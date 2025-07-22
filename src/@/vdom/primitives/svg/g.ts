@@ -1,5 +1,7 @@
-import { h } from '../../h'
+import { h, tag } from '../../h'
 import { VDom } from '../../vdom'
+
+export const G_TAG = tag('g')
 
 export const G = ({
   children,
@@ -53,6 +55,5 @@ export const G = ({
   onContextMenu?: (event: unknown) => void
   opacity?: number | string
 }) => {
-  // @ts-ignore
-  return h('g', input, children)
+  return h(G_TAG, input, children)
 }

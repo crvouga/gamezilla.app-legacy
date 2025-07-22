@@ -1,5 +1,7 @@
-import { h } from '../../h'
+import { h, tag } from '../../h'
 import { VDom } from '../../vdom'
+
+export const PATH_TAG = tag('path')
 
 export const Path = ({
   children,
@@ -53,6 +55,5 @@ export const Path = ({
   onContextMenu?: (event: unknown) => void
   opacity?: number | string
 }) => {
-  // @ts-ignore
-  return h('path', input, children)
+  return h(PATH_TAG, input, children)
 }

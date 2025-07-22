@@ -2,7 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import type { VDom } from '~/@/vdom/vdom'
-import { Text } from '../vdom/primitives/svg/text'
+import { SvgText } from '../vdom/primitives/svg/text'
 import { cn } from './cn'
 import { PAPER_CLASS_NAME } from './paper'
 
@@ -21,7 +21,7 @@ export const Select = <T>(props: {
 }) => {
   const labelId = `${props.id}-label`
   return h(Box, { class: 'flex w-full flex-col gap-1', 'data-testid': props.dataTestId }, [
-    Text({ id: labelId, class: cn('text-base', props.error && 'text-red-500'), text: props.label }),
+    SvgText({ id: labelId, class: cn('text-base', props.error && 'text-red-500'), text: props.label }),
     h(
       // @ts-ignore
       'select',
@@ -61,6 +61,6 @@ export const Select = <T>(props: {
       }),
     ),
     typeof props.helperText === 'string' &&
-      h(Box, { class: cn('text-sm', props.error && 'text-red-500') }, [Text({ text: props.helperText })]),
+      h(Box, { class: cn('text-sm', props.error && 'text-red-500') }, [SvgText({ text: props.helperText })]),
   ])
 }

@@ -1,5 +1,7 @@
-import { h } from '../../h'
+import { h, tag } from '../../h'
 import { VDom } from '../../vdom'
+
+export const SVG_TAG = tag('svg')
 
 export const Svg = ({
   children,
@@ -45,6 +47,5 @@ export const Svg = ({
   onContextMenu?: (event: unknown) => void
   opacity?: number | string
 }) => {
-  // @ts-ignore
-  return h('svg', input, children)
+  return h(SVG_TAG, input, children)
 }

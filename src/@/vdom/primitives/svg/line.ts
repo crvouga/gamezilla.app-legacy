@@ -1,5 +1,7 @@
-import { h } from '../../h'
+import { h, tag } from '../../h'
 import { VDom } from '../../vdom'
+
+export const LINE_TAG = tag('line')
 
 export const Line = ({
   children,
@@ -51,6 +53,5 @@ export const Line = ({
   onContextMenu?: (event: unknown) => void
   opacity?: number | string
 }) => {
-  // @ts-ignore
-  return h('line', input, children)
+  return h(LINE_TAG, input, children)
 }

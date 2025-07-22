@@ -1,6 +1,8 @@
-import { h } from '../../h'
+import { h, tag } from '../../h'
 
-export const Text = ({
+export const SVG_TEXT_TAG = tag('text')
+
+export const SvgText = ({
   text,
   ...input
 }: {
@@ -45,10 +47,6 @@ export const Text = ({
   onContextMenu?: (event: unknown) => void
   opacity?: number | string
 }) => {
-  return h(
-    // @ts-ignore
-    'text',
-    input,
-    [text],
-  )
+  // @ts-ignore
+  return h(SVG_TEXT_TAG, input, [text])
 }

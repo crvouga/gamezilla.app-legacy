@@ -4,16 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { FRAGMENT_TAG } from '../primitives/frag'
 import { kebabObjectToCamelObject } from '../style'
 import { IVirtualDomEngine } from './interface'
-
-const propMap = new Map<string, string>()
-propMap.set('class', 'className')
-propMap.set('stroke-linecap', 'strokeLinecap')
-propMap.set('stroke-linejoin', 'strokeLinejoin')
-propMap.set('stroke-width', 'strokeWidth')
-propMap.set('stroke-opacity', 'strokeOpacity')
-propMap.set('clip-rule', 'clipRule')
-propMap.set('fill-rule', 'fillRule')
-const propMapKeys = Array.from(propMap.keys())
+import { REACT_JS_PROP_MAP, REACT_JS_PROP_MAP_KEYS } from './react'
 
 export type ImplReact = {
   t: 'react'
@@ -37,9 +28,9 @@ const init = (_config: ImplReact): IVirtualDomEngine => {
       }
 
       if (typeof tag === 'string') {
-        for (const propKey of propMapKeys) {
+        for (const propKey of REACT_JS_PROP_MAP_KEYS) {
           if (propKey in props) {
-            props[propMap.get(propKey)!] = props[propKey]
+            props[REACT_JS_PROP_MAP.get(propKey)!] = props[propKey]
             delete props[propKey]
           }
         }
@@ -47,11 +38,14 @@ const init = (_config: ImplReact): IVirtualDomEngine => {
 
       children = Array.isArray(children) ? children : children ? [children] : []
 
-      if (tag === FRAGMENT_TAG) {
-        return createElement(Fragment, props, ...children) as any
+      switch (tag) {
+        case FRAGMENT_TAG: {
+          return createElement(Fragment, props, ...children) as any
+        }
+        default: {
+          return createElement(tag, props, ...children) as any
+        }
       }
-
-      return createElement(tag, props, ...children) as any
     },
   }
 }

@@ -9,7 +9,7 @@ import { Path } from '~/@/vdom/primitives/svg/path'
 import { Pattern } from '~/@/vdom/primitives/svg/pattern'
 import { Rect } from '~/@/vdom/primitives/svg/rect'
 import { Svg } from '~/@/vdom/primitives/svg/svg'
-import { Text } from '~/@/vdom/primitives/svg/text'
+import { SvgText } from '~/@/vdom/primitives/svg/text'
 import type { VDom } from '~/@/vdom/vdom'
 import { Numberlink } from '../../../numberlink'
 import { NodeId } from '../../../numberlink/node-id'
@@ -241,7 +241,7 @@ const ViewCoordinates = (input: BoardInput<VariantGrid.Model>) => {
       { transform: 'translate(0, 1)' },
       map(VariantGrid.yieldNodes(input.model), (node) => {
         return h(
-          Text,
+          SvgText,
           {
             class: 'pointer-events-none',
             key: node.nodeId,

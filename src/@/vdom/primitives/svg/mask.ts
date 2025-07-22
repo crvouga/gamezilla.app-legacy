@@ -1,5 +1,7 @@
-import { h } from '../../h'
+import { h, tag } from '../../h'
 import { VDom } from '../../vdom'
+
+export const MASK_TAG = tag('mask')
 
 export const Mask = ({
   children,
@@ -50,6 +52,5 @@ export const Mask = ({
   onContextMenu?: (event: unknown) => void
   opacity?: number | string
 }) => {
-  // @ts-ignore
-  return h('mask', input, children)
+  return h(MASK_TAG, input, children)
 }

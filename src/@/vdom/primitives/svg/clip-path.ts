@@ -1,5 +1,7 @@
-import { h } from '../../h'
+import { h, tag } from '../../h'
 import { VDom } from '../../vdom'
+
+export const CLIP_PATH_TAG = tag('clipPath')
 
 export const ClipPath = ({
   children,
@@ -51,6 +53,5 @@ export const ClipPath = ({
   onContextMenu?: (event: unknown) => void
   opacity?: number | string
 }) => {
-  // @ts-ignore
-  return h('clipPath', input, children)
+  return h(CLIP_PATH_TAG, input, children)
 }

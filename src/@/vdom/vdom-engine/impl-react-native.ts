@@ -1,22 +1,27 @@
 import { createElement, Fragment } from 'react'
+import { CANVAS_TAG } from '../primitives/canvas'
 import { FRAGMENT_TAG } from '../primitives/frag'
+import { IMAGE_TAG } from '../primitives/image'
+import { CIRCLE_TAG } from '../primitives/svg/circle'
+import { CLIP_PATH_TAG } from '../primitives/svg/clip-path'
+import { DEFS_TAG } from '../primitives/svg/defs'
+import { G_TAG } from '../primitives/svg/g'
+import { LINE_TAG } from '../primitives/svg/line'
+import { LINEAR_GRADIENT_TAG } from '../primitives/svg/linear-gradient'
+import { MASK_TAG } from '../primitives/svg/mask'
+import { PATH_TAG } from '../primitives/svg/path'
+import { PATTERN_TAG } from '../primitives/svg/pattern'
+import { RADIAL_GRADIENT_TAG } from '../primitives/svg/radial-gradient'
+import { RECT_TAG } from '../primitives/svg/rect'
+import { STOP_TAG } from '../primitives/svg/stop'
+import { SVG_TAG } from '../primitives/svg/svg'
+import { SVG_TEXT_TAG } from '../primitives/svg/text'
+import { TEXT_TAG } from '../primitives/text'
+import { TEXT_INPUT_TAG } from '../primitives/text-input'
+import { TOUCHABLE_TAG } from '../primitives/touchable'
 import { kebabObjectToCamelObject } from '../style'
 import { IVirtualDomEngine } from './interface'
-import { TOUCHABLE_TAG } from '../primitives/touchable'
-import { TEXT_INPUT_TAG } from '../primitives/text-input'
-import { TEXT_TAG } from '../primitives/text'
-import { IMAGE_TAG } from '../primitives/image'
-import { CANVAS_TAG } from '../primitives/canvas'
-
-const propMap = new Map<string, string>()
-propMap.set('class', 'className')
-propMap.set('stroke-linecap', 'strokeLinecap')
-propMap.set('stroke-linejoin', 'strokeLinejoin')
-propMap.set('stroke-width', 'strokeWidth')
-propMap.set('stroke-opacity', 'strokeOpacity')
-propMap.set('clip-rule', 'clipRule')
-propMap.set('fill-rule', 'fillRule')
-const propMapKeys = Array.from(propMap.keys())
+import { REACT_JS_PROP_MAP, REACT_JS_PROP_MAP_KEYS } from './react'
 
 export type ImplReactNative = {
   t: 'react-native'
@@ -33,9 +38,9 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
       }
 
       if (typeof tag === 'string') {
-        for (const propKey of propMapKeys) {
+        for (const propKey of REACT_JS_PROP_MAP_KEYS) {
           if (propKey in props) {
-            props[propMap.get(propKey)!] = props[propKey]
+            props[REACT_JS_PROP_MAP.get(propKey)!] = props[propKey]
             delete props[propKey]
           }
         }
@@ -57,6 +62,48 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
           throw new Error('Not implemented')
         }
         case CANVAS_TAG: {
+          throw new Error('Not implemented')
+        }
+        case SVG_TAG: {
+          throw new Error('Not implemented')
+        }
+        case SVG_TEXT_TAG: {
+          throw new Error('Not implemented')
+        }
+        case CIRCLE_TAG: {
+          throw new Error('Not implemented')
+        }
+        case RECT_TAG: {
+          throw new Error('Not implemented')
+        }
+        case LINE_TAG: {
+          throw new Error('Not implemented')
+        }
+        case LINEAR_GRADIENT_TAG: {
+          throw new Error('Not implemented')
+        }
+        case RADIAL_GRADIENT_TAG: {
+          throw new Error('Not implemented')
+        }
+        case MASK_TAG: {
+          throw new Error('Not implemented')
+        }
+        case PATH_TAG: {
+          throw new Error('Not implemented')
+        }
+        case PATTERN_TAG: {
+          throw new Error('Not implemented')
+        }
+        case STOP_TAG: {
+          throw new Error('Not implemented')
+        }
+        case DEFS_TAG: {
+          throw new Error('Not implemented')
+        }
+        case G_TAG: {
+          throw new Error('Not implemented')
+        }
+        case CLIP_PATH_TAG: {
           throw new Error('Not implemented')
         }
         case FRAGMENT_TAG: {

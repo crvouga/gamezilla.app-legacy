@@ -1,5 +1,7 @@
-import { h } from '../../h'
+import { h, tag } from '../../h'
 import { VDom } from '../../vdom'
+
+export const RECT_TAG = tag('rect')
 
 export const Rect = ({
   children,
@@ -59,6 +61,5 @@ export const Rect = ({
   onPointerClick?: (event: unknown) => void
   opacity?: number | string
 }) => {
-  // @ts-ignore
-  return h('rect', input, children)
+  return h(RECT_TAG, input, children)
 }

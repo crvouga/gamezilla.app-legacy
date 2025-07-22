@@ -1,5 +1,7 @@
-import { h } from '../../h'
+import { h, tag } from '../../h'
 import { VDom } from '../../vdom'
+
+export const LINEAR_GRADIENT_TAG = tag('linearGradient')
 
 export const LinearGradient = ({
   children,
@@ -51,6 +53,5 @@ export const LinearGradient = ({
   onContextMenu?: (event: unknown) => void
   opacity?: number | string
 }) => {
-  // @ts-ignore
-  return h('linearGradient', input, children)
+  return h(LINEAR_GRADIENT_TAG, input, children)
 }

@@ -1,5 +1,7 @@
-import { h } from '../../h'
+import { h, tag } from '../../h'
 import { VDom } from '../../vdom'
+
+export const RADIAL_GRADIENT_TAG = tag('radialGradient')
 
 export const RadialGradient = ({
   children,
@@ -51,6 +53,5 @@ export const RadialGradient = ({
   onContextMenu?: (event: unknown) => void
   opacity?: number | string
 }) => {
-  // @ts-ignore
-  return h('radialGradient', input, children)
+  return h(RADIAL_GRADIENT_TAG, input, children)
 }

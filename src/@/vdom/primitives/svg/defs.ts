@@ -1,5 +1,7 @@
-import { h } from '../../h'
+import { h, tag } from '../../h'
 import { VDom } from '../../vdom'
+
+export const DEFS_TAG = tag('defs')
 
 export const Defs = ({
   children,
@@ -59,6 +61,5 @@ export const Defs = ({
   onPointerClick?: (event: unknown) => void
   opacity?: number | string
 }) => {
-  // @ts-ignore
-  return h('defs', input, children)
+  return h(DEFS_TAG, input, children)
 }

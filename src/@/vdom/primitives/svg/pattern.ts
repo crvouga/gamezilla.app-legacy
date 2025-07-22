@@ -1,5 +1,7 @@
-import { h } from '../../h'
+import { h, tag } from '../../h'
 import { VDom } from '../../vdom'
+
+export const PATTERN_TAG = tag('pattern')
 
 export const Pattern = ({
   children,
@@ -60,6 +62,5 @@ export const Pattern = ({
   onPointerClick?: (event: unknown) => void
   opacity?: number | string
 }) => {
-  // @ts-ignore
-  return h('pattern', input, children)
+  return h(PATTERN_TAG, input, children)
 }

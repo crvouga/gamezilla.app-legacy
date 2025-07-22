@@ -1,5 +1,7 @@
-import { h } from '../../h'
+import { h, tag } from '../../h'
 import { VDom } from '../../vdom'
+
+export const CIRCLE_TAG = tag('circle')
 
 export const Circle = ({
   children,
@@ -50,6 +52,5 @@ export const Circle = ({
   onContextMenu?: (event: unknown) => void
   opacity?: number | string
 }) => {
-  // @ts-ignore
-  return h('circle', input, children)
+  return h(CIRCLE_TAG, input, children)
 }

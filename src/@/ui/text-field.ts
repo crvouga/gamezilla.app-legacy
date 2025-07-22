@@ -4,7 +4,7 @@ import { Box } from '~/@/vdom/primitives/box'
 import { TextInput } from '~/@/vdom/primitives/text-input'
 import { Touchable } from '~/@/vdom/primitives/touchable'
 import type { VDom } from '~/@/vdom/vdom'
-import { Text } from '../vdom/primitives/svg/text'
+import { SvgText } from '../vdom/primitives/svg/text'
 import { cn } from './cn'
 import { IconXMark } from './icon'
 import { PAPER_CLASS_NAME } from './paper'
@@ -26,7 +26,7 @@ export const TextField = (input: {
   onChange: (value: string) => void
 }) => {
   return h(Box, { class: 'flex w-full flex-col gap-1' }, [
-    Text({ class: cn('text-base', input.error && 'text-red-500'), text: input.label }),
+    SvgText({ class: cn('text-base', input.error && 'text-red-500'), text: input.label }),
     h(
       Box,
       {
@@ -105,7 +105,7 @@ export const TextField = (input: {
           'data-info': input.error ? 'false' : 'true',
           class: cn('text-sm', input.error && 'text-red-500'),
         },
-        [Text({ text: input.helperText ?? '' })],
+        [SvgText({ text: input.helperText ?? '' })],
       ),
   ])
 }
