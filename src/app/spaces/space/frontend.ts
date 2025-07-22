@@ -12,6 +12,7 @@ import { GameFrontend } from '../game/frontend'
 import { JoinSpaceFrontend } from '../join-space/frontend'
 import { LeaveSpaceFrontend } from '../leave-space/frontend'
 import type { FrontendCtxModule, ModelFrontend, MsgFrontend } from '../types'
+import { CurrentUserSpaceLoader } from './current-user-space-loader'
 import { Space } from './space'
 import { SpaceDbQueryCache } from './space-db-query-cache'
 import { SpaceDbQuery } from './space-db/interface-query'
@@ -55,9 +56,9 @@ const View = (input: {
 
       const spaceCtx: SpaceFrontendCtx & FrontendCtxModule = { ...input.ctx, currentUser, space: spaceProjection }
 
-      const currentUserSpaceId = spaceProjection.spaceId
+      const currentUserSpaceId = CurrentUserSpaceLoader.toCurrentUserSpaceId(input.ctx)
 
-      const isNotJoined = currentUserSpaceId !== spaceCtx.space.spaceId
+      const isNotJoined = spaceProjection.spaceId !== currentUserSpaceId
 
       if (isNotJoined) {
         return h(JoinSpaceFrontend.view, { ...input, ctx: spaceCtx })
@@ -112,13 +113,11 @@ const ViewSpaceNotFound = (input: { ctx: FrontendCtxModule; dispatch: (m: MsgFro
 
 const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
   const spaceId = input.ctx.currentScreen.t === 'space' ? input.ctx.currentScreen.spaceId : null
-
   if (!spaceId) return Sub.none()
-
   return SpaceDbQueryCache.sub(input.ctx.spaceDb, toQuery(spaceId), (c): MsgFrontend => ({ t: 'got-msg-out', c }))
 }
 
-export const ScreenSpace = {
+export const SpaceFrontend = {
   View,
   subscriptions,
 }

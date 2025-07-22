@@ -126,10 +126,11 @@ const batch = <Msg extends {}>(arr: Sub<Msg>[]): Sub<Msg> => {
   }
 }
 
+const subNone: Sub<any> = {
+  sub: () => () => {},
+}
 const none = <T>(): Sub<T> => {
-  return {
-    sub: () => () => {},
-  }
+  return subNone
 }
 
 const lastKeyById = new Map<string, string>()

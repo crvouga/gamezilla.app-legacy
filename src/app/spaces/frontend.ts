@@ -22,7 +22,7 @@ import { JoinSpaceFrontend } from './join-space/frontend'
 import { LeaveSpaceFrontend } from './leave-space/frontend'
 import { ListSpacesFrontend } from './list-spaces/frontend'
 import { CurrentUserSpaceLoader } from './space/current-user-space-loader'
-import { ScreenSpace } from './space/screen-space'
+import { SpaceFrontend } from './space/frontend'
 import { Space } from './space/space'
 import { ISpaceDb, SpaceDb } from './space/space-db'
 import { SpaceDbQueryCache } from './space/space-db-query-cache'
@@ -160,7 +160,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
     SyncFrontend.subscriptions(input),
     ListSpacesFrontend.subscriptions(input),
     CurrentUserSpaceLoader.subscriptions(input),
-    ScreenSpace.subscriptions(input),
+    SpaceFrontend.subscriptions(input),
   ])
 }
 
@@ -173,7 +173,7 @@ const View: FrontendModule['View'] = (input) => {
         }
         case 'space': {
           if (isAppFrontendCtx(input.ctx)) {
-            return h(ScreenSpace.View, {
+            return h(SpaceFrontend.View, {
               spaceId: input.ctx.currentScreen.spaceId,
               ctx: input.ctx,
               dispatch: input.dispatch,

@@ -12,7 +12,8 @@ import { PeopleActionTypes } from './frontend/people-action'
 import { GameTypes } from './game'
 import { JoinSpaceTypes } from './join-space'
 import { LeaveSpaceTypes } from './leave-space'
-import { ListSpacesTypes } from './list-spaces'
+
+import { SpaceId } from '../@/data/space-id'
 import { ISpaceDb } from './space/space-db/interface'
 import { SpaceProjectionStarted } from './space/space-projection'
 import { StartSpaceTypes } from './start-space'
@@ -35,6 +36,7 @@ export type ModelFrontend = ModelFrontendBase & GameTypes.ModelFrontend
 
 export type MsgFrontend =
   | { t: 'got-msg-out'; c: unknown }
+  | { t: 'list-spaces.clicked-space-card'; spaceId: SpaceId }
   | PeopleActionTypes.MsgFrontend
   | LeaveSpaceTypes.MsgFrontend
   | EndSpaceTypes.MsgFrontend
@@ -44,7 +46,6 @@ export type MsgFrontend =
   | StartSpaceTypes.MsgFrontend
   | CurrentSpaceMiniPlayerTypes.MsgFrontend
   | SyncTypes.MsgFrontend
-  | ListSpacesTypes.MsgFrontend
 
 export const topicContract = TopicContract.combine([SyncTypes.topicContract])
 
