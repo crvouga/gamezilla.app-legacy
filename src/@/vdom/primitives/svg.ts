@@ -43,6 +43,7 @@ export const Svg = ({
   onTouchLeave?: (event: unknown) => void
   onTouchOver?: (event: unknown) => void
   onContextMenu?: (event: unknown) => void
+  opacity?: number | string
 }) => {
-  return h(Svg, input, children)
+  return h('svg', input, children)
 }

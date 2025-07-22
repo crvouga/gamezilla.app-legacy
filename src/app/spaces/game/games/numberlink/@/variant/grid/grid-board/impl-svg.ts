@@ -1,13 +1,14 @@
 import { cn } from '~/@/ui/cn'
 import { IconCheckmark } from '~/@/ui/icon'
-import type { VDom } from '~/@/vdom/vdom'
 import { h } from '~/@/vdom/h'
+import { Path } from '~/@/vdom/primitives/path'
+import { Svg } from '~/@/vdom/primitives/svg'
+import type { VDom } from '~/@/vdom/vdom'
 import { Numberlink } from '../../../numberlink'
 import { NodeId } from '../../../numberlink/node-id'
 import { BoardInput } from '../../../ui/board'
 import { Color } from '../../../ui/color'
 import * as VariantGrid from '../grid'
-import { Svg } from '~/@/vdom/primitives/svg'
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const TERMINAL_NODE_RADIUS = 0.33
@@ -82,7 +83,7 @@ const ViewGrid = (input: BoardInput<VariantGrid.Model>) => {
           patternUnits: 'userSpaceOnUse',
         },
         [
-          h('path', {
+          h(Path, {
             d: 'M 1 0 L 0 0 0 1',
             fill: 'none',
             stroke: Color.GRID_LINE_COLOR,
@@ -136,7 +137,7 @@ const ViewPipeline = (
     },
     [
       !input.disableHighlight &&
-        h('path', {
+        h(Path, {
           d: input.isGroupActive?.(terminal.groupId) ? '' : pipelinePathData,
           stroke: groupColor,
           fill: 'none',
@@ -145,7 +146,7 @@ const ViewPipeline = (
           'stroke-width': '1',
           'stroke-opacity': '0.2',
         }),
-      h('path', {
+      h(Path, {
         d: pipelinePathData,
         stroke: groupColor,
         fill: 'none',

@@ -1,4 +1,5 @@
 import { h } from '~/@/vdom/h'
+import { Path } from '~/@/vdom/primitives/path'
 import { Svg } from '~/@/vdom/primitives/svg'
 
 const theme = {
@@ -21,7 +22,7 @@ export const CoverArt = (input: { class?: string }) => {
 
     h(Svg, { x: 0, y: 0, width: '2', height: '2', viewBox: '0 0 45 45' }, [
       h('g', { transform: 'translate(0 -2) scale(0.8)' }, [
-        h('path', {
+        h(Path, {
           fill: theme.pawn,
           stroke: theme.pawn,
           'stroke-linecap': 'round',
