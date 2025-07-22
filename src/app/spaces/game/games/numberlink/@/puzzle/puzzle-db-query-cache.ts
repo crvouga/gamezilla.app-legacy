@@ -37,12 +37,11 @@ const entity = (ctx: { queryCache: QueryCache }, id: PuzzleId | undefined | null
 
 const isLoading = (ctx: { queryCache: QueryCache }, query: PuzzleQuery): boolean => {
   const queryKey = deterministicJsonStringify(query)
-  return ctx.queryCache.results[queryKey] === undefined
+  return !Boolean(ctx.queryCache.results[queryKey])
 }
 
 const isEmpty = (ctx: { queryCache: QueryCache }, query: PuzzleQuery): boolean => {
-  const puzzles = read(ctx, query)
-  return !isLoading(ctx, query) && puzzles.length === 0
+  return !isLoading(ctx, query) && read(ctx, query).length === 0
 }
 
 export const PuzzleDbQueryCache = {
