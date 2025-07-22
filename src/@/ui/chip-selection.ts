@@ -28,7 +28,7 @@ export const ChipSelection = <T>({
     h(
       Box,
       {
-        class: 'flex flex-row gap-2 flex-wrap',
+        class: 'flex flex-row gap-3 flex-wrap', // increased gap for bigger chips
       },
       options.map((option) =>
         h(
@@ -39,10 +39,11 @@ export const ChipSelection = <T>({
             'aria-pressed': value === option.value ? 'true' : 'false',
             role: 'button',
             class: [
-              'px-3 py-1 rounded-full border transition-colors',
+              // Bigger padding, larger text, dark mode colors
+              'px-5 py-2 rounded-full border transition-colors text-base font-medium',
               value === option.value
-                ? 'bg-blue-600 text-white border-blue-700'
-                : 'bg-white text-blue-700 border-blue-300 hover:bg-blue-50',
+                ? 'bg-blue-500 text-white border-blue-600'
+                : 'bg-neutral-800 text-neutral-100 border-neutral-700 hover:bg-neutral-700',
               disabled ? 'opacity-50 pointer-events-none' : '',
             ].join(' '),
             onClick: () => {
