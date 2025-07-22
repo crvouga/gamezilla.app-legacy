@@ -2,8 +2,9 @@ import { eq } from '~/@/equals/equals'
 import { memoize } from '~/@/function/memoize'
 import { Random } from '~/@/random/random'
 import { h } from '~/@/vdom/h'
-import { Direction, Position } from './position'
+import { G } from '~/@/vdom/primitives/g'
 import { Svg } from '~/@/vdom/primitives/svg'
+import { Direction, Position } from './position'
 
 //
 //
@@ -196,7 +197,7 @@ export const CoverArt = () => {
     }),
     ...coverArtMaze.edges.map(([a, b]) =>
       h(
-        'g',
+        G,
         {
           key: [a.x, a.y, b.x, b.y].join('-'),
           'stroke-width': '0.1',

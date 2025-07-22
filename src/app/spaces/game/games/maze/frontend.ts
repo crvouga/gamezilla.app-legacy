@@ -17,6 +17,7 @@ import {
   initShared,
 } from './types'
 import { Svg } from '~/@/vdom/primitives/svg'
+import { G } from '~/@/vdom/primitives/g'
 
 //
 //
@@ -206,7 +207,7 @@ export const View = ({
     h(Svg, { width: '100%', viewBox }, [
       h('rect', { x: model.lower.x, y: model.lower.y, width: '100%', height: '100%', fill: '#000' }),
       ...maze.edges.map(([a, b]) =>
-        h('g', { key: [a.x, a.y, b.x, b.y].join('-'), 'stroke-width': '0.1', stroke: '#fff' }, [
+        h(G, { key: [a.x, a.y, b.x, b.y].join('-'), 'stroke-width': '0.1', stroke: '#fff' }, [
           h('line', {
             x1: a.x + 1 / 2,
             y1: a.y + 1 / 2,
@@ -269,8 +270,8 @@ const ViewJoystick = ({
   return h(Box, {}, [
     h(Svg, { width: '100%', viewBox: '-1 -1 2 2', class: 'touch-none overflow-hidden select-none' }, [
       h('defs', {}, [h('clipPath', { id: 'cut-off-bottom' }, [h('circle', { x: '0', y: '0', r: 1 })])]),
-      h('g', { 'stroke-width': 0.025 }, [
-        h('g', { clipPath: 'url(#cut-off-bottom)', stroke }, [
+      h(G, { 'stroke-width': 0.025 }, [
+        h(G, { 'clip-path': 'url(#cut-off-bottom)', stroke }, [
           ...Direction.all.map((direction) => {
             const { x, y } = directionToVector(direction)
             return h('rect', {

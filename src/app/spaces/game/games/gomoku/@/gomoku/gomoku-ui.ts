@@ -4,6 +4,7 @@ import { cn } from '~/@/ui/cn'
 import { type Board, type Bounds, type Stone, allPositions, bounds, presetToStars } from './gomoku'
 import type { Position } from './gomoku-position'
 import { Svg } from '~/@/vdom/primitives/svg'
+import { G } from '~/@/vdom/primitives/g'
 
 const backgroundColor = '#C88655'
 const lineColor = Hex.darken(backgroundColor, 0.3)
@@ -107,7 +108,7 @@ export const ViewBoard = ({
       class: cn('overflow-hidden', class_),
     },
     [
-      h('g', { 'stroke-width': 0.05 }, [
+      h(G, { 'stroke-width': 0.05 }, [
         h('rect', {
           x: boundsView.lower.x,
           y: boundsView.lower.y,
@@ -116,7 +117,7 @@ export const ViewBoard = ({
           fill: gameTheme.background,
         }),
 
-        h('g', { stroke: gameTheme.line }, [
+        h(G, { stroke: gameTheme.line }, [
           h('rect', {
             x: bounds_.lower.x,
             y: bounds_.lower.y,
@@ -151,7 +152,7 @@ export const ViewBoard = ({
         ]),
 
         h(
-          'g',
+          G,
           {},
           stars.map((pos) =>
             h('circle', {
@@ -182,7 +183,7 @@ export const ViewBoard = ({
         }),
 
         h(
-          'g',
+          G,
           {},
           allPositions.map(({ x, y }) =>
             h('circle', {

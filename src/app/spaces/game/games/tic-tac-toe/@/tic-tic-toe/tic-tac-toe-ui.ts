@@ -12,6 +12,7 @@ import {
   toSlot,
   toWins,
 } from './tic-tac-toe'
+import { G } from '~/@/vdom/primitives/g'
 
 export const gameTheme = {
   background: '#14BDAC',
@@ -27,7 +28,7 @@ export const ViewBoard = ({ board, onClick }: { board: Model; onClick: (position
   return h(Svg, { width: '100%', viewBox: [0, 0, MAX_X * scale, MAX_Y * scale].join(' ') }, [
     h('rect', { x: '0', y: '0', width: '100%', height: '100%', fill: gameTheme.background }),
     h(
-      'g',
+      G,
       {},
       lines.map((line, index) =>
         h('line', {
@@ -54,7 +55,7 @@ export const ViewBoard = ({ board, onClick }: { board: Model; onClick: (position
         }
 
         if (slot === 'X') {
-          return h('g', { strokeWidth, stroke: gameTheme.cross }, [
+          return h(G, { 'stroke-width': strokeWidth, stroke: gameTheme.cross }, [
             // direction: \
             h('line', { x1: cx - r, y1: cy - r, x2: cx + r, y2: cy + r }),
             // direction: /
@@ -62,7 +63,7 @@ export const ViewBoard = ({ board, onClick }: { board: Model; onClick: (position
           ])
         }
 
-        return h('g', { key })
+        return h(G, { key })
       }),
     ),
     h(ViewWins, { board }, []),
@@ -86,7 +87,7 @@ const ViewWins = (input: { board: Model }) => {
   const wins = toWins(input.board)
 
   return h(
-    'g',
+    G,
     {},
     [...wins.X, ...wins.O].map((winningGroup) => {
       const key = winningGroup.map((position) => `${position.column}-${position.row}`).join(',')
@@ -253,7 +254,7 @@ export const ViewSlot = ({
 }) => {
   switch (slot) {
     case Empty:
-      return h('g', {})
+      return h(G, {})
 
     case 'O':
       return h(Naught, { strokeWidth, color, r, cx, cy })
@@ -276,7 +277,7 @@ const Cross = ({
   cy: number
   strokeWidth?: number
 }) => {
-  return h('g', { strokeWidth, stroke: color }, [
+  return h(G, { 'stroke-width': strokeWidth, stroke: color }, [
     // direction: \
     h('line', { x1: cx - r, y1: cy - r, x2: cx + r, y2: cy + r }),
     // direction: /

@@ -4,6 +4,7 @@ import { COLUMN_COUNT, type Columns, MAX_COLUMN_HEIGHT, type Pos2d, isColumnInde
 import { gameTheme } from '../shared'
 import type { Model, ViewColumnsInput } from './shared'
 import { Svg } from '~/@/vdom/primitives/svg'
+import { G } from '~/@/vdom/primitives/g'
 
 type SvgIds = {
   playerOneGradient: string
@@ -35,10 +36,10 @@ export const ViewColumnsSvg = ({
 
   return h(Svg, { id, width: '100%', viewBox: `0 0 ${COLUMN_COUNT} ${MAX_COLUMN_HEIGHT}` }, [
     h(SvgDefs, { ids }),
-    h('g', { transform: `translate(0, ${MAX_COLUMN_HEIGHT}) scale(1,-1)` }, [
+    h(G, { transform: `translate(0, ${MAX_COLUMN_HEIGHT}) scale(1,-1)` }, [
       h('rect', { x: 0, y: 0, width: COLUMN_COUNT, height: MAX_COLUMN_HEIGHT, fill: gameTheme.primary.darker }),
       h(
-        'g',
+        G,
         { transform: 'translate(0.5, 0.5)' },
         model?.discs?.map(({ item: disc, state }) =>
           h('circle', {

@@ -14,6 +14,7 @@ import {
 } from '../../chess'
 import { Svg } from '~/@/vdom/primitives/svg'
 import { Path } from '~/@/vdom/primitives/path'
+import { G } from '~/@/vdom/primitives/g'
 
 //
 //
@@ -421,7 +422,7 @@ export const Chessboard = (input: ChessboardInput) => {
     },
     [
       h(
-        'g',
+        G,
         {},
         CHECKERS.map((checker) => {
           const square = positionToSquare(checker, input.orientation ?? 'w')
@@ -446,7 +447,7 @@ export const Chessboard = (input: ChessboardInput) => {
       ),
 
       h(
-        'g',
+        G,
         {},
         CHECKERS.map((checker) => {
           const square = positionToSquare(checker, input.orientation ?? 'w')
@@ -464,7 +465,7 @@ export const Chessboard = (input: ChessboardInput) => {
       ),
 
       h(
-        'g',
+        G,
         {},
         CHECKERS.map((checker) => {
           const square = positionToSquare(checker, input.orientation ?? 'w')
@@ -482,7 +483,7 @@ export const Chessboard = (input: ChessboardInput) => {
       ),
 
       h(
-        'g',
+        G,
         {},
         pieces?.map(({ piece, x, y }) => {
           return h(
@@ -526,7 +527,7 @@ export const Chessboard = (input: ChessboardInput) => {
 const renderPiece: { [piece in Piece]: () => VDom } = {
   wK: () =>
     h(
-      'g',
+      G,
       {
         fill: 'none',
         'fill-opacity': '1',
@@ -584,7 +585,7 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
 
   wQ: () =>
     h(
-      'g',
+      G,
       {
         fill: '#ffffff',
         'fill-opacity': '1',
@@ -639,7 +640,7 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
 
   wB: () =>
     h(
-      'g',
+      G,
       {
         fill: 'none',
         'fill-rule': 'evenodd',
@@ -654,7 +655,7 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
       },
       [
         h(
-          'g',
+          G,
           {
             fill: '#ffffff',
             stroke: '#000000',
@@ -683,7 +684,7 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
 
   wN: () =>
     h(
-      'g',
+      G,
       {
         fill: 'none',
         'fill-opacity': '1',
@@ -723,7 +724,7 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
 
   wR: () =>
     h(
-      'g',
+      G,
       {
         fill: '#ffffff',
         'fill-opacity': '1',
@@ -770,7 +771,7 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
     ),
 
   wP: () =>
-    h('g', {}, [
+    h(G, {}, [
       h(Path, {
         d: 'M 22,9 C 19.79,9 18,10.79 18,13 C 18,13.89 18.29,14.71 18.78,15.38 C 16.83,16.5 15.5,18.59 15.5,21 C 15.5,23.03 16.44,24.84 17.91,26.03 C 14.91,27.09 10.5,31.58 10.5,39.5 L 33.5,39.5 C 33.5,31.58 29.09,27.09 26.09,26.03 C 27.56,24.84 28.5,23.03 28.5,21 C 28.5,18.59 27.17,16.5 25.22,15.38 C 25.71,14.71 26,13.89 26,13 C 26,10.79 24.21,9 22,9 z ',
         fill: '#ffffff',
@@ -788,7 +789,7 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
 
   bK: () =>
     h(
-      'g',
+      G,
       {
         fill: 'none',
         'fill-opacity': '1',
@@ -841,7 +842,7 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
 
   bQ: () =>
     h(
-      'g',
+      G,
       {
         fill: '#000000',
         'fill-opacity': '1',
@@ -856,7 +857,7 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
       },
       [
         h(
-          'g',
+          G,
           {
             fill: '#000000',
             stroke: 'none',
@@ -909,7 +910,7 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
 
   bB: () =>
     h(
-      'g',
+      G,
       {
         fill: 'none',
         'fill-rule': 'evenodd',
@@ -924,7 +925,7 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
       },
       [
         h(
-          'g',
+          G,
           {
             fill: '#000000',
             stroke: '#000000',
@@ -951,7 +952,7 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
 
   bN: () =>
     h(
-      'g',
+      G,
       {
         fill: 'none',
         'fill-opacity': '1',
@@ -996,7 +997,7 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
 
   bR: () =>
     h(
-      'g',
+      G,
       {
         fill: '#000000',
         'fill-opacity': '1',
@@ -1073,7 +1074,7 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
     ),
 
   bP: () =>
-    h('g', {}, [
+    h(G, {}, [
       h(Path, {
         d: 'M 22,9 C 19.79,9 18,10.79 18,13 C 18,13.89 18.29,14.71 18.78,15.38 C 16.83,16.5 15.5,18.59 15.5,21 C 15.5,23.03 16.44,24.84 17.91,26.03 C 14.91,27.09 10.5,31.58 10.5,39.5 L 33.5,39.5 C 33.5,31.58 29.09,27.09 26.09,26.03 C 27.56,24.84 28.5,23.03 28.5,21 C 28.5,18.59 27.17,16.5 25.22,15.38 C 25.71,14.71 26,13.89 26,13 C 26,10.79 24.21,9 22,9 z ',
         fill: '#000000',

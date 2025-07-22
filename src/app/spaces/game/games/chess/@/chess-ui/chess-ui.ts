@@ -1,4 +1,5 @@
 import { h } from '~/@/vdom/h'
+import { G } from '~/@/vdom/primitives/g'
 import { Path } from '~/@/vdom/primitives/path'
 import { Svg } from '~/@/vdom/primitives/svg'
 
@@ -13,7 +14,7 @@ const isOdd = (x: number) => !isEven(x)
 
 export const PawnIcon = (input: { stroke?: string }) => {
   return h(
-    'g',
+    G,
     {
       transform: 'translate(0 -2) scale(1)',
       class: 'origin-center',
@@ -39,7 +40,7 @@ export const PlayerIcon = ({ class: class_, color }: { class?: string; color: 'w
     },
     [
       h(
-        'g',
+        G,
         {
           transform: 'translate(0 -2) scale(1.25)',
           class: 'origin-center',

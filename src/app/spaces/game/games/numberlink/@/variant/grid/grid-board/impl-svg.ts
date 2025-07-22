@@ -9,6 +9,7 @@ import { NodeId } from '../../../numberlink/node-id'
 import { BoardInput } from '../../../ui/board'
 import { Color } from '../../../ui/color'
 import * as VariantGrid from '../grid'
+import { G } from '~/@/vdom/primitives/g'
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const TERMINAL_NODE_RADIUS = 0.33
@@ -72,7 +73,7 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
 }
 
 const ViewGrid = (input: BoardInput<VariantGrid.Model>) => {
-  return h('g', {}, [
+  return h(G, {}, [
     h('defs', {}, [
       h(
         'pattern',
@@ -106,7 +107,7 @@ const ViewGrid = (input: BoardInput<VariantGrid.Model>) => {
 
 const ViewPipelines = (input: BoardInput<VariantGrid.Model>) => {
   return h(
-    'g',
+    G,
     {
       transform: 'translate(0.5, 0.5)',
     },
@@ -130,7 +131,7 @@ const ViewPipeline = (
   const shouldShowUsedHint = isConnectedWithPipes && didUseHint
 
   return h(
-    'g',
+    G,
     {
       key: terminal.groupId,
       id: terminal.groupId,
@@ -162,7 +163,7 @@ const ViewPipeline = (
       }),
       shouldShowUsedHint && HintCheckmark({ x: terminal.start.x, y: terminal.start.y }),
       terminal.end &&
-        h('g', {}, [
+        h(G, {}, [
           h('circle', {
             cx: terminal.end.x,
             cy: terminal.end.y,
@@ -213,7 +214,7 @@ const ViewAutocompleteEdge = (input: BoardInput<VariantGrid.Model>) => {
   return (
     input.autocompleteEdge &&
     h(
-      'g',
+      G,
       {
         transform: 'translate(0.5, 0.5)',
       },
@@ -236,7 +237,7 @@ const ViewCoordinates = (input: BoardInput<VariantGrid.Model>) => {
   return (
     input.showCoordinates &&
     h(
-      'g',
+      G,
       { transform: 'translate(0, 1)' },
       map(VariantGrid.yieldNodes(input.model), (node) => {
         return h(
@@ -262,7 +263,7 @@ const ViewClickable = (
   },
 ) => {
   return h(
-    'g',
+    G,
     {
       key: input.model.nodeHash,
     },
