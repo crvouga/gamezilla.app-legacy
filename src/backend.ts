@@ -2,9 +2,7 @@ import { AppBackend } from '~/app/backend'
 import { DotEnv } from './@/dotenv/dotenv'
 import { FileSystem } from './@/file-system'
 import { Logger } from './@/logger'
-import { isErr } from './@/result'
 import { SecretString } from './@/secrets/secret-string'
-import { SqlDbMigration } from './@/sql-db-migrations/impl'
 import { BackendSqlDb } from './@/sql-db/backend-impl'
 
 const main = async () => {
@@ -28,16 +26,6 @@ const main = async () => {
   const IS_PROD = process.env.NODE_ENV?.includes('production') ?? false
 
   const sqlDb = BackendSqlDb.init({ t: 'postgres', databaseUrl: DATABASE_URL, logger })
-
-  const sqlDbMigration = SqlDbMigration.init({
-    t: 'dbmate',
-    databaseUrl: DATABASE_URL,
-    logger,
-    sqlDb,
-  })
-
-  const migrated = await sqlDbMigration.up()
-  if (isErr(migrated)) throw new Error(migrated.error)
 
   const ctx = await AppBackend.initCtx({
     isProd: IS_PROD,
