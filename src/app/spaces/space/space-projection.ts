@@ -2,9 +2,9 @@ import { EventId, WithEventMeta } from '~/@/event-sourced/event'
 import { s } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import * as GameSpace from '../../game/games/space'
-import * as Game from '../../game/games/types'
-import { MsgSpace } from '../msg-space'
+import * as GameSpace from '../game/games/space'
+import * as Game from '../game/games/types'
+import { MsgSpace } from './msg-space'
 
 //
 //

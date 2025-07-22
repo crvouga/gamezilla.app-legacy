@@ -10,7 +10,7 @@ import { ViewYouChip } from '~/app/spaces/@/ui/you-chip'
 import { GameCoverArt } from '~/app/spaces/game/games/cover-art'
 import { ViewHostChip } from '../../@/ui/host-chip'
 import { GameName } from '../../game/games/@/game-name'
-import { SpaceProjectionStarted } from '../../space/space/space-projection'
+import { SpaceProjectionStarted } from '../../space/space-projection'
 import { SPACE_CARD_GRADIENT_CLASS_NAME } from './space-card-gradient'
 
 const MAX_AVATAR_COUNT = 3

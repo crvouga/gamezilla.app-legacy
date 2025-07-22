@@ -4,8 +4,8 @@ import { s } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { MsgSpace } from '../msg-space'
-import { Space } from '../space/space'
-import { SpaceProjection, SpaceProjectionStarted } from '../space/space-projection'
+import { Space } from '../space'
+import { SpaceProjection, SpaceProjectionStarted } from '../space-projection'
 
 export const SpaceError = s.obj({
   t: s.l('user-already-in-a-space'),

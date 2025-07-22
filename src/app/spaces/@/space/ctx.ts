@@ -1,4 +1,4 @@
-import { SpaceProjectionStarted } from '../../space/space/space-projection'
+import { SpaceProjectionStarted } from '../../space/space-projection'
 
 export type SpaceCtx = {
   space: SpaceProjectionStarted

@@ -4,7 +4,7 @@ import { RPC } from '~/@/rpc'
 import { RPCError } from '~/@/rpc/error'
 import { s } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
-import { Space } from '../space/space/space'
+import { Space } from '../space/space'
 
 export type ModelFrontend = {
   listSpacesRequest: RemoteResult<RPCError, unknown>

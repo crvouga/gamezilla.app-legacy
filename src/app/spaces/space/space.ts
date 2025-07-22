@@ -7,7 +7,7 @@ import { s } from '~/@/schema'
 import { ParseError } from '~/@/schema/schema/parse-error'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { MsgSpace } from '../msg-space'
+import { MsgSpace } from './msg-space'
 import { SpaceProjection, SpaceProjectionStarted } from './space-projection'
 
 const schema = EventSourced.schema(MsgSpace, SpaceProjection.schema)

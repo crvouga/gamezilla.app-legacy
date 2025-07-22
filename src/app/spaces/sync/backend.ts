@@ -5,7 +5,7 @@ import { Sub } from '~/@/sub'
 import { throttleByKey } from '~/@/throttle/throttle'
 import { TimeSpan } from '~/@/time/time-span'
 import { SpaceId } from '~/app/@/data/space-id'
-import { Space } from '../space/space/space'
+import { Space } from '../space/space'
 import { BackendCtxModule } from '../types'
 import { rpcContract } from './types'
 
