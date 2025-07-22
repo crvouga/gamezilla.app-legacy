@@ -1,5 +1,5 @@
 import { cn } from '~/@/ui/cn'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { PAPER_CLASS_NAME } from './paper'
 import { h } from '~/@/vdom/h'
 

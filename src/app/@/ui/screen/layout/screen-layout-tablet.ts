@@ -1,8 +1,7 @@
 import { Button } from '~/@/ui/button'
-import { Box } from '~/@/vdom/box'
 import { cn } from '~/@/ui/cn'
-import { DynamicElement } from '~/@/ui/dynamic-element'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 import { VDom } from '~/@/vdom/vdom'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
 import { VerticalActionBar } from '../action-bar/screen-action-bar-vertical'
@@ -10,20 +9,13 @@ import { ScreenNavBarTablet } from '../nav-bar/screen-nav-bar-tablet'
 import { ParentScreenProps, ScreenLayoutProps } from './screen-layout-props'
 
 export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
-  const element = input.patchAction ? 'form' : 'div'
-
   return h(
-    DynamicElement,
+    Box,
     {
-      element: element,
       class: 'relative flex w-full flex-1 flex-row overflow-hidden',
-      onSubmit: (e) => {
-        e.preventDefault()
-        input.patchAction?.onSubmit()
-      },
     },
     [
-      ActionBars({ position: 'start', input: input }),
+      h(ActionBars, { position: 'start', input: input }),
 
       h(Box, { class: 'flex max-w-3xl flex-[4] shrink-0 flex-col border-x' }, [
         ...renderNavBars(input.ctx, input),
@@ -35,7 +27,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
         ]),
       ]),
 
-      ActionBars({ position: 'end', input: input }),
+      h(ActionBars, { position: 'end', input: input }),
     ],
   )
 }

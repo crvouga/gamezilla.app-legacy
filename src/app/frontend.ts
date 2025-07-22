@@ -1,5 +1,5 @@
 import { AudioPlayer } from '~/@/audio-player'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { Eff } from '~/@/eff'
 import { HttpClient } from '~/@/http-client'
 import { KeyValueDb } from '~/@/key-value-db'

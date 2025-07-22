@@ -1,5 +1,5 @@
 import type { Eff } from '~/@/eff'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { UnixMs } from '~/@/time/unix-ms'
 import { IconArrowLeft, IconArrowRotateLeft, IconRightLeft } from '~/@/ui/icon'
 import { LoadingBar } from '~/@/ui/loading-bar'

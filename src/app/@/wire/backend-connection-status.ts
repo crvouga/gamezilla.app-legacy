@@ -1,5 +1,5 @@
 import { Translator } from '~/@/l18n/generated'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { TimeSpan } from '~/@/time/time-span'
 import { cn } from '~/@/ui/cn'
 import { ListItem } from '~/@/ui/list-item'

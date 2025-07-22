@@ -3,6 +3,7 @@ import { VDom } from '../vdom/vdom'
 import { h } from '~/@/vdom/h'
 import { cn } from './cn'
 import { PAPER_CLASS_NAME } from './paper'
+import { Touchable } from '../vdom/primitives/touchable'
 
 export type ClickableEvent = {
   stopPropagation: () => void
@@ -29,7 +30,7 @@ export type ClickableProps = {
 
 export const Clickable = ({ dataTestId, ...input }: ClickableProps) => {
   return h(
-    'button',
+    Touchable,
     {
       ...input,
       'aria-hidden': input['aria-hidden'] ? 'true' : 'false',

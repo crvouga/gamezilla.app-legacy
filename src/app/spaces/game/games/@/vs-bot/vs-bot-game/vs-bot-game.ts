@@ -1,17 +1,18 @@
-import type { UserId } from '~/app/@/data/user-id'
-import { Box } from '~/@/vdom/box'
+import { TranslatedText } from '~/@/l18n/translations'
+import { Avatar } from '~/@/ui/avatar'
+import { cn } from '~/@/ui/cn'
 import { IconRobot } from '~/@/ui/icon'
 import { Paper } from '~/@/ui/paper'
-import { Avatar } from '~/@/ui/avatar'
-import { Transition } from '~/@/ui/transition'
-import { cn } from '~/@/ui/cn'
+import { Transition } from '~/@/vdom/primitives/transition'
 import { Typography } from '~/@/ui/typography'
-import type { PlayerType, VsBotInput } from '../vs-bot'
-import type { VDom } from '~/@/vdom/vdom'
-import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { UserProfile } from '~/app/@/data/user-profile'
-import { TranslatedText } from '~/@/l18n/translations'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Touchable } from '~/@/vdom/primitives/touchable'
+import type { VDom } from '~/@/vdom/vdom'
+import type { UserId } from '~/app/@/data/user-id'
+import { UserProfile } from '~/app/@/data/user-profile'
+import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
+import type { PlayerType, VsBotInput } from '../vs-bot'
 
 //
 //
@@ -212,7 +213,7 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
     [
       gameOver?.t === 'winner' &&
         h(
-          'button',
+          Touchable,
           {
             class: 'absolute inset-0 flex flex-col items-center justify-center bg-black/70',
             disabled: input.isSpectating,
@@ -230,7 +231,7 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
         ),
       gameOver?.t === 'draw' &&
         h(
-          'button',
+          Touchable,
           {
             class: 'absolute inset-0 flex flex-col items-center justify-center bg-black/60',
             disabled: input.isSpectating,

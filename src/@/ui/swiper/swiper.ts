@@ -73,6 +73,7 @@ const Container = (input: {
 }) => {
   onContainer(input)
   return h(
+    // @ts-ignore
     'swiper-container',
     {
       id: input.id,
@@ -90,6 +91,7 @@ const Container = (input: {
 
 const Slide = (input: { children?: VDom; class?: string }) => {
   return h(
+    // @ts-ignore
     'swiper-slide',
     {
       class: input.class,

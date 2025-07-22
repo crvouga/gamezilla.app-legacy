@@ -1,5 +1,5 @@
 import { Translator } from '~/@/l18n/generated'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 

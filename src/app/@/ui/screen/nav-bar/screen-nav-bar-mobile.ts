@@ -1,5 +1,5 @@
 import type { TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import type { Translator } from '~/@/l18n/generated'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconArrowLeft } from '~/@/ui/icon'

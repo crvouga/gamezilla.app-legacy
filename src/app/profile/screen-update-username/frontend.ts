@@ -1,5 +1,5 @@
 import { RequestResponse } from '~/@/request-response/request-response'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { TextField } from '~/@/ui/text-field'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'

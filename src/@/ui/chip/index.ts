@@ -3,7 +3,7 @@ import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
 import { Clickable } from '../clickable'
 import { cn } from '../cn'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 
 export type ChipSize = 'sm' | 'lg'
 

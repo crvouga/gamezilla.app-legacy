@@ -1,5 +1,5 @@
 import { cn } from '~/@/ui/cn'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { Paper } from '~/@/ui/paper'
 import { TEXT_SECONDARY_CLASS_NAME } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'

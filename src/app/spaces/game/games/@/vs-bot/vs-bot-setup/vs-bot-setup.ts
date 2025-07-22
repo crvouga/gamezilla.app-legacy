@@ -1,8 +1,8 @@
 import { TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
-import { ClickablePaper } from '~/@/ui/clickable'
+import { Clickable, ClickablePaper } from '~/@/ui/clickable'
 import { IconQuestionMark } from '~/@/ui/icon'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { Typography } from '~/@/ui/typography'
@@ -242,7 +242,7 @@ export const View = ({
                 })
               }
               return h(
-                'button',
+                Clickable,
                 {
                   key: botLevel.label,
                   class: 'flex w-full items-center gap-3 p-4 text-left text-xl font-bold',

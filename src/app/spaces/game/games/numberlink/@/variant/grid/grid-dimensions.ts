@@ -1,5 +1,5 @@
 import { Translator } from '~/@/l18n/generated'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { s } from '~/@/schema'
 import { IconXMark } from '~/@/ui/icon'
 import { Slider } from '~/@/ui/slider'

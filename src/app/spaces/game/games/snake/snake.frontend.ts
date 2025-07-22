@@ -1,5 +1,5 @@
 import { Eff } from '~/@/eff'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { exhaustive } from '~/@/function/exhaustive'
 import { Option } from '~/@/option/option'
 import { type Result, isErr } from '~/@/result'
@@ -192,6 +192,7 @@ export const View = ({ model, dispatch }: { ctx: AppFrontendCtx; model: Model; d
 }
 
 export const ViewBoard = (_input: { model: Model; dispatch: (msg: Msg) => void }) => {
+  // @ts-ignore
   return h('canvas', {
     class: 'pointer-events-none h-full max-h-full min-h-full w-full touch-none select-none',
   })

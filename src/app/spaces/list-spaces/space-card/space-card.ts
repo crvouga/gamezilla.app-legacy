@@ -1,5 +1,5 @@
 import { Avatar } from '~/@/ui/avatar'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { Clickable } from '~/@/ui/clickable'
 import { cn } from '~/@/ui/cn'
 import { Typography } from '~/@/ui/typography'

@@ -1,5 +1,5 @@
 import { Eff } from '~/@/eff'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { pipe } from '~/@/function/pipe'
 import { KeyboardKey } from '~/@/keyboard'
 import { Sub } from '~/@/sub'

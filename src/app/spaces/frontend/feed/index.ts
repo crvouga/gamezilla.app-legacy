@@ -1,5 +1,5 @@
 import { WithEventId } from '~/@/event-sourced/event'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { FeedItem } from '../../@/feed-item'

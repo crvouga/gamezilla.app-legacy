@@ -1,5 +1,5 @@
 import { createPortal, h } from '~/@/vdom/h'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { VDom } from '~/@/vdom/vdom'
 import { IPortal } from './interface'
 

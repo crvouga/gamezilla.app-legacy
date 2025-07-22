@@ -159,10 +159,12 @@ if (typeof window !== 'undefined') {
 }
 
 const Entrance = (input: { portalId: string; children: VDom[] }) => {
+  // @ts-ignore
   return h('portal-entrance', { 'portal-id': input.portalId }, input.children)
 }
 
 const Exit = (input: { portalId: string }) => {
+  // @ts-ignore
   return h('portal-exit', { class: 'z-50', 'portal-id': input.portalId })
 }
 

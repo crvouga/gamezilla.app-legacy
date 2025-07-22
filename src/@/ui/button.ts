@@ -1,8 +1,8 @@
 import { TranslatedText } from '~/@/l18n'
-import type { VDom } from '~/@/vdom/vdom'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import type { VDom } from '~/@/vdom/vdom'
 import { Clickable } from './clickable'
-import { Box } from '~/@/vdom/box'
 import { cn } from './cn'
 import { Spinner } from './spinner'
 
@@ -23,7 +23,7 @@ export type ButtonInput = {
   fab?: boolean
   text?: TranslatedText
   disabled?: boolean
-  type?: 'button' | 'submit' | 'reset'
+  type?: 'button'
   class?: string
   onClick?: (event: ButtonEvent) => void
   renderIconStart?: (input: { class?: string }) => VDom

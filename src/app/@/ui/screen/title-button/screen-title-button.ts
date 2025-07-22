@@ -1,5 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { Button } from '~/@/ui/button'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'

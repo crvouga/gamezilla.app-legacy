@@ -1,8 +1,8 @@
 import { h } from '~/@/vdom/h'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { VDom } from '~/@/vdom/vdom'
 import { cn } from '../cn'
-import { Transition } from '../transition'
+import { Transition } from '../../vdom/primitives/transition'
 import { DropDownAlignment } from './drop-down-alignment'
 import { DropDownPosition } from './drop-down-position'
 

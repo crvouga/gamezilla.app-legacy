@@ -1,4 +1,4 @@
-import { Frag } from '~/@/ui/frag'
+import { Frag } from '~/@/vdom/primitives/frag'
 import { Drawer } from '~/@/ui/surface-drawer/drawer'
 import { h } from '~/@/vdom/h'
 import { SurfaceContent } from './surface-content'

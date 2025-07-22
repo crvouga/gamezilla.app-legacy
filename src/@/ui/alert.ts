@@ -1,5 +1,5 @@
 import type { VDom } from '~/@/vdom/vdom'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
 import { IconCheckmarkCircle, IconExclamationCircle, IconInfoCircle } from './icon'
 import { cn } from './cn'

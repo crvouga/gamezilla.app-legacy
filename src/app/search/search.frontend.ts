@@ -1,10 +1,10 @@
 import { matchSort } from '~/@/array/match-sort'
-import { Box } from '~/@/vdom/box'
 import { Eff } from '~/@/eff'
 import { ClickableTransparent } from '~/@/ui/clickable'
 import { IconMagnifyingGlass, IconXMark } from '~/@/ui/icon'
 import { Paper } from '~/@/ui/paper'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 import type { VDom } from '~/@/vdom/vdom'
 import type { ModelFrontend, MsgFrontend, MsgToFrontend } from './search.types'
 
@@ -146,10 +146,10 @@ export const View = ({
       ]),
       // results
       h(
-        'ul',
+        Box,
         {},
         results.map((result) =>
-          h('li', { key: result.userId }, [
+          h(Box, { key: result.userId }, [
             h(
               ClickableTransparent,
               {

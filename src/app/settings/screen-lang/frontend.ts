@@ -1,5 +1,5 @@
 import { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { translations } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
 import { Gutter } from '~/@/ui/gutter'

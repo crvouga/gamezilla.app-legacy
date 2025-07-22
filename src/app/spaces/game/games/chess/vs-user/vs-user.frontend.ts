@@ -1,5 +1,5 @@
 import { Eff } from '~/@/eff'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { exhaustive } from '~/@/function/exhaustive'
 import { Option } from '~/@/option/option'
 import { isErr } from '~/@/result'

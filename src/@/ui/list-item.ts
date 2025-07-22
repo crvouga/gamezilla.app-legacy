@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
-import { Box } from '../vdom/box'
+import { Box } from '../vdom/primitives/box'
 import { ClickableTransparent } from './clickable'
 import { cn } from './cn'
 import { preventConsoleErrorWhenClosingDrawer } from './surface-drawer/drawer-shared'

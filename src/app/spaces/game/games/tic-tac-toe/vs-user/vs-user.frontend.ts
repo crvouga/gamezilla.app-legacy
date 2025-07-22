@@ -1,5 +1,5 @@
 import { h } from '~/@/vdom/h'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { VsUserSetupScreen } from '~/app/spaces/game/games/@/vs-user'
 import { toTurn } from '../@/tic-tic-toe/tic-tac-toe'

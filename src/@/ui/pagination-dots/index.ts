@@ -1,5 +1,5 @@
 import { AriaRole } from '~/@/html/aria-role'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
 import { Clickable } from '../clickable'
 import { cn } from '../cn'

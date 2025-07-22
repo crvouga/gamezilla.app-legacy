@@ -1,5 +1,6 @@
 import { h } from '~/@/vdom/h'
-import { Box } from '../vdom/box'
+import { Box } from '../vdom/primitives/box'
+import { Image } from '../vdom/primitives/image'
 import { cn } from './cn'
 
 type AvatarProps = {
@@ -15,7 +16,7 @@ const isImage = (src: string | null | undefined): boolean => {
 
 export const Avatar = (props: AvatarProps) => {
   if (isImage(props.src)) {
-    return h('img', {
+    return h(Image, {
       onClick: props.onClick,
       src: props.src ?? '',
       alt: props.alt ?? 'user avatar',

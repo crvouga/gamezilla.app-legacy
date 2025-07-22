@@ -23,5 +23,6 @@ export const Transition = ({
     class: class_,
     mode,
   })
+  // @ts-ignore
   return h('transition-element', { id: id }, [children])
 }

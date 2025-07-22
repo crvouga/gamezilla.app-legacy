@@ -1,5 +1,5 @@
 import { Chip } from '~/@/ui/chip'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { IconArrowDownShortWide, IconUserCircle } from '~/@/ui/icon'
 import { h } from '~/@/vdom/h'
 import { UserId } from '~/app/@/data/user-id'

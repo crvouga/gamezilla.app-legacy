@@ -1,5 +1,5 @@
 import { Eff } from '~/@/eff'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { Sub } from '~/@/sub'
 import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'

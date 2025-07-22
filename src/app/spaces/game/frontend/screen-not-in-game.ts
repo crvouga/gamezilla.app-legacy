@@ -1,5 +1,5 @@
 import { Clickable } from '~/@/ui/clickable'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'

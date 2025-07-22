@@ -10,6 +10,6 @@ export const IntersectionObserverEmitter = (
 ) => {
   // There is some kind of race condition setTimeout fixes
   setTimeout(() => sub.pub({ type: 'input', input }), 1)
-
+  // @ts-ignore
   return h('intersection-observer-dispatcher', { id: input.id })
 }

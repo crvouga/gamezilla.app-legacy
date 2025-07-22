@@ -1,5 +1,5 @@
 import { h } from '~/@/vdom/h'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { BoardInput } from '../../ui/board'
 import type * as VariantTri from './tri'
 

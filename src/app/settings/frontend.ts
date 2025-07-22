@@ -1,5 +1,5 @@
 import { Eff } from '~/@/eff'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { TranslatedText } from '~/@/l18n'
 import { Sub } from '~/@/sub'
 import { Clickable } from '~/@/ui/clickable'

@@ -1,5 +1,5 @@
 import { DropDown } from '~/@/ui/drop-down/drop-down'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { DropDownSurface } from '~/@/ui/drop-down/drop-down-surface'
 import { Dialog } from '~/@/ui/surface-dialog/dialog'
 import { DialogSurface } from '~/@/ui/surface-dialog/dialog-surface'

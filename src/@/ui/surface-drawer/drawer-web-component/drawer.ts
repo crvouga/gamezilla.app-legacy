@@ -11,6 +11,7 @@ import { drawerSub } from './drawer-shared'
 export const DrawerWebComponent = (input: DrawerProps) => {
   drawerSub.pub({ type: 'input', ...input })
   return h(Portal.Entrance, { portalId: DRAWER_PORTAL_ID }, [
+    // @ts-ignore
     h('drawer-element', { id: input.id, position: input.position }, [
       h(
         Surface,

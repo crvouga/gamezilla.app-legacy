@@ -1,5 +1,5 @@
 import { cn } from '~/@/ui/cn'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
 import { Gutter } from '../gutter'
 import { Portal } from '../portal'

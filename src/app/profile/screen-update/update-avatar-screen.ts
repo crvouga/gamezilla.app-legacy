@@ -1,5 +1,5 @@
 import { Avatar } from '~/@/ui/avatar'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { TextField } from '~/@/ui/text-field'
 import { h } from '~/@/vdom/h'
 import { AppFrontendCtxBase, AppFrontendCtx } from '~/app/@/frontend/ctx'

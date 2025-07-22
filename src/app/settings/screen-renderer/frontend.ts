@@ -1,5 +1,5 @@
 import { ListItem } from '~/@/ui/list-item'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { RadioInputIcon } from '~/@/ui/radio-input'
 import { h, VDomEngine } from '~/@/vdom/h'
 import { VDomImpl } from '~/@/vdom/vdom-impl'

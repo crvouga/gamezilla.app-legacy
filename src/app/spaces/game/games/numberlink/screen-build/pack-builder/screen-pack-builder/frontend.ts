@@ -1,5 +1,5 @@
 import { Sub } from '~/@/sub'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { Button } from '~/@/ui/button'
 import { IconArrowLeft } from '~/@/ui/icon'
 import { h } from '~/@/vdom/h'

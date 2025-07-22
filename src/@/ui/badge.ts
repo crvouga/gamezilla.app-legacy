@@ -1,9 +1,9 @@
 import { VDom } from '~/@/vdom/vdom'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
 import { sleep } from '../promise/sleep'
 import { TimeSpan } from '../time/time-span'
-import { Transition } from './transition'
+import { Transition } from '../vdom/primitives/transition'
 
 export const Badge = (input: { badgeContent: VDom; id: string; children: VDom[] }) => {
   return h(Box, { class: 'relative h-fit w-fit' }, [

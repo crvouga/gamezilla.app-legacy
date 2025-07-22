@@ -1,5 +1,5 @@
 import { h } from '~/@/vdom/h'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 
 type LoadingBarInput = {
   disabled?: boolean

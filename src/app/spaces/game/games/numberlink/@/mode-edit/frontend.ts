@@ -1,5 +1,5 @@
 import { History } from '~/@/history'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { IconArrowRotateLeft, IconArrowRotateRight, IconExpand, IconXMark } from '~/@/ui/icon'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { Typography } from '~/@/ui/typography'

@@ -1,5 +1,5 @@
-import { Frag } from '~/@/ui/frag'
-import { Box } from '~/@/vdom/box'
+import { Frag } from '~/@/vdom/primitives/frag'
+import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
 import { ScreenLayoutMobile } from './screen-layout-mobile'
 import { ScreenLayoutProps, toDataTestIds } from './screen-layout-props'

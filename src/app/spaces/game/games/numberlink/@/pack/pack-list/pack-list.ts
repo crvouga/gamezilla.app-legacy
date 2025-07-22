@@ -1,5 +1,5 @@
 import { descend } from '~/@/array/sorting'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { TimeSpan } from '~/@/time/time-span'

@@ -1,5 +1,5 @@
 import { type WithEventId } from '~/@/event-sourced/event'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { IconArrowLeft, IconArrowRotateLeft, IconRightLeft } from '~/@/ui/icon'

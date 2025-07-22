@@ -1,5 +1,5 @@
 import { EmptyState } from '~/@/ui/empty-state'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { IconGamepad } from '~/@/ui/icon'
 import { SpinnerBlock } from '~/@/ui/spinner-block'
 import { h } from '~/@/vdom/h'

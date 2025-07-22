@@ -1,5 +1,5 @@
 import { s } from '~/@/schema'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
 
 export const Model = s.obj({

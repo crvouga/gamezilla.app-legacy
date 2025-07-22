@@ -1,5 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { Translator } from '~/@/l18n/generated'
 import { IconArrowLeft } from '~/@/ui/icon'
 import { IconButton } from '~/@/ui/icon-button'

@@ -1,5 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import type { VDom } from '~/@/vdom/vdom'
 import { h } from '~/@/vdom/h'
 import { cn } from './cn'
@@ -24,6 +24,7 @@ export const Select = <T>(props: {
       props.label,
     ]),
     h(
+      // @ts-ignore
       'select',
       {
         id: props.id,
@@ -48,6 +49,7 @@ export const Select = <T>(props: {
       props.options.map((option) => {
         const isSelected = props.value && props.toKey(option) === props.toKey(props.value)
         return h(
+          // @ts-ignore
           'option',
           {
             key: props.toKey(option),

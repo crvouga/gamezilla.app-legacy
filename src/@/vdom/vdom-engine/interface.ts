@@ -24,7 +24,16 @@ export type Tag =
   | 'path'
   | 'polygon'
   | 'polyline'
-  | (string & {})
+  | 'defs'
+  | 'pattern'
+  | 'title'
+  | 'mask'
+  | 'stop'
+  | 'linearGradient'
+  | 'radialGradient'
+  | 'canvas'
+  | 'clipPath'
+  | 'text'
 
 export type StyleAttribute =
   | string

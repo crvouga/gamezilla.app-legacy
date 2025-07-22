@@ -1,5 +1,5 @@
 import { cn } from '~/@/ui/cn'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
 import { AriaRole } from '../html/aria-role'

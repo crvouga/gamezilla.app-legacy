@@ -1,5 +1,5 @@
 import { Sub } from '~/@/sub'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { IconBox, IconPuzzlePiece, IconScrewdriverWrench } from '~/@/ui/icon'
 import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'

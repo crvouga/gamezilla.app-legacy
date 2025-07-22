@@ -1,5 +1,5 @@
 import { withEventId } from '~/@/event-sourced/event'
-import { Box } from '~/@/vdom/box'
+import { Box } from '~/@/vdom/primitives/box'
 import { Translator } from '~/@/l18n/generated'
 import { IconArrowRightOnRect } from '~/@/ui/icon'
 import { Typography } from '~/@/ui/typography'

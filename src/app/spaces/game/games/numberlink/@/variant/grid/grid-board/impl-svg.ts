@@ -58,12 +58,11 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
       onMouseUp: left,
     },
     [
-      h('title', {}, ['Flow Grid']),
-      ViewGrid(input),
-      ViewPipelines(input),
-      ViewAutocompleteEdge(input),
-      ViewCoordinates(input),
-      !input.disabled && ViewClickable({ ...input, draggedOver }),
+      h(ViewGrid, input),
+      h(ViewPipelines, input),
+      h(ViewAutocompleteEdge, input),
+      h(ViewCoordinates, input),
+      !input.disabled && h(ViewClickable, { ...input, draggedOver }),
     ],
   )
 }
@@ -234,9 +233,7 @@ const ViewCoordinates = (input: BoardInput<VariantGrid.Model>) => {
     input.showCoordinates &&
     h(
       'g',
-      {
-        transform: 'translate(0, 1)',
-      },
+      { transform: 'translate(0, 1)' },
       map(VariantGrid.yieldNodes(input.model), (node) => {
         return h(
           'text',

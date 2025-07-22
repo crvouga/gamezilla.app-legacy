@@ -1,7 +1,6 @@
 import { Button } from '~/@/ui/button'
-import { DynamicElement } from '~/@/ui/dynamic-element'
-import { Box } from '~/@/vdom/box'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 import { VDom } from '~/@/vdom/vdom'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
 import { HorizontalActionBar } from '../action-bar/screen-action-bar-horizontal'
@@ -9,17 +8,10 @@ import { ScreenNavBarMobile } from '../nav-bar/screen-nav-bar-mobile'
 import { ParentScreenProps, ScreenLayoutProps } from './screen-layout-props'
 
 export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
-  const element = input.patchAction ? 'form' : 'div'
-
   return h(
-    DynamicElement,
+    Box,
     {
-      element: element,
       class: 'flex w-full flex-1 flex-col overflow-hidden',
-      onSubmit: (e) => {
-        e.preventDefault()
-        input.patchAction?.onSubmit()
-      },
     },
     [
       ...renderActionBars(input.ctx, input),
