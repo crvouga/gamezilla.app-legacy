@@ -1,16 +1,14 @@
 import { Sub } from '../../sub'
 import { VDomImpl } from '../vdom-impl'
-import { ICreateElement, ICreatePortal, IRender, IVirtualDomEngine } from './interface'
+import { ICreateElement, IRender, IVirtualDomEngine } from './interface'
 
 export let render: IRender
-export let createPortal: ICreatePortal
 export let h: ICreateElement
 
 const initialize = async (vdomImpl: VDomImpl) => {
   if (typeof window === 'undefined') return
   const vdomEngine = await init(vdomImpl)
   render = vdomEngine.render
-  createPortal = vdomEngine.createPortal
   h = vdomEngine.createElement
 }
 

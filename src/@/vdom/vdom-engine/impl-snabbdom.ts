@@ -9,7 +9,7 @@ import {
   propsModule,
   styleModule,
 } from 'snabbdom'
-import { VDOM_FRAGMENT_KEY } from '../fragment'
+import { FRAGMENT_TAG } from '../primitives/frag'
 import { IVirtualDomEngine } from './interface'
 
 export type ImplSnabbdom = {
@@ -37,9 +37,6 @@ const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
         console.error(e)
       }
     },
-    createPortal: (vDom, _container) => {
-      return vDom
-    },
     createElement: (tag: any, props: any, children: any) => {
       try {
         // Reusable objects to reduce allocations
@@ -52,7 +49,7 @@ const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
           return tag({ ...props, key: props?.key, children })
         }
 
-        if (tag === VDOM_FRAGMENT_KEY) {
+        if (tag === FRAGMENT_TAG) {
           return fragment(children)
         }
 

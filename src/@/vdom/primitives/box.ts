@@ -1,5 +1,5 @@
 import type { AriaRole } from '~/@/html/aria-role'
-import { h } from '~/@/vdom/h'
+import { h, tag } from '~/@/vdom/h'
 import { VDom } from '../vdom'
 
 export interface BoxProps {
@@ -23,6 +23,5 @@ export interface BoxProps {
 }
 
 export const Box = ({ children, ...props }: BoxProps) => {
-  // @ts-ignore
-  return h('div', props, children)
+  return h(tag('div'), props, children)
 }

@@ -1,6 +1,6 @@
 import { Fragment, render } from 'preact'
-import { createElement, createPortal } from 'preact/compat'
-import { VDOM_FRAGMENT_KEY } from '../fragment'
+import { createElement } from 'preact/compat'
+import { FRAGMENT_TAG } from '../primitives/frag'
 import { IVirtualDomEngine } from './interface'
 
 export type ImplPreact = {
@@ -12,13 +12,10 @@ const init = (_config: ImplPreact): IVirtualDomEngine => {
     render: (vDom, node) => {
       render(vDom as any, node)
     },
-    createPortal: (vDom, container) => {
-      return createPortal(vDom as any, container) as any
-    },
     createElement: (tag: any, props: any, children: any) => {
       children = Array.isArray(children) ? children : children ? [children] : []
 
-      if (tag === VDOM_FRAGMENT_KEY) {
+      if (tag === FRAGMENT_TAG) {
         return createElement(Fragment, props, ...children) as any
       }
 

@@ -1,12 +1,8 @@
-import { h } from '~/@/vdom/h'
+import { h, tag } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
-import { VDOM_FRAGMENT_KEY } from '../fragment'
+
+export const FRAGMENT_TAG = tag('@frag')
 
 export const Frag = (props: { children?: VDom[] }) => {
-  return h(
-    // @ts-ignore
-    VDOM_FRAGMENT_KEY,
-    {},
-    props.children,
-  )
+  return h(FRAGMENT_TAG, {}, props.children)
 }

@@ -1,4 +1,7 @@
-import { h } from '../h'
+import { AriaRole } from '~/@/html/aria-role'
+import { h, tag } from '../h'
+
+export const TEXT_INPUT_TAG = tag('input')
 
 export const TextInput = (props: {
   value?: string | number
@@ -8,7 +11,7 @@ export const TextInput = (props: {
   id?: string
   type?: string
   autoFocus?: boolean
-  role?: string
+  role?: AriaRole
   disabled?: boolean
   readOnly?: boolean
   'data-testid'?: string
@@ -45,6 +48,5 @@ export const TextInput = (props: {
   style?: Record<string, string>
   testId?: string
 }) => {
-  // @ts-ignore
-  return h('input', props, [])
+  return h(tag('input'), props, [])
 }

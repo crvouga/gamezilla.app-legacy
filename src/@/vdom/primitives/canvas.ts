@@ -1,7 +1,8 @@
-import { h, IntrinsicAttributes } from '~/@/vdom/h'
+import { h, IntrinsicAttributes, tag } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 
+export const CANVAS_TAG = tag('canvas')
+
 export const Canvas = ({ children, ...props }: IntrinsicAttributes & { children: VDom[] }) => {
-  // @ts-ignore
-  return h('canvas', props, children)
+  return h(CANVAS_TAG, props, children)
 }

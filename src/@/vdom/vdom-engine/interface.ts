@@ -1,7 +1,10 @@
+import { Brand } from '~/@/brand/brand'
 import { AriaRole } from '../../html/aria-role'
 import { VDom } from '../vdom'
 
-export type Tag = never
+export type Tag = Brand<string, 'Tag'>
+
+export const tag = (value: string): Tag => value as Tag
 
 export type StyleAttribute =
   | string
@@ -44,14 +47,9 @@ export type ICreateElement = {
   ): VDom
 }
 
-export type RenderNode = Element | HTMLBodyElement | HTMLElement
-
-export type IRender = (vDom: VDom, node: RenderNode) => void
-
-export type ICreatePortal = (vDom: VDom, container: RenderNode) => VDom
+export type IRender = (vDom: VDom, root: HTMLElement | Element | HTMLBodyElement) => void
 
 export type IVirtualDomEngine = {
   render: IRender
-  createPortal: ICreatePortal
   createElement: ICreateElement
 }

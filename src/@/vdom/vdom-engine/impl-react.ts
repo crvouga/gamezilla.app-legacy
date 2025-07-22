@@ -1,7 +1,7 @@
 import { createElement, Fragment, StrictMode } from 'react'
 import { createPortal } from 'react-dom'
 import { createRoot } from 'react-dom/client'
-import { VDOM_FRAGMENT_KEY } from '../fragment'
+import { FRAGMENT_TAG } from '../primitives/frag'
 import { kebabObjectToCamelObject } from '../style'
 import { IVirtualDomEngine } from './interface'
 
@@ -47,7 +47,7 @@ const init = (_config: ImplReact): IVirtualDomEngine => {
 
       children = Array.isArray(children) ? children : children ? [children] : []
 
-      if (tag === VDOM_FRAGMENT_KEY) {
+      if (tag === FRAGMENT_TAG) {
         return createElement(Fragment, props, ...children) as any
       }
 

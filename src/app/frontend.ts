@@ -1,5 +1,4 @@
 import { AudioPlayer } from '~/@/audio-player'
-import { Box } from '~/@/vdom/primitives/box'
 import { Eff } from '~/@/eff'
 import { HttpClient } from '~/@/http-client'
 import { KeyValueDb } from '~/@/key-value-db'
@@ -25,9 +24,9 @@ import { TopicClient } from '~/@/topic/topic-client/topic-client'
 import { IconGamepad, IconUserCircle } from '~/@/ui/icon'
 import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
 import { SpinnerBlock } from '~/@/ui/spinner-block'
-import { DrawerPortalExit } from '~/@/ui/surface-drawer/drawer-portal-exit'
 import { Url } from '~/@/url/url'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 import { Viewport } from '~/@/viewport'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { Logger } from '../@/logger'
@@ -95,8 +94,12 @@ const initCtx = async (config: { backendUrl: Url; topicUrl: Url }): Promise<Fron
     logger,
   })
 
-  // @ts-ignore
-  window.q = Psql({ sqlDb }).psql
+  const psql = Psql({ sqlDb })
+
+  if (typeof window !== 'undefined') {
+    // @ts-ignore
+    window.q = psql.psql
+  }
 
   const navigatorLanguage = LanguageCodeISO_639_1.getLangFromNavigator() ?? 'en'
 
@@ -388,8 +391,6 @@ const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
       dispatch: (c) => input.dispatch({ t: 'auth', c }),
       model: input.model.auth,
     }),
-
-    h(DrawerPortalExit, {}),
 
     h(ToasterFrontend.View, {
       ctx: frontendCtx,
