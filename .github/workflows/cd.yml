@@ -92,9 +92,6 @@ jobs:
       - name: Wait for infra to be ready
         run: sleep 10
 
-      - name: Migrate database
-        run: pnpm db:up
-
       - name: Run integration tests
         run: pnpm run int
 
@@ -127,9 +124,6 @@ jobs:
 
       - name: Wait for infra to be ready
         run: sleep 10
-
-      - name: Migrate database
-        run: pnpm db:up
 
       - name: Setup e2e
         run: pnpm e2e:ci:setup
@@ -177,23 +171,5 @@ jobs:
     if: github.ref == 'refs/heads/main'
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: latest
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Run database migrations
-        run: pnpm db:up
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - name: Deploy
+        run: echo "All good to deploy"
