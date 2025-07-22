@@ -4,6 +4,7 @@ import { Rect } from '~/@/vdom/primitives/rect'
 import { Svg } from '~/@/vdom/primitives/svg'
 import { COLUMN_COUNT, MAX_COLUMN_HEIGHT } from '../connect-four'
 import { gameTheme } from './shared'
+import { Defs } from '~/@/vdom/primitives/defs'
 
 const coverArtId = Uuid.generate()
 
@@ -20,7 +21,7 @@ export const CoverArt = (input: { class?: string }) => {
   const playerTwoFill = `url(#${ids.playerTwoGradient})`
 
   return h(Svg, { width: '100%', viewBox: '0 0 2 2', ...input }, [
-    h('defs', {}, [
+    h(Defs, {}, [
       h('pattern', { id: ids.holePattern, patternUnits: 'userSpaceOnUse', width: 1, height: 1 }, [
         h('circle', { cx: 0.5, cy: 0.5, r: 0.425, fill: 'black' }),
       ]),

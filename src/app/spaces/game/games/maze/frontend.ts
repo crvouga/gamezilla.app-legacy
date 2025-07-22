@@ -1,9 +1,13 @@
 import { Eff } from '~/@/eff'
-import { Box } from '~/@/vdom/primitives/box'
 import { pipe } from '~/@/function/pipe'
 import { KeyboardKey } from '~/@/keyboard'
 import { Sub } from '~/@/sub'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Defs } from '~/@/vdom/primitives/defs'
+import { G } from '~/@/vdom/primitives/g'
+import { Rect } from '~/@/vdom/primitives/rect'
+import { Svg } from '~/@/vdom/primitives/svg'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { Maze } from './@/maze'
@@ -16,9 +20,6 @@ import {
   type MsgToFrontend,
   initShared,
 } from './types'
-import { Svg } from '~/@/vdom/primitives/svg'
-import { G } from '~/@/vdom/primitives/g'
-import { Rect } from '~/@/vdom/primitives/rect'
 
 //
 //
@@ -270,7 +271,7 @@ const ViewJoystick = ({
 }) => {
   return h(Box, {}, [
     h(Svg, { width: '100%', viewBox: '-1 -1 2 2', class: 'touch-none overflow-hidden select-none' }, [
-      h('defs', {}, [h('clipPath', { id: 'cut-off-bottom' }, [h('circle', { x: '0', y: '0', r: 1 })])]),
+      h(Defs, {}, [h('clipPath', { id: 'cut-off-bottom' }, [h('circle', { x: '0', y: '0', r: 1 })])]),
       h(G, { 'stroke-width': 0.025 }, [
         h(G, { 'clip-path': 'url(#cut-off-bottom)', stroke }, [
           ...Direction.all.map((direction) => {

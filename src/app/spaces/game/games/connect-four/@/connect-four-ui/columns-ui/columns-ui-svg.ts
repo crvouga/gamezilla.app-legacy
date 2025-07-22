@@ -6,6 +6,7 @@ import type { Model, ViewColumnsInput } from './shared'
 import { Svg } from '~/@/vdom/primitives/svg'
 import { G } from '~/@/vdom/primitives/g'
 import { Rect } from '~/@/vdom/primitives/rect'
+import { Defs } from '~/@/vdom/primitives/defs'
 
 type SvgIds = {
   playerOneGradient: string
@@ -142,7 +143,7 @@ const ViewWins = ({ model }: { model?: Model; columns: Columns }) => {
 }
 
 const SvgDefs = ({ ids }: { ids: SvgIds }) => {
-  return h('defs', {}, [
+  return h(Defs, {}, [
     h('pattern', { id: ids.holePattern, patternUnits: 'userSpaceOnUse', width: 1, height: 1 }, [
       h('circle', { cx: 0.5, cy: 0.5, r: 0.425, fill: 'black' }),
     ]),
