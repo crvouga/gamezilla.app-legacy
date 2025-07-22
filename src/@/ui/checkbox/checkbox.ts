@@ -1,4 +1,5 @@
 import { h } from '~/@/vdom/h'
+import { Text } from '~/@/vdom/primitives/text'
 import { Touchable } from '~/@/vdom/primitives/touchable'
 import { cn } from '../cn'
 
@@ -27,7 +28,7 @@ export const Checkbox = (input: { state: CheckboxState; onChange?: (checkedNew: 
         }
       },
     },
-    [toCheckboxText(input.state)],
+    [Text({ text: toCheckboxText(input.state) })],
   )
 }
 

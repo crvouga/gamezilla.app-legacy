@@ -3,6 +3,7 @@ import { Box } from '~/@/vdom/primitives/box'
 import { cn } from '~/@/ui/cn'
 import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
+import { Text } from '~/@/vdom/primitives/text'
 
 export const LayoutGame = ({
   children,
@@ -35,7 +36,7 @@ export const LayoutGame = ({
           {
             class: 'flex w-full items-center justify-center bg-blue-500 py-1 text-sm font-semibold text-white',
           },
-          [ctx.t('game.you-are-spectating')],
+          [Text({ text: ctx.t('game.you-are-spectating') })],
         ),
       children,
     ].filter(Boolean),

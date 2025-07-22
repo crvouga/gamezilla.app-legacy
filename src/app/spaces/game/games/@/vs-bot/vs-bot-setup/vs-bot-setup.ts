@@ -14,6 +14,7 @@ import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ScreenLayoutGameCoverArt } from '../../ui/screen-layout-game-cover-art'
 import type { PlayerType, VsBotInput } from '../vs-bot'
+import { Text } from '~/@/vdom/primitives/text'
 
 //
 //
@@ -233,7 +234,9 @@ export const View = ({
       },
       body: {
         render: () =>
-          h(Box, {}, [
+          h(
+            Box,
+            {},
             botVariants.map((botLevel) => {
               const onClick = () => {
                 botLevel.onSelect()
@@ -252,11 +255,11 @@ export const View = ({
                   botLevel.renderIcon({
                     class: 'w-10 h-10',
                   }),
-                  botLevel.label,
+                  Text({ text: botLevel.label }),
                 ],
               )
             }),
-          ]),
+          ),
       },
     }),
   ])

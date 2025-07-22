@@ -1,5 +1,4 @@
 import { Brand } from '../brand/brand'
 
-type Primitive = null | false | true | undefined | number | string | bigint | boolean | symbol | object | Function
-
+type Primitive = null | false | true | undefined
 export type VDom = Brand<unknown, 'VDom'> | Primitive

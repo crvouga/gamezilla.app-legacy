@@ -45,7 +45,7 @@ export const ViewBoard = ({ board, onClick }: { board: Model; onClick: (position
         }),
       ),
     ),
-    board.flatMap((slots, x) =>
+    ...board.flatMap((slots, x) =>
       slots.flatMap((slot, y) => {
         const key = [x, y, slot].join(' ')
         const cx = x * scale + scale / 2
@@ -70,7 +70,7 @@ export const ViewBoard = ({ board, onClick }: { board: Model; onClick: (position
       }),
     ),
     h(ViewWins, { board }, []),
-    allPositions.map((position) =>
+    ...allPositions.map((position) =>
       h(Rect, {
         key: [position.column, position.row, toSlot(board, position)].join(' '),
         class: 'cursor-pointer',
@@ -333,8 +333,8 @@ export const CoverArt = (input: { class?: string }) => {
 
   return h(Svg, { width: '100%', viewBox: '0 0 2 2', ...input }, [
     h(Rect, { x: 0, y: 0, width: 2, height: 2, fill: gameTheme.background }),
-    LINES.map((line, index) => h(Line, { key: index, ...line, stroke: gameTheme.line, 'stroke-width': 0.1 })),
-    positions.map(([{ column, row }, slot], index) =>
+    ...LINES.map((line, index) => h(Line, { key: index, ...line, stroke: gameTheme.line, 'stroke-width': 0.1 })),
+    ...positions.map(([{ column, row }, slot], index) =>
       h(ViewSlot, { key: index, slot, cx: Number(column) + 0.5, cy: Number(row) + 0.5, r: 0.3 }),
     ),
   ])

@@ -1,7 +1,7 @@
 import { AriaRole } from '../../html/aria-role'
 import { VDom } from '../vdom'
 
-export type Tag = symbol
+export type Tag = never
 
 export type StyleAttribute =
   | string

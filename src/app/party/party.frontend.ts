@@ -9,6 +9,7 @@ import type { UserId } from '~/app/@/data/user-id'
 import { AppFrontendCtx } from '../@/frontend/ctx'
 import { Mic } from './mic'
 import type { ModelFrontend, MsgFrontend, MsgToFrontend } from './party.types'
+import { Text } from '~/@/vdom/primitives/text'
 
 //
 //
@@ -197,7 +198,7 @@ export const ViewPage = ({
 }
 
 const ViewNotInParty = (_input: { ctx: AppFrontendCtx; model: Model; dispatch: (msg: Msg) => void }) => {
-  return h(Box, {}, ['ViewNotInParty'])
+  return h(Box, {}, [Text({ text: 'ViewNotInParty' })])
 }
 
 export const ViewBanner = ({
@@ -221,7 +222,7 @@ export const ViewBanner = ({
     return null
   }
 
-  return h(Box, {}, ['ViewBanner'])
+  return h(Box, {}, [Text({ text: 'ViewBanner' })])
 }
 
 //

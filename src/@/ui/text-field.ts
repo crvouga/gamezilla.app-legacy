@@ -26,7 +26,7 @@ export const TextField = (input: {
   onChange: (value: string) => void
 }) => {
   return h(Box, { class: 'flex w-full flex-col gap-1' }, [
-    h(Text, { class: cn('text-base', input.error && 'text-red-500') }, [input.label]),
+    Text({ class: cn('text-base', input.error && 'text-red-500'), text: input.label }),
     h(
       Box,
       {
@@ -73,8 +73,8 @@ export const TextField = (input: {
           ),
         }),
         input.onClear &&
-          input.value &&
-          input.value?.toString().length > 0 &&
+          typeof input.value === 'string' &&
+          input.value.length > 0 &&
           h(
             Touchable,
             {
@@ -96,7 +96,7 @@ export const TextField = (input: {
           ),
       ],
     ),
-    input.helperText &&
+    typeof input.helperText === 'string' &&
       h(
         Box,
         {
@@ -105,7 +105,7 @@ export const TextField = (input: {
           'data-info': input.error ? 'false' : 'true',
           class: cn('text-sm', input.error && 'text-red-500'),
         },
-        [input.helperText],
+        [Text({ text: input.helperText ?? '' })],
       ),
   ])
 }

@@ -13,6 +13,7 @@ import type { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import type { PlayerType, VsBotInput } from '../vs-bot'
+import { Text } from '~/@/vdom/primitives/text'
 
 //
 //
@@ -224,7 +225,7 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
             h(Winner, { ...input, winner: gameOver.winner }),
             input.onPlayAgain && !input.isSpectating
               ? h(Box, { class: 'flex flex-1 items-center justify-center pb-2 text-2xl font-bold' }, [
-                  'Tap to play again',
+                  Text({ text: 'Tap to play again' }),
                 ])
               : h(Box, { class: 'flex-1' }),
           ],
@@ -242,7 +243,7 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
             h(Draw, input),
             input.onPlayAgain && !input.isSpectating
               ? h(Box, { class: 'flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0' }, [
-                  'Tap to play again',
+                  Text({ text: 'Tap to play again' }),
                 ])
               : h(Box, { class: 'flex-1' }),
           ],
@@ -316,7 +317,7 @@ const Draw = (input: Input) => {
 
   return h(Box, { class: 'flex h-full w-full flex-1 items-center justify-center' }, [
     h(Box, {}, [playerOneSlot, playerTwoSlot]),
-    h(Box, {}, ['Tie']),
+    h(Box, {}, [Text({ text: 'Tie' })]),
   ])
 }
 

@@ -5,6 +5,7 @@ import type { VDom } from '~/@/vdom/vdom'
 import { Clickable } from './clickable'
 import { cn } from './cn'
 import { Spinner } from './spinner'
+import { Text } from '../vdom/primitives/text'
 
 export type ButtonVariant = 'contained' | 'outlined' | 'text' | 'soft'
 
@@ -63,7 +64,7 @@ export const Button = (input: ButtonInput) => {
     [
       h(Box, { class: cn('flex h-full w-full items-center justify-center', input.loading && 'text-transparent') }, [
         h(Box, { class: 'flex-none' }, [input.renderIconStart?.({ class: cn(toIconSizeClass(input), 'mr-2') })]),
-        h(Box, { class: 'truncate' }, [input.text]),
+        h(Box, { class: 'truncate' }, [Text({ text: input.text ?? '' })]),
       ]),
       input.loading &&
         h(Box, { class: 'absolute inset-0 flex items-center justify-center' }, [h(Spinner, { class: 'size-8' })]),

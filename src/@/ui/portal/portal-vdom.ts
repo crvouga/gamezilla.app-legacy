@@ -38,6 +38,7 @@ const Exit = (input: { portalId: string }) => {
 }
 
 export const Portal: IPortal = {
+  // @ts-ignore
   Entrance,
   Exit,
 }

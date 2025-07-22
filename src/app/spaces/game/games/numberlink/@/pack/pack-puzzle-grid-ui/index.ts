@@ -9,6 +9,7 @@ import { Paper } from '~/@/ui/paper'
 import type { VDom } from '~/@/vdom/vdom'
 import type { PuzzleId } from '../../puzzle/puzzle-id'
 import { h } from '~/@/vdom/h'
+import { Text } from '~/@/vdom/primitives/text'
 
 const COLUMN_COUNT = 5
 const ROW_COUNT = 6
@@ -186,7 +187,7 @@ const ViewPuzzleCell = ({ onClick, index }: { onClick: () => void; index: number
       onClick,
       class: 'flex h-full w-full items-center justify-center overflow-hidden rounded text-lg font-normal',
     },
-    [String(index + 1)],
+    [Text({ text: String(index + 1) })],
   )
 }
 
@@ -210,7 +211,7 @@ export const _ViewErrorCell = ({ onClick, index }: { onClick: () => void; index:
       class:
         'flex h-full w-full items-center justify-center overflow-hidden rounded bg-orange-500/50 text-xl font-bold',
     },
-    [String(index + 1)],
+    [Text({ text: String(index + 1) })],
   )
 }
 

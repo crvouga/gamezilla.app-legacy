@@ -26,6 +26,7 @@ import {
   isBotTurn,
   updateSpace,
 } from './vs-bot.types'
+import { Text } from '~/@/vdom/primitives/text'
 
 //
 //
@@ -384,7 +385,7 @@ export const View = ({
 
   const botSlot = h(Box, { class: 'flex w-full items-center gap-3 p-3' }, [
     h(IconRobot, { class: 'h-10 w-10' }),
-    h(Box, { class: 'flex-1 text-lg' }, [ChessBotLevel.toString(model.spaceModel.botLevel)]),
+    h(Box, { class: 'flex-1 text-lg' }, [Text({ text: ChessBotLevel.toString(model.spaceModel.botLevel) })]),
     isBotTurn(model.spaceModel) && h(Spinner, { class: 'h-10 w-10' }),
   ])
 
@@ -393,7 +394,9 @@ export const View = ({
       class: 'h-10 w-10',
       src: UserProfile.toAvatarUrl(ctx.profilesByUserId[model.spaceModel.userId]),
     }),
-    h(Box, { class: 'flex-1 text-lg' }, [ctx.profilesByUserId[model.spaceModel.userId]?.username]),
+    h(Box, { class: 'flex-1 text-lg' }, [
+      Text({ text: ctx.profilesByUserId[model.spaceModel.userId]?.username ?? '' }),
+    ]),
   ])
 
   const boardOrientation = model.isFlipped

@@ -45,6 +45,7 @@ import {
 } from './puzzle.types'
 import { Line } from '~/@/vdom/primitives/svg/line'
 import { Circle } from '~/@/vdom/primitives/svg/circle'
+import { Text } from '~/@/vdom/primitives/text'
 
 //
 //
@@ -256,20 +257,20 @@ export const View = ({
             class: '-mb-1/2 text-xs',
           }),
           h(Box, { class: 'flex items-center gap-1' }, [
-            h(Box, { class: 'text-xl font-semibold' }, [model.profile?.eloRating ?? '...']),
+            h(Box, { class: 'text-xl font-semibold' }, [Text({ text: String(model.profile?.eloRating ?? '...') })]),
 
             model.t === 'solved' &&
               !model.hasLost &&
               nextEloRating &&
               h(Box, { class: 'rounded-xl text-lg font-semibold text-green-500' }, [
-                `+${nextEloRating - model.profile.eloRating}`,
+                Text({ text: `+${nextEloRating - model.profile.eloRating}` }),
               ]),
 
             model.t !== 'loading' &&
               model.hasLost &&
               nextEloRating &&
               h(Box, { class: 'rounded-xl text-lg font-semibold text-red-500' }, [
-                nextEloRating - model.profile.eloRating,
+                Text({ text: String(nextEloRating - model.profile.eloRating) }),
               ]),
           ]),
         ]),
@@ -329,7 +330,7 @@ export const View = ({
       h(Box, { class: 'grid w-full grid-cols-2 px-2 py-1' }, [
         h(Box, { class: 'flex items-center justify-start gap-1 text-xs' }, [
           h(Typography, { text: TranslatedText.of('Puzzle Rating'), color: 'text-secondary' }),
-          h(Box, {}, [model.t === 'loading' ? '...' : model.puzzle.rating]),
+          h(Box, {}, [Text({ text: model.t === 'loading' ? '...' : String(model.puzzle.rating) })]),
         ]),
 
         h(Box, { class: 'flex flex-1 items-center justify-end gap-1 text-right text-xs' }, [
@@ -440,20 +441,22 @@ export const BottomBarActions = ({
 
 const ViewStatusBar = (input: { model: ModelFrontend }) => {
   if (input.model.t === 'loading') {
-    return h(Box, { class: 'flex w-full items-center justify-center p-2' }, [h(Box, { class: 'text-xl' }, ['...'])])
+    return h(Box, { class: 'flex w-full items-center justify-center p-2' }, [
+      h(Box, { class: 'text-xl' }, [Text({ text: '...' })]),
+    ])
   }
 
   if (input.model.t === 'incorrect') {
     return h(Box, { class: 'flex w-full items-center justify-center gap-2 bg-red-500 p-2 text-white' }, [
       h(IconXMark, { class: 'size-6' }),
-      h(Box, { class: 'text-xl' }, ['Incorrect']),
+      h(Box, { class: 'text-xl' }, [Text({ text: 'Incorrect' })]),
     ])
   }
 
   if (input.model.t === 'solved') {
     return h(Box, { class: 'flex w-full items-center justify-center gap-2 bg-green-500 p-2 text-white' }, [
       h(IconCheckmarkCircle, { class: 'size-6' }),
-      h(Box, { class: 'text-xl' }, ['Correct']),
+      h(Box, { class: 'text-xl' }, [Text({ text: 'Correct' })]),
     ])
   }
 
@@ -474,7 +477,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
           ),
         }),
         h(Box, { class: 'text-xl text-inherit' }, [
-          `${Chess.colorToString(toPlayerColor(input.model.puzzle))} to move`,
+          Text({ text: `${Chess.colorToString(toPlayerColor(input.model.puzzle))} to move` }),
         ]),
       ],
     )
@@ -483,7 +486,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
   if (input.model.t === 'solved-with-hint') {
     return h(Paper, { class: 'flex w-full items-center justify-center gap-2 p-2 text-white' }, [
       h(IconCheckmarkCircle, { class: 'size-6' }),
-      h(Box, { class: 'text-xl' }, ['Solved with hint']),
+      h(Box, { class: 'text-xl' }, [Text({ text: 'Solved with hint' })]),
     ])
   }
 

@@ -23,6 +23,7 @@ import { ScreenLangFrontend } from './screen-lang/frontend'
 import { ScreenRendererFrontend } from './screen-renderer/frontend'
 import { SoundFrontend } from './sound'
 import type { FrontendModule, MsgFrontend } from './types'
+import { Text } from '~/@/vdom/primitives/text'
 
 const init: FrontendModule['init'] = (input) => {
   const lang = ScreenLangFrontend.init(input)
@@ -130,7 +131,7 @@ const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
   return h(ListItem, {
     icon: (inputIcon) => h(IconLanguage, inputIcon),
     primary: ctx.t('l18n.language'),
-    end: () => ctx.t(model.lang),
+    end: () => Text({ text: ctx.t(model.lang) }),
     onClick: () => {
       dispatch({ t: 'settings.clicked-open-lang' })
     },
@@ -176,14 +177,14 @@ const ViewMain: FrontendModule['View'] = (props) => {
       h(Box, { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
         h(ListItem, {
           primary: props.ctx.t('l18n.language'),
-          end: () => h(Box, {}, [props.ctx.t(props.model.lang)]),
+          end: () => h(Box, {}, [Text({ text: props.ctx.t(props.model.lang) })]),
           onClick: () => props.dispatch({ t: 'settings.clicked-open-lang' }),
           link: true,
           icon: (inputIcon) => IconLanguage(inputIcon),
         }),
         h(ListItem, {
           primary: props.ctx.t('l18n.renderer'),
-          end: () => h(Box, {}, [VDomImpl.toName(props.model.renderVDomImpl)]),
+          end: () => h(Box, {}, [Text({ text: VDomImpl.toName(props.model.renderVDomImpl) })]),
           onClick: () => props.dispatch({ t: 'settings.clicked-open-renderer' }),
           icon: (inputIcon) => IconCode(inputIcon),
           link: true,

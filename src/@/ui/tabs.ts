@@ -3,6 +3,7 @@ import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
 import { ClickableTransparent } from './clickable'
 import { cn } from './cn'
+import { Text } from '../vdom/primitives/text'
 
 export const Tabs = <TTab extends string>({
   tabs,
@@ -35,7 +36,7 @@ export const Tabs = <TTab extends string>({
                 selected === tab ? 'border-b-blue-500 text-blue-500' : 'text-neutral-300',
               ),
             },
-            [labels[tab]],
+            [Text({ text: labels[tab] })],
           ),
         ],
       ),

@@ -1,5 +1,4 @@
 import { TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/primitives/box'
 import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
 import { Time } from '~/@/time/time'
@@ -8,14 +7,16 @@ import { UnixMs } from '~/@/time/unix-ms'
 import { cn } from '~/@/ui/cn'
 import { IconXMark } from '~/@/ui/icon'
 import { PAPER_CLASS_NAME } from '~/@/ui/paper'
-import { Transition } from '~/@/vdom/primitives/transition'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Text } from '~/@/vdom/primitives/text'
+import { Touchable } from '~/@/vdom/primitives/touchable'
+import { Transition } from '~/@/vdom/primitives/transition'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { APP_SOUND } from '../../@/frontend/app-sound'
-import { Touchable } from '~/@/vdom/primitives/touchable'
 
 type Ctx = {
   now: UnixMs
@@ -192,8 +193,8 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
             ),
           },
           [
-            input.toast.text,
-            errorMsg &&
+            Text({ text: input.toast.text }),
+            typeof errorMsg === 'string' &&
               h(
                 Touchable,
                 {
@@ -202,7 +203,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
                   onClick: () =>
                     input.dispatch({ t: 'clicked-see-error', errorMsg: errorMsg, toastId: input.toast.toastId }),
                 },
-                ['See Error'],
+                [Text({ text: 'See Error' })],
               ),
             h(
               Touchable,

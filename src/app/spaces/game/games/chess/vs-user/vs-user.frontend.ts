@@ -19,6 +19,7 @@ import {
   type SpaceModel,
   initSpace,
 } from './vs-user.types'
+import { Text } from '~/@/vdom/primitives/text'
 
 //
 //
@@ -490,7 +491,7 @@ export const View = ({
 
 const ViewGameOverDialog = ({ model }: { model: Model; dispatch: (msg: Msg) => void }) => {
   if (model.spaceModel.type === 'setup') {
-    return h(Box, {}, [toGameText(model.spaceModel)])
+    return h(Box, {}, [Text({ text: toGameText(model.spaceModel) })])
   }
 
   if (model.spaceModel.type === 'game') {

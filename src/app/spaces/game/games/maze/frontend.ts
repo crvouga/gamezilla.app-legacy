@@ -23,6 +23,7 @@ import {
   type MsgToFrontend,
   initShared,
 } from './types'
+import { Text } from '~/@/vdom/primitives/text'
 
 //
 //
@@ -208,7 +209,7 @@ export const View = ({
   const currentUserPlayer = model.players[ctx.currentUser.userId]
 
   return h(Box, {}, [
-    !currentUserPlayer && h(Box, {}, ['Spectating']),
+    !currentUserPlayer && h(Box, {}, [Text({ text: 'Spectating' })]),
     h(Svg, { width: '100%', viewBox }, [
       h(Rect, { x: model.lower.x, y: model.lower.y, width: '100%', height: '100%', fill: '#000' }),
       ...maze.edges.map(([a, b]) =>

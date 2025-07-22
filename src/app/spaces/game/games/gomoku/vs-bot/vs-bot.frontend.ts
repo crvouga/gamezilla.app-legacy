@@ -12,6 +12,7 @@ import {
   handle,
   initShared,
 } from './vs-bot.types'
+import { Text } from '~/@/vdom/primitives/text'
 
 //
 //
@@ -141,5 +142,5 @@ export const subscriptions = (_ctx: AppFrontendCtx, model: Model): Sub<Msg> => {
 //
 
 export const View = (_input: { model: Model; ctx: AppFrontendCtx; dispatch: (m: Msg) => void; onBack: () => void }) => {
-  return h(Box, {}, ['View'])
+  return h(Box, {}, [Text({ text: 'View' })])
 }

@@ -1,8 +1,9 @@
-import type { VDom } from '~/@/vdom/vdom'
-import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
-import { IconCheckmarkCircle, IconExclamationCircle, IconInfoCircle } from './icon'
+import { Box } from '~/@/vdom/primitives/box'
+import { Text } from '~/@/vdom/primitives/text'
+import type { VDom } from '~/@/vdom/vdom'
 import { cn } from './cn'
+import { IconCheckmarkCircle, IconExclamationCircle, IconInfoCircle } from './icon'
 
 export const AlertError = ({ class: class_, text }: { text?: string; class?: string }) => {
   return h(
@@ -12,7 +13,7 @@ export const AlertError = ({ class: class_, text }: { text?: string; class?: str
       'aria-label': text,
       class: cn('flex w-full items-center rounded-md bg-red-500 p-4 text-white', class_),
     },
-    [h(Box, { class: 'mr-2' }, [h(IconExclamationCircle, { class: 'size-6' })]), text],
+    [h(Box, { class: 'mr-2' }, [h(IconExclamationCircle, { class: 'size-6' })]), Text({ text: text ?? '' })],
   )
 }
 

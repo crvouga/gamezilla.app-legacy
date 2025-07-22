@@ -249,8 +249,9 @@ const ViewCoordinates = (input: BoardInput<VariantGrid.Model>) => {
             y: node.y,
             'font-size': '0.2',
             fill: '#fff',
+            text: `${node.x},${node.y}`,
           },
-          [`${node.x},${node.y}`],
+          [],
         )
       }),
     )

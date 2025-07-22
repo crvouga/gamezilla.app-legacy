@@ -10,6 +10,7 @@ import {
   type MsgToFrontend,
   initShared,
 } from './vs-user.types'
+import { Text } from '~/@/vdom/primitives/text'
 
 //
 //
@@ -142,5 +143,5 @@ export const View = (_input: {
   model: Model
   onCancel: () => void
 }) => {
-  return h(Box, {}, ['View'])
+  return h(Box, {}, [Text({ text: 'View' })])
 }

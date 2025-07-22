@@ -1,6 +1,7 @@
 import { Eff } from '~/@/eff'
-import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Text } from '~/@/vdom/primitives/text'
 import type { VDom } from '~/@/vdom/vdom'
 import { AppFrontendCtx } from '../@/frontend/ctx'
 import type { ModelFrontend, MsgFrontend, MsgToFrontend } from './types'
@@ -158,7 +159,7 @@ export const View = (_input: {
 }
 
 export const ViewChat = (_input: { model: ModelFrontend; dispatch: (m: Msg) => void }) => {
-  return h(Box, {}, ['ViewChat'])
+  return h(Box, {}, [Text({ text: 'ViewChat' })])
 }
 
 export const ViewChatNew = (_input: {
@@ -170,9 +171,9 @@ export const ViewChatNew = (_input: {
     loading: boolean
   }
 }) => {
-  return h(Box, {}, ['ViewChat'])
+  return h(Box, {}, [Text({ text: 'ViewChat' })])
 }
 
 export const ViewChatList = (_input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (m: Msg) => void }) => {
-  return h(Box, {}, ['View'])
+  return h(Box, {}, [Text({ text: 'ViewChatList' })])
 }

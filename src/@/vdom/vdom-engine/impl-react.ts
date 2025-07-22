@@ -26,6 +26,7 @@ const init = (_config: ImplReact): IVirtualDomEngine => {
       reactRoot ??= createRoot(node)
       reactRoot.render(createElement(StrictMode, {}, vDom as any))
     },
+    // @ts-ignore
     createPortal: (vDom, container) => {
       const portal = createPortal(vDom as any, container)
       return portal

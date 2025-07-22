@@ -29,6 +29,7 @@ import {
   type StateGameOver,
   toPlayerType,
 } from './vs-user.types'
+import { Text } from '~/@/vdom/primitives/text'
 
 //
 //
@@ -340,7 +341,7 @@ const ViewGameOverMessage = ({
 
   if (modelSpace.rematch.type === 'Asking' && modelSpace.rematch.asker === currentPlayerType) {
     return h(Box, {}, [
-      h(Box, { class: 'mb-4 text-center text-xl' }, ['Waiting for response']),
+      h(Box, { class: 'mb-4 text-center text-xl' }, [Text({ text: 'Waiting for response' })]),
       h(IconSpinner, { class: 'mb-4 h-8 w-8 animate-spin' }),
       h(Button, {
         variant: 'contained',
@@ -360,7 +361,7 @@ const ViewGameOverMessage = ({
     currentPlayerType !== null
   ) {
     return h(Box, {}, [
-      h(Box, {}, ['Rematch?']),
+      h(Box, {}, [Text({ text: 'Rematch?' })]),
       h(Box, { class: 'flex w-full items-center justify-center gap-4' }, [
         h(Button, {
           variant: 'contained',
@@ -389,7 +390,7 @@ const ViewGameOverMessage = ({
   }
 
   if (modelSpace.gameOver.type === 'Draw') {
-    return h(Box, { class: 'text-xl' }, ['Tie'])
+    return h(Box, { class: 'text-xl' }, [Text({ text: 'Tie' })])
   }
 
   if (modelSpace.gameOver.type === 'resignation') {
@@ -407,13 +408,13 @@ const ViewGameOverMessage = ({
             src: UserProfile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[winner]]),
           }),
         ]),
-        h(Box, {}, ['Winner']),
+        h(Box, {}, [Text({ text: 'Winner' })]),
       ])
     }
 
     return h(Box, {}, [
-      h(Box, {}, [currentPlayerType === winner ? 'You Won' : 'You Lost']),
-      h(Box, {}, ['by resignation']),
+      h(Box, {}, [Text({ text: currentPlayerType === winner ? 'You Won' : 'You Lost' })]),
+      h(Box, {}, [Text({ text: 'by resignation' })]),
     ])
   }
 
@@ -429,11 +430,11 @@ const ViewGameOverMessage = ({
             src: UserProfile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[winner]]),
           }),
         ]),
-        h(Box, {}, ['Winner']),
+        h(Box, {}, [Text({ text: 'Winner' })]),
       ])
     }
 
-    return h(Box, {}, [currentPlayerType === winner ? 'You Won' : 'You Lost'])
+    return h(Box, {}, [Text({ text: currentPlayerType === winner ? 'You Won' : 'You Lost' })])
   }
 
   return null
@@ -461,7 +462,7 @@ const Feedback = ({ ctx, modelSpace }: { ctx: SpaceFrontendCtx; modelSpace: Stat
 
   return h(Box, { class: 'flex items-center justify-center gap-2 text-center' }, [
     h(PlayerIcon, { class: 'h-4 w-4', playerType: turn }),
-    'Your Turn',
+    Text({ text: 'Your Turn' }),
   ])
 }
 

@@ -13,6 +13,7 @@ import { APP_SOUND } from '../../@/frontend/app-sound'
 import { AppFrontendCtxBase } from '../../@/frontend/ctx'
 import { FrontendModule } from '../types'
 import { ModelFrontend, MsgFrontend } from './types'
+import { Text } from '~/@/vdom/primitives/text'
 
 const LANG_STORAGE_KEY = 'lang'
 
@@ -99,7 +100,7 @@ const ViewChooseLangListItem = (input: {
   return ListItem({
     link: true,
     primary: TranslatedText.of(primary),
-    end: () => h(Box, {}, [input.ctx.t(input.langCode)]),
+    end: () => h(Box, {}, [Text({ text: input.ctx.t(input.langCode) })]),
     onClick: () => input.dispatch({ t: 'lang.clicked-lang', lang: input.langCode }),
     icon: (inputIcon) => h(RadioInputIcon, { class: inputIcon.class, status: toStatus(input) }),
   })

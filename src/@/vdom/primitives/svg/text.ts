@@ -1,8 +1,7 @@
 import { h } from '../../h'
-import { VDom } from '../../vdom'
 
 export const Text = ({
-  children,
+  text,
   ...input
 }: {
   width?: number | string
@@ -20,12 +19,12 @@ export const Text = ({
   'font-size'?: number | string
   'stroke-linecap'?: string
   id?: string
+  text: string
   xmlSpace?: string
   'stroke-linejoin'?: string
   'stroke-miterlimit'?: number | string
   preserveAspectRatio?: string
   version?: string
-  children: VDom[]
   'fill-rule'?: string
   'clip-rule'?: string
   onClick?: (event: unknown) => void
@@ -46,6 +45,10 @@ export const Text = ({
   onContextMenu?: (event: unknown) => void
   opacity?: number | string
 }) => {
-  // @ts-ignore
-  return h('text', input, children)
+  return h(
+    // @ts-ignore
+    'text',
+    input,
+    [text],
+  )
 }

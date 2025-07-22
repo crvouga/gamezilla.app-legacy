@@ -3,6 +3,7 @@ import { Box } from '~/@/vdom/primitives/box'
 import { AriaRole } from '~/@/html/aria-role'
 import { cn } from './cn'
 import { h } from '~/@/vdom/h'
+import { Text } from '../vdom/primitives/text'
 
 export type TypographyVariant = 'title' | 'body' | 'label' | 'subtitle' | 'caption'
 
@@ -75,6 +76,6 @@ export const Typography = (input: Props) => {
       'data-title': input.variant === 'title' ? 'true' : 'false',
       'data-testid': input.dataTestId,
     },
-    [input.text],
+    [Text({ text: input.text })],
   )
 }

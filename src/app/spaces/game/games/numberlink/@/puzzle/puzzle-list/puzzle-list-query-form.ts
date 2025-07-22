@@ -59,7 +59,7 @@ const View = (input: { query: Model; ctx: FlowFrontendCtxBase; onChange: (query:
 
       h(Box, { class: 'flex-1' }),
 
-      input.query.order.lastUpdatedAt &&
+      typeof input.query.order.lastUpdatedAt === 'string' &&
         h(Chip, {
           size: 'sm',
           renderStartIcon: (input) => h(IconArrowDownShortWide, input),
@@ -67,7 +67,7 @@ const View = (input: { query: Model; ctx: FlowFrontendCtxBase; onChange: (query:
           onClick: () => dispatch({ t: 'toggled-last-updated-chip' }),
         }),
 
-      input.query.order.createdAt &&
+      typeof input.query.order.createdAt === 'string' &&
         h(Chip, {
           size: 'sm',
           renderStartIcon: (input) => h(IconArrowDownShortWide, input),

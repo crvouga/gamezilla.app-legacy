@@ -3,6 +3,7 @@ import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Touchable } from '../vdom/primitives/touchable'
 import { Typography } from './typography'
+import { Text } from '../vdom/primitives/text'
 
 export type ChipSelectionOption<T = string> = {
   value: T
@@ -50,7 +51,7 @@ export const ChipSelection = <T>({
               }
             },
           },
-          [option.label],
+          [Text({ text: option.label })],
         ),
       ),
     ),

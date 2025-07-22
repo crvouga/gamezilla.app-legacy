@@ -4,6 +4,7 @@ import { VDom } from '~/@/vdom/vdom'
 import { Clickable } from '../clickable'
 import { cn } from '../cn'
 import { Box } from '~/@/vdom/primitives/box'
+import { Text } from '~/@/vdom/primitives/text'
 
 export type ChipSize = 'sm' | 'lg'
 
@@ -26,7 +27,7 @@ export const Chip = (input: ChipProps) => {
       input.renderStartIcon?.({
         class: cn(toIconSizeClass(input), 'shrink-0'),
       }),
-      h(Box, { class: 'truncate' }, [input.label]),
+      h(Box, { class: 'truncate' }, [Text({ text: input.label })]),
     ],
   )
 }

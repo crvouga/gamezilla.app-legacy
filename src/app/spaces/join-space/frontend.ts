@@ -1,9 +1,10 @@
 import { withEventId } from '~/@/event-sourced/event'
-import { Box } from '~/@/vdom/primitives/box'
 import { Translator } from '~/@/l18n/generated'
 import { IconArrowRightOnRect } from '~/@/ui/icon'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Text } from '~/@/vdom/primitives/text'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
@@ -114,11 +115,11 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
 const view: SpaceFrontendModule['View'] = (input) => {
   const currentUser = input.ctx.currentUser
 
-  if (!currentUser) return h(Box, {}, ['No current user'])
+  if (!currentUser) return Text({ text: 'No current user' })
 
   const space = input.ctx.space
 
-  if (!space) return h(Box, {}, ['No space'])
+  if (!space) return Text({ text: 'No space' })
 
   const spaceCtx: SpaceFrontendCtx = { ...input.ctx, space, currentUser }
   const hostProfile = input.ctx.profilesByUserId[space.hostId]

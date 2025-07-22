@@ -9,6 +9,7 @@ import { TextInput } from '~/@/vdom/primitives/text-input'
 import { Touchable } from '~/@/vdom/primitives/touchable'
 import type { VDom } from '~/@/vdom/vdom'
 import type { ModelFrontend, MsgFrontend, MsgToFrontend } from './search.types'
+import { Text } from '~/@/vdom/primitives/text'
 
 //
 //
@@ -162,7 +163,7 @@ export const View = ({
                     userId: result.userId,
                   }),
               },
-              [result.username],
+              [Text({ text: result.username })],
             ),
           ]),
         ),

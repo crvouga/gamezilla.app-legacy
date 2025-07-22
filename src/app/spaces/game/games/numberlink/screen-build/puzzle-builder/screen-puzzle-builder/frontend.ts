@@ -24,6 +24,7 @@ import { ScreenPuzzleBuilderSpace } from './space'
 import { DeleteForeverFrontend } from './surface-delete-forever/frontend'
 import { EditPuzzleNameFrontend } from './surface-edit-puzzle-name/frontend'
 import { SaveChangesFrontend } from './surface-save-changes/frontend'
+import { Text } from '~/@/vdom/primitives/text'
 
 //
 //
@@ -276,7 +277,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
     renderBody: () =>
       h(BoardLayout, {}, [
         h(Box, { class: 'flex w-full items-center justify-center gap-1 p-2' }, [
-          input.ctx.t('game.numberlink.playing'),
+          Text({ text: input.ctx.t('game.numberlink.playing') }),
         ]),
         h(ModePlayFrontend.View, {
           model: puzzleBuilder.modePlay,

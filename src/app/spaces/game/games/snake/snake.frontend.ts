@@ -6,6 +6,7 @@ import { Sub } from '~/@/sub'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Canvas } from '~/@/vdom/primitives/canvas'
+import { Text } from '~/@/vdom/primitives/text'
 import { AppFrontendCtx, AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { Direction } from './@/direction'
@@ -186,7 +187,7 @@ export const subscriptions = (input: { ctx: AppFrontendCtxBase }): Sub<Msg> => {
 
 export const View = ({ model, dispatch }: { ctx: AppFrontendCtx; model: Model; dispatch: (msg: Msg) => void }) => {
   if (model.gameStatus.type === 'GameSetup') {
-    return h(Box, {}, ['View'])
+    return h(Box, {}, [Text({ text: 'View' })])
   }
 
   return h(Box, {}, [h(ViewBoard, { model, dispatch })])

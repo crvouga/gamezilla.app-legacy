@@ -49,7 +49,7 @@ export const Clickable = ({ dataTestId, ...input }: ClickableProps) => {
         input.class,
       ),
     },
-    [input.children],
+    input.children ?? [],
   )
 }
 
@@ -71,6 +71,6 @@ export const ClickablePaper = (input: ClickableProps) => {
       ...input,
       class: cn(PAPER_CLASS_NAME, '[@media(hover:hover)]:enabled:hover:bg-neutral-800', input.class),
     },
-    [input.children],
+    input.children ?? [],
   )
 }

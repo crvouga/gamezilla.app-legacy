@@ -1,6 +1,7 @@
 import { s } from '~/@/schema'
 import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
+import { Text } from '~/@/vdom/primitives/text'
 
 export const Model = s.obj({
   t: s.l('hex'),
@@ -26,5 +27,5 @@ export const init = (input: { width: number; height: number; side: number }): Mo
 }
 
 export const ViewForm = (_input: { form: Model; onInput: (dimensions: Model) => void }) => {
-  return h(Box, {}, ['hex dimensions form'])
+  return h(Box, {}, [Text({ text: 'hex dimensions form' })])
 }

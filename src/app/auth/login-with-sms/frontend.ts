@@ -2,12 +2,11 @@ import { Iso3166Alpha2Code } from '~/@/country/iso-3166-alpha-2-code'
 import { PhoneNumber } from '~/@/phone-number'
 import { NotAsked, RemoteResult, isErr } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
-import { Frag } from '~/@/vdom/primitives/frag'
 import { IconMobilePhone } from '~/@/ui/icon'
-import { Select } from '~/@/ui/select'
 import { TextField } from '~/@/ui/text-field'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Frag } from '~/@/vdom/primitives/frag'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { FocusViewCmd } from '~/app/@/frontend/focus-view-cmd.$msg'
@@ -234,16 +233,16 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
     onSubmit: () => input.dispatch({ t: 'user-clicked-send-code-button' }),
     renderInputs: () =>
       h(Frag, {}, [
-        h(Select<Iso3166Alpha2Code>, {
-          id: 'countryCode',
-          dataTestId: 'auth/country-code-select',
-          label: input.ctx.t('auth-sms.country'),
-          onChange: (countryCode) => input.dispatch({ t: 'inputted-country-code', countryCode }),
-          value: input.model.countryCode,
-          options: Iso3166Alpha2Code.all,
-          toKey: (countryCode) => countryCode,
-          toName: (countryCode) => Iso3166Alpha2Code.toNameWithEmoji(countryCode),
-        }),
+        // h(Select<Iso3166Alpha2Code>, {
+        //   id: 'countryCode',
+        //   dataTestId: 'auth/country-code-select',
+        //   label: input.ctx.t('auth-sms.country'),
+        //   onChange: (countryCode) => input.dispatch({ t: 'inputted-country-code', countryCode }),
+        //   value: input.model.countryCode,
+        //   options: Iso3166Alpha2Code.all,
+        //   toKey: (countryCode) => countryCode,
+        //   toName: (countryCode) => Iso3166Alpha2Code.toNameWithEmoji(countryCode),
+        // }),
 
         h(TextField, {
           id: 'phoneNumberInput',

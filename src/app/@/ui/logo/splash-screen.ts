@@ -1,7 +1,8 @@
 import { TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/primitives/box'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Text } from '~/@/vdom/primitives/text'
 import { LOGO_TEXT } from './logo-text'
 
 export const SplashScreen = (input: { reason: TranslatedText }) => {
@@ -11,7 +12,7 @@ export const SplashScreen = (input: { reason: TranslatedText }) => {
       class: 'fixed inset-0 grid place-items-center gap-4 text-7xl',
     },
     [
-      LOGO_TEXT,
+      Text({ text: LOGO_TEXT }),
       false &&
         h(Typography, {
           text: input.reason,

@@ -10,6 +10,7 @@ import { SectionTitle } from '~/app/@/ui/section/section-title'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ViewHostChip } from '~/app/spaces/@/ui/host-chip'
 import { ViewYouChip } from '~/app/spaces/@/ui/you-chip'
+import { Text } from '~/@/vdom/primitives/text'
 
 export const SectionPeopleList = (input: {
   ctx: SpaceFrontendCtx
@@ -23,7 +24,9 @@ export const SectionPeopleList = (input: {
 
   return h(Box, { class: 'flex w-full flex-col gap-3 py-6' }, [
     h(SectionTitle, { text: input.ctx.t('app.people') }),
-    h(Box, { class: 'flex w-full flex-col' }, [
+    h(
+      Box,
+      { class: 'flex w-full flex-col' },
       profiles.map((profile) =>
         h(Frag, { key: profile.id }, [
           renderItem(
@@ -37,7 +40,7 @@ export const SectionPeopleList = (input: {
           ),
         ]),
       ),
-    ]),
+    ),
   ])
 }
 
@@ -56,7 +59,7 @@ const PersonListItem = (input: {
     },
     [
       h(Avatar, { class: 'size-12', src: UserProfile.toAvatarUrl(input.profile) }),
-      h(Box, {}, [input.profile.username]),
+      h(Box, {}, [Text({ text: input.profile.username })]),
       input.profile.userId === input.ctx.space.hostId && h(ViewHostChip, { ctx: input.ctx }),
       input.profile.userId === input.ctx.currentUser.userId && h(ViewYouChip, { ctx: input.ctx }),
     ],

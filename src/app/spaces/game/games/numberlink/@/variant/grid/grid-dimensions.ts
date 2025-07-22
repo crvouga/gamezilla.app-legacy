@@ -5,6 +5,7 @@ import { s } from '~/@/schema'
 import { IconXMark } from '~/@/ui/icon'
 import { ChipSelection } from '~/@/ui/chip-selection'
 import { h } from '~/@/vdom/h'
+import { Text } from '~/@/vdom/primitives/text'
 
 export const Model = s.obj({
   t: s.l('grid'),
@@ -31,11 +32,11 @@ export const ViewForm = (input: {
 }) => {
   return h(Box, { class: 'flex flex-col gap-4 p-6' }, [
     h(Box, { class: 'flex items-center justify-center gap-1 text-center text-4xl font-bold' }, [
-      h(Box, {}, [`${input.form.width}w`]),
+      h(Box, {}, [Text({ text: `${input.form.width}w` })]),
 
       h(IconXMark, { class: 'size-6' }),
 
-      h(Box, {}, [`${input.form.height}h`]),
+      h(Box, {}, [Text({ text: `${input.form.height}h` })]),
     ]),
 
     h(Box, { class: 'flex flex-col gap-3' }, [
