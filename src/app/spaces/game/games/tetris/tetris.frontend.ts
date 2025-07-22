@@ -23,6 +23,7 @@ import {
   toPiece,
 } from './tetris.types'
 import { Svg } from '~/@/vdom/primitives/svg'
+import { Rect } from '~/@/vdom/primitives/rect'
 
 //
 //
@@ -388,7 +389,7 @@ export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void 
       ),
 
       ...Board.flatMap(model.spaceModel.board, ({ cell, x, y }) =>
-        v('rect', {
+        v(Rect, {
           key: `${x}-${y}-${cell}`,
           width: 1,
           height: 1,
@@ -399,7 +400,7 @@ export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void 
       ),
 
       ...toGhostPiece(model.spaceModel).map(position =>
-        v('rect', {
+        v(Rect, {
           key: `${position.x}-${position.y}`,
           width: 1,
           height: 1,
@@ -410,7 +411,7 @@ export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void 
       ),
 
       ...toPiece(model.spaceModel).map(position =>
-        v('rect', {
+        v(Rect, {
           key: `${position.x}-${position.y}`,
           width: 1,
           height: 1,
@@ -421,7 +422,7 @@ export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void 
       ),
 
       ...Board.flatMap(model.spaceModel.board, ({ x, y }) =>
-        v('rect', {
+        v(Rect, {
           key: `${x}-${y}`,
           width: 1,
           height: 1,
@@ -532,7 +533,7 @@ export const CoverArt = () => {
       viewBox: [0, 0, 4, 4].join(', '),
     },
     [
-      h('rect', {
+      h(Rect, {
         width: '100%',
         height: '100%',
         fill: theme.lightBlue,
@@ -545,7 +546,7 @@ export const CoverArt = () => {
           }),
         )
         .map((position) =>
-          h('rect', {
+          h(Rect, {
             key: `${position.x}-${position.y}`,
             x: position.x,
             y: position.y,

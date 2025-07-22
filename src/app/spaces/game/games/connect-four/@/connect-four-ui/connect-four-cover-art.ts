@@ -1,8 +1,9 @@
 import { Uuid } from '~/@/id/uuid'
 import { h } from '~/@/vdom/h'
+import { Rect } from '~/@/vdom/primitives/rect'
+import { Svg } from '~/@/vdom/primitives/svg'
 import { COLUMN_COUNT, MAX_COLUMN_HEIGHT } from '../connect-four'
 import { gameTheme } from './shared'
-import { Svg } from '~/@/vdom/primitives/svg'
 
 const coverArtId = Uuid.generate()
 
@@ -25,8 +26,8 @@ export const CoverArt = (input: { class?: string }) => {
       ]),
 
       h('mask', { id: ids.holeMask }, [
-        h('rect', { x: 0, y: 0, width: COLUMN_COUNT, height: MAX_COLUMN_HEIGHT, fill: 'white' }),
-        h('rect', { x: 0, y: 0, width: COLUMN_COUNT, height: MAX_COLUMN_HEIGHT, fill: `url(#${ids.holePattern})` }),
+        h(Rect, { x: 0, y: 0, width: COLUMN_COUNT, height: MAX_COLUMN_HEIGHT, fill: 'white' }),
+        h(Rect, { x: 0, y: 0, width: COLUMN_COUNT, height: MAX_COLUMN_HEIGHT, fill: `url(#${ids.holePattern})` }),
       ]),
 
       h('linearGradient', { id: ids.columnGradient, gradientTransform: 'rotate(90)' }, [
@@ -45,7 +46,7 @@ export const CoverArt = (input: { class?: string }) => {
       ]),
     ]),
 
-    h('rect', { x: 0, y: 0, width: 2, height: 2, fill: gameTheme.primary.darker }),
+    h(Rect, { x: 0, y: 0, width: 2, height: 2, fill: gameTheme.primary.darker }),
 
     h('circle', { cx: 0.5, cy: 0, r: 0.5, fill: playerOneFill }),
 
@@ -55,7 +56,7 @@ export const CoverArt = (input: { class?: string }) => {
 
     h('circle', { cx: 0.5, cy: 1.5, r: 0.5, fill: playerTwoFill }),
 
-    h('rect', {
+    h(Rect, {
       x: 0,
       y: 0,
       width: COLUMN_COUNT,

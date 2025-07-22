@@ -10,6 +10,7 @@ import { BoardInput } from '../../../ui/board'
 import { Color } from '../../../ui/color'
 import * as VariantGrid from '../grid'
 import { G } from '~/@/vdom/primitives/g'
+import { Rect } from '~/@/vdom/primitives/rect'
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const TERMINAL_NODE_RADIUS = 0.33
@@ -93,7 +94,7 @@ const ViewGrid = (input: BoardInput<VariantGrid.Model>) => {
         ],
       ),
     ]),
-    h('rect', {
+    h(Rect, {
       x: 0,
       y: 0,
       width: input.model.width,
@@ -284,7 +285,7 @@ const ViewClickableNode = (
     draggedOver?: (nodeId: NodeId) => void
   },
 ) => {
-  return h('rect', {
+  return h(Rect, {
     key: input.node.nodeId,
     x: input.node.x,
     y: input.node.y,

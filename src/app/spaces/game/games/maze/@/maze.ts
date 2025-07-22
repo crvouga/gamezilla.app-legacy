@@ -5,6 +5,7 @@ import { h } from '~/@/vdom/h'
 import { G } from '~/@/vdom/primitives/g'
 import { Svg } from '~/@/vdom/primitives/svg'
 import { Direction, Position } from './position'
+import { Rect } from '~/@/vdom/primitives/rect'
 
 //
 //
@@ -188,7 +189,7 @@ const viewBox = [
 
 export const CoverArt = () => {
   return h(Svg, { viewBox, width: '100%', class: 'border' }, [
-    h('rect', {
+    h(Rect, {
       x: coverArtMaze.lower.x,
       y: coverArtMaze.lower.y,
       width: '100%',

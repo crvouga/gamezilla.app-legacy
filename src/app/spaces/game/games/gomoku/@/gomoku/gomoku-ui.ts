@@ -1,10 +1,11 @@
-import { h } from '~/@/vdom/h'
 import { Hex } from '~/@/hex/hex'
 import { cn } from '~/@/ui/cn'
+import { h } from '~/@/vdom/h'
+import { G } from '~/@/vdom/primitives/g'
+import { Rect } from '~/@/vdom/primitives/rect'
+import { Svg } from '~/@/vdom/primitives/svg'
 import { type Board, type Bounds, type Stone, allPositions, bounds, presetToStars } from './gomoku'
 import type { Position } from './gomoku-position'
-import { Svg } from '~/@/vdom/primitives/svg'
-import { G } from '~/@/vdom/primitives/g'
 
 const backgroundColor = '#C88655'
 const lineColor = Hex.darken(backgroundColor, 0.3)
@@ -109,7 +110,7 @@ export const ViewBoard = ({
     },
     [
       h(G, { 'stroke-width': 0.05 }, [
-        h('rect', {
+        h(Rect, {
           x: boundsView.lower.x,
           y: boundsView.lower.y,
           width,
@@ -118,7 +119,7 @@ export const ViewBoard = ({
         }),
 
         h(G, { stroke: gameTheme.line }, [
-          h('rect', {
+          h(Rect, {
             x: bounds_.lower.x,
             y: bounds_.lower.y,
             width: bounds_.upper.x - 1 - bounds_.lower.x,

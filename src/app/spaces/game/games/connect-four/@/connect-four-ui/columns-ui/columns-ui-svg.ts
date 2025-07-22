@@ -5,6 +5,7 @@ import { gameTheme } from '../shared'
 import type { Model, ViewColumnsInput } from './shared'
 import { Svg } from '~/@/vdom/primitives/svg'
 import { G } from '~/@/vdom/primitives/g'
+import { Rect } from '~/@/vdom/primitives/rect'
 
 type SvgIds = {
   playerOneGradient: string
@@ -37,7 +38,7 @@ export const ViewColumnsSvg = ({
   return h(Svg, { id, width: '100%', viewBox: `0 0 ${COLUMN_COUNT} ${MAX_COLUMN_HEIGHT}` }, [
     h(SvgDefs, { ids }),
     h(G, { transform: `translate(0, ${MAX_COLUMN_HEIGHT}) scale(1,-1)` }, [
-      h('rect', { x: 0, y: 0, width: COLUMN_COUNT, height: MAX_COLUMN_HEIGHT, fill: gameTheme.primary.darker }),
+      h(Rect, { x: 0, y: 0, width: COLUMN_COUNT, height: MAX_COLUMN_HEIGHT, fill: gameTheme.primary.darker }),
       h(
         G,
         { transform: 'translate(0.5, 0.5)' },
@@ -52,7 +53,7 @@ export const ViewColumnsSvg = ({
           }),
         ),
       ),
-      h('rect', {
+      h(Rect, {
         x: 0,
         y: 0,
         width: COLUMN_COUNT,
@@ -62,7 +63,7 @@ export const ViewColumnsSvg = ({
       }),
       h(ViewWins, { model, columns }),
       ...[...new Array(COLUMN_COUNT)].map((_, columnIndex) =>
-        h('rect', {
+        h(Rect, {
           class: cn(
             disabled || !onClick
               ? undefined
@@ -121,7 +122,7 @@ const ViewWins = ({ model }: { model?: Model; columns: Columns }) => {
       const originY = (westMost.y + 0.5) * n
       const width = (distance(westMost, eastMost) + 1) * n
       return [
-        h('rect', {
+        h(Rect, {
           key: i,
           id: winToId(win),
           transform: `rotate(${theta} ${originX} ${originY})`,
@@ -146,8 +147,8 @@ const SvgDefs = ({ ids }: { ids: SvgIds }) => {
       h('circle', { cx: 0.5, cy: 0.5, r: 0.425, fill: 'black' }),
     ]),
     h('mask', { id: ids.holeMask }, [
-      h('rect', { x: 0, y: 0, width: COLUMN_COUNT, height: MAX_COLUMN_HEIGHT, fill: 'white' }),
-      h('rect', { x: 0, y: 0, width: COLUMN_COUNT, height: MAX_COLUMN_HEIGHT, fill: `url(#${ids.holePattern})` }),
+      h(Rect, { x: 0, y: 0, width: COLUMN_COUNT, height: MAX_COLUMN_HEIGHT, fill: 'white' }),
+      h(Rect, { x: 0, y: 0, width: COLUMN_COUNT, height: MAX_COLUMN_HEIGHT, fill: `url(#${ids.holePattern})` }),
     ]),
     h('linearGradient', { id: ids.columnGradient, gradientTransform: 'rotate(90)' }, [
       h('stop', { offset: '0%', stopColor: gameTheme.primary.light }),

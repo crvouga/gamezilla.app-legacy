@@ -18,6 +18,7 @@ import {
 } from './types'
 import { Svg } from '~/@/vdom/primitives/svg'
 import { G } from '~/@/vdom/primitives/g'
+import { Rect } from '~/@/vdom/primitives/rect'
 
 //
 //
@@ -205,7 +206,7 @@ export const View = ({
   return h(Box, {}, [
     !currentUserPlayer && h(Box, {}, ['Spectating']),
     h(Svg, { width: '100%', viewBox }, [
-      h('rect', { x: model.lower.x, y: model.lower.y, width: '100%', height: '100%', fill: '#000' }),
+      h(Rect, { x: model.lower.x, y: model.lower.y, width: '100%', height: '100%', fill: '#000' }),
       ...maze.edges.map(([a, b]) =>
         h(G, { key: [a.x, a.y, b.x, b.y].join('-'), 'stroke-width': '0.1', stroke: '#fff' }, [
           h('line', {
@@ -274,7 +275,7 @@ const ViewJoystick = ({
         h(G, { 'clip-path': 'url(#cut-off-bottom)', stroke }, [
           ...Direction.all.map((direction) => {
             const { x, y } = directionToVector(direction)
-            return h('rect', {
+            return h(Rect, {
               key: direction,
               x,
               y,

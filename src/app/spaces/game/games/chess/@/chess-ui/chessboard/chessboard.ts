@@ -15,6 +15,7 @@ import {
 import { Svg } from '~/@/vdom/primitives/svg'
 import { Path } from '~/@/vdom/primitives/path'
 import { G } from '~/@/vdom/primitives/g'
+import { Rect } from '~/@/vdom/primitives/rect'
 
 //
 //
@@ -426,7 +427,7 @@ export const Chessboard = (input: ChessboardInput) => {
         {},
         CHECKERS.map((checker) => {
           const square = positionToSquare(checker, input.orientation ?? 'w')
-          return h('rect', {
+          return h(Rect, {
             key: checker.id,
             id: square ? toCheckerId(square) : undefined,
             x: checker.x * SCALE,
@@ -507,7 +508,7 @@ export const Chessboard = (input: ChessboardInput) => {
               viewBox: '0 0 45 45',
             },
             [
-              h('rect', {
+              h(Rect, {
                 fill: 'transparent',
                 stroke: 'transparent',
                 x: '0',

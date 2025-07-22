@@ -1,6 +1,7 @@
 import { h } from '~/@/vdom/h'
 import { G } from '~/@/vdom/primitives/g'
 import { Path } from '~/@/vdom/primitives/path'
+import { Rect } from '~/@/vdom/primitives/rect'
 import { Svg } from '~/@/vdom/primitives/svg'
 
 const theme = {
@@ -13,13 +14,13 @@ const theme = {
 
 export const CoverArt = (input: { class?: string }) => {
   return h(Svg, { width: '100%', viewBox: '0 0 2 2', ...input }, [
-    h('rect', { x: 0, y: 0, width: 1, height: 1, fill: theme.lightSquare }),
+    h(Rect, { x: 0, y: 0, width: 1, height: 1, fill: theme.lightSquare }),
 
-    h('rect', { x: 0, y: 1, width: 1, height: 1, fill: theme.darkSquare }),
+    h(Rect, { x: 0, y: 1, width: 1, height: 1, fill: theme.darkSquare }),
 
-    h('rect', { x: 1, y: 1, width: 1, height: 1, fill: theme.lightSquare }),
+    h(Rect, { x: 1, y: 1, width: 1, height: 1, fill: theme.lightSquare }),
 
-    h('rect', { x: 1, y: 0, width: 1, height: 1, fill: theme.darkSquare }),
+    h(Rect, { x: 1, y: 0, width: 1, height: 1, fill: theme.darkSquare }),
 
     h(Svg, { x: 0, y: 0, width: '2', height: '2', viewBox: '0 0 45 45' }, [
       h(G, { transform: 'translate(0 -2) scale(0.8)' }, [
