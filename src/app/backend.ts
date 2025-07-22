@@ -9,9 +9,8 @@ import { ILogger } from '~/@/logger'
 import { TopicBasedPubSub } from '~/@/pub-sub-topic-based'
 import { RPC } from '~/@/rpc'
 import { Runtime } from '~/@/runtime'
-import { SecretString } from '~/@/secrets/secret-string'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
-import { BackendSqlDb } from '~/@/sql-db/backend-impl'
+import { ISqlDb } from '~/@/sql-db/interface'
 import { SyncEngineServer } from '~/@/sync-engine/sync-engine-server'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
@@ -31,9 +30,9 @@ import { WireBackend } from './wire/backend'
 const initCtx = async (config: {
   port: number
   topicUrl: string
-  databaseUrl: SecretString
   isProd: boolean
   logger: ILogger
+  sqlDb: ISqlDb
 }): Promise<BackendCtxModule> => {
   const logger = config.logger.child(['app'])
 
@@ -45,12 +44,6 @@ const initCtx = async (config: {
     logger,
   })
 
-  const sqlDb = BackendSqlDb.init({
-    t: 'postgres',
-    databaseUrl: config.databaseUrl,
-    logger,
-  })
-
   const migrationPolicy = SqlDbMigrationPolicy.init({
     t: 'never-run',
     logger,
@@ -58,14 +51,14 @@ const initCtx = async (config: {
 
   const keyValueDbDurable = KeyValueDb.init({
     t: 'sql-db',
-    sqlDb,
+    sqlDb: config.sqlDb,
     logger,
     migrationPolicy,
   })
 
   const pubSub = TopicBasedPubSub.init({
     t: 'sql-db',
-    sqlDb,
+    sqlDb: config.sqlDb,
     logger,
   })
 
@@ -105,7 +98,7 @@ const initCtx = async (config: {
 
   const userProfileDb = ProfileDb({
     t: 'sql',
-    sqlDb,
+    sqlDb: config.sqlDb,
     logger,
     migrationPolicy,
   })
@@ -124,7 +117,7 @@ const initCtx = async (config: {
     fileSystem,
     syncEngine,
     env,
-    sqlDb,
+    sqlDb: config.sqlDb,
     keyValueDbDurable,
     logger,
     now,
