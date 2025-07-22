@@ -13,7 +13,7 @@ concurrency:
 jobs:
   type-check:
     name: Type Check
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 10
     steps:
       - name: Checkout code
@@ -37,7 +37,7 @@ jobs:
 
   unit-tests:
     name: Unit Tests
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 10
     steps:
       - name: Checkout code
@@ -64,7 +64,7 @@ jobs:
 
   integration-tests:
     name: Integration Tests
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 10
     steps:
       - name: Checkout code
@@ -100,7 +100,7 @@ jobs:
 
   e2e-tests:
     name: E2E Tests
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 10
     steps:
       - name: Checkout code
@@ -147,7 +147,7 @@ jobs:
 
   circular-deps:
     name: Circular Dependencies Check
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 10
     steps:
       - name: Checkout code
@@ -172,7 +172,7 @@ jobs:
   deploy:
     name: Deploy
     needs: [type-check, unit-tests, integration-tests, circular-deps, e2e-tests]
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 10
     if: github.ref == 'refs/heads/main'
 
