@@ -1,13 +1,17 @@
 import { cn } from '~/@/ui/cn'
 import { h } from '~/@/vdom/h'
+import { Circle } from '~/@/vdom/primitives/svg/circle'
+import { Defs } from '~/@/vdom/primitives/svg/defs'
+import { G } from '~/@/vdom/primitives/svg/g'
+import { LinearGradient } from '~/@/vdom/primitives/svg/linear-gradient'
+import { Mask } from '~/@/vdom/primitives/svg/mask'
+import { Pattern } from '~/@/vdom/primitives/svg/pattern'
+import { Rect } from '~/@/vdom/primitives/svg/rect'
+import { Stop } from '~/@/vdom/primitives/svg/stop'
+import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { COLUMN_COUNT, type Columns, MAX_COLUMN_HEIGHT, type Pos2d, isColumnIndex, winToId } from '../../connect-four'
 import { gameTheme } from '../shared'
 import type { Model, ViewColumnsInput } from './shared'
-import { Svg } from '~/@/vdom/primitives/svg/svg'
-import { G } from '~/@/vdom/primitives/svg/g'
-import { Rect } from '~/@/vdom/primitives/svg/rect'
-import { Defs } from '~/@/vdom/primitives/svg/defs'
-import { Circle } from '~/@/vdom/primitives/svg/circle'
 
 type SvgIds = {
   playerOneGradient: string
@@ -145,24 +149,24 @@ const ViewWins = ({ model }: { model?: Model; columns: Columns }) => {
 
 const SvgDefs = ({ ids }: { ids: SvgIds }) => {
   return h(Defs, {}, [
-    h('pattern', { id: ids.holePattern, patternUnits: 'userSpaceOnUse', width: 1, height: 1 }, [
+    h(Pattern, { id: ids.holePattern, patternUnits: 'userSpaceOnUse', width: 1, height: 1 }, [
       h(Circle, { cx: 0.5, cy: 0.5, r: 0.425, fill: 'black' }),
     ]),
-    h('mask', { id: ids.holeMask }, [
+    h(Mask, { id: ids.holeMask }, [
       h(Rect, { x: 0, y: 0, width: COLUMN_COUNT, height: MAX_COLUMN_HEIGHT, fill: 'white' }),
       h(Rect, { x: 0, y: 0, width: COLUMN_COUNT, height: MAX_COLUMN_HEIGHT, fill: `url(#${ids.holePattern})` }),
     ]),
-    h('linearGradient', { id: ids.columnGradient, gradientTransform: 'rotate(90)' }, [
-      h('stop', { offset: '0%', stopColor: gameTheme.primary.light }),
-      h('stop', { offset: '100%', stopColor: gameTheme.primary.dark }),
+    h(LinearGradient, { id: ids.columnGradient, gradientTransform: 'rotate(90)' }, [
+      h(Stop, { offset: '0%', stopColor: gameTheme.primary.light }),
+      h(Stop, { offset: '100%', stopColor: gameTheme.primary.dark }),
     ]),
-    h('linearGradient', { id: ids.playerOneGradient, gradientTransform: 'rotate(90)' }, [
-      h('stop', { offset: '0%', stopColor: gameTheme['player-one'].light }),
-      h('stop', { offset: '100%', stopColor: gameTheme['player-one'].dark }),
+    h(LinearGradient, { id: ids.playerOneGradient, gradientTransform: 'rotate(90)' }, [
+      h(Stop, { offset: '0%', stopColor: gameTheme['player-one'].light }),
+      h(Stop, { offset: '100%', stopColor: gameTheme['player-one'].dark }),
     ]),
-    h('linearGradient', { id: ids.playerTwoGradient, gradientTransform: 'rotate(90)' }, [
-      h('stop', { offset: '0%', stopColor: gameTheme['player-two'].light }),
-      h('stop', { offset: '100%', stopColor: gameTheme['player-two'].dark }),
+    h(LinearGradient, { id: ids.playerTwoGradient, gradientTransform: 'rotate(90)' }, [
+      h(Stop, { offset: '0%', stopColor: gameTheme['player-two'].light }),
+      h(Stop, { offset: '100%', stopColor: gameTheme['player-two'].dark }),
     ]),
   ])
 }

@@ -1,23 +1,7 @@
 import { AriaRole } from '../../html/aria-role'
 import { VDom } from '../vdom'
 
-export type Tag =
-  | 'label'
-  | 'form'
-  | 'circle'
-  | 'path'
-  | 'polygon'
-  | 'polyline'
-  | 'defs'
-  | 'pattern'
-  | 'title'
-  | 'mask'
-  | 'stop'
-  | 'linearGradient'
-  | 'radialGradient'
-  | 'canvas'
-  | 'clipPath'
-  | 'text'
+export type Tag = symbol
 
 export type StyleAttribute =
   | string

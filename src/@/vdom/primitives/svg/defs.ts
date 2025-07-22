@@ -59,5 +59,6 @@ export const Defs = ({
   onPointerClick?: (event: unknown) => void
   opacity?: number | string
 }) => {
+  // @ts-ignore
   return h('defs', input, children)
 }

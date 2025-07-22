@@ -1,8 +1,9 @@
 import { Translator } from '~/@/l18n/generated'
+import { TranslatedText } from '~/@/l18n/translations'
 import { Box } from '~/@/vdom/primitives/box'
 import { s } from '~/@/schema'
 import { IconXMark } from '~/@/ui/icon'
-import { Slider } from '~/@/ui/slider'
+import { ChipSelection } from '~/@/ui/chip-selection'
 import { h } from '~/@/vdom/h'
 
 export const Model = s.obj({
@@ -38,21 +39,23 @@ export const ViewForm = (input: {
     ]),
 
     h(Box, { class: 'flex flex-col gap-3' }, [
-      h(Slider, {
-        onInput: (width) => input.onInput({ ...input.form, width }),
-        value: input.form.width,
+      h(ChipSelection<number>, {
         label: input.ctx.t('app.width'),
-        min: 3,
-        max: 15,
-        step: 1,
+        options: Array.from({ length: 13 }, (_, i) => ({
+          value: i + 3,
+          label: TranslatedText.of(`${i + 3}`),
+        })),
+        value: input.form.width,
+        onChange: (width) => input.onInput({ ...input.form, width }),
       }),
-      h(Slider, {
-        onInput: (height) => input.onInput({ ...input.form, height }),
-        value: input.form.height,
+      h(ChipSelection<number>, {
         label: input.ctx.t('app.height'),
-        min: 3,
-        max: 15,
-        step: 1,
+        options: Array.from({ length: 13 }, (_, i) => ({
+          value: i + 3,
+          label: TranslatedText.of(`${i + 3}`),
+        })),
+        value: input.form.height,
+        onChange: (height) => input.onInput({ ...input.form, height }),
       }),
     ]),
   ])

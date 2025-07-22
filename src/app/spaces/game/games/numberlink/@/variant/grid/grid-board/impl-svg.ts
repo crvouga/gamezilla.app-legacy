@@ -1,9 +1,12 @@
 import { cn } from '~/@/ui/cn'
 import { IconCheckmark } from '~/@/ui/icon'
 import { h } from '~/@/vdom/h'
+import { Circle } from '~/@/vdom/primitives/svg/circle'
 import { Defs } from '~/@/vdom/primitives/svg/defs'
 import { G } from '~/@/vdom/primitives/svg/g'
+import { Line } from '~/@/vdom/primitives/svg/line'
 import { Path } from '~/@/vdom/primitives/svg/path'
+import { Pattern } from '~/@/vdom/primitives/svg/pattern'
 import { Rect } from '~/@/vdom/primitives/svg/rect'
 import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { Text } from '~/@/vdom/primitives/svg/text'
@@ -13,8 +16,6 @@ import { NodeId } from '../../../numberlink/node-id'
 import { BoardInput } from '../../../ui/board'
 import { Color } from '../../../ui/color'
 import * as VariantGrid from '../grid'
-import { Line } from '~/@/vdom/primitives/svg/line'
-import { Circle } from '~/@/vdom/primitives/svg/circle'
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const TERMINAL_NODE_RADIUS = 0.33
@@ -81,7 +82,7 @@ const ViewGrid = (input: BoardInput<VariantGrid.Model>) => {
   return h(G, {}, [
     h(Defs, {}, [
       h(
-        'pattern',
+        Pattern,
         {
           id: 'grid',
           width: '1',
@@ -117,7 +118,7 @@ const ViewPipelines = (input: BoardInput<VariantGrid.Model>) => {
       transform: 'translate(0.5, 0.5)',
     },
     map(VariantGrid.yieldTerminals(input.model), (terminal) => {
-      return ViewPipeline({ ...input, terminal })
+      return h(ViewPipeline, { ...input, terminal })
     }),
   )
 }
@@ -166,7 +167,7 @@ const ViewPipeline = (
         r: TERMINAL_NODE_RADIUS,
         fill: groupColor,
       }),
-      shouldShowUsedHint && HintCheckmark({ x: terminal.start.x, y: terminal.start.y }),
+      shouldShowUsedHint && h(HintCheckmark, { x: terminal.start.x, y: terminal.start.y }),
       terminal.end &&
         h(G, {}, [
           h(Circle, {
@@ -175,14 +176,14 @@ const ViewPipeline = (
             r: TERMINAL_NODE_RADIUS,
             fill: groupColor,
           }),
-          shouldShowUsedHint && HintCheckmark({ x: terminal.end.x, y: terminal.end.y }),
+          shouldShowUsedHint && h(HintCheckmark, { x: terminal.end.x, y: terminal.end.y }),
         ]),
     ],
   )
 }
 
 const HintCheckmark = (input: { x: number; y: number }) => {
-  return WithPadding({
+  return h(WithPadding, {
     x: input.x - 0.5,
     y: input.y - 0.5,
     width: 1,

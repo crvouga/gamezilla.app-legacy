@@ -1,7 +1,8 @@
 import { TranslatedText } from '~/@/l18n'
+import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import type { VDom } from '~/@/vdom/vdom'
-import { h } from '~/@/vdom/h'
+import { Text } from '../vdom/primitives/svg/text'
 import { cn } from './cn'
 import { PAPER_CLASS_NAME } from './paper'
 
@@ -20,9 +21,7 @@ export const Select = <T>(props: {
 }) => {
   const labelId = `${props.id}-label`
   return h(Box, { class: 'flex w-full flex-col gap-1', 'data-testid': props.dataTestId }, [
-    h('label', { id: labelId, htmlFor: props.id, class: cn('text-base', props.error && 'text-red-500') }, [
-      props.label,
-    ]),
+    h(Text, { id: labelId, class: cn('text-base', props.error && 'text-red-500') }, [props.label]),
     h(
       // @ts-ignore
       'select',

@@ -6,6 +6,10 @@ import { COLUMN_COUNT, MAX_COLUMN_HEIGHT } from '../connect-four'
 import { gameTheme } from './shared'
 import { Defs } from '~/@/vdom/primitives/svg/defs'
 import { Circle } from '~/@/vdom/primitives/svg/circle'
+import { Pattern } from '~/@/vdom/primitives/svg/pattern'
+import { Mask } from '~/@/vdom/primitives/svg/mask'
+import { LinearGradient } from '~/@/vdom/primitives/svg/linear-gradient'
+import { Stop } from '~/@/vdom/primitives/svg/stop'
 
 const coverArtId = Uuid.generate()
 
@@ -23,28 +27,28 @@ export const CoverArt = (input: { class?: string }) => {
 
   return h(Svg, { width: '100%', viewBox: '0 0 2 2', ...input }, [
     h(Defs, {}, [
-      h('pattern', { id: ids.holePattern, patternUnits: 'userSpaceOnUse', width: 1, height: 1 }, [
+      h(Pattern, { id: ids.holePattern, patternUnits: 'userSpaceOnUse', width: 1, height: 1 }, [
         h(Circle, { cx: 0.5, cy: 0.5, r: 0.425, fill: 'black' }),
       ]),
 
-      h('mask', { id: ids.holeMask }, [
+      h(Mask, { id: ids.holeMask }, [
         h(Rect, { x: 0, y: 0, width: COLUMN_COUNT, height: MAX_COLUMN_HEIGHT, fill: 'white' }),
         h(Rect, { x: 0, y: 0, width: COLUMN_COUNT, height: MAX_COLUMN_HEIGHT, fill: `url(#${ids.holePattern})` }),
       ]),
 
-      h('linearGradient', { id: ids.columnGradient, gradientTransform: 'rotate(90)' }, [
-        h('stop', { offset: '0%', stopColor: gameTheme.primary.light }),
-        h('stop', { offset: '100%', stopColor: gameTheme.primary.dark }),
+      h(LinearGradient, { id: ids.columnGradient, gradientTransform: 'rotate(90)' }, [
+        h(Stop, { offset: '0%', stopColor: gameTheme.primary.light }),
+        h(Stop, { offset: '100%', stopColor: gameTheme.primary.dark }),
       ]),
 
-      h('linearGradient', { id: ids.playerOneGradient, gradientTransform: 'rotate(90)' }, [
-        h('stop', { offset: '0%', stopColor: gameTheme['player-one'].light }),
-        h('stop', { offset: '100%', stopColor: gameTheme['player-one'].dark }),
+      h(LinearGradient, { id: ids.playerOneGradient, gradientTransform: 'rotate(90)' }, [
+        h(Stop, { offset: '0%', stopColor: gameTheme['player-one'].light }),
+        h(Stop, { offset: '100%', stopColor: gameTheme['player-one'].dark }),
       ]),
 
-      h('linearGradient', { id: ids.playerTwoGradient, gradientTransform: 'rotate(90)' }, [
-        h('stop', { offset: '0%', stopColor: gameTheme['player-two'].light }),
-        h('stop', { offset: '100%', stopColor: gameTheme['player-two'].dark }),
+      h(LinearGradient, { id: ids.playerTwoGradient, gradientTransform: 'rotate(90)' }, [
+        h(Stop, { offset: '0%', stopColor: gameTheme['player-two'].light }),
+        h(Stop, { offset: '100%', stopColor: gameTheme['player-two'].dark }),
       ]),
     ]),
 

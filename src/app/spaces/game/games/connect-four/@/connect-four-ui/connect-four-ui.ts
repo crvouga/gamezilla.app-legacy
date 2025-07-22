@@ -4,6 +4,8 @@ import type { PlayerType } from '../connect-four'
 import { gameTheme } from './shared'
 import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { Circle } from '~/@/vdom/primitives/svg/circle'
+import { RadialGradient } from '~/@/vdom/primitives/svg/radial-gradient'
+import { Stop } from '~/@/vdom/primitives/svg/stop'
 
 export const PlayerIcon = ({ playerType, ...input }: { playerType: PlayerType; key?: string; class?: string }) => {
   switch (playerType) {
@@ -28,16 +30,16 @@ export const ViewPlayerOneGradientDef = ({
   cy: number
   r: number
 }) => {
-  return h('radialGradient', { id: gradientId, gradientTransform: 'rotate(90)', cx, cy, r }, [
-    h('stop', { offset: '50%', stopColor: gameTheme['player-one'].light }),
-    h('stop', { offset: '100%', stopColor: gameTheme['player-one'].dark }),
+  return h(RadialGradient, { id: gradientId, gradientTransform: 'rotate(90)', cx, cy, r }, [
+    h(Stop, { offset: '50%', stopColor: gameTheme['player-one'].light }),
+    h(Stop, { offset: '100%', stopColor: gameTheme['player-one'].dark }),
   ])
 }
 
 export const ViewPlayerTwoGradientDef = ({ gradientId }: { gradientId: string }) => {
-  return h('radialGradient', { id: gradientId, gradientTransform: 'rotate(90)' }, [
-    h('stop', { offset: '50%', stopColor: gameTheme['player-two'].light }),
-    h('stop', { offset: '100%', stopColor: gameTheme['player-two'].dark }),
+  return h(RadialGradient, { id: gradientId, gradientTransform: 'rotate(90)' }, [
+    h(Stop, { offset: '50%', stopColor: gameTheme['player-two'].light }),
+    h(Stop, { offset: '100%', stopColor: gameTheme['player-two'].dark }),
   ])
 }
 

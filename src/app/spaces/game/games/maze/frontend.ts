@@ -4,8 +4,11 @@ import { KeyboardKey } from '~/@/keyboard'
 import { Sub } from '~/@/sub'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
+import { Circle } from '~/@/vdom/primitives/svg/circle'
+import { ClipPath } from '~/@/vdom/primitives/svg/clip-path'
 import { Defs } from '~/@/vdom/primitives/svg/defs'
 import { G } from '~/@/vdom/primitives/svg/g'
+import { Line } from '~/@/vdom/primitives/svg/line'
 import { Rect } from '~/@/vdom/primitives/svg/rect'
 import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
@@ -20,8 +23,6 @@ import {
   type MsgToFrontend,
   initShared,
 } from './types'
-import { Line } from '~/@/vdom/primitives/svg/line'
-import { Circle } from '~/@/vdom/primitives/svg/circle'
 
 //
 //
@@ -273,7 +274,7 @@ const ViewJoystick = ({
 }) => {
   return h(Box, {}, [
     h(Svg, { width: '100%', viewBox: '-1 -1 2 2', class: 'touch-none overflow-hidden select-none' }, [
-      h(Defs, {}, [h('clipPath', { id: 'cut-off-bottom' }, [h(Circle, { x: '0', y: '0', r: 1 })])]),
+      h(Defs, {}, [h(ClipPath, { id: 'cut-off-bottom' }, [h(Circle, { x: '0', y: '0', r: 1 })])]),
       h(G, { 'stroke-width': 0.025 }, [
         h(G, { 'clip-path': 'url(#cut-off-bottom)', stroke }, [
           ...Direction.all.map((direction) => {

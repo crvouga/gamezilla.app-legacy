@@ -1,12 +1,12 @@
-import { Canvas } from '~/@/ui/canvas'
 import { cn } from '~/@/ui/cn'
 import { h } from '~/@/vdom/h'
+import { Canvas } from '~/@/vdom/primitives/canvas'
 import { NodeId } from '../../../numberlink/node-id'
 import { BoardInput } from '../../../ui/board'
 import { Color } from '../../../ui/color'
 import * as VariantGrid from '../grid'
 
-const paint = (model: VariantGrid.Model, ctx: CanvasRenderingContext2D) => {
+export const paint = (model: VariantGrid.Model, ctx: CanvasRenderingContext2D) => {
   const canvasWidth = ctx.canvas.width
   ctx.canvas.height = (canvasWidth * model.height) / model.width
   const canvasHeight = ctx.canvas.height
@@ -111,11 +111,12 @@ const View = ({
   onDraggedOver,
   onPressUp,
 }: BoardInput<VariantGrid.Model>) => {
-  return h(Canvas<VariantGrid.Model>, {
+  return h(Canvas, {
     class: cn('aspect-square w-full', isDragging ? 'cursor-grabbing' : 'cursor-grab'),
     watch: model,
-    paint: (value, ctx) => paint(value, ctx),
-    onMouseDown: (event) => {
+    // paint: (value, ctx) => paint(value, ctx),
+    onMouseDown: (event_: unknown) => {
+      const event = event_ as MouseEvent
       // event.preventDefault()
       // event.stopImmediatePropagation()
       // event.stopPropagation()
@@ -168,11 +169,8 @@ const View = ({
         onPressUp?.(nodeId)
       }
     },
-    onMouseMove: (event) => {
-      // event.preventDefault()
-      // event.stopImmediatePropagation()
-      // event.stopPropagation()
-      //
+    onMouseMove: (event_: unknown) => {
+      const event = event_ as MouseEvent
       const canvas = event.currentTarget as HTMLCanvasElement
       const rect = canvas.getBoundingClientRect()
       const x = (event.clientX - rect.left) / rect.width
@@ -199,10 +197,11 @@ const View = ({
         onDraggedOver?.(nodeId)
       }
     },
-    onTouchStart: (event) => {
+    onTouchStart: (event_: unknown) => {
       // event.preventDefault()
       // event.stopImmediatePropagation()
       // event.stopPropagation()
+      const event = event_ as TouchEvent
       const canvas = event.currentTarget as HTMLCanvasElement
       const rect = canvas.getBoundingClientRect()
       const x = ((event.touches[0]?.clientX ?? 0) - rect.left) / rect.width
@@ -225,7 +224,8 @@ const View = ({
         onPressDown?.(nodeId)
       }
     },
-    onTouchEnd: (event) => {
+    onTouchEnd: (event_: unknown) => {
+      const event = event_ as TouchEvent
       // event.preventDefault()
       // event.stopImmediatePropagation()
       // event.stopPropagation()
@@ -251,10 +251,11 @@ const View = ({
         onPressUp?.(nodeId)
       }
     },
-    onTouchMove: (event) => {
+    onTouchMove: (event_: unknown) => {
       // event.preventDefault()
       // event.stopImmediatePropagation()
       // event.stopPropagation()
+      const event = event_ as TouchEvent
       const canvas = event.currentTarget as HTMLCanvasElement
       const rect = canvas.getBoundingClientRect()
       const x = ((event.touches[0]?.clientX ?? 0) - rect.left) / rect.width

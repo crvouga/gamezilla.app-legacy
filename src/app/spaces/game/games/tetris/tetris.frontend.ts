@@ -24,6 +24,7 @@ import {
 } from './tetris.types'
 import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { Rect } from '~/@/vdom/primitives/svg/rect'
+import { Canvas } from '~/@/vdom/primitives/canvas'
 
 //
 //
@@ -302,7 +303,7 @@ export const subscriptions = (input: { ctx: AppFrontendCtxBase }): Sub<Msg> => {
 export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void }) => {
   return h(Box, {}, [
     h(Box, {}, [
-      h('canvas', {
+      h(Canvas, {
         onTouchMove: (e: unknown) => {
           // @ts-ignore
           const touch = e.touches[0]

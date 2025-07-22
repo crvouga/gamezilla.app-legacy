@@ -51,5 +51,5 @@ export const Circle = ({
   opacity?: number | string
 }) => {
   // @ts-ignore
-  return h(Circle, input, children)
+  return h('circle', input, children)
 }
