@@ -1,4 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import { h } from '~/@/vdom/h'
 import { Typography } from './typography'
 
@@ -17,7 +18,7 @@ export const Slider = ({
   step: number
   onInput?: (newValue: number) => void
 }) => {
-  return h('div', {}, [
+  return h(Box, {}, [
     h(Typography, { variant: 'label', text: label }),
     h('input', {
       type: 'range',

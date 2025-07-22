@@ -1,4 +1,5 @@
 import type { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import { AriaRole } from '~/@/html/aria-role'
 import { cn } from './cn'
 import { h } from '~/@/vdom/h'
@@ -64,7 +65,7 @@ export const Typography = (input: Props) => {
   const sizeClassName = input.sizeClassName ?? sizeClassNames[input.variant ?? 'body']
   const colorClassName = input.color && !input.skeleton ? colorClassNames[input.color] : null
   return h(
-    'div',
+    Box,
     {
       class: cn(sizeClassName, colorClassName, input.skeleton ? SKELETON_CLASS : null, input.class),
       role: input.role,

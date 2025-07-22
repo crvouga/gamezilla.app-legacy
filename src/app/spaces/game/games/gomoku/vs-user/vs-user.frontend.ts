@@ -1,4 +1,5 @@
 import { Eff } from '~/@/eff'
+import { Box } from '~/@/vdom/box'
 import { Sub } from '~/@/sub'
 import { h } from '~/@/vdom/h'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
@@ -141,5 +142,5 @@ export const View = (_input: {
   model: Model
   onCancel: () => void
 }) => {
-  return h('div', {}, ['View'])
+  return h(Box, {}, ['View'])
 }

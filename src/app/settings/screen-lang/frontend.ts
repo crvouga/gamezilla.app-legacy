@@ -1,4 +1,5 @@
 import { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import { translations } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
 import { Gutter } from '~/@/ui/gutter'
@@ -73,7 +74,7 @@ const View: FrontendModule['View'] = (input) => {
       back: { onClick: () => input.dispatch({ t: 'lang.clicked-back-button' }) },
     },
     renderBody: () =>
-      h('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
+      h(Box, { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
         ...LanguageCodeISO_639_1.ALL.map((langCode) =>
           h(ViewChooseLangListItem, {
             key: langCode,
@@ -98,7 +99,7 @@ const ViewChooseLangListItem = (input: {
   return ListItem({
     link: true,
     primary: TranslatedText.of(primary),
-    end: () => h('div', {}, [input.ctx.t(input.langCode)]),
+    end: () => h(Box, {}, [input.ctx.t(input.langCode)]),
     onClick: () => input.dispatch({ t: 'lang.clicked-lang', lang: input.langCode }),
     icon: (inputIcon) => h(RadioInputIcon, { class: inputIcon.class, status: toStatus(input) }),
   })

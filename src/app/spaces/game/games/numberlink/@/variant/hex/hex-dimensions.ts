@@ -1,4 +1,5 @@
 import { s } from '~/@/schema'
+import { Box } from '~/@/vdom/box'
 import { h } from '~/@/vdom/h'
 
 export const Model = s.obj({
@@ -25,5 +26,5 @@ export const init = (input: { width: number; height: number; side: number }): Mo
 }
 
 export const ViewForm = (_input: { form: Model; onInput: (dimensions: Model) => void }) => {
-  return h('div', {}, ['hex dimensions form'])
+  return h(Box, {}, ['hex dimensions form'])
 }

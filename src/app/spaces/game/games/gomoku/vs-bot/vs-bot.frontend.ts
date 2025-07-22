@@ -1,4 +1,5 @@
 import { Eff } from '~/@/eff'
+import { Box } from '~/@/vdom/box'
 import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { h } from '~/@/vdom/h'
@@ -140,5 +141,5 @@ export const subscriptions = (_ctx: AppFrontendCtx, model: Model): Sub<Msg> => {
 //
 
 export const View = (_input: { model: Model; ctx: AppFrontendCtx; dispatch: (m: Msg) => void; onBack: () => void }) => {
-  return h('div', {}, ['View'])
+  return h(Box, {}, ['View'])
 }

@@ -1,4 +1,5 @@
 import { ListItem } from '~/@/ui/list-item'
+import { Box } from '~/@/vdom/box'
 import { RadioInputIcon } from '~/@/ui/radio-input'
 import { h, VDomEngine } from '~/@/vdom/h'
 import { VDomImpl } from '~/@/vdom/vdom-impl'
@@ -54,7 +55,7 @@ export const TEST_ID_RENDERER_SCREEN = 'settings/renderer-screen'
 export const TEST_ID_RENDERER_MENU_ITEM = (vDomImpl: VDomImpl) => `settings/renderer-menu-item-${vDomImpl}`
 
 const View: FrontendModule['View'] = (input) => {
-  return ScreenLayout({
+  return h(ScreenLayout, {
     id: 'setting-renderer',
     dataTestId: TEST_ID_RENDERER_SCREEN,
     ctx: input.ctx,
@@ -67,7 +68,7 @@ const View: FrontendModule['View'] = (input) => {
     },
     renderBody: () =>
       h(
-        'div',
+        Box,
         { class: 'flex flex-1 flex-col overflow-y-scroll' },
         VDomImpl.VISIBLE.map((vDomImpl) => {
           const isSelected = vDomImpl === input.model.renderVDomImpl

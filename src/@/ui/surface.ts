@@ -1,4 +1,5 @@
 import { cn } from '~/@/ui/cn'
+import { Box } from '~/@/vdom/box'
 import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
 import { AriaRole } from '../html/aria-role'
@@ -13,7 +14,7 @@ export const Surface = (input: {
   'aria-label'?: string
 }) => {
   return h(
-    'div',
+    Box,
     {
       class: cn(SURFACE_CLASS_NAME, input.class),
       role: input.role,

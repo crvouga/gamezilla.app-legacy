@@ -1,4 +1,5 @@
 import type { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import type { Translator } from '~/@/l18n/generated'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconArrowLeft } from '~/@/ui/icon'
@@ -42,7 +43,7 @@ export const ScreenNavBarTablet = (input: {
         },
       }),
 
-    h('div', { class: 'flex flex-1 flex-col truncate' }, [
+    h(Box, { class: 'flex flex-1 flex-col truncate' }, [
       input.title &&
         h(Typography, {
           role: 'heading',
@@ -66,5 +67,5 @@ export const ScreenNavBarTablet = (input: {
 }
 
 export const ScreenNavBarTabletRoot = (input: { children: VDom }) => {
-  return h('div', { class: 'flex h-24 w-full shrink-0 items-center px-6' }, [input.children])
+  return h(Box, { class: 'flex h-24 w-full shrink-0 items-center px-6' }, [input.children])
 }

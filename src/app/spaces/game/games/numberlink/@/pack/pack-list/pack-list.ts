@@ -1,4 +1,5 @@
 import { descend } from '~/@/array/sorting'
+import { Box } from '~/@/vdom/box'
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { TimeSpan } from '~/@/time/time-span'
@@ -24,9 +25,9 @@ const View = (input: {
   const isLoading = PackDbQueryCache.isLoading(input.ctx, input.query)
   const isEmpty = PackDbQueryCache.isEmpty(input.ctx, input.query)
 
-  return h('div', { class: 'relative flex w-full flex-1 flex-col gap-2 overflow-hidden' }, [
+  return h(Box, { class: 'relative flex w-full flex-1 flex-col gap-2 overflow-hidden' }, [
     h(
-      'div',
+      Box,
       {
         class:
           'relative flex max-h-full w-full flex-1 flex-col items-center overflow-x-hidden overflow-y-scroll border-t-neutral-800',
@@ -62,7 +63,7 @@ const ViewPackListItem = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pa
     },
     [
       false && h(IconBox, { class: 'h-9 w-9 shrink-0' }),
-      h('div', { class: 'flex flex-1 flex-col overflow-hidden' }, [
+      h(Box, { class: 'flex flex-1 flex-col overflow-hidden' }, [
         h(Typography, { text: TranslatedText.of(input.pack.name), variant: 'body' }),
         h(Typography, { text: toListItemSecondaryText(input), variant: 'subtitle', color: 'text-secondary' }),
       ]),

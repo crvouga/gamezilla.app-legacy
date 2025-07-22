@@ -1,4 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import type { VDom } from '~/@/vdom/vdom'
 import { h } from '~/@/vdom/h'
 import { Typography } from './typography'
@@ -15,13 +16,13 @@ export const EmptyState = (input: {
   // } | null
 }) => {
   return h(
-    'div',
+    Box,
     {
       class: 'flex h-full w-full flex-1 flex-col items-center justify-center gap-2 px-6 text-center',
       'data-testid': EMPTY_STATE_TEST_ID,
     },
     [
-      h('div', { class: 'flex flex-col items-center justify-center gap-2 pb-20' }, [
+      h(Box, { class: 'flex flex-col items-center justify-center gap-2 pb-20' }, [
         input.renderIcon({ class: 'size-14 opacity-60' }),
         h(Typography, { variant: 'body', text: input.label, class: 'pb-3 text-lg font-semibold opacity-60' }),
         // {input.action && (

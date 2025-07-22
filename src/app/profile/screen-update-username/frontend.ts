@@ -1,4 +1,5 @@
 import { RequestResponse } from '~/@/request-response/request-response'
+import { Box } from '~/@/vdom/box'
 import { TextField } from '~/@/ui/text-field'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
@@ -67,7 +68,7 @@ const View: FrontendModule['View'] = (input) => {
       cancelDisabled: false,
     },
     renderBody: () =>
-      h('div', { class: 'flex w-full flex-col gap-4 p-4' }, [
+      h(Box, { class: 'flex w-full flex-col gap-4 p-4' }, [
         h(TextField, {
           id: 'username',
           label: input.ctx.t('username.username-label'),

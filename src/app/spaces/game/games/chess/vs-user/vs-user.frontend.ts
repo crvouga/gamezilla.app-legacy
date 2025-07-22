@@ -1,4 +1,5 @@
 import { Eff } from '~/@/eff'
+import { Box } from '~/@/vdom/box'
 import { exhaustive } from '~/@/function/exhaustive'
 import { Option } from '~/@/option/option'
 import { isErr } from '~/@/result'
@@ -417,9 +418,9 @@ export const View = ({
   onQuit: () => void
 }) => {
   if (model.spaceModel.type === 'setup') {
-    return h('div', {}, [
-      h('div', { class: 'flex-1' }),
-      h('div', { class: 'flex items-center gap-4 p-4' }, [
+    return h(Box, {}, [
+      h(Box, { class: 'flex-1' }),
+      h(Box, { class: 'flex items-center gap-4 p-4' }, [
         h(Button, {
           class: 'flex-1',
           onClick: onQuit,
@@ -454,7 +455,7 @@ export const View = ({
   //   (color) => (model.isFlipped ? Chess.toOppositeColor(color) : color)
   // );
 
-  return h('div', {}, [
+  return h(Box, {}, [
     /* h(Chessboard, {
       model: board,
       boardOrientation: boardOrientation,
@@ -481,7 +482,7 @@ export const View = ({
       },
     }), */
 
-    h('div', { class: 'flex-1' }),
+    h(Box, { class: 'flex-1' }),
 
     h(ViewGameOverDialog, { model, dispatch }),
   ])
@@ -489,14 +490,14 @@ export const View = ({
 
 const ViewGameOverDialog = ({ model }: { model: Model; dispatch: (msg: Msg) => void }) => {
   if (model.spaceModel.type === 'setup') {
-    return h('span', {}, [toGameText(model.spaceModel)])
+    return h(Box, {}, [toGameText(model.spaceModel)])
   }
 
   if (model.spaceModel.type === 'game') {
-    return h('span', {})
+    return h(Box, {})
   }
 
-  return h('span', {})
+  return h(Box, {})
 }
 
 const toGameText = (model: SpaceModel): string => {

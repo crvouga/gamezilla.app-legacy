@@ -4,6 +4,7 @@ import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { IconCheckmark } from '~/@/ui/icon'
 import { Transition } from '~/@/ui/transition/transition'
+import { Box } from '~/@/vdom/box'
 import { h } from '~/@/vdom/h'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
@@ -28,7 +29,7 @@ const View = (input: {
 }) => {
   const numberlink = toNumberlink(input.model, input.numberlink)
 
-  return h('div', { class: 'relative aspect-square h-full max-h-full w-full touch-none overflow-hidden select-none' }, [
+  return h(Box, { class: 'relative aspect-square h-full max-h-full w-full touch-none overflow-hidden select-none' }, [
     h(NumberlinkVariantBoard.View, {
       disabled: input.disabled,
       model: numberlink,
@@ -114,7 +115,7 @@ const CheckmarkAnimation = (input: { open: boolean; duration?: TimeSpan | null |
     },
     [
       input.open &&
-        h('div', { class: 'pointer-events-none absolute inset-0 flex items-center justify-center opacity-0' }, [
+        h(Box, { class: 'pointer-events-none absolute inset-0 flex items-center justify-center opacity-0' }, [
           h(IconCheckmark, { class: 'pointer-events-none aspect-square w-full opacity-50' }),
         ]),
     ],

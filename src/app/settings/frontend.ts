@@ -1,4 +1,5 @@
 import { Eff } from '~/@/eff'
+import { Box } from '~/@/vdom/box'
 import { TranslatedText } from '~/@/l18n'
 import { Sub } from '~/@/sub'
 import { Clickable } from '~/@/ui/clickable'
@@ -172,17 +173,17 @@ const ViewMain: FrontendModule['View'] = (props) => {
       back: { onClick: () => props.dispatch({ t: 'settings.clicked-back-button' }) },
     },
     renderBody: () =>
-      h('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
+      h(Box, { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
         h(ListItem, {
           primary: props.ctx.t('l18n.language'),
-          end: () => h('div', {}, [props.ctx.t(props.model.lang)]),
+          end: () => h(Box, {}, [props.ctx.t(props.model.lang)]),
           onClick: () => props.dispatch({ t: 'settings.clicked-open-lang' }),
           link: true,
           icon: (inputIcon) => IconLanguage(inputIcon),
         }),
         h(ListItem, {
           primary: props.ctx.t('l18n.renderer'),
-          end: () => h('div', {}, [VDomImpl.toName(props.model.renderVDomImpl)]),
+          end: () => h(Box, {}, [VDomImpl.toName(props.model.renderVDomImpl)]),
           onClick: () => props.dispatch({ t: 'settings.clicked-open-renderer' }),
           icon: (inputIcon) => IconCode(inputIcon),
           link: true,
@@ -220,7 +221,7 @@ const ViewLogoutListItem: FrontendModule['View'] = (input) => {
 const ViewTopBar: FrontendModule['View'] = (props) => {
   const iconSize = props.ctx.screenSize === 'mobile' ? 'size-3' : 'size-4'
 
-  return h('div', { class: cn(props.ctx.screenSize === 'mobile' ? 'w-full' : 'fixed top-0 right-0 z-10 w-fit') }, [
+  return h(Box, { class: cn(props.ctx.screenSize === 'mobile' ? 'w-full' : 'fixed top-0 right-0 z-10 w-fit') }, [
     h(SurfaceLayout, {
       ctx: props.ctx,
       ariaLabel: props.ctx.t('status-bar.status-bar'),
@@ -259,7 +260,7 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
       },
       body: {
         render: () =>
-          h('div', { 'data-testid': TEST_ID_TOP_BAR_DROP_DOWN_SURFACE }, [
+          h(Box, { 'data-testid': TEST_ID_TOP_BAR_DROP_DOWN_SURFACE }, [
             h(BackendConnectionStatus.ViewListItem, {
               ctx: props.ctx,
               model: props.ctx.backendConnectionStatus,

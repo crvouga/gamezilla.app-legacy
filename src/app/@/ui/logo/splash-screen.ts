@@ -1,11 +1,12 @@
 import { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { LOGO_TEXT } from './logo-text'
 
 export const SplashScreen = (input: { reason: TranslatedText }) => {
   return h(
-    'div',
+    Box,
     {
       class: 'fixed inset-0 grid place-items-center gap-4 text-7xl',
     },

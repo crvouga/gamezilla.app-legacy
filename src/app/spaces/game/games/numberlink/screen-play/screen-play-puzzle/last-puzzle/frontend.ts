@@ -1,4 +1,3 @@
-import { TimeSpan } from '~/@/time/time-span'
 import { Button } from '~/@/ui/button'
 import { Dialog } from '~/@/ui/surface-dialog/dialog'
 import { DialogSurface } from '~/@/ui/surface-dialog/dialog-surface'
@@ -34,12 +33,7 @@ const update: FrontendModule['update'] = (input) => {
   }
 }
 
-const ViewDialog = (input: {
-  open: boolean
-  delay: TimeSpan
-  dispatch: (m: MsgFrontend) => void
-  ctx: AppFrontendCtx
-}) => {
+const ViewDialog = (input: { open: boolean; dispatch: (m: MsgFrontend) => void; ctx: AppFrontendCtx }) => {
   const onClose = () => {
     input.dispatch({
       t: 'got-msg-space',
@@ -47,7 +41,7 @@ const ViewDialog = (input: {
     })
   }
 
-  return h(Dialog, { delay: TimeSpan.seconds(1), open: input.open, onClose }, [
+  return h(Dialog, { delay: '300ms', open: input.open, onClose }, [
     h(DialogSurface, {}, [
       h(SurfaceHeader, { ctx: input.ctx, title: input.ctx.t('app.congratulations'), onClose }),
 

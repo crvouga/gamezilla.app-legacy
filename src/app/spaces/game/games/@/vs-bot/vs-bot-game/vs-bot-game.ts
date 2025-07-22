@@ -1,4 +1,5 @@
 import type { UserId } from '~/app/@/data/user-id'
+import { Box } from '~/@/vdom/box'
 import { IconRobot } from '~/@/ui/icon'
 import { Paper } from '~/@/ui/paper'
 import { Avatar } from '~/@/ui/avatar'
@@ -122,7 +123,7 @@ export const ViewStatusBar = (input: VsBotInput & { status: Status }) => {
       class: 'relative h-8 w-full',
     },
     [
-      h('div', { key: statusToKey(input.status), class: 'absolute inset-0 flex items-center justify-center gap-1' }, [
+      h(Box, { key: statusToKey(input.status), class: 'absolute inset-0 flex items-center justify-center gap-1' }, [
         ViewStatusBarContent(input),
       ]),
     ],
@@ -166,7 +167,7 @@ const ViewStatusBarContent = (input: VsBotInput & { status: Status }) => {
     case 'playing': {
       switch (input.status.turn) {
         case 'player-one': {
-          return h('div', {}, [
+          return h(Box, {}, [
             input.playerOne.renderIcon({
               class: 'h-5 w-5',
             }),
@@ -175,7 +176,7 @@ const ViewStatusBarContent = (input: VsBotInput & { status: Status }) => {
         }
 
         case 'player-two': {
-          return h('div', {}, [
+          return h(Box, {}, [
             input.playerTwo.renderIcon({
               class: 'h-5 w-5',
             }),
@@ -218,13 +219,13 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
             onClick: !input.isSpectating ? input.onPlayAgain : undefined,
           },
           [
-            h('div', { class: 'flex-1' }),
+            h(Box, { class: 'flex-1' }),
             h(Winner, { ...input, winner: gameOver.winner }),
             input.onPlayAgain && !input.isSpectating
-              ? h('div', { class: 'flex flex-1 items-center justify-center pb-2 text-2xl font-bold' }, [
+              ? h(Box, { class: 'flex flex-1 items-center justify-center pb-2 text-2xl font-bold' }, [
                   'Tap to play again',
                 ])
-              : h('div', { class: 'flex-1' }),
+              : h(Box, { class: 'flex-1' }),
           ],
         ),
       gameOver?.t === 'draw' &&
@@ -236,13 +237,13 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
             onClick: !input.isSpectating ? input.onPlayAgain : undefined,
           },
           [
-            h('div', { class: 'flex-1' }),
+            h(Box, { class: 'flex-1' }),
             h(Draw, input),
             input.onPlayAgain && !input.isSpectating
-              ? h('div', { class: 'flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0' }, [
+              ? h(Box, { class: 'flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0' }, [
                   'Tap to play again',
                 ])
-              : h('div', { class: 'flex-1' }),
+              : h(Box, { class: 'flex-1' }),
           ],
         ),
     ].filter(Boolean),
@@ -250,18 +251,18 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
 }
 
 const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { winner: PlayerType }) => {
-  const humanSlot = h('div', {}, [
+  const humanSlot = h(Box, {}, [
     h(Avatar, { class: 'size-16', src: UserProfile.toAvatarUrl(ctx.profilesByUserId[human.userId]) }),
   ])
 
-  const botSlot = h('div', {}, [
+  const botSlot = h(Box, {}, [
     bot.renderIcon({
       class: 'size-16',
     }),
   ])
 
-  const playerOneSlot = h('div', { class: 'flex flex-col items-center justify-center gap-3' }, [
-    h('div', { class: 'flex items-center justify-center gap-3' }, [
+  const playerOneSlot = h(Box, { class: 'flex flex-col items-center justify-center gap-3' }, [
+    h(Box, { class: 'flex items-center justify-center gap-3' }, [
       playerOne.renderIcon({
         class: 'size-16',
       }),
@@ -274,8 +275,8 @@ const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { win
     }),
   ])
 
-  const playerTwoSlot = h('div', { class: 'flex flex-col items-center justify-center gap-3' }, [
-    h('div', { class: 'flex items-center justify-center gap-3' }, [
+  const playerTwoSlot = h(Box, { class: 'flex flex-col items-center justify-center gap-3' }, [
+    h(Box, { class: 'flex items-center justify-center gap-3' }, [
       playerTwo.renderIcon({
         class: 'size-16',
       }),
@@ -288,54 +289,54 @@ const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { win
     }),
   ])
 
-  return h('div', { class: 'grid w-full flex-1 grid-cols-2 items-center' }, [playerOneSlot, playerTwoSlot])
+  return h(Box, { class: 'grid w-full flex-1 grid-cols-2 items-center' }, [playerOneSlot, playerTwoSlot])
 }
 
 const Draw = (input: Input) => {
-  const humanSlot = h('div', {}, [
+  const humanSlot = h(Box, {}, [
     h(Avatar, { src: UserProfile.toAvatarUrl(input.ctx.profilesByUserId[input.ctx.currentUser.userId]) }),
   ])
 
-  const botSlot = h('div', {}, [h(IconRobot, { class: 'size-6' })])
+  const botSlot = h(Box, {}, [h(IconRobot, { class: 'size-6' })])
 
-  const playerOneSlot = h('div', {}, [
+  const playerOneSlot = h(Box, {}, [
     input.playerOne.renderIcon({
       class: 'h-5 w-5',
     }),
     input.human.player === 'player-one' ? humanSlot : botSlot,
   ])
 
-  const playerTwoSlot = h('div', {}, [
+  const playerTwoSlot = h(Box, {}, [
     input.playerTwo.renderIcon({
       class: 'h-5 w-5',
     }),
     input.human.player === 'player-two' ? humanSlot : botSlot,
   ])
 
-  return h('div', { class: 'flex h-full w-full flex-1 items-center justify-center' }, [
-    h('div', {}, [playerOneSlot, playerTwoSlot]),
-    h('p', {}, ['Tie']),
+  return h(Box, { class: 'flex h-full w-full flex-1 items-center justify-center' }, [
+    h(Box, {}, [playerOneSlot, playerTwoSlot]),
+    h(Box, {}, ['Tie']),
   ])
 }
 
 export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn }: VsBotGameInput) => {
   const profile = ctx.profilesByUserId[human.userId]
-  const humanSlot = h('div', {}, [
+  const humanSlot = h(Box, {}, [
     h(Avatar, { class: 'size-6', src: UserProfile.toAvatarUrl(profile) }),
     profile && h(Typography, { class: 'truncate', variant: 'body', text: ctx.t('username', profile.username) }),
   ])
 
-  const botSlot = h('div', {}, [
+  const botSlot = h(Box, {}, [
     bot.renderIcon({
       class: 'size-6 flex-shrink-0',
     }),
     h(Typography, { class: 'truncate', variant: 'body', text: bot.label }),
   ])
 
-  return h('section', { class: 'flex w-full items-center gap-3 px-3' }, [
-    h('div', { class: 'flex w-1/2 items-center justify-center overflow-hidden' }, [
+  return h(Box, { class: 'flex w-full items-center gap-3 px-3' }, [
+    h(Box, { class: 'flex w-1/2 items-center justify-center overflow-hidden' }, [
       h(Slot, { active: turn === 'player-one' }, [
-        h('div', {}, [
+        h(Box, {}, [
           playerOne.renderIcon({
             class: 'size-6',
           }),
@@ -343,7 +344,7 @@ export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn
         human.player === 'player-one' ? humanSlot : botSlot,
       ]),
     ]),
-    h('div', { class: 'flex w-1/2 items-center justify-center overflow-hidden' }, [
+    h(Box, { class: 'flex w-1/2 items-center justify-center overflow-hidden' }, [
       h(Slot, { active: turn === 'player-two' }, [
         playerTwo.renderIcon({
           class: 'size-6',

@@ -1,4 +1,5 @@
 import { Sub } from '~/@/sub'
+import { Box } from '~/@/vdom/box'
 import { Button } from '~/@/ui/button'
 import { IconArrowLeft } from '~/@/ui/icon'
 import { h } from '~/@/vdom/h'
@@ -31,7 +32,7 @@ export const TEST_ID_NUMBERLINK_PACK_BUILDER_SCREEN = 'numberlink-pack-builder-s
 
 const View: FrontendModule['View'] = (input) => {
   return h(
-    'div',
+    Box,
     { class: 'w-full h-full flex flex-col flex-1', 'data-testid': TEST_ID_NUMBERLINK_PACK_BUILDER_SCREEN },
     [h(ViewScreen, input), h(EditPackNameFrontend.ViewSurface, input)],
   )

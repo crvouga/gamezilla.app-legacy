@@ -1,4 +1,5 @@
 import { AriaRole } from '~/@/html/aria-role'
+import { Box } from '~/@/vdom/box'
 import { h } from '~/@/vdom/h'
 import { Clickable } from '../clickable'
 import { cn } from '../cn'
@@ -11,7 +12,7 @@ export const PaginationDots = (input: { count: number; activeIndex: number; onCl
   if (input.count <= 1) return null
 
   return h(
-    'div',
+    Box,
     {
       class: 'flex items-center justify-center space-x-2',
       role: 'tablist',
@@ -29,7 +30,7 @@ export const PaginationDots = (input: { count: number; activeIndex: number; onCl
       if (input.onClick) {
         return h(Clickable, { ...baseProps, onClick: () => input.onClick?.(i) })
       }
-      return h('div', {
+      return h(Box, {
         ...baseProps,
         'aria-selected': baseProps['aria-selected'] ? 'true' : 'false',
         onClick: () => input.onClick?.(i),

@@ -1,4 +1,5 @@
 import { type WithEventId } from '~/@/event-sourced/event'
+import { Box } from '~/@/vdom/box'
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { IconArrowLeft, IconArrowRotateLeft, IconRightLeft } from '~/@/ui/icon'
@@ -404,12 +405,12 @@ const View: Module['View'] = (input) => {
     id: 'connect-four-vs-bot',
     renderBody: () =>
       h(LayoutGame, { ctx: input.ctx, isSpectating }, [
-        h('div', { class: 'flex w-full flex-1 flex-col items-center justify-center gap-1' }, [
+        h(Box, { class: 'flex w-full flex-1 flex-col items-center justify-center gap-1' }, [
           h(VsBotGame.VsBotPlayerSection, vsBotGameInput),
 
           h(VsBotGame.ViewStatusBar, { ...vsBotSetupInput, status: toVsBotStatus(status) }),
 
-          h('div', { class: 'relative flex w-full flex-col items-center justify-center overflow-hidden' }, [
+          h(Box, { class: 'relative flex w-full flex-col items-center justify-center overflow-hidden' }, [
             h(ViewColumns, {
               gameId: 0,
               columns: columns,

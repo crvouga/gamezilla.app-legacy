@@ -1,4 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import type { VDom } from '~/@/vdom/vdom'
 import { h } from '~/@/vdom/h'
 import { cn } from './cn'
@@ -18,7 +19,7 @@ export const Select = <T>(props: {
   onChange: (value: T) => void
 }) => {
   const labelId = `${props.id}-label`
-  return h('div', { class: 'flex w-full flex-col gap-1', 'data-testid': props.dataTestId }, [
+  return h(Box, { class: 'flex w-full flex-col gap-1', 'data-testid': props.dataTestId }, [
     h('label', { id: labelId, htmlFor: props.id, class: cn('text-base', props.error && 'text-red-500') }, [
       props.label,
     ]),
@@ -58,6 +59,6 @@ export const Select = <T>(props: {
         )
       }),
     ),
-    props.helperText && h('div', { class: cn('text-sm', props.error && 'text-red-500') }, [props.helperText]),
+    props.helperText && h(Box, { class: cn('text-sm', props.error && 'text-red-500') }, [props.helperText]),
   ])
 }

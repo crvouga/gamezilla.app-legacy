@@ -1,4 +1,5 @@
 import { Translator } from '~/@/l18n/generated'
+import { Box } from '~/@/vdom/box'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 
@@ -8,7 +9,7 @@ export const AuthScreenHeaderCta = (input: {
   }
 }) => {
   return h(
-    'div',
+    Box,
     {
       class: 'flex w-full flex-col items-start justify-center',
     },
@@ -18,7 +19,7 @@ export const AuthScreenHeaderCta = (input: {
         variant: 'title',
       }),
       h(
-        'span',
+        Box,
         {
           class:
             'bg-gradient-to-b from-blue-400 to-blue-500 bg-clip-text pb-2 text-5xl font-extrabold text-transparent',

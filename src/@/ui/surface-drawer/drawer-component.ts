@@ -1,4 +1,5 @@
 import { cn } from '~/@/ui/cn'
+import { Box } from '~/@/vdom/box'
 import { h } from '~/@/vdom/h'
 import { Gutter } from '../gutter'
 import { Portal } from '../portal'
@@ -10,7 +11,7 @@ import { preventConsoleErrorWhenClosingDrawer } from './drawer-shared'
 export const DrawerComponent = (props: DrawerProps) => {
   return h(Portal.Entrance, { portalId: DRAWER_PORTAL_ID }, [
     h(
-      'div',
+      Box,
       {
         id: props.id,
         'aria-hidden': props.open ? 'false' : 'true',
@@ -24,7 +25,7 @@ export const DrawerComponent = (props: DrawerProps) => {
         ),
       },
       [
-        h('div', {
+        h(Box, {
           class: 'w-full flex-1',
           'aria-label': props.ctx.t('drawer.close'),
           onClick: (event: unknown) => {

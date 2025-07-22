@@ -3,6 +3,7 @@ import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
 import { Clickable } from '../clickable'
 import { cn } from '../cn'
+import { Box } from '~/@/vdom/box'
 
 export type ChipSize = 'sm' | 'lg'
 
@@ -25,7 +26,7 @@ export const Chip = (input: ChipProps) => {
       input.renderStartIcon?.({
         class: cn(toIconSizeClass(input), 'shrink-0'),
       }),
-      h('span', { class: 'truncate' }, [input.label]),
+      h(Box, { class: 'truncate' }, [input.label]),
     ],
   )
 }
@@ -44,7 +45,7 @@ const Tag = ({
     case 'button':
       return h(Clickable, input, [children])
     default:
-      return h('div', input, [children])
+      return h(Box, input, [children])
   }
 }
 

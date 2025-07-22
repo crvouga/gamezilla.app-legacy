@@ -1,4 +1,5 @@
 import { cn } from '~/@/ui/cn'
+import { Box } from '~/@/vdom/box'
 import { PAPER_CLASS_NAME } from './paper'
 import { h } from '~/@/vdom/h'
 
@@ -29,7 +30,7 @@ export const ToggleButton = ({
       checked: checked,
       onChange: onChange,
     }),
-    h('div', {
+    h(Box, {
       class: cn(
         `peer h-6 w-11 rounded-full bg-neutral-200 peer-checked:bg-blue-500 peer-focus:ring-4 peer-focus:ring-blue-500 after:absolute after:start-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:border after:border-neutral-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white rtl:peer-checked:after:-translate-x-full dark:peer-focus:ring-blue-500`,
         PAPER_CLASS_NAME,

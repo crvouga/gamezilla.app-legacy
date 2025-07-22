@@ -1,4 +1,5 @@
 import type { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import type { Translator } from '~/@/l18n/generated'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconArrowLeft } from '~/@/ui/icon'
@@ -25,7 +26,7 @@ export const ScreenNavBarMobile = (input: {
     input.back?.renderSurface ?? ((input: { dropDown: DropDownConfig }) => input.dropDown.reference?.render())
   const shouldRenderBack = input.back && typeof input.back.onClick === 'function'
   return h(
-    'div',
+    Box,
     {
       class: 'flex h-16 w-full shrink-0 items-center truncate px-6 text-center',
     },
@@ -49,7 +50,7 @@ export const ScreenNavBarMobile = (input: {
         }),
 
       h(
-        'div',
+        Box,
         {
           class: 'flex flex-1 flex-col truncate',
         },

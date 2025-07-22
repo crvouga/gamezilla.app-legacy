@@ -1,4 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import { Sub } from '~/@/sub'
 import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
@@ -68,7 +69,7 @@ const ViewBody: typeof View = (input) => {
 
   const isCurrentUserProfile = input.ctx.currentUser?.userId === userId
 
-  return h('div', { class: 'flex w-full flex-col items-center gap-4 p-6' }, [
+  return h(Box, { class: 'flex w-full flex-col items-center gap-4 p-6' }, [
     h(Avatar, { class: 'size-28', src: UserProfile.toAvatarUrl(profile), alt: 'profile avatar' }),
     h(Typography, {
       variant: 'title',
@@ -76,7 +77,7 @@ const ViewBody: typeof View = (input) => {
     }),
 
     isCurrentUserProfile
-      ? h('div', { class: 'flex w-full items-center justify-center gap-6 pt-4' }, [
+      ? h(Box, { class: 'flex w-full items-center justify-center gap-6 pt-4' }, [
           h(Button, {
             onClick: () =>
               input.dispatch({ t: 'got-msg-out', c: PushScreenCmd.init({ t: 'profile-edit', n: 'profile' }) }),

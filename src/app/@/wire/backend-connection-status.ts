@@ -1,4 +1,5 @@
 import { Translator } from '~/@/l18n/generated'
+import { Box } from '~/@/vdom/box'
 import { TimeSpan } from '~/@/time/time-span'
 import { cn } from '~/@/ui/cn'
 import { ListItem } from '~/@/ui/list-item'
@@ -60,8 +61,8 @@ const ViewListItem = (input: { model: BackendConnectionStatus; ctx: { t: Transla
 }
 
 const Dot = (input: { class: string; colorClassName: string }) => {
-  return h('div', { class: cn(input.class, 'aspect-square shrink-0 p-[1px]') }, [
-    h('div', { class: cn(input.colorClassName, 'h-full w-full shrink-0 rounded-full') }),
+  return h(Box, { class: cn(input.class, 'aspect-square shrink-0 p-[1px]') }, [
+    h(Box, { class: cn(input.colorClassName, 'h-full w-full shrink-0 rounded-full') }),
   ])
 }
 

@@ -1,9 +1,10 @@
+import { Box } from '~/@/vdom/box'
 import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
 
 export const ViewAppRoot = (input: { children: VDom[] }) => {
   return h(
-    'div',
+    Box,
     {
       class:
         'relative flex h-[100dvh] w-[100dvw] flex-col items-center justify-center overflow-hidden bg-black text-white',

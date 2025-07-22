@@ -1,4 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import { Translator } from '~/@/l18n/generated'
 import { Avatar } from '~/@/ui/avatar'
 import { Typography } from '~/@/ui/typography'
@@ -16,10 +17,10 @@ export const ProfileListItem = ({
   profile?: UserProfile | null
   subtitle?: TranslatedText
 }) => {
-  return h('div', { class: 'flex w-full items-center gap-2 p-2' }, [
+  return h(Box, { class: 'flex w-full items-center gap-2 p-2' }, [
     h(Avatar, { class: 'size-12', src: profile ? UserProfile.toAvatarUrl(profile) : '' }),
     h(
-      'div',
+      Box,
       { class: 'flex flex-1 flex-col gap-0.5' },
       [
         profile && h(Typography, { variant: 'body', text: ctx.t('username', profile.username) }),

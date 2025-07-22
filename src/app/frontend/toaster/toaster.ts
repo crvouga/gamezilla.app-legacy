@@ -1,4 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
 import { Time } from '~/@/time/time'
@@ -161,7 +162,7 @@ const onExit = async (node: HTMLElement) => {
 const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) => {
   const errorMsg = input.toast.errorMsg
   return h(
-    'div',
+    Box,
     {
       key: input.toast.toastId,
       id: String(input.toast.toastId),
@@ -178,9 +179,9 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
       onContextMenu: (e: any) => e.preventDefault(),
     },
     [
-      h('div', { class: cn('w-full bg-black', toWidthClass(input)) }, [
+      h(Box, { class: cn('w-full bg-black', toWidthClass(input)) }, [
         h(
-          'div',
+          Box,
           {
             class: cn(
               'pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden rounded-lg border p-3 text-lg text-white shadow-2xl',

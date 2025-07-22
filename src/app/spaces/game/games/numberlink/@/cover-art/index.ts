@@ -1,4 +1,5 @@
 import { pipe } from '~/@/function/pipe'
+import { Box } from '~/@/vdom/box'
 import { h } from '~/@/vdom/h'
 import { VariantGridBoard, VariantGridShorthand } from '../variant/grid'
 
@@ -36,7 +37,7 @@ const GRIDS = [
 const GRID = GRIDS[3]
 
 export const CoverArt = (input: { class?: string }) => {
-  return h('div', { class: input.class }, [
+  return h(Box, { class: input.class }, [
     h(VariantGridBoard.View, {
       model: GRID,
       disabled: true,

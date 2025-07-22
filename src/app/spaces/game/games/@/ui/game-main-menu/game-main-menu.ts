@@ -1,4 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import { Translator } from '~/@/l18n/generated'
 import { isOk } from '~/@/result'
 import { s } from '~/@/schema'
@@ -91,7 +92,7 @@ export const View = (props: {
     navBar: { title: props.title, back: { onClick: props.onBack } },
     renderCoverArt: props.renderCoverArt,
     renderBody: () =>
-      h('div', { class: 'flex w-full flex-col gap-6 px-6', role: 'menu' }, [
+      h(Box, { class: 'flex w-full flex-col gap-6 px-6', role: 'menu' }, [
         ...props.buttons.map((button) =>
           h(ViewMainMenuButton, {
             key: `${button.title}${button.description}`,
@@ -113,7 +114,7 @@ const ViewMainMenuButton = (props: MainMenuButton) => {
     },
     [
       props.renderIcon({ class: 'aspect-square size-12' }),
-      h('div', { class: 'flex flex-1 flex-col gap-1 text-left' }, [
+      h(Box, { class: 'flex flex-1 flex-col gap-1 text-left' }, [
         h(Typography, {
           variant: 'title',
           text: props.title,

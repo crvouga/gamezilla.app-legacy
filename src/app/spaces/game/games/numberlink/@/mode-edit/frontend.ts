@@ -1,4 +1,5 @@
 import { History } from '~/@/history'
+import { Box } from '~/@/vdom/box'
 import { IconArrowRotateLeft, IconArrowRotateRight, IconExpand, IconXMark } from '~/@/ui/icon'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { Typography } from '~/@/ui/typography'
@@ -114,7 +115,7 @@ const View = (input: {
 
 const ViewStatus: typeof View = (input) => {
   const position = ModeEdit.toCurrentPlacingTerminalPosition(input.model) === 'start' ? 'first' : 'last'
-  return h('div', { class: 'flex w-full items-center justify-center gap-1 p-2' }, [
+  return h(Box, { class: 'flex w-full items-center justify-center gap-1 p-2' }, [
     h(Typography, {
       variant: 'body',
       text: input.ctx.t('game.numberlink.placing', { position }),

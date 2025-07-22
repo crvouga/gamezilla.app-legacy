@@ -1,4 +1,5 @@
 import { Eff } from '~/@/eff'
+import { Box } from '~/@/vdom/box'
 import { exhaustive } from '~/@/function/exhaustive'
 import { Option } from '~/@/option/option'
 import { type Result, isErr } from '~/@/result'
@@ -184,10 +185,10 @@ export const subscriptions = (input: { ctx: AppFrontendCtxBase }): Sub<Msg> => {
 
 export const View = ({ model, dispatch }: { ctx: AppFrontendCtx; model: Model; dispatch: (msg: Msg) => void }) => {
   if (model.gameStatus.type === 'GameSetup') {
-    return h('div', {}, ['View'])
+    return h(Box, {}, ['View'])
   }
 
-  return h('div', {}, [h(ViewBoard, { model, dispatch })])
+  return h(Box, {}, [h(ViewBoard, { model, dispatch })])
 }
 
 export const ViewBoard = (_input: { model: Model; dispatch: (msg: Msg) => void }) => {

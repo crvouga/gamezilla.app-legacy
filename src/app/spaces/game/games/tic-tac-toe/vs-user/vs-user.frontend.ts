@@ -1,4 +1,5 @@
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/box'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { VsUserSetupScreen } from '~/app/spaces/game/games/@/vs-user'
 import { toTurn } from '../@/tic-tic-toe/tic-tac-toe'
@@ -189,7 +190,7 @@ export const View = ({
           },
         ]),
       renderCoverArt: (input) => {
-        return h('div', { ...input }, [h(CoverArt, {})])
+        return h(Box, { ...input }, [h(CoverArt, {})])
       },
       title: ctx.t('tic-tac-toe'),
       canStartGame: model.X !== 'none' && model.O !== 'none',
@@ -247,10 +248,10 @@ export const View = ({
   }
 
   if (model.type === 'game') {
-    return h('div', {})
+    return h(Box, {})
   }
 
-  return h('div', {})
+  return h(Box, {})
 }
 
 export const toGameText = ({ model }: { model: ModelFrontend }): string => {

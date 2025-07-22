@@ -1,4 +1,5 @@
 import { Avatar } from '~/@/ui/avatar'
+import { Box } from '~/@/vdom/box'
 import { Clickable } from '~/@/ui/clickable'
 import { cn } from '~/@/ui/cn'
 import { Typography } from '~/@/ui/typography'
@@ -44,11 +45,11 @@ const ViewRoot = (input: { onClick?: () => void; children?: VDom }) => {
   if (typeof input.onClick === 'function') {
     return h(Clickable, { onClick: input.onClick, disabled: !input.onClick, class: class_ }, [input.children])
   }
-  return h('div', { class: class_ }, [input.children])
+  return h(Box, { class: class_ }, [input.children])
 }
 
 const ViewLiveIndicator = (input: { ctx: AppFrontendCtxBase }) => {
-  return h('div', { class: 'flex items-center justify-start gap-2' }, [
+  return h(Box, { class: 'flex items-center justify-start gap-2' }, [
     h(Typography, {
       variant: 'label',
       class: 'block flex-1 text-left text-lg font-bold text-white uppercase',
@@ -60,16 +61,16 @@ const ViewLiveIndicator = (input: { ctx: AppFrontendCtxBase }) => {
 const ViewSpaceCardGame = (input: { gameName: GameName | null; ctx: AppFrontendCtxBase }) => {
   if (!input.gameName) return null
 
-  return h('div', { class: 'flex items-center justify-start gap-2' }, [
+  return h(Box, { class: 'flex items-center justify-start gap-2' }, [
     h(GameCoverArt, { rounded: true, class: 'size-12', gameName: input.gameName }),
     h(Typography, { variant: 'title', class: 'truncate text-lg font-normal', text: input.ctx.t(input.gameName) }),
   ])
 }
 
 const ViewSpaceCardHost = (input: { host?: UserProfile | null; ctx: AppFrontendCtxBase }) => {
-  return h('div', { class: 'flex max-w-full items-center justify-start gap-2 overflow-x-hidden' }, [
+  return h(Box, { class: 'flex max-w-full items-center justify-start gap-2 overflow-x-hidden' }, [
     h(Avatar, { src: UserProfile.toAvatarUrl(input.host), alt: 'avatar', class: 'size-12' }),
-    h('div', { class: 'flex flex-1 items-center justify-start gap-2 overflow-x-hidden' }, [
+    h(Box, { class: 'flex flex-1 items-center justify-start gap-2 overflow-x-hidden' }, [
       input.host &&
         h(Typography, {
           variant: 'title',
@@ -85,8 +86,8 @@ const ViewSpaceCardHost = (input: { host?: UserProfile | null; ctx: AppFrontendC
 const ViewSpaceCardUsers = (input: { users: UserProfile[]; ctx: AppFrontendCtxBase }) => {
   if (input.users.length <= 1) return null
 
-  return h('div', { class: 'flex items-center justify-start gap-2' }, [
-    h('div', { class: 'flex items-center' }, [
+  return h(Box, { class: 'flex items-center justify-start gap-2' }, [
+    h(Box, { class: 'flex items-center' }, [
       ...input.users.slice(0, MAX_AVATAR_COUNT).map((user, index) =>
         h(Avatar, {
           key: user.username,
@@ -96,7 +97,7 @@ const ViewSpaceCardUsers = (input: { users: UserProfile[]; ctx: AppFrontendCtxBa
         }),
       ),
       input.users.length > MAX_AVATAR_COUNT &&
-        h('div', { class: '-ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/30' }, [
+        h(Box, { class: '-ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/30' }, [
           h(Typography, { variant: 'label', text: input.ctx.t('app.+number', input.users.length - MAX_AVATAR_COUNT) }),
         ]),
     ]),

@@ -1,4 +1,5 @@
 import { Avatar } from '~/@/ui/avatar'
+import { Box } from '~/@/vdom/box'
 import { Button } from '~/@/ui/button'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
@@ -12,7 +13,7 @@ export const SectionPersonDetails = (input: {
   profile: UserProfile | null
   onOpenDetails: () => void
 }) => {
-  return h('div', {}, [
+  return h(Box, {}, [
     h(
       'button',
       {
@@ -23,14 +24,14 @@ export const SectionPersonDetails = (input: {
       [
         h(Avatar, { src: input.profile ? UserProfile.toAvatarUrl(input.profile) : '', class: 'size-24' }),
         input.profile && h(Typography, { variant: 'title', text: input.ctx.t('username', input.profile?.username) }),
-        h('div', { class: 'flex items-center gap-2' }, [
+        h(Box, { class: 'flex items-center gap-2' }, [
           input.ctx.space.hostId === input.profile?.userId && h(ViewHostChip, { ctx: input.ctx }),
           input.ctx.currentUser.userId === input.profile?.userId && h(ViewYouChip, { ctx: input.ctx }),
         ]),
       ],
     ),
 
-    h('div', { class: 'w-full px-4 pb-8' }, [
+    h(Box, { class: 'w-full px-4 pb-8' }, [
       h(Button, { onClick: input.onOpenDetails, class: 'w-full', text: input.ctx.t('app.see-profile') }),
     ]),
   ])

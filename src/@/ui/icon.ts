@@ -1,4 +1,5 @@
 import { h } from '~/@/vdom/h'
+import { cn } from './cn'
 
 export type Props = {
   class?: string
@@ -54,7 +55,7 @@ export const IconArrowRightOnRect = (input: Props) => {
 }
 
 export const IconArrowLeftOnRect = (input: Props) => {
-  return h(IconArrowRightOnRect, { ...input, style: { transform: 'rotate(180deg)', 'transform-origin': 'center' } })
+  return h(IconArrowRightOnRect, { ...input,class: cn(input.class,"origin-center rotate-180deg"),})
 }
 
 export const IconArrowRight = (input: Props) => {

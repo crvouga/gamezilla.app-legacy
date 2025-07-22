@@ -1,4 +1,5 @@
 import { Eff } from '~/@/eff'
+import { Box } from '~/@/vdom/box'
 import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { AppFrontendCtx } from '../@/frontend/ctx'
@@ -157,7 +158,7 @@ export const View = (_input: {
 }
 
 export const ViewChat = (_input: { model: ModelFrontend; dispatch: (m: Msg) => void }) => {
-  return h('div', {}, ['ViewChat'])
+  return h(Box, {}, ['ViewChat'])
 }
 
 export const ViewChatNew = (_input: {
@@ -169,9 +170,9 @@ export const ViewChatNew = (_input: {
     loading: boolean
   }
 }) => {
-  return h('div', {}, ['ViewChat'])
+  return h(Box, {}, ['ViewChat'])
 }
 
 export const ViewChatList = (_input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (m: Msg) => void }) => {
-  return h('div', {}, ['View'])
+  return h(Box, {}, ['View'])
 }

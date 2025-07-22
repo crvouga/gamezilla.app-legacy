@@ -1,4 +1,5 @@
 import { Clickable } from '~/@/ui/clickable'
+import { Box } from '~/@/vdom/box'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
@@ -53,7 +54,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
 const ViewHostGameSelection = (input: { ctx: SpaceFrontendCtx; dispatch: (msg: MsgFrontend) => void }) => {
   return h(
-    'div',
+    Box,
     {
       class: 'grid flex-1 grid-cols-3 justify-between gap-8 p-4 md:grid-cols-4 md:gap-12',
     },
@@ -64,7 +65,7 @@ const ViewHostGameSelection = (input: { ctx: SpaceFrontendCtx; dispatch: (msg: M
 }
 
 const GameTile = (input: { gameName: GameName; ctx: SpaceFrontendCtx; dispatch: (msg: MsgFrontend) => void }) => {
-  return h('div', {}, [
+  return h(Box, {}, [
     h(
       Clickable,
       {

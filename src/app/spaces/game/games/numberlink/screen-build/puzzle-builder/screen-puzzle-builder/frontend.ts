@@ -1,4 +1,5 @@
 import { Sub } from '~/@/sub'
+import { Box } from '~/@/vdom/box'
 import { IconPen, IconPlay } from '~/@/ui/icon'
 import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
@@ -274,7 +275,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
     ctx: input.ctx,
     renderBody: () =>
       h(BoardLayout, {}, [
-        h('div', { class: 'flex w-full items-center justify-center gap-1 p-2' }, [
+        h(Box, { class: 'flex w-full items-center justify-center gap-1 p-2' }, [
           input.ctx.t('game.numberlink.playing'),
         ]),
         h(ModePlayFrontend.View, {
@@ -315,7 +316,7 @@ const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
     },
     renderBody: () =>
       h(LayoutGame, { ctx: input.ctx, isSpectating: true }, [
-        h('div', { class: 'flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll' }, [
+        h(Box, { class: 'flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll' }, [
           h(ProfileListItem, {
             ctx: input.ctx,
             profile: input.ctx.profilesByUserId[input.ctx.space.hostId],

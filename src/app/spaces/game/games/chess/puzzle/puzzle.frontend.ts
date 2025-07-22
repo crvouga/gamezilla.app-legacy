@@ -1,4 +1,5 @@
 import { Eff } from '~/@/eff'
+import { Box } from '~/@/vdom/box'
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { isErr } from '~/@/result'
@@ -236,41 +237,41 @@ export const View = ({
   return h(LayoutGame, { ctx, isSpectating }, [
     h(ViewStatusBar, { model }),
 
-    h('div', { class: 'flex w-full flex-1 flex-col items-center justify-center' }, [
-      h('div', { class: 'flex w-full items-center gap-2 px-3 py-2' }, [
+    h(Box, { class: 'flex w-full flex-1 flex-col items-center justify-center' }, [
+      h(Box, { class: 'flex w-full items-center gap-2 px-3 py-2' }, [
         h(Avatar, {
           src: UserProfile.toAvatarUrl(ctx.profilesByUserId[ctx.space.hostId]),
           class: 'h-10 w-10',
           alt: '',
         }),
 
-        h('div', { class: 'flex flex-1 flex-col justify-center' }, [
+        h(Box, { class: 'flex flex-1 flex-col justify-center' }, [
           h(Typography, {
             text: TranslatedText.of('Rating'),
             variant: 'label',
             color: 'text-secondary',
             class: '-mb-1/2 text-xs',
           }),
-          h('div', { class: 'flex items-center gap-1' }, [
+          h(Box, { class: 'flex items-center gap-1' }, [
             h('p', { class: 'text-xl font-semibold' }, [model.profile?.eloRating ?? '...']),
 
             model.t === 'solved' &&
               !model.hasLost &&
               nextEloRating &&
-              h('div', { class: 'rounded-xl text-lg font-semibold text-green-500' }, [
+              h(Box, { class: 'rounded-xl text-lg font-semibold text-green-500' }, [
                 `+${nextEloRating - model.profile.eloRating}`,
               ]),
 
             model.t !== 'loading' &&
               model.hasLost &&
               nextEloRating &&
-              h('div', { class: 'rounded-xl text-lg font-semibold text-red-500' }, [
+              h(Box, { class: 'rounded-xl text-lg font-semibold text-red-500' }, [
                 nextEloRating - model.profile.eloRating,
               ]),
           ]),
         ]),
 
-        h('div', { class: 'flex items-center justify-end gap-2' }, [
+        h(Box, { class: 'flex items-center justify-end gap-2' }, [
           h(TickingClock, { sec: durationMs ? Math.floor(durationMs / 1_000) : 0 }),
           h(Typography, {
             text: TranslatedText.of(durationMs ? formatDuration(durationMs) : '-:--'),
@@ -317,18 +318,18 @@ export const View = ({
           },
         }),
         model.t === 'loading' &&
-          h('div', { class: 'absolute top-0 left-0 z-20 grid h-full w-full place-items-center bg-black/50' }, [
+          h(Box, { class: 'absolute top-0 left-0 z-20 grid h-full w-full place-items-center bg-black/50' }, [
             h(Spinner, {}),
           ]),
       ]),
 
-      h('div', { class: 'grid w-full grid-cols-2 px-2 py-1' }, [
-        h('div', { class: 'flex items-center justify-start gap-1 text-xs' }, [
+      h(Box, { class: 'grid w-full grid-cols-2 px-2 py-1' }, [
+        h(Box, { class: 'flex items-center justify-start gap-1 text-xs' }, [
           h(Typography, { text: TranslatedText.of('Puzzle Rating'), color: 'text-secondary' }),
-          h('p', {}, [model.t === 'loading' ? '...' : model.puzzle.rating]),
+          h(Box, {}, [model.t === 'loading' ? '...' : model.puzzle.rating]),
         ]),
 
-        h('div', { class: 'flex flex-1 items-center justify-end gap-1 text-right text-xs' }, [
+        h(Box, { class: 'flex flex-1 items-center justify-end gap-1 text-right text-xs' }, [
           h(Typography, { text: TranslatedText.of('Moved'), color: 'text-secondary' }),
           h(Typography, {
             text: TranslatedText.of(model.t === 'loading' ? '0' : (model.moves?.length ?? '0').toString()),
@@ -436,26 +437,26 @@ export const BottomBarActions = ({
 
 const ViewStatusBar = (input: { model: ModelFrontend }) => {
   if (input.model.t === 'loading') {
-    return h('div', { class: 'flex w-full items-center justify-center p-2' }, [h('p', { class: 'text-xl' }, ['...'])])
+    return h(Box, { class: 'flex w-full items-center justify-center p-2' }, [h(Box, { class: 'text-xl' }, ['...'])])
   }
 
   if (input.model.t === 'incorrect') {
-    return h('div', { class: 'flex w-full items-center justify-center gap-2 bg-red-500 p-2 text-white' }, [
+    return h(Box, { class: 'flex w-full items-center justify-center gap-2 bg-red-500 p-2 text-white' }, [
       h(IconXMark, { class: 'size-6' }),
-      h('p', { class: 'text-xl' }, ['Incorrect']),
+      h(Box, { class: 'text-xl' }, ['Incorrect']),
     ])
   }
 
   if (input.model.t === 'solved') {
-    return h('div', { class: 'flex w-full items-center justify-center gap-2 bg-green-500 p-2 text-white' }, [
+    return h(Box, { class: 'flex w-full items-center justify-center gap-2 bg-green-500 p-2 text-white' }, [
       h(IconCheckmarkCircle, { class: 'size-6' }),
-      h('p', { class: 'text-xl' }, ['Correct']),
+      h(Box, { class: 'text-xl' }, ['Correct']),
     ])
   }
 
   if (input.model.t === 'started') {
     return h(
-      'div',
+      Box,
       {
         class: cn(
           'flex w-full items-center justify-center gap-2 p-2',
@@ -463,13 +464,13 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
         ),
       },
       [
-        h('div', {
+        h(Box, {
           class: cn(
             'size-6 rounded-full border-2',
             toPlayerColor(input.model.puzzle) === 'b' ? 'border-[#ababab] bg-black' : 'border-black bg-white',
           ),
         }),
-        h('p', { class: 'text-xl text-inherit' }, [
+        h(Box, { class: 'text-xl text-inherit' }, [
           `${Chess.colorToString(toPlayerColor(input.model.puzzle))} to move`,
         ]),
       ],
@@ -479,11 +480,11 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
   if (input.model.t === 'solved-with-hint') {
     return h(Paper, { class: 'flex w-full items-center justify-center gap-2 p-2 text-white' }, [
       h(IconCheckmarkCircle, { class: 'size-6' }),
-      h('p', { class: 'text-xl' }, ['Solved with hint']),
+      h(Box, { class: 'text-xl' }, ['Solved with hint']),
     ])
   }
 
-  return h('div', {})
+  return h(Box, {})
 }
 
 const TickingClock = (input: { sec: number }) => {

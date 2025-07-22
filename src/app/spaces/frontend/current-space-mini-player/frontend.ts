@@ -1,4 +1,5 @@
 import { Avatar } from '~/@/ui/avatar'
+import { Box } from '~/@/vdom/box'
 import { cn } from '~/@/ui/cn'
 import { IconXMark } from '~/@/ui/icon'
 import { IconButton } from '~/@/ui/icon-button'
@@ -58,7 +59,7 @@ const View = (input: {
   const userCount = Object.values(space.users).length
   const isCurrentUserHost = input.ctx.currentUser.userId === space.hostId
   return h(
-    'div',
+    Box,
     {
       class: cn(
         'flex w-full flex-row items-center justify-center overflow-hidden rounded-lg text-inherit',
@@ -75,7 +76,7 @@ const View = (input: {
           onClick: () => input.dispatch({ t: 'current-space-bar.clicked-current-space-bottom-bar' }),
         },
         [
-          h('div', { class: 'p-2' }, [
+          h(Box, { class: 'p-2' }, [
             space.game
               ? h(GameCoverArt, { rounded: true, class: 'size-14', gameName: space.game.t })
               : h(Avatar, {
@@ -85,7 +86,7 @@ const View = (input: {
                 }),
           ]),
 
-          h('div', { class: 'flex flex-1 flex-col gap-0.5 overflow-hidden py-3 pr-3' }, [
+          h(Box, { class: 'flex flex-1 flex-col gap-0.5 overflow-hidden py-3 pr-3' }, [
             h(Typography, {
               variant: 'title',
               class: 'truncate text-left text-lg font-normal',
@@ -105,7 +106,7 @@ const View = (input: {
       ),
 
       h(
-        'div',
+        Box,
         { class: 'pr-4' },
         [
           isCurrentUserHost &&

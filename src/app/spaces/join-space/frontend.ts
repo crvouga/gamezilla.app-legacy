@@ -1,4 +1,5 @@
 import { withEventId } from '~/@/event-sourced/event'
+import { Box } from '~/@/vdom/box'
 import { Translator } from '~/@/l18n/generated'
 import { IconArrowRightOnRect } from '~/@/ui/icon'
 import { Typography } from '~/@/ui/typography'
@@ -113,11 +114,11 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
 const view: SpaceFrontendModule['View'] = (input) => {
   const currentUser = input.ctx.currentUser
 
-  if (!currentUser) return h('div', {}, ['No current user'])
+  if (!currentUser) return h(Box, {}, ['No current user'])
 
   const space = input.ctx.space
 
-  if (!space) return h('div', {}, ['No space'])
+  if (!space) return h(Box, {}, ['No space'])
 
   const spaceCtx: SpaceFrontendCtx = { ...input.ctx, space, currentUser }
   const hostProfile = input.ctx.profilesByUserId[space.hostId]
@@ -145,7 +146,7 @@ const view: SpaceFrontendModule['View'] = (input) => {
       },
     },
     renderBody: () =>
-      h('div', { class: 'flex w-full flex-col gap-6' }, [
+      h(Box, { class: 'flex w-full flex-col gap-6' }, [
         space.game && h(SectionGame, { ctx: input.ctx, gameName: space.game.t }),
 
         h(SectionPeopleList, {
@@ -189,10 +190,10 @@ const SectionGame = (props: {
   }
   gameName: GameName
 }) => {
-  return h('section', { class: 'flex w-full flex-col gap-6 py-3' }, [
+  return h(Box, { class: 'flex w-full flex-col gap-6 py-3' }, [
     h(SectionTitle, { text: props.ctx.t('spaces.game') }),
 
-    h('div', { class: 'flex w-fit flex-row items-center gap-4 px-6' }, [
+    h(Box, { class: 'flex w-fit flex-row items-center gap-4 px-6' }, [
       h(GameCoverArt, { rounded: true, class: 'size-20', gameName: props.gameName }),
 
       h(Typography, { variant: 'label', sizeClassName: 'text-lg', text: props.ctx.t(props.gameName) }),

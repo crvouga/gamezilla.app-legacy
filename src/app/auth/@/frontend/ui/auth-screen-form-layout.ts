@@ -1,4 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import { Translator } from '~/@/l18n/generated'
 import { Button } from '~/@/ui/button'
 import { h } from '~/@/vdom/h'
@@ -45,7 +46,7 @@ export const AuthScreenFormLayout = (input: {
         },
         [
           h(
-            'div',
+            Box,
             {
               class: 'flex w-full flex-col gap-6',
             },

@@ -1,4 +1,5 @@
 import { AudioPlayer } from '~/@/audio-player'
+import { Box } from '~/@/vdom/box'
 import { Eff } from '~/@/eff'
 import { HttpClient } from '~/@/http-client'
 import { KeyValueDb } from '~/@/key-value-db'
@@ -374,7 +375,7 @@ const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
       ctx: frontendCtx,
     }),
 
-    h('div', { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
+    h(Box, { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
       h(ViewScreen, {
         model: input.model,
         dispatch: input.dispatch,

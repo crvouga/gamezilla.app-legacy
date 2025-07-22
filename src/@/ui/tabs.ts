@@ -1,4 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import { h } from '~/@/vdom/h'
 import { ClickableTransparent } from './clickable'
 import { cn } from './cn'
@@ -14,11 +15,11 @@ export const Tabs = <TTab extends string>({
   labels: { [tab in TTab]: TranslatedText }
   onSelect: (tab: TTab) => void
 }) => {
-  return h('div', {
+  return h(Box, {
     class: 'flex w-full items-center',
     children: tabs.map((tab, index) =>
       h(
-        'div',
+        Box,
         {
           key: tab,
           class: 'flex-1 shrink-0',

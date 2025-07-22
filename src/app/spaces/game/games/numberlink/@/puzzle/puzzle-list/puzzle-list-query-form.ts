@@ -1,4 +1,5 @@
 import { Chip } from '~/@/ui/chip'
+import { Box } from '~/@/vdom/box'
 import { IconArrowDownShortWide, IconUserCircle } from '~/@/ui/icon'
 import { h } from '~/@/vdom/h'
 import { UserId } from '~/app/@/data/user-id'
@@ -46,7 +47,7 @@ const View = (input: { query: Model; ctx: FlowFrontendCtxBase; onChange: (query:
     input.onChange(queryNew)
   }
   return h(
-    'div',
+    Box,
     { class: 'flex w-full gap-2 px-4 py-4 pt-2' },
     [
       input.query.where.createdBy?.equals === input.ctx.currentUser.userId &&
@@ -56,7 +57,7 @@ const View = (input: { query: Model; ctx: FlowFrontendCtxBase; onChange: (query:
           label: input.ctx.t('app.created-by-you'),
         }),
 
-      h('div', { class: 'flex-1' }),
+      h(Box, { class: 'flex-1' }),
 
       input.query.order.lastUpdatedAt &&
         h(Chip, {

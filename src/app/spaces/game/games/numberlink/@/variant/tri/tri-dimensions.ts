@@ -1,4 +1,5 @@
 import { s } from '~/@/schema'
+import { Box } from '~/@/vdom/box'
 import { h } from '~/@/vdom/h'
 
 export const Model = s.obj({
@@ -16,5 +17,5 @@ export const init = (input: { side: number }): Model => {
 }
 
 export const ViewForm = (_input: { form: Model; onInput: (dimensions: Model) => void }) => {
-  return h('div', {}, ['tri dimensions form'])
+  return h(Box, {}, ['tri dimensions form'])
 }

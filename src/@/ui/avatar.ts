@@ -1,4 +1,5 @@
 import { h } from '~/@/vdom/h'
+import { Box } from '../vdom/box'
 import { cn } from './cn'
 
 type AvatarProps = {
@@ -26,7 +27,7 @@ export const Avatar = (props: AvatarProps) => {
   }
 
   return h(
-    'span',
+    Box,
     {
       onClick: props.onClick,
       class: cn('inline-block aspect-square flex-shrink-0 overflow-hidden rounded-full bg-white/40', props.class),

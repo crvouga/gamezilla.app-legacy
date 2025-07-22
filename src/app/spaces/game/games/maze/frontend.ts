@@ -1,4 +1,5 @@
 import { Eff } from '~/@/eff'
+import { Box } from '~/@/vdom/box'
 import { pipe } from '~/@/function/pipe'
 import { KeyboardKey } from '~/@/keyboard'
 import { Sub } from '~/@/sub'
@@ -185,7 +186,7 @@ export const View = ({
   dispatch: (msg: Msg) => void
 }) => {
   if (model.type === 'setup') {
-    return h('div', {})
+    return h(Box, {})
   }
 
   const viewBox = [
@@ -199,8 +200,8 @@ export const View = ({
 
   const currentUserPlayer = model.players[ctx.currentUser.userId]
 
-  return h('div', {}, [
-    !currentUserPlayer && h('p', {}, ['Spectating']),
+  return h(Box, {}, [
+    !currentUserPlayer && h(Box, {}, ['Spectating']),
     h('svg', { width: '100%', viewBox }, [
       h('rect', { x: model.lower.x, y: model.lower.y, width: '100%', height: '100%', fill: '#000' }),
       ...maze.edges.map(([a, b]) =>
@@ -264,7 +265,7 @@ const ViewJoystick = ({
   fill: string
   activeFill: string
 }) => {
-  return h('div', {}, [
+  return h(Box, {}, [
     h('svg', { width: '100%', viewBox: '-1 -1 2 2', class: 'touch-none overflow-hidden select-none' }, [
       h('defs', {}, [h('clipPath', { id: 'cut-off-bottom' }, [h('circle', { x: '0', y: '0', r: 1 })])]),
       h('g', { 'stroke-width': 0.025 }, [

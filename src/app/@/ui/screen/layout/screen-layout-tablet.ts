@@ -1,4 +1,5 @@
 import { Button } from '~/@/ui/button'
+import { Box } from '~/@/vdom/box'
 import { cn } from '~/@/ui/cn'
 import { DynamicElement } from '~/@/ui/dynamic-element'
 import { h } from '~/@/vdom/h'
@@ -24,13 +25,13 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
     [
       ActionBars({ position: 'start', input: input }),
 
-      h('div', { class: 'flex max-w-3xl flex-[4] shrink-0 flex-col border-x' }, [
+      h(Box, { class: 'flex max-w-3xl flex-[4] shrink-0 flex-col border-x' }, [
         ...renderNavBars(input.ctx, input),
 
-        h('div', { class: 'flex w-full flex-1 flex-col overflow-hidden' }, [
+        h(Box, { class: 'flex w-full flex-1 flex-col overflow-hidden' }, [
           input.renderBody(),
           (input.renderMiniPlayer || input.parentScreen?.renderMiniPlayer) &&
-            h('div', { class: 'absolute right-8 bottom-8 bg-black' }, [...renderMiniPlayers(input)]),
+            h(Box, { class: 'absolute right-8 bottom-8 bg-black' }, [...renderMiniPlayers(input)]),
         ]),
       ]),
 
@@ -43,7 +44,7 @@ const ActionBars = (props: { position: 'start' | 'end'; input: ScreenLayoutProps
   const actionBars = renderActionBars(props.input.ctx, props.input, props.position)
 
   return h(
-    'div',
+    Box,
     {
       class: cn(
         'flex h-full flex-1 flex-row items-start',
@@ -104,9 +105,9 @@ const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps 
         subtitle: screen.navBar.subtitle,
         renderEnd: () =>
           (screen.patchAction || screen.postAction) &&
-          h('div', { class: 'flex items-center justify-end' }, [
+          h(Box, { class: 'flex items-center justify-end' }, [
             screen.patchAction &&
-              h('div', { class: 'flex min-w-64 items-center justify-end' }, [
+              h(Box, { class: 'flex min-w-64 items-center justify-end' }, [
                 h(CancelSubmitButtons, { ...screen.patchAction, size: 'md' }),
               ]),
             screen.postAction &&

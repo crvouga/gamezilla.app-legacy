@@ -1,4 +1,5 @@
 import { Translator } from '~/@/l18n/generated'
+import { Box } from '~/@/vdom/box'
 import { cn } from '~/@/ui/cn'
 import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
@@ -18,7 +19,7 @@ export const LayoutGame = ({
   children?: VDom
 }) => {
   return h(
-    'div',
+    Box,
     {
       class: cn(
         'flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll',
@@ -30,7 +31,7 @@ export const LayoutGame = ({
     [
       isSpectating &&
         h(
-          'div',
+          Box,
           {
             class: 'flex w-full items-center justify-center bg-blue-500 py-1 text-sm font-semibold text-white',
           },

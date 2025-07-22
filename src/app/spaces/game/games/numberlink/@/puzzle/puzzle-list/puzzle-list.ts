@@ -1,4 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import { Translator } from '~/@/l18n/generated'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
@@ -33,7 +34,7 @@ const View = (input: {
   const totalCount = puzzles.length
   const selectedCount = Math.min(input.selected?.length ?? 0, totalCount)
 
-  return h('div', { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
+  return h(Box, { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
     h(QueryForm.View, { ctx: input.ctx, query: input.query, onChange: input.onQueryChanged }),
 
     input.selectable &&
@@ -57,7 +58,7 @@ const View = (input: {
         ],
       ),
 
-    h('div', { class: 'relative flex w-full flex-1 flex-col items-center overflow-y-scroll' }, [
+    h(Box, { class: 'relative flex w-full flex-1 flex-col items-center overflow-y-scroll' }, [
       ...puzzles.map((puzzle) =>
         h(ViewListItem, {
           selectable: input.selectable,
@@ -109,14 +110,13 @@ const ViewListItem = (input: {
       onClick: input.onClick,
     },
     [
-      input.selectable &&
-        h('div', { class: 'px-4' }, [h(Checkbox, { state: input.selected ? 'checked' : 'unchecked' })]),
+      input.selectable && h(Box, { class: 'px-4' }, [h(Checkbox, { state: input.selected ? 'checked' : 'unchecked' })]),
 
-      h('div', { class: 'flex aspect-square h-24 w-24 shrink-0 items-center justify-center overflow-hidden' }, [
+      h(Box, { class: 'flex aspect-square h-24 w-24 shrink-0 items-center justify-center overflow-hidden' }, [
         h(NumberlinkVariantBoard.View, { disabled: true, model: input.puzzle.model }),
       ]),
 
-      h('div', { class: 'flex flex-col gap-1 truncate overflow-hidden px-4' }, [
+      h(Box, { class: 'flex flex-col gap-1 truncate overflow-hidden px-4' }, [
         h(Typography, {
           variant: 'body',
           color: 'text-primary',

@@ -1,4 +1,5 @@
 import { matchSort } from '~/@/array/match-sort'
+import { Box } from '~/@/vdom/box'
 import { Eff } from '~/@/eff'
 import { ClickableTransparent } from '~/@/ui/clickable'
 import { IconMagnifyingGlass, IconXMark } from '~/@/ui/icon'
@@ -112,10 +113,10 @@ export const View = ({
   //   const request = model.requests[model.searchText] ?? { type: 'not-asked' };
   const results = matchSort(Object.values(model.searchResults), (item) => item.username, model.searchText)
 
-  return h('div', {}, [
-    h('div', { class: 'flex h-full w-full flex-col' }, [
+  return h(Box, {}, [
+    h(Box, { class: 'flex h-full w-full flex-col' }, [
       // input
-      h('div', { class: 'w-full p-4' }, [
+      h(Box, { class: 'w-full p-4' }, [
         h(Paper, { class: 'flex w-full items-center gap-2 rounded-full px-4 py-2' }, [
           h(IconMagnifyingGlass, { class: 'size-6' }),
           h('input', {

@@ -1,10 +1,10 @@
 import { Sub } from '~/@/sub'
-import { TimeSpan } from '~/@/time/time-span'
 import { Button } from '~/@/ui/button'
 import { Dialog } from '~/@/ui/surface-dialog/dialog'
 import { DialogSurface } from '~/@/ui/surface-dialog/dialog-surface'
 import { SurfaceActions } from '~/@/ui/surface/surface-actions'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
+import { Box } from '~/@/vdom/box'
 import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -91,7 +91,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
   )
 }
 
-const CHECKMARK_DURATION = TimeSpan.seconds(1 / 2)
+// const CHECKMARK_DURATION = TimeSpan.seconds(1 / 2)
 
 const View: FrontendModule['View'] = (input) => {
   const isSpectating = input.ctx.currentUser.userId !== input.ctx.space.hostId
@@ -146,7 +146,7 @@ const ViewHosting: FrontendModule['View'] = (input) => {
     },
     renderBody: () =>
       h(
-        'div',
+        Box,
         {
           class: 'flex w-full flex-1 items-center justify-center',
           'data-puzzle-id': puzzle.t === 'got' ? puzzle.c.id : null,
@@ -243,7 +243,7 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
           profile: input.ctx.profilesByUserId[input.ctx.space.hostId],
           subtitle: input.ctx.t('game.player'),
         }),
-        h('div', { class: 'flex flex-1 items-center justify-center' }, [
+        h(Box, { class: 'flex flex-1 items-center justify-center' }, [
           puzzle.t === 'got'
             ? h(ModePlayFrontend.View, {
                 disabled: true,
@@ -291,14 +291,13 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
 
   if (isLastPuzzle) {
     return h(LastPuzzleFrontend.ViewDialog, {
-      delay: CHECKMARK_DURATION,
       open: isSolvedPuzzleDialogOpen,
       ctx: input.ctx,
       dispatch: (c) => input.dispatch(c),
     })
   }
 
-  return h(Dialog, { delay: CHECKMARK_DURATION, open: isSolvedPuzzleDialogOpen, onClose }, [
+  return h(Dialog, { delay: '300ms', open: isSolvedPuzzleDialogOpen, onClose }, [
     h(DialogSurface, {}, [
       h(SurfaceHeader, {
         ctx: input.ctx,

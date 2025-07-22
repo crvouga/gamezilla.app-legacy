@@ -1,4 +1,5 @@
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/box'
 import { VDom } from '~/@/vdom/vdom'
 import { cn } from '../cn'
 import { Transition } from '../transition'
@@ -31,13 +32,13 @@ export const DropDown = (props: {
     }
   }
 
-  return h('div', {}, [
+  return h(Box, {}, [
     h(Backdrop, { open: props.open, onClick: onClose, onKeyDown }),
-    h('div', { id: props.id, class: cn('relative', props.class, props.open && 'z-50'), onKeyDown }, [
+    h(Box, { id: props.id, class: cn('relative', props.class, props.open && 'z-50'), onKeyDown }, [
       props.renderReference(),
       h(Transition, { id: `${props.id}-transition`, mode: 'in-out', onEnter, onExit }, [
         props.open &&
-          h('div', { id: props.id, class: toPositionClasses(position, alignment), 'data-testid': props.testId }, [
+          h(Box, { id: props.id, class: toPositionClasses(position, alignment), 'data-testid': props.testId }, [
             props.renderFloating(),
           ]),
       ]),

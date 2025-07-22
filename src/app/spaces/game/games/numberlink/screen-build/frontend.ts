@@ -1,4 +1,5 @@
 import { Eff } from '~/@/eff'
+import { Box } from '~/@/vdom/box'
 import { Sub } from '~/@/sub'
 import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
@@ -110,7 +111,7 @@ const View: FrontendModule['View'] = (input) => {
 }
 
 const ViewFeedItem: FrontendModule['ViewFeedItem'] = () => {
-  return h('div', {})
+  return h(Box, {})
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {

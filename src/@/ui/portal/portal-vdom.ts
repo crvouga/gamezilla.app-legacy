@@ -1,4 +1,5 @@
 import { createPortal, h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/box'
 import { VDom } from '~/@/vdom/vdom'
 import { IPortal } from './interface'
 
@@ -27,13 +28,13 @@ const getExit = (portalId: string): HTMLElement | null => {
 const Entrance = (input: { portalId: string; children: VDom; noPortal?: boolean }) => {
   const element = getExit(input.portalId)
   if (!element || input.noPortal) return input.children
-  return h('div', { key: input.portalId, 'data-portal-entrance': true, 'data-portal-id': input.portalId }, [
+  return h(Box, { key: input.portalId, 'data-portal-entrance': true, 'data-portal-id': input.portalId }, [
     createPortal?.(input.children, element),
   ])
 }
 
 const Exit = (input: { portalId: string }) => {
-  return h('div', { id: input.portalId, 'data-portal-exit': true, 'data-portal-id': input.portalId })
+  return h(Box, { id: input.portalId, 'data-portal-exit': true, 'data-portal-id': input.portalId })
 }
 
 export const Portal: IPortal = {

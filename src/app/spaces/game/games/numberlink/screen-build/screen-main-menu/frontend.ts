@@ -1,4 +1,5 @@
 import { Sub } from '~/@/sub'
+import { Box } from '~/@/vdom/box'
 import { IconBox, IconPuzzlePiece, IconScrewdriverWrench } from '~/@/ui/icon'
 import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
@@ -51,9 +52,7 @@ const View: FrontendModule['View'] = (input) => {
         },
       }),
     renderCoverArt: (input) =>
-      h('div', input, [
-        h('div', { class: 'h-full w-full p-4' }, [h(IconScrewdriverWrench, { class: 'h-full w-full' })]),
-      ]),
+      h(Box, input, [h(Box, { class: 'h-full w-full p-4' }, [h(IconScrewdriverWrench, { class: 'h-full w-full' })])]),
     title: input.ctx.t('game.numberlink.build'),
     buttons: [
       {

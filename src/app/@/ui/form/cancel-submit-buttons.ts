@@ -1,4 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import { Button, ButtonInput } from '~/@/ui/button'
 import { preventConsoleErrorWhenClosingDrawer } from '~/@/ui/surface-drawer/drawer-shared'
 import { h } from '~/@/vdom/h'
@@ -14,7 +15,7 @@ export const CancelSubmitButtons = (input: {
   size?: ButtonInput['size']
 }) => {
   return h(
-    'div',
+    Box,
     {
       class: 'flex w-full items-center gap-4 px-6 pt-4 pb-6',
     },

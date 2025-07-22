@@ -1,7 +1,8 @@
 import { Button } from '~/@/ui/button'
 import { DynamicElement } from '~/@/ui/dynamic-element'
-import { VDom } from '~/@/vdom/vdom'
+import { Box } from '~/@/vdom/box'
 import { h } from '~/@/vdom/h'
+import { VDom } from '~/@/vdom/vdom'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
 import { HorizontalActionBar } from '../action-bar/screen-action-bar-horizontal'
 import { ScreenNavBarMobile } from '../nav-bar/screen-nav-bar-mobile'
@@ -23,14 +24,14 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
     [
       ...renderActionBars(input.ctx, input),
 
-      h('div', { class: 'flex flex-1 flex-col overflow-hidden' }, [
+      h(Box, { class: 'flex flex-1 flex-col overflow-hidden' }, [
         ...renderNavBars(input.ctx, input),
 
-        h('div', { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
+        h(Box, { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
           input.renderBody(),
 
           input.postAction &&
-            h('div', { class: 'absolute right-4 bottom-6' }, [
+            h(Box, { class: 'absolute right-4 bottom-6' }, [
               h(Button, {
                 color: 'primary',
                 size: 'lg',
@@ -59,7 +60,7 @@ const renderActionBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenPro
     const id = screen.actionBar.id ?? `${screen.id}-${position}-actions`
     bars.push(
       h(
-        'div',
+        Box,
         {
           key: id,
           class: position === 'top' ? 'order-first' : 'order-last',

@@ -1,4 +1,5 @@
 import { EmptyState } from '~/@/ui/empty-state'
+import { Box } from '~/@/vdom/box'
 import { IconGamepad } from '~/@/ui/icon'
 import { SpinnerBlock } from '~/@/ui/spinner-block'
 import { h } from '~/@/vdom/h'
@@ -68,7 +69,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
       }
 
       return h(
-        'div',
+        Box,
         {
           class: 'flex flex-1 flex-col gap-4 overflow-y-auto p-6',
         },

@@ -1,4 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import { Translator } from '~/@/l18n/generated'
 import { IconXMark } from '~/@/ui/icon'
 import { IconButton } from '~/@/ui/icon-button'
@@ -12,8 +13,8 @@ export const SurfaceHeader = (input: {
   onClose: () => void
   testId?: string
 }) => {
-  return h('div', { class: 'flex w-full items-center justify-center px-6 pt-4 pb-0', 'data-testid': input.testId }, [
-    h('div', { class: 'flex-1' }, [
+  return h(Box, { class: 'flex w-full items-center justify-center px-6 pt-4 pb-0', 'data-testid': input.testId }, [
+    h(Box, { class: 'flex-1' }, [
       input.title && h(Typography, { text: input.title, variant: 'title', sizeClassName: 'text-2xl' }),
     ]),
     input.onClose &&

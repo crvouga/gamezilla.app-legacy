@@ -1,6 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
+import { Box } from '../vdom/box'
 import { ClickableTransparent } from './clickable'
 import { cn } from './cn'
 import { preventConsoleErrorWhenClosingDrawer } from './surface-drawer/drawer-shared'
@@ -43,13 +44,13 @@ export const ListItem = (input: Input) => {
             icon: input.icon,
             secondary: input.secondary,
           }),
-          input.end && h('div', { class: 'shrink-0 flex items-center gap-2' }, [input.end()]),
+          input.end && h(Box, { class: 'shrink-0 flex items-center gap-2' }, [input.end()]),
         ],
       )
     }
     default: {
       return h(
-        'div',
+        Box,
         {
           onClick: (event: unknown) => {
             preventConsoleErrorWhenClosingDrawer(event)
@@ -66,7 +67,7 @@ export const ListItem = (input: Input) => {
             icon: input.icon,
             secondary: input.secondary,
           }),
-          input.end && h('div', { class: 'shrink-0' }, [input.end()]),
+          input.end && h(Box, { class: 'shrink-0' }, [input.end()]),
         ],
       )
     }
@@ -79,9 +80,9 @@ const ListItemContent = (input: {
   end?: () => VDom
   secondary?: TranslatedText
 }) => {
-  return h('div', { class: 'flex flex-1 items-center gap-3 truncate' }, [
+  return h(Box, { class: 'flex flex-1 items-center gap-3 truncate' }, [
     input.icon?.({ class: 'size-8' }),
-    h('div', { class: 'flex flex-col gap-1 text-left' }, [
+    h(Box, { class: 'flex flex-col gap-1 text-left' }, [
       h(Typography, {
         variant: 'body',
         class: 'font-bold text-xl',

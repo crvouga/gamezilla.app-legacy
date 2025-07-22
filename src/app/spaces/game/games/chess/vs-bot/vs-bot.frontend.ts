@@ -1,4 +1,5 @@
 import { Eff } from '~/@/eff'
+import { Box } from '~/@/vdom/box'
 import { exhaustive } from '~/@/function/exhaustive'
 import { pipe } from '~/@/function/pipe'
 import { isErr } from '~/@/result'
@@ -7,7 +8,6 @@ import { Avatar } from '~/@/ui/avatar'
 import { IconArrowLeft, IconRobot } from '~/@/ui/icon'
 import { Spinner } from '~/@/ui/spinner'
 import { UserProfile } from '~/app/@/data/user-profile'
-
 import { h } from '~/@/vdom/h'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
@@ -382,18 +382,18 @@ export const View = ({
     })
   }
 
-  const botSlot = h('div', { class: 'flex w-full items-center gap-3 p-3' }, [
+  const botSlot = h(Box, { class: 'flex w-full items-center gap-3 p-3' }, [
     h(IconRobot, { class: 'h-10 w-10' }),
-    h('p', { class: 'flex-1 text-lg' }, [ChessBotLevel.toString(model.spaceModel.botLevel)]),
+    h(Box, { class: 'flex-1 text-lg' }, [ChessBotLevel.toString(model.spaceModel.botLevel)]),
     isBotTurn(model.spaceModel) && h(Spinner, { class: 'h-10 w-10' }),
   ])
 
-  const userSlot = h('div', { class: 'flex w-full items-center gap-3 p-3' }, [
+  const userSlot = h(Box, { class: 'flex w-full items-center gap-3 p-3' }, [
     h(Avatar, {
       class: 'h-10 w-10',
       src: UserProfile.toAvatarUrl(ctx.profilesByUserId[model.spaceModel.userId]),
     }),
-    h('p', { class: 'flex-1 text-lg' }, [ctx.profilesByUserId[model.spaceModel.userId]?.username]),
+    h(Box, { class: 'flex-1 text-lg' }, [ctx.profilesByUserId[model.spaceModel.userId]?.username]),
   ])
 
   const boardOrientation = model.isFlipped
@@ -410,7 +410,7 @@ export const View = ({
     id: 'chess-vs-bot',
     renderBody: () =>
       h(LayoutGame, { ctx }, [
-        h('div', { class: 'flex w-full flex-1 flex-col items-center justify-center' }, [
+        h(Box, { class: 'flex w-full flex-1 flex-col items-center justify-center' }, [
           topSlot,
           h(Chessboard, {
             id: 'chessboard',

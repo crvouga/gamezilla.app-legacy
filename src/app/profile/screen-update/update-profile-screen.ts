@@ -1,4 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
 import { IconChevronRight } from '~/@/ui/icon'
@@ -27,8 +28,8 @@ export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFronten
       },
     },
     renderBody: () =>
-      h('div', { class: 'flex w-full flex-1 flex-col items-center gap-4' }, [
-        h('div', { class: 'flex w-full flex-col items-center justify-center gap-2' }, [
+      h(Box, { class: 'flex w-full flex-1 flex-col items-center gap-4' }, [
+        h(Box, { class: 'flex w-full flex-col items-center justify-center gap-2' }, [
           h(Avatar, {
             src: UserProfile.toAvatarUrl(profile),
             class: 'size-16',
@@ -56,7 +57,7 @@ export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFronten
 
 const ViewField = (input: { label: TranslatedText; value: TranslatedText; onClick?: () => void }) => {
   return h('button', { onClick: input.onClick, class: 'flex w-full items-center justify-start px-4 py-2' }, [
-    h('div', { class: 'flex flex-1 flex-col items-start' }, [
+    h(Box, { class: 'flex flex-1 flex-col items-start' }, [
       h(Typography, { variant: 'label', text: input.label }),
       input.value && h(Typography, { variant: 'body', text: input.value }),
     ]),

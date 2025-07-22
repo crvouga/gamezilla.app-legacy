@@ -1,4 +1,5 @@
 import { cn } from '~/@/ui/cn'
+import { Box } from '~/@/vdom/box'
 import { Paper } from '~/@/ui/paper'
 import { TEXT_SECONDARY_CLASS_NAME } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
@@ -15,7 +16,7 @@ export const ScreenLayoutGameCoverArt = (
   return h(ScreenLayout, {
     ...input,
     renderBody: () =>
-      h('div', { class: 'flex w-full flex-1 flex-col items-center justify-start gap-6 py-4' }, [
+      h(Box, { class: 'flex w-full flex-1 flex-col items-center justify-start gap-6 py-4' }, [
         renderCoverArtFinal({ class: 'size-28 overflow-hidden rounded-lg mx-auto' }),
         input.renderBody(),
       ]),

@@ -1,4 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
 import { ClickablePaper } from '~/@/ui/clickable'
@@ -30,11 +31,11 @@ const VersusSection = ({
   playerTwo: PlayerProp
   ctx: SpaceFrontendCtx
 }) => {
-  return h('div', { class: 'flex w-full flex-col gap-2 p-4' }, [
-    h('div', { class: 'grid w-full grid-cols-7' }, [
+  return h(Box, { class: 'flex w-full flex-col gap-2 p-4' }, [
+    h(Box, { class: 'grid w-full grid-cols-7' }, [
       h(PlayerIcons, { player: playerOne, ctx }),
 
-      h('div', { class: 'col-span-1' }, [
+      h(Box, { class: 'col-span-1' }, [
         h(Typography, {
           text: ctx.t('game.vs'),
           variant: 'title',
@@ -45,18 +46,18 @@ const VersusSection = ({
       h(PlayerIcons, { player: playerTwo, ctx }),
     ]),
 
-    h('div', { class: 'grid w-full grid-cols-7' }, [
+    h(Box, { class: 'grid w-full grid-cols-7' }, [
       h(PlayerLabels, { player: playerOne, ctx }),
 
-      h('div', { class: 'col-span-1' }),
+      h(Box, { class: 'col-span-1' }),
 
       h(PlayerLabels, { player: playerTwo, ctx }),
     ]),
 
-    h('div', { class: 'mt-2 grid w-full grid-cols-7' }, [
+    h(Box, { class: 'mt-2 grid w-full grid-cols-7' }, [
       h(PlayerButtons, { player: playerOne, ctx }),
 
-      h('div', { class: 'col-span-1' }),
+      h(Box, { class: 'col-span-1' }),
 
       h(PlayerButtons, { player: playerTwo, ctx }),
     ]),
@@ -68,7 +69,7 @@ export const VsUserSetup = {
 }
 
 const PlayerButtons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
-  return h('div', { class: 'col-span-3 w-full' }, [
+  return h(Box, { class: 'col-span-3 w-full' }, [
     player.userId &&
       player.userId === ctx.currentUser.userId &&
       h(Button, {
@@ -92,7 +93,7 @@ const PlayerButtons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerP
 
 const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
   return h(
-    'div',
+    Box,
     {
       class: 'col-span-3 grid w-full cursor-pointer grid-cols-2 place-items-center text-center',
       onClick: player.userId === ctx.currentUser.userId ? player.onStopPlaying : player.onStartPlaying,
@@ -122,7 +123,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
 }
 
 const PlayerLabels = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
-  return h('div', { class: 'col-span-3 grid w-full grid-cols-2 place-items-center text-center text-sm' }, [
+  return h(Box, { class: 'col-span-3 grid w-full grid-cols-2 place-items-center text-center text-sm' }, [
     h(Typography, {
       class: 'w-full overflow-hidden text-center text-ellipsis whitespace-nowrap',
       text: TranslatedText.of(player.userId ? (ctx.profilesByUserId[player.userId]?.username ?? '...') : '?'),
@@ -158,7 +159,7 @@ export const VsUserSetupScreen = ({
   onQuit: () => void
   canStartGame?: boolean
 }) => {
-  return h('div', { class: 'flex h-full w-full flex-1 flex-col overflow-hidden' }, [
+  return h(Box, { class: 'flex h-full w-full flex-1 flex-col overflow-hidden' }, [
     h(ScreenLayoutGameCoverArt, {
       id: 'vs-user-setup',
       parentScreen: ctx.parentScreen,
@@ -174,7 +175,7 @@ export const VsUserSetupScreen = ({
     }),
 
     ctx.currentUser.userId === ctx.space.hostId &&
-      h('div', { class: 'flex w-full items-center gap-4 p-4' }, [
+      h(Box, { class: 'flex w-full items-center gap-4 p-4' }, [
         h(Button, {
           disabled: !canStartGame,
           variant: 'contained',

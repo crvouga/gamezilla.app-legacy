@@ -1,4 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import { IconPlus } from '~/@/ui/icon'
 import { Swiper } from '~/@/ui/swiper'
 import { Typography } from '~/@/ui/typography'
@@ -28,7 +29,7 @@ const View = (input: {
   const cellCount = (puzzleIds.length ?? 0) + (input.addCell?.include ? 1 : 0)
   const slideCount = Math.ceil(cellCount / (COLUMN_COUNT * ROW_COUNT))
 
-  return h('div', { class: 'flex h-full w-full flex-col gap-4 py-6' }, [
+  return h(Box, { class: 'flex h-full w-full flex-col gap-4 py-6' }, [
     h(
       Swiper.Container,
       {
@@ -68,7 +69,7 @@ const ViewSlideContent = (input: {
   }
   onClickPuzzleCell?: (input: { puzzleIndex: number; puzzleId: PuzzleId }) => void
 }) => {
-  return h('div', { class: 'flex w-fit flex-col items-center justify-center gap-1' }, [
+  return h(Box, { class: 'flex w-fit flex-col items-center justify-center gap-1' }, [
     h(ViewSlideHeading, { slideIndex: input.slideIndex, puzzleIds: input.puzzleIds }),
     h(ViewGrid, {
       slideIndex: input.slideIndex,
@@ -115,7 +116,7 @@ const ViewGrid = (input: {
   const indexOffset = input.slideIndex * (COLUMN_COUNT * ROW_COUNT)
 
   return h(
-    'div',
+    Box,
     { role: 'grid', class: 'grid aspect-square w-full grid-cols-5 grid-rows-6' },
     range2d({ x: COLUMN_COUNT, y: ROW_COUNT }).map(({ x, y }) =>
       h(ViewGridCell, {
@@ -142,7 +143,7 @@ const ViewGridCell = (input: {
   const empty = index >= input.puzzleIds.length
 
   return h(
-    'div',
+    Box,
     {
       role: 'gridcell',
       class: 'flex aspect-square h-12 w-12 items-center justify-center overflow-hidden p-1 sm:h-16 sm:w-16',
@@ -190,7 +191,7 @@ const ViewPuzzleCell = ({ onClick, index }: { onClick: () => void; index: number
 }
 
 const ViewEmptyCell = () => {
-  return h('div', {
+  return h(Box, {
     class: 'flex h-full w-full items-center justify-center overflow-hidden rounded border-2 opacity-70',
   })
 }

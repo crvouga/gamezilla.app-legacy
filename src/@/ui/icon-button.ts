@@ -1,4 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { ClickableTransparent } from './clickable'
@@ -38,7 +39,7 @@ export const IconButton = (input: {
 }
 
 export const IconButtonEmpty = (input: { size?: IconButtonSize }) => {
-  return h('div', { class: toSizeClassName(input.size ?? 'md') })
+  return h(Box, { class: toSizeClassName(input.size ?? 'md') })
 }
 
 const toSizeClassName = (size: IconButtonSize): string => {

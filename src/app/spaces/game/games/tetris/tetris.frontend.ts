@@ -1,4 +1,5 @@
 import { Eff } from '~/@/eff'
+import { Box } from '~/@/vdom/box'
 import { exhaustive } from '~/@/function/exhaustive'
 import { KeyboardKey } from '~/@/keyboard'
 import { Option } from '~/@/option/option'
@@ -297,8 +298,8 @@ export const subscriptions = (input: { ctx: AppFrontendCtxBase }): Sub<Msg> => {
 // const gridStrokeWidth = 0.025
 
 export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void }) => {
-  return h('div', {}, [
-    h('div', {}, [
+  return h(Box, {}, [
+    h(Box, {}, [
       h('canvas', {
         onTouchMove: (e: unknown) => {
           // @ts-ignore

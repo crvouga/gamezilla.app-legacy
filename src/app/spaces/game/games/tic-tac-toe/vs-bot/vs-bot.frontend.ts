@@ -1,4 +1,5 @@
 import type { Eff } from '~/@/eff'
+import { Box } from '~/@/vdom/box'
 import { UnixMs } from '~/@/time/unix-ms'
 import { IconArrowLeft, IconArrowRotateLeft, IconRightLeft } from '~/@/ui/icon'
 import { LoadingBar } from '~/@/ui/loading-bar'
@@ -238,7 +239,7 @@ export const View = (input: {
     ctx: input.ctx,
     id: 'tic-tac-toe-vs-bot',
     renderBody: () =>
-      h('div', { class: 'flex flex-col items-center justify-center' }, [
+      h(Box, { class: 'flex flex-col items-center justify-center' }, [
         h(VsBotGame.VsBotPlayerSection, vsBotGameInput),
 
         h(LoadingBar, {

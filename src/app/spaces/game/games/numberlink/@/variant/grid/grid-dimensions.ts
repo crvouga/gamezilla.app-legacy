@@ -1,4 +1,5 @@
 import { Translator } from '~/@/l18n/generated'
+import { Box } from '~/@/vdom/box'
 import { s } from '~/@/schema'
 import { IconXMark } from '~/@/ui/icon'
 import { Slider } from '~/@/ui/slider'
@@ -27,16 +28,16 @@ export const ViewForm = (input: {
     t: Translator
   }
 }) => {
-  return h('div', { class: 'flex flex-col gap-4 p-6' }, [
-    h('div', { class: 'flex items-center justify-center gap-1 text-center text-4xl font-bold' }, [
-      h('p', {}, [`${input.form.width}w`]),
+  return h(Box, { class: 'flex flex-col gap-4 p-6' }, [
+    h(Box, { class: 'flex items-center justify-center gap-1 text-center text-4xl font-bold' }, [
+      h(Box, {}, [`${input.form.width}w`]),
 
       h(IconXMark, { class: 'size-6' }),
 
-      h('p', {}, [`${input.form.height}h`]),
+      h(Box, {}, [`${input.form.height}h`]),
     ]),
 
-    h('div', { class: 'flex flex-col gap-3' }, [
+    h(Box, { class: 'flex flex-col gap-3' }, [
       h(Slider, {
         onInput: (width) => input.onInput({ ...input.form, width }),
         value: input.form.width,

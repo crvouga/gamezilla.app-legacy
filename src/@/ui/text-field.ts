@@ -1,4 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { cn } from './cn'
@@ -21,10 +22,10 @@ export const TextField = (input: {
   onClear?: () => void
   onChange: (value: string) => void
 }) => {
-  return h('div', { class: 'flex w-full flex-col gap-1' }, [
+  return h(Box, { class: 'flex w-full flex-col gap-1' }, [
     h('label', { htmlFor: input.id, class: cn('text-base', input.error && 'text-red-500') }, [input.label]),
     h(
-      'div',
+      Box,
       {
         class: cn(
           PAPER_CLASS_NAME,
@@ -87,7 +88,7 @@ export const TextField = (input: {
     ),
     input.helperText &&
       h(
-        'div',
+        Box,
         {
           role: 'alert',
           'data-error': input.error ? 'true' : 'false',

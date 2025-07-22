@@ -163,7 +163,7 @@ const Entrance = (input: { portalId: string; children: VDom[] }) => {
 }
 
 const Exit = (input: { portalId: string }) => {
-  return h('portal-exit', { style: { 'z-index': 1000 }, 'portal-id': input.portalId })
+  return h('portal-exit', { class: 'z-50', 'portal-id': input.portalId })
 }
 
 export const Portal: IPortal = {

@@ -3,6 +3,7 @@ import { TranslatedText } from '~/@/l18n'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Avatar } from '~/@/ui/avatar'
+import { Box } from '~/@/vdom/box'
 import { Button } from '~/@/ui/button'
 import { IconMobilePhone, IconUserCircle } from '~/@/ui/icon'
 import { ListItem } from '~/@/ui/list-item'
@@ -236,7 +237,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
       center: true,
     },
     [
-      h('div', { class: 'flex w-full flex-1 flex-col gap-6' }, [
+      h(Box, { class: 'flex w-full flex-1 flex-col gap-6' }, [
         AuthScreenHeaderCta({ ctx: input.ctx }),
 
         Button({
@@ -248,7 +249,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
           text: input.ctx.t('auth.continue-with-phone'),
         }),
 
-        h('div', { class: 'flex w-full items-center justify-center py-1' }, [
+        h(Box, { class: 'flex w-full items-center justify-center py-1' }, [
           Typography({
             variant: 'body',
             class: 'text-base font-bold uppercase',

@@ -1,4 +1,5 @@
 import { Avatar } from '~/@/ui/avatar'
+import { Box } from '~/@/vdom/box'
 import { Clickable } from '~/@/ui/clickable'
 import { Frag } from '~/@/ui/frag'
 import { h } from '~/@/vdom/h'
@@ -20,9 +21,9 @@ export const SectionPeopleList = (input: {
 
   const renderItem = input.renderItem ?? ((_profile, vDom) => vDom)
 
-  return h('section', { class: 'flex w-full flex-col gap-3 py-6' }, [
+  return h(Box, { class: 'flex w-full flex-col gap-3 py-6' }, [
     h(SectionTitle, { text: input.ctx.t('app.people') }),
-    h('div', { class: 'flex w-full flex-col' }, [
+    h(Box, { class: 'flex w-full flex-col' }, [
       profiles.map((profile) =>
         h(Frag, { key: profile.id }, [
           renderItem(
@@ -55,7 +56,7 @@ const PersonListItem = (input: {
     },
     [
       h(Avatar, { class: 'size-12', src: UserProfile.toAvatarUrl(input.profile) }),
-      h('p', {}, [input.profile.username]),
+      h(Box, {}, [input.profile.username]),
       input.profile.userId === input.ctx.space.hostId && h(ViewHostChip, { ctx: input.ctx }),
       input.profile.userId === input.ctx.currentUser.userId && h(ViewYouChip, { ctx: input.ctx }),
     ],

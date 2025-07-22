@@ -1,4 +1,5 @@
 import { Eff } from '~/@/eff'
+import { Box } from '~/@/vdom/box'
 import { exhaustive } from '~/@/function/exhaustive'
 import { pipe } from '~/@/function/pipe'
 import { RemoteResult, isErr } from '~/@/result'
@@ -196,7 +197,7 @@ export const ViewPage = ({
 }
 
 const ViewNotInParty = (_input: { ctx: AppFrontendCtx; model: Model; dispatch: (msg: Msg) => void }) => {
-  return h('div', {}, ['ViewNotInParty'])
+  return h(Box, {}, ['ViewNotInParty'])
 }
 
 export const ViewBanner = ({
@@ -220,7 +221,7 @@ export const ViewBanner = ({
     return null
   }
 
-  return h('div', {}, ['ViewBanner'])
+  return h(Box, {}, ['ViewBanner'])
 }
 
 //

@@ -1,4 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
+import { Box } from '~/@/vdom/box'
 import { Translator } from '~/@/l18n/generated'
 import { Button } from '~/@/ui/button'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
@@ -54,7 +55,7 @@ export const SurfaceUnsavedChanges = (input: SurfaceUnsavedChangesProps) => {
             variant: 'body',
             text: input.body,
           }),
-          h('div', { class: 'flex w-full flex-col gap-4 p-4 px-6 pb-6' }, [
+          h(Box, { class: 'flex w-full flex-col gap-4 p-4 px-6 pb-6' }, [
             h(Button, {
               class: 'w-full',
               text: input.saveText,
@@ -64,7 +65,7 @@ export const SurfaceUnsavedChanges = (input: SurfaceUnsavedChangesProps) => {
               onClick: input.onSave,
             }),
             h(Button, { class: 'w-full', text: input.discardText, onClick: input.onDiscard }),
-            h('div', { class: 'w-full' }),
+            h(Box, { class: 'w-full' }),
             h(Button, { class: 'w-full', text: input.cancelText, onClick: input.onCancel }),
           ]),
         ]),
