@@ -40,11 +40,11 @@ RUN curl -o ${RUNNER_FILENAME} -L ${RUNNER_URL} \
  && tar xzf ${RUNNER_FILENAME} \
  && rm ${RUNNER_FILENAME}
 
-COPY infra/github-actions-runner.sh .
-RUN chmod +x ./github-actions-runner.sh
+COPY github-actions/runner.sh .
+RUN chmod +x ./runner.sh
 
 # Give runner user permissions for Docker
 RUN usermod -aG docker runner \
  && chown -R runner:runner /home/runner
 
-ENTRYPOINT ["./github-actions-runner.sh"]
+ENTRYPOINT ["./runner.sh"]

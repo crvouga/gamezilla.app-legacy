@@ -57,8 +57,8 @@
     "vitest:int": "IS_INTEGRATION_TEST=true IS_VITEST_TEST=true NODE_ENV=test vitest run",
     "vitest:int:coverage": "IS_INTEGRATION_TEST=true IS_VITEST_TEST=true NODE_ENV=test vitest run --coverage",
     "viz-bundle": "pnpm exec vite-bundle-visualizer",
-    "github-action-runners:up": "docker compose --env-file .env -f infra/github-actions.docker-compose.yml up -d --build",
-    "github-action-runners:down": "docker compose --env-file .env -f infra/github-actions.docker-compose.yml down --volumes"
+    "github-action-runners:up": "docker compose --env-file github-actions/.env -f github-actions/docker-compose.yml up -d --build",
+    "github-action-runners:down": "docker compose --env-file github-actions/.env -f github-actions/docker-compose.yml down --volumes"
   },
   "prettier": {
     "jsxSingleQuote": true,
