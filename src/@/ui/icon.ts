@@ -1,7 +1,7 @@
 import { h } from '~/@/vdom/h'
 import { cn } from './cn'
-import { Svg } from '../vdom/primitives/svg'
-import { Path } from '../vdom/primitives/path'
+import { Svg } from '../vdom/primitives/svg/svg'
+import { Path } from '../vdom/primitives/svg/path'
 
 export type Props = {
   class?: string

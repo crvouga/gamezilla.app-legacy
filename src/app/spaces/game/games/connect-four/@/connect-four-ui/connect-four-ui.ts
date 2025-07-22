@@ -2,7 +2,7 @@ import { Uuid } from '~/@/id/uuid'
 import { h } from '~/@/vdom/h'
 import type { PlayerType } from '../connect-four'
 import { gameTheme } from './shared'
-import { Svg } from '~/@/vdom/primitives/svg'
+import { Svg } from '~/@/vdom/primitives/svg/svg'
 
 export const PlayerIcon = ({ playerType, ...input }: { playerType: PlayerType; key?: string; class?: string }) => {
   switch (playerType) {

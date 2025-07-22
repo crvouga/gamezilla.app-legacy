@@ -1,10 +1,10 @@
 import { Uuid } from '~/@/id/uuid'
 import { h } from '~/@/vdom/h'
-import { Rect } from '~/@/vdom/primitives/rect'
-import { Svg } from '~/@/vdom/primitives/svg'
+import { Rect } from '~/@/vdom/primitives/svg/rect'
+import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { COLUMN_COUNT, MAX_COLUMN_HEIGHT } from '../connect-four'
 import { gameTheme } from './shared'
-import { Defs } from '~/@/vdom/primitives/defs'
+import { Defs } from '~/@/vdom/primitives/svg/defs'
 
 const coverArtId = Uuid.generate()
 

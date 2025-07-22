@@ -1,7 +1,7 @@
-import { h } from '../h'
-import { VDom } from '../vdom'
+import { h } from '../../h'
+import { VDom } from '../../vdom'
 
-export const Defs = ({
+export const G = ({
   children,
   ...input
 }: {
@@ -9,28 +9,32 @@ export const Defs = ({
   height?: number | string
   viewBox?: string
   class?: string
-  key?: string | number | undefined
+  key?: string | number | undefined | null | number | boolean
   xmlns?: string
   x?: number | string
+  d?: string
   y?: number | string
   fill?: string
-  stroke?: string
+  'fill-opacity'?: number | string
+  stroke?: string | null | undefined
   'stroke-width'?: number | string
   xmlnsXlink?: string
   'stroke-linecap'?: string
   id?: string
+  'p-id'?: string | undefined | null
   xmlSpace?: string
-  'stroke-linejoin'?: string
-  mask?: string | null | undefined
-  rx?: number | string
-  ry?: number | string
   transform?: string
+  'stroke-dasharray'?: number | string
+  'stroke-dashoffset'?: number | string
+  'stroke-linejoin'?: string
   'stroke-miterlimit'?: number | string
+  'stroke-opacity'?: number | string
   preserveAspectRatio?: string
   version?: string
   children: VDom[]
   'fill-rule'?: string
   'clip-rule'?: string
+  'clip-path'?: string | null | undefined
   onClick?: (event: unknown) => void
   onMouseDown?: (event: unknown) => void
   onMouseUp?: (event: unknown) => void
@@ -47,17 +51,7 @@ export const Defs = ({
   onTouchLeave?: (event: unknown) => void
   onTouchOver?: (event: unknown) => void
   onContextMenu?: (event: unknown) => void
-  onPointerDown?: (event: unknown) => void
-  onPointerUp?: (event: unknown) => void
-  onPointerEnter?: (event: unknown) => void
-  onPointerLeave?: (event: unknown) => void
-  onAbort?: (event: unknown) => void
-  onPointerOver?: (event: unknown) => void
-  onPointerOut?: (event: unknown) => void
-  onPointerMove?: (event: unknown) => void
-  onPointerCancel?: (event: unknown) => void
-  onPointerClick?: (event: unknown) => void
   opacity?: number | string
 }) => {
-  return h('defs', input, children)
+  return h('g', input, children)
 }

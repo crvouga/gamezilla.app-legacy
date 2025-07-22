@@ -2,10 +2,10 @@ import { eq } from '~/@/equals/equals'
 import { memoize } from '~/@/function/memoize'
 import { Random } from '~/@/random/random'
 import { h } from '~/@/vdom/h'
-import { G } from '~/@/vdom/primitives/g'
-import { Svg } from '~/@/vdom/primitives/svg'
+import { G } from '~/@/vdom/primitives/svg/g'
+import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { Direction, Position } from './position'
-import { Rect } from '~/@/vdom/primitives/rect'
+import { Rect } from '~/@/vdom/primitives/svg/rect'
 
 //
 //

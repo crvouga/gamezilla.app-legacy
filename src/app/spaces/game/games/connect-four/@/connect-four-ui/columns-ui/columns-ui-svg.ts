@@ -3,10 +3,10 @@ import { h } from '~/@/vdom/h'
 import { COLUMN_COUNT, type Columns, MAX_COLUMN_HEIGHT, type Pos2d, isColumnIndex, winToId } from '../../connect-four'
 import { gameTheme } from '../shared'
 import type { Model, ViewColumnsInput } from './shared'
-import { Svg } from '~/@/vdom/primitives/svg'
-import { G } from '~/@/vdom/primitives/g'
-import { Rect } from '~/@/vdom/primitives/rect'
-import { Defs } from '~/@/vdom/primitives/defs'
+import { Svg } from '~/@/vdom/primitives/svg/svg'
+import { G } from '~/@/vdom/primitives/svg/g'
+import { Rect } from '~/@/vdom/primitives/svg/rect'
+import { Defs } from '~/@/vdom/primitives/svg/defs'
 
 type SvgIds = {
   playerOneGradient: string

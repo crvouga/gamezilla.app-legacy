@@ -1,7 +1,7 @@
-import { h } from '../h'
-import { VDom } from '../vdom'
+import { h } from '../../h'
+import { VDom } from '../../vdom'
 
-export const Rect = ({
+export const Defs = ({
   children,
   ...input
 }: {
@@ -59,5 +59,5 @@ export const Rect = ({
   onPointerClick?: (event: unknown) => void
   opacity?: number | string
 }) => {
-  return h('rect', input, children)
+  return h('defs', input, children)
 }

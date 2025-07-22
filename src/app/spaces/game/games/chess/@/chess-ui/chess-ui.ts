@@ -1,7 +1,7 @@
 import { h } from '~/@/vdom/h'
-import { G } from '~/@/vdom/primitives/g'
-import { Path } from '~/@/vdom/primitives/path'
-import { Svg } from '~/@/vdom/primitives/svg'
+import { G } from '~/@/vdom/primitives/svg/g'
+import { Path } from '~/@/vdom/primitives/svg/path'
+import { Svg } from '~/@/vdom/primitives/svg/svg'
 
 export const toChecker = ({ x, y }: { x: number; y: number }): 'Light' | 'Dark' => {
   if ((isEven(x) && isOdd(y)) || (isOdd(x) && isEven(y))) {

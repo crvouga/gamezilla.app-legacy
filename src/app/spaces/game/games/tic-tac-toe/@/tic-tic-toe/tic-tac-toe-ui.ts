@@ -1,5 +1,5 @@
 import { h } from '~/@/vdom/h'
-import { Svg } from '~/@/vdom/primitives/svg'
+import { Svg } from '~/@/vdom/primitives/svg/svg'
 import {
   Empty,
   MAX_X,
@@ -12,8 +12,8 @@ import {
   toSlot,
   toWins,
 } from './tic-tac-toe'
-import { G } from '~/@/vdom/primitives/g'
-import { Rect } from '~/@/vdom/primitives/rect'
+import { G } from '~/@/vdom/primitives/svg/g'
+import { Rect } from '~/@/vdom/primitives/svg/rect'
 
 export const gameTheme = {
   background: '#14BDAC',

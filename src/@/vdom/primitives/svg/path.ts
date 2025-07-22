@@ -1,7 +1,7 @@
-import { h } from '../h'
-import { VDom } from '../vdom'
+import { h } from '../../h'
+import { VDom } from '../../vdom'
 
-export const Svg = ({
+export const Path = ({
   children,
   ...input
 }: {
@@ -12,16 +12,24 @@ export const Svg = ({
   key?: string | number | undefined
   xmlns?: string
   x?: number | string
+  d?: string
   y?: number | string
   fill?: string
+  'fill-opacity'?: number | string
   stroke?: string
   'stroke-width'?: number | string
   xmlnsXlink?: string
+
   'stroke-linecap'?: string
   id?: string
+  'p-id'?: string | undefined | null
   xmlSpace?: string
+  transform?: string
+  'stroke-dasharray'?: number | string
+  'stroke-dashoffset'?: number | string
   'stroke-linejoin'?: string
   'stroke-miterlimit'?: number | string
+  'stroke-opacity'?: number | string
   preserveAspectRatio?: string
   version?: string
   children: VDom[]
@@ -45,6 +53,5 @@ export const Svg = ({
   onContextMenu?: (event: unknown) => void
   opacity?: number | string
 }) => {
-  // @ts-ignore
-  return h('svg', input, children)
+  return h('path', input, children)
 }

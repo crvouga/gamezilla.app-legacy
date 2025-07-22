@@ -1,5 +1,5 @@
 import { h } from '~/@/vdom/h'
-import { Svg } from '../vdom/primitives/svg'
+import { Svg } from '../vdom/primitives/svg/svg'
 
 export type IconInput = {
   class?: string

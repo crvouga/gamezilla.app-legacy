@@ -1,8 +1,8 @@
 import { h } from '~/@/vdom/h'
-import { G } from '~/@/vdom/primitives/g'
-import { Path } from '~/@/vdom/primitives/path'
-import { Rect } from '~/@/vdom/primitives/rect'
-import { Svg } from '~/@/vdom/primitives/svg'
+import { G } from '~/@/vdom/primitives/svg/g'
+import { Path } from '~/@/vdom/primitives/svg/path'
+import { Rect } from '~/@/vdom/primitives/svg/rect'
+import { Svg } from '~/@/vdom/primitives/svg/svg'
 
 const theme = {
   // lightSquare: "#EBEBD0",

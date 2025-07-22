@@ -6,8 +6,8 @@ import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ScreenLayoutProps } from '~/app/@/ui/screen/layout/screen-layout-props'
-import { Svg } from '~/@/vdom/primitives/svg'
-import { Path } from '~/@/vdom/primitives/path'
+import { Svg } from '~/@/vdom/primitives/svg/svg'
+import { Path } from '~/@/vdom/primitives/svg/path'
 
 export const ScreenLayoutGameCoverArt = (
   input: ScreenLayoutProps & {

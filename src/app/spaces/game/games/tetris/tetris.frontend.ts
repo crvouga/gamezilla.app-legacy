@@ -22,8 +22,8 @@ import {
   toGhostPiece,
   toPiece,
 } from './tetris.types'
-import { Svg } from '~/@/vdom/primitives/svg'
-import { Rect } from '~/@/vdom/primitives/rect'
+import { Svg } from '~/@/vdom/primitives/svg/svg'
+import { Rect } from '~/@/vdom/primitives/svg/rect'
 
 //
 //

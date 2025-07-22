@@ -12,10 +12,10 @@ import {
   squareToChecker,
   toLowercaseSquare,
 } from '../../chess'
-import { Svg } from '~/@/vdom/primitives/svg'
-import { Path } from '~/@/vdom/primitives/path'
-import { G } from '~/@/vdom/primitives/g'
-import { Rect } from '~/@/vdom/primitives/rect'
+import { Svg } from '~/@/vdom/primitives/svg/svg'
+import { Path } from '~/@/vdom/primitives/svg/path'
+import { G } from '~/@/vdom/primitives/svg/g'
+import { Rect } from '~/@/vdom/primitives/svg/rect'
 
 //
 //

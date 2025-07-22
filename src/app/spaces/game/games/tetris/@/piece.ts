@@ -1,7 +1,7 @@
 import { h } from '~/@/vdom/h'
-import { Svg } from '~/@/vdom/primitives/svg'
+import { Svg } from '~/@/vdom/primitives/svg/svg'
 import type * as Position from './position'
-import { Rect } from '~/@/vdom/primitives/rect'
+import { Rect } from '~/@/vdom/primitives/svg/rect'
 
 export type Piece = Position.Position[]
 

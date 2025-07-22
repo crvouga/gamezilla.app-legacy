@@ -14,7 +14,7 @@ import { GroupId } from '../numberlink/group-id'
 import { BoardLayout } from '../ui/board-layout'
 import { Color } from '../ui/color'
 import { NumberlinkVariantBoard, NumberlinkVariantDimensions } from '../variant'
-import { Svg } from '~/@/vdom/primitives/svg'
+import { Svg } from '~/@/vdom/primitives/svg/svg'
 
 const View = (input: {
   ctx: AppFrontendCtx

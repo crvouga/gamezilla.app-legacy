@@ -1,8 +1,8 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '../vdom/primitives/box'
 import { Image } from '../vdom/primitives/image'
-import { Path } from '../vdom/primitives/path'
-import { Svg } from '../vdom/primitives/svg'
+import { Path } from '../vdom/primitives/svg/path'
+import { Svg } from '../vdom/primitives/svg/svg'
 import { cn } from './cn'
 
 type AvatarProps = {
