@@ -102,6 +102,7 @@ jobs:
     name: E2E Tests
     runs-on: self-hosted
     timeout-minutes: 10
+    needs: [integration-tests]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
