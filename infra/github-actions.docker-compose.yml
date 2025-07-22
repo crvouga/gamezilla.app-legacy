@@ -1,0 +1,13 @@
+name: gamezilla_app_github_action_runners
+
+services:
+  runner-1:
+    build:
+      context: ../
+      dockerfile: infra/github-actions-runner.Dockerfile
+    environment:
+      GITHUB_RUNNER_TOKEN: ${GITHUB_RUNNER_TOKEN}
+      GITHUB_RUNNER_URL: ${GITHUB_RUNNER_URL:-https://github.com/crvouga/gamezilla.app}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always

@@ -11,7 +11,10 @@ if [ -z "$GITHUB_RUNNER_TOKEN" ]; then
 fi
 
 # Set default URL if not provided
-GITHUB_RUNNER_URL=${GITHUB_RUNNER_URL:-"https://github.com/crvouga/gamezilla.app"}
+if [ -z "$GITHUB_RUNNER_URL" ]; then
+  echo "GITHUB_RUNNER_URL must be set"
+  exit 1
+fi
 
 # The runner agent should not run as root.
 # We'll run it as the 'runner' user.

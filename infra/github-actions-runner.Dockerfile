@@ -27,6 +27,7 @@ RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /
 # Create runner user
 RUN useradd -m runner
 WORKDIR /home/runner
+ENV HOME /home/runner
 
 # Set runner version and arch
 ENV RUNNER_VERSION=2.326.0
