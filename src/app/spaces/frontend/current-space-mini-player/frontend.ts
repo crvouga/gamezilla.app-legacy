@@ -5,7 +5,7 @@ import { IconButton } from '~/@/ui/icon-button'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import { Touchable } from '~/@/vdom/primitives/touchable'
+import { Pressable } from '~/@/vdom/primitives/pressable'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
@@ -70,7 +70,7 @@ const View = (input: {
     },
     [
       h(
-        Touchable,
+        Pressable,
         {
           type: 'button',
           class: 'flex flex-1 items-center gap-3 overflow-hidden',

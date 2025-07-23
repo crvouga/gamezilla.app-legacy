@@ -6,7 +6,7 @@ import { Paper } from '~/@/ui/paper'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { TextInput } from '~/@/vdom/primitives/text-input'
-import { Touchable } from '~/@/vdom/primitives/touchable'
+import { Pressable } from '~/@/vdom/primitives/pressable'
 import type { VDom } from '~/@/vdom/vdom'
 import type { ModelFrontend, MsgFrontend, MsgToFrontend } from './search.types'
 import { Text } from '~/@/vdom/primitives/text'
@@ -135,7 +135,7 @@ export const View = ({
               }),
           }),
           h(
-            Touchable,
+            Pressable,
             {
               type: 'button',
               onClick: () =>

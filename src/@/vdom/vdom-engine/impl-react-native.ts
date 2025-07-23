@@ -18,7 +18,7 @@ import { SVG_TAG } from '../primitives/svg/svg'
 import { SVG_TEXT_TAG } from '../primitives/svg/text'
 import { TEXT_TAG } from '../primitives/text'
 import { TEXT_INPUT_TAG } from '../primitives/text-input'
-import { TOUCHABLE_TAG } from '../primitives/touchable'
+import { PRESSABLE_TAG } from '../primitives/pressable'
 import { IVirtualDomEngine } from './interface'
 import { normalizeChildren, normalizePropsInPlace } from './react'
 
@@ -36,7 +36,7 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
       children = normalizeChildren(children)
 
       switch (tag) {
-        case TOUCHABLE_TAG: {
+        case PRESSABLE_TAG: {
           throw new Error('Not implemented')
         }
         case TEXT_TAG: {

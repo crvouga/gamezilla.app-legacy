@@ -7,7 +7,7 @@ import { Transition } from '~/@/vdom/primitives/transition'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import { Touchable } from '~/@/vdom/primitives/touchable'
+import { Pressable } from '~/@/vdom/primitives/pressable'
 import type { VDom } from '~/@/vdom/vdom'
 import type { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
@@ -214,7 +214,7 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
     [
       gameOver?.t === 'winner' &&
         h(
-          Touchable,
+          Pressable,
           {
             class: 'absolute inset-0 flex flex-col items-center justify-center bg-black/70',
             disabled: input.isSpectating,
@@ -232,7 +232,7 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
         ),
       gameOver?.t === 'draw' &&
         h(
-          Touchable,
+          Pressable,
           {
             class: 'absolute inset-0 flex flex-col items-center justify-center bg-black/60',
             disabled: input.isSpectating,

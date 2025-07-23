@@ -40,7 +40,7 @@ const doVerifyCode = async (f: IFixtureApp) => {
   const codeInput = await f.frontend.findByRole('textbox', 'Code')
   expect(codeInput).toBeTruthy()
   await codeInput!.do({ t: 'input', value: '123' })
-  const verifyCodeButton = await f.frontend.findByRole('button', 'Verify Code')
+  const verifyCodeButton = await f.frontend.findByRole('button', 'Verify code')
   expect(verifyCodeButton).toBeTruthy()
   await verifyCodeButton!.do({ t: 'click' })
   await doDismissAlert(f.frontend, 'info')

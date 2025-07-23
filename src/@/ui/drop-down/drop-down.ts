@@ -1,6 +1,6 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import { Touchable } from '~/@/vdom/primitives/touchable'
+import { Pressable } from '~/@/vdom/primitives/pressable'
 import { VDom } from '~/@/vdom/vdom'
 import { Transition } from '../../vdom/primitives/transition'
 import { cn } from '../cn'
@@ -49,7 +49,7 @@ export const DropDown = (props: {
 
 const Backdrop = (props: { open: boolean; onClick: () => void; onKeyDown: (e: unknown) => void }) => {
   if (!props.open) return null
-  return h(Touchable, {
+  return h(Pressable, {
     class: 'fixed inset-0 z-40 bg-black/50',
     onClick: props.onClick,
     onKeyDown: props.onKeyDown,

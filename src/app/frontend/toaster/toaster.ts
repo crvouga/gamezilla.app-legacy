@@ -10,7 +10,7 @@ import { PAPER_CLASS_NAME } from '~/@/ui/paper'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
-import { Touchable } from '~/@/vdom/primitives/touchable'
+import { Pressable } from '~/@/vdom/primitives/pressable'
 import { Transition } from '~/@/vdom/primitives/transition'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -196,7 +196,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
             Text({ text: input.toast.text }),
             typeof errorMsg === 'string' &&
               h(
-                Touchable,
+                Pressable,
                 {
                   type: 'button',
                   class: 'font-bold',
@@ -206,7 +206,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
                 [Text({ text: 'See Error' })],
               ),
             h(
-              Touchable,
+              Pressable,
               {
                 type: 'button',
                 role: 'button',

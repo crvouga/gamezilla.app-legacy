@@ -2,7 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { TextInput } from '~/@/vdom/primitives/text-input'
-import { Touchable } from '~/@/vdom/primitives/touchable'
+import { Pressable } from '~/@/vdom/primitives/pressable'
 import type { VDom } from '~/@/vdom/vdom'
 import { SvgText } from '../vdom/primitives/svg/text'
 import { cn } from './cn'
@@ -76,7 +76,7 @@ export const TextField = (input: {
           typeof input.value === 'string' &&
           input.value.length > 0 &&
           h(
-            Touchable,
+            Pressable,
             {
               class: 'rounded-md px-3 ring-blue-500 outline-none focus:ring-2',
               'aria-label': 'Clear input',

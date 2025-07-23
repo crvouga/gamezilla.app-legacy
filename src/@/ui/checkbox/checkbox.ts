@@ -1,6 +1,6 @@
 import { h } from '~/@/vdom/h'
 import { Text } from '~/@/vdom/primitives/text'
-import { Touchable } from '~/@/vdom/primitives/touchable'
+import { Pressable } from '~/@/vdom/primitives/pressable'
 import { cn } from '../cn'
 
 export type CheckboxState = 'checked' | 'unchecked' | 'indeterminate'
@@ -9,7 +9,7 @@ export const Checkbox = (input: { state: CheckboxState; onChange?: (checkedNew: 
   const element = input.onChange ? 'button' : 'div'
   const isChecked = input.state === 'checked'
   return h(
-    Touchable,
+    Pressable,
     {
       class: cn(
         'flex size-6 items-center justify-center rounded border-2 border-neutral-500 text-xl font-black text-neutral-800',

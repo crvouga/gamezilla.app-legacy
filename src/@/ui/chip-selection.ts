@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import { Touchable } from '../vdom/primitives/touchable'
+import { Pressable } from '../vdom/primitives/pressable'
 import { Typography } from './typography'
 import { Text } from '../vdom/primitives/text'
 
@@ -32,7 +32,7 @@ export const ChipSelection = <T>({
       },
       options.map((option) =>
         h(
-          Touchable,
+          Pressable,
           {
             key: String(option.value),
             disabled: disabled,

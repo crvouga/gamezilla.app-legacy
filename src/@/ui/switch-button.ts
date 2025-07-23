@@ -1,7 +1,7 @@
 import { cn } from '~/@/ui/cn'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import { Touchable } from '~/@/vdom/primitives/touchable'
+import { Pressable } from '~/@/vdom/primitives/pressable'
 
 export const SwitchButton = ({
   onToggle,
@@ -15,7 +15,7 @@ export const SwitchButton = ({
   return h(Box, { class: 'flex flex-row items-center space-x-2' }, [
     // h(Text, {}, label),
     h(
-      Touchable,
+      Pressable,
       {
         onClick: onToggle,
         accessibilityRole: 'switch',
