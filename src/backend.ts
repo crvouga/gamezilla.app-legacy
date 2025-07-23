@@ -3,6 +3,7 @@ import { DotEnv } from './@/dotenv/dotenv'
 import { FileSystem } from './@/file-system'
 import { Logger } from './@/logger'
 import { SecretString } from './@/secrets/secret-string'
+import { SqlDbMigration } from './@/sql-db-migrations/impl'
 import { BackendSqlDb } from './@/sql-db/backend-impl'
 
 const main = async () => {
@@ -14,19 +15,32 @@ const main = async () => {
   await DotEnv.load({ fs: FileSystem.init({ t: 'node' }), paths: ['.env'] })
   logger.info('Environment variables loaded')
 
+  logger.info('Loading configuration from environment')
   const BACKEND_PORT = Number(process.env.BACKEND_PORT)
   if (isNaN(BACKEND_PORT)) throw new Error('BACKEND_PORT is not set')
+  logger.info(`Backend port set to ${BACKEND_PORT}`)
 
   const TOPIC_URL = process.env.TOPIC_URL
   if (!TOPIC_URL) throw new Error('TOPIC_URL is not set')
+  logger.info(`Topic URL set to ${TOPIC_URL}`)
 
   const DATABASE_URL = SecretString.init('DATABASE_URL', process.env.DATABASE_URL)
   if (!DATABASE_URL) throw new Error('DATABASE_URL is not set')
+  logger.info('Database URL loaded')
 
   const IS_PROD = process.env.NODE_ENV?.includes('production') ?? false
+  logger.info(`Running in ${IS_PROD ? 'production' : 'development'} mode`)
 
+  logger.info('Initializing database connection')
   const sqlDb = BackendSqlDb.init({ t: 'postgres', databaseUrl: DATABASE_URL, logger })
+  logger.info('Database connection initialized')
 
+  logger.info('Running database migrations')
+  const sqlDbMigration = SqlDbMigration.init({ t: 'dbmate', databaseUrl: DATABASE_URL, logger, sqlDb })
+  await sqlDbMigration.up()
+  logger.info('Database migrations completed')
+
+  logger.info('Initializing backend context')
   const ctx = await AppBackend.initCtx({
     isProd: IS_PROD,
     port: BACKEND_PORT,
@@ -34,9 +48,11 @@ const main = async () => {
     sqlDb,
     logger,
   })
+  logger.info('Backend context initialized')
 
   const abortController = new AbortController()
 
+  logger.info('Starting backend worker')
   await AppBackend.worker(abortController.signal, { ctx })
 }
 
