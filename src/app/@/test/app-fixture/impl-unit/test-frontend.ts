@@ -54,7 +54,7 @@ export const TestFrontend = async (config: {
 
   const navigation = Navigation({ t: 'web-standard', logger })
 
-  const audioPlayer = AudioPlayer({ t: 'fake', logger })
+  const audioPlayer = AudioPlayer.init({ t: 'fake', logger })
 
   const viewport = Viewport({ t: 'web-standard' })
 

@@ -80,7 +80,7 @@ const initCtx = async (config: {
 
   const navigatorLanguage = LanguageCodeISO_639_1.getLangFromNavigator() ?? 'en'
 
-  const audioPlayer = AudioPlayer({
+  const audioPlayer = AudioPlayer.init({
     t: 'web-standard',
     logger,
   })

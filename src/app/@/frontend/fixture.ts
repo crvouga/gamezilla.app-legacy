@@ -50,7 +50,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     keyValueDb,
     migrationPolicy,
     keyboard: KeyBoard({ t: 'noop' }),
-    audioPlayer: AudioPlayer({ t: 'fake', logger: Logger.init({ t: 'noop' }) }),
+    audioPlayer: AudioPlayer.init({ t: 'fake', logger: Logger.init({ t: 'noop' }) }),
     navigation: Navigation({ t: 'in-memory', logger: Logger.init({ t: 'noop' }) }),
     viewport: Viewport({ t: 'noop' }),
     clientSessionId: ClientSessionId.generate(),

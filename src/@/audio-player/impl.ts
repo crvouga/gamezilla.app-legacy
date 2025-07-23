@@ -1,14 +1,18 @@
-import * as ImplFake from './impl-fake'
-import * as ImplWebStandard from './impl-web-standard'
+import { ImplFake } from './impl-fake'
+import { ImplWebStandard } from './impl-web-standard'
 import { IAudioPlayer } from './interface'
 
-export type Config = ImplWebStandard.Config | ImplFake.Config
+export type AudioPlayer = ImplWebStandard | ImplFake
 
-export const AudioPlayer = (config: Config): IAudioPlayer => {
+const init = (config: AudioPlayer): IAudioPlayer => {
   switch (config.t) {
     case 'web-standard':
-      return ImplWebStandard.AudioPlayer(config)
+      return ImplWebStandard.init(config)
     case 'fake':
-      return ImplFake.AudioPlayer(config)
+      return ImplFake.init(config)
   }
+}
+
+export const AudioPlayer = {
+  init,
 }
