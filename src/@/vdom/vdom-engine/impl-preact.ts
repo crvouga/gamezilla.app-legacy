@@ -1,6 +1,6 @@
 import { Fragment, render } from 'preact'
 import { createElement } from 'preact/compat'
-import { FRAGMENT_TAG } from '../primitives/frag'
+import { FRAGMENT_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 
 export type ImplPreact = {

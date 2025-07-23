@@ -1,7 +1,7 @@
 import { createElement, Fragment, StrictMode } from 'react'
 import { createPortal } from 'react-dom'
 import { createRoot } from 'react-dom/client'
-import { FRAGMENT_TAG } from '../primitives/frag'
+import { FRAGMENT_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { normalizeChildren, normalizePropsInPlace } from './react'
 

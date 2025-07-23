@@ -1,5 +1,6 @@
+import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
-import { h, tag } from '~/@/vdom/h'
+import { TRANSITION_ELEMENT_TAG } from '../../tags'
 import './transition-element'
 import { type TransitionInput, transitionSub } from './transition-shared'
 
@@ -23,5 +24,5 @@ export const Transition = ({
     class: class_,
     mode,
   })
-  return h(tag('transition-element'), { id: id }, [children])
+  return h(TRANSITION_ELEMENT_TAG, { id: id }, [children])
 }

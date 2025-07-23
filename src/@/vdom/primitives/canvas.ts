@@ -1,7 +1,7 @@
-import { h, IntrinsicAttributes, tag } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
-
-export const CANVAS_TAG = tag('canvas')
+import { h } from '~/@/vdom/vdom-engine/impl'
+import { IntrinsicAttributes } from '~/@/vdom/vdom-engine/interface'
+import { CANVAS_TAG } from '../tags'
 
 export const Canvas = ({ children, ...props }: IntrinsicAttributes & { children: VDom[] }) => {
   return h(CANVAS_TAG, props, children)

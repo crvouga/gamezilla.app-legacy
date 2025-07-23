@@ -1,8 +1,6 @@
 import type { AriaRole } from '~/@/html/aria-role'
-import { h, tag } from '~/@/vdom/h'
+import { h } from '~/@/vdom/vdom-engine/impl'
 import { VDom } from '../vdom'
-
-export const TEXT_TAG = tag('p')
 
 export interface TextProps {
   class?: string

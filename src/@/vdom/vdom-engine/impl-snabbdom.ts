@@ -9,7 +9,7 @@ import {
   propsModule,
   styleModule,
 } from 'snabbdom'
-import { FRAGMENT_TAG } from '../primitives/frag'
+import { FRAGMENT_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 
 export type ImplSnabbdom = {

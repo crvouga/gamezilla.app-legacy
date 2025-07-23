@@ -1,7 +1,6 @@
 import { AriaRole } from '~/@/html/aria-role'
-import { h, tag } from '../h'
-
-export const TEXT_INPUT_TAG = tag('input')
+import { h } from '~/@/vdom/vdom-engine/impl'
+import { tag } from '~/@/vdom/vdom-engine/interface'
 
 export const TextInput = (props: {
   value?: string | number

@@ -1,5 +1,5 @@
 import type { EventMeta } from '~/@/event-sourced/event'
-import { SpaceCtx } from '~/app/spaces/@/space/ctx'
+import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import { GameName } from './@/game-name'
 import * as ConnectFour from './connect-four/types'
 import { NumberlinkSpace } from './numberlink/space'

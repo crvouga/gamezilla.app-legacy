@@ -1,7 +1,7 @@
-import { h, IntrinsicAttributes, tag } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
-
-export const PRESSABLE_TAG = tag('button')
+import { h } from '~/@/vdom/vdom-engine/impl'
+import { IntrinsicAttributes } from '~/@/vdom/vdom-engine/interface'
+import { PRESSABLE_TAG } from '../tags'
 
 export const Pressable = ({ children, ...props }: IntrinsicAttributes & { children: VDom[] }) => {
   return h(PRESSABLE_TAG, props, children)

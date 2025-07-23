@@ -1,6 +1,6 @@
 import { Fragment, render } from 'inferno'
 import { createElement } from 'inferno-create-element'
-import { FRAGMENT_TAG } from '../primitives/frag'
+import { FRAGMENT_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 
 export type ImplInferno = {
