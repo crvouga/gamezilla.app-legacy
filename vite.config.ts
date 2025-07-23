@@ -37,6 +37,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      'react-native-svg': path.resolve(__dirname, 'src/app/@/react-native-svg.mock.ts'),
+      'react-native': 'react-native-web',
       '~': path.resolve(__dirname, 'src'),
       inferno: process.env.NODE_ENV === 'production' ? 'inferno' : 'inferno/dist/index.dev.mjs',
     },
