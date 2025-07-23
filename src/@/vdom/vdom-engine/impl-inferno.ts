@@ -13,10 +13,14 @@ const init = (_config: ImplInferno): IVirtualDomEngine => {
       render(vDom, node)
     },
     createElement: (tag: any, props: any, children: any) => {
-      if (tag === FRAGMENT_TAG) {
-        return createElement(Fragment, props, children) as any
+      switch (tag) {
+        case FRAGMENT_TAG: {
+          return createElement(Fragment, props, children) as any
+        }
+        default: {
+          return createElement(tag, props, children) as any
+        }
       }
-      return createElement(tag, props, children) as any
     },
   }
 }

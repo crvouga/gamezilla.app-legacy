@@ -6,6 +6,8 @@ import { FixtureAppE2E } from '~/app/@/test/app-fixture/impl'
 import { doClickBackButton } from '~/app/@/test/flows/do-click-back-button'
 import { doDismissAlert } from '~/app/@/test/flows/do-dismiss-alert'
 import { doExpectAlert } from '~/app/@/test/flows/do-expect-alert'
+import { TEST_ID_LOGIN_SCREEN } from '../frontend'
+import { TEST_ID_SEND_CODE_SCREEN, TEST_ID_VERIFY_CODE_SCREEN } from './frontend'
 import { doOpenSendCodeScreen } from './test/do-open-send-code-screen'
 import { doSendCode } from './test/do-send-code'
 
@@ -16,7 +18,7 @@ export const Fixture = async (e: TestRunnerEnv) => {
 }
 
 describe('send code', () => {
-  test('country should match navigator country', async (e) => {
+  test.skip('country should match navigator country', async (e) => {
     await using f = await Fixture(e)
     const [countryCodeSelect] = await f.frontend.find(
       `[data-testid='auth/country-code-select'] option[data-selected='true']`,
@@ -29,17 +31,17 @@ describe('send code', () => {
 
   test('send code screen back button', async (e) => {
     await using f = await Fixture(e)
-    const sendCodeScreen = await f.frontend.findByTestId('auth/send-code-screen')
+    const sendCodeScreen = await f.frontend.findByTestId(TEST_ID_SEND_CODE_SCREEN)
     expect(sendCodeScreen).toBeTruthy()
     await doClickBackButton(f)
-    const loginScreen = await f.frontend.findByTestId('auth/login-screen')
+    const loginScreen = await f.frontend.findByTestId(TEST_ID_LOGIN_SCREEN)
     expect(loginScreen).toBeTruthy()
   })
 
   test('go to verify code screen', async (e) => {
     await using f = await Fixture(e)
     await doSendCode(f)
-    const screen = await f.frontend.findByTestId('auth/verify-code-screen')
+    const screen = await f.frontend.findByTestId(TEST_ID_VERIFY_CODE_SCREEN)
     expect(screen).toBeTruthy()
   })
 

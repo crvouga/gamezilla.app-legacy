@@ -45,7 +45,7 @@ export const translations: Translations<Text> = {
     'auth-sms.send-code': 'Send code',
     'auth-sms.country': 'Country',
     'auth-sms.code': 'Code',
-    'auth-sms.verify-code': 'Verify Code',
+    'auth-sms.verify-code': 'Verify code',
     'auth-sms.invalid-phone-number': 'Invalid phone number',
     'auth-sms.enter-code-sent-to': (formattedPhoneNumber) => `Enter the code sent to ${formattedPhoneNumber}`,
     'auth-sms.sent-code-to': (formattedPhoneNumber) => `Sent code to ${formattedPhoneNumber}`,

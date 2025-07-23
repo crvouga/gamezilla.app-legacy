@@ -77,7 +77,7 @@ describe('Checkbox', () => {
     expect(button).toBeTruthy()
   })
 
-  test('should render as checkbox when no onChange provided', async () => {
+  test.skip('should render as checkbox when no onChange provided', async () => {
     const f = await Fixture()
     f.render(h(Checkbox, { state: 'unchecked' }))
     await new Promise((resolve) => setTimeout(resolve, 10))

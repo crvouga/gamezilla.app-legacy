@@ -21,9 +21,8 @@ export const Checkbox = (input: { state: CheckboxState; onChange?: (checkedNew: 
       onClick: () => {
         input.onChange?.(!isChecked)
       },
-      onKeyDown: (e: MouseEvent) => {
-        if (element === 'button' && 'key' in e && e.key === 'Enter') {
-          e.preventDefault()
+      onKeyDown: (e: unknown) => {
+        if (element === 'button' && typeof e === 'object' && e !== null && 'key' in e && e.key === 'Enter') {
           input.onChange?.(!isChecked)
         }
       },

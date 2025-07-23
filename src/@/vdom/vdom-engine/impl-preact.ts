@@ -13,15 +13,22 @@ const init = (_config: ImplPreact): IVirtualDomEngine => {
       render(vDom as any, node)
     },
     createElement: (tag: any, props: any, children: any) => {
-      children = Array.isArray(children) ? children : children ? [children] : []
+      children = normalizeChildren(children)
 
-      if (tag === FRAGMENT_TAG) {
-        return createElement(Fragment, props, ...children) as any
+      switch (tag) {
+        case FRAGMENT_TAG: {
+          return createElement(Fragment, props, ...children) as any
+        }
+        default: {
+          return createElement(tag, props, ...children) as any
+        }
       }
-
-      return createElement(tag, props, ...children) as any
     },
   }
+}
+
+const normalizeChildren = (children: unknown) => {
+  return Array.isArray(children) ? children : children ? [children] : []
 }
 
 export const ImplPreact = {

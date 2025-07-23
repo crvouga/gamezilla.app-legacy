@@ -19,9 +19,8 @@ import { SVG_TEXT_TAG } from '../primitives/svg/text'
 import { TEXT_TAG } from '../primitives/text'
 import { TEXT_INPUT_TAG } from '../primitives/text-input'
 import { TOUCHABLE_TAG } from '../primitives/touchable'
-import { kebabObjectToCamelObject } from '../style'
 import { IVirtualDomEngine } from './interface'
-import { REACT_JS_PROP_MAP, REACT_JS_PROP_MAP_KEYS } from './react'
+import { normalizeChildren, normalizePropsInPlace } from './react'
 
 export type ImplReactNative = {
   t: 'react-native'
@@ -33,20 +32,8 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
       throw new Error('Not implemented')
     },
     createElement: (tag: any, props: any, children: any) => {
-      if (props?.style) {
-        props.style = kebabObjectToCamelObject(props?.style)
-      }
-
-      if (typeof tag === 'string') {
-        for (const propKey of REACT_JS_PROP_MAP_KEYS) {
-          if (propKey in props) {
-            props[REACT_JS_PROP_MAP.get(propKey)!] = props[propKey]
-            delete props[propKey]
-          }
-        }
-      }
-
-      children = Array.isArray(children) ? children : children ? [children] : []
+      normalizePropsInPlace(props, tag)
+      children = normalizeChildren(children)
 
       switch (tag) {
         case TOUCHABLE_TAG: {

@@ -68,6 +68,7 @@ export type AriaRole =
   | 'tree'
   | 'treegrid'
   | 'treeitem'
+  | 'submit'
 
 export const AriaRole = {
   of: (role: AriaRole) => role,

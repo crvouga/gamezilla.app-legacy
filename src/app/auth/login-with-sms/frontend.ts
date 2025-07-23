@@ -233,17 +233,6 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
     onSubmit: () => input.dispatch({ t: 'user-clicked-send-code-button' }),
     renderInputs: () =>
       h(Frag, {}, [
-        // h(Select<Iso3166Alpha2Code>, {
-        //   id: 'countryCode',
-        //   dataTestId: 'auth/country-code-select',
-        //   label: input.ctx.t('auth-sms.country'),
-        //   onChange: (countryCode) => input.dispatch({ t: 'inputted-country-code', countryCode }),
-        //   value: input.model.countryCode,
-        //   options: Iso3166Alpha2Code.all,
-        //   toKey: (countryCode) => countryCode,
-        //   toName: (countryCode) => Iso3166Alpha2Code.toNameWithEmoji(countryCode),
-        // }),
-
         h(TextField, {
           id: 'phoneNumberInput',
           testId: 'phone-number-input',
