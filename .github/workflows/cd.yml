@@ -11,32 +11,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  setup:
-    name: Setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: latest
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Create env file
-        run: pnpm run env:ci
-
   type-check:
     name: Type Check
-    needs: setup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,11 +23,11 @@ jobs:
         with:
           version: latest
       - run: pnpm install --frozen-lockfile
+      - run: pnpm run env:ci
       - run: pnpm exec tsc
 
   circular-deps:
     name: Check Circular Dependencies
-    needs: setup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -62,11 +38,11 @@ jobs:
         with:
           version: latest
       - run: pnpm install --frozen-lockfile
+      - run: pnpm run env:ci
       - run: pnpm run cir-deps
 
   unit-tests:
     name: Unit Tests
-    needs: setup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -77,11 +53,11 @@ jobs:
         with:
           version: latest
       - run: pnpm install --frozen-lockfile
+      - run: pnpm run env:ci
       - run: pnpm run unit
 
   integration-tests:
     name: Integration Tests
-    needs: setup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -98,7 +74,6 @@ jobs:
 
   e2e-tests:
     name: E2E Tests
-    needs: setup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
