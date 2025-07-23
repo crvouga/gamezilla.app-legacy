@@ -245,7 +245,7 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
                     : 'flex flex-row w-fit justify-center gap-4 px-6 py-3 pl-8',
                 ),
                 'aria-label': props.ctx.t('app.open-settings'),
-                onPress: () => props.dispatch({ t: 'settings.clicked-top-bar' }),
+                onClick: () => props.dispatch({ t: 'settings.clicked-top-bar' }),
               },
               [
                 h(BackendConnectionStatus.ViewDot, {

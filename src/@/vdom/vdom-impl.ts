@@ -24,7 +24,7 @@ const from = (s: unknown): VDomImpl | null => {
 
 const SEARCH_PARAM_KEY = 'vdom'
 
-const FALLBACK: VDomImpl = 'snabbdom'
+const FALLBACK: VDomImpl = 'inferno'
 
 const getUrl = (): VDomImpl => {
   if (typeof window === 'undefined') return FALLBACK
