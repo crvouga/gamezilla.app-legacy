@@ -27,7 +27,7 @@ export const ListItem = (input: Input) => {
       return h(
         ClickableTransparent,
         {
-          role: 'button',
+          role: 'menuitem',
           onClick: (event) => {
             preventConsoleErrorWhenClosingDrawer(event)
             input.onClick?.()
@@ -56,6 +56,7 @@ export const ListItem = (input: Input) => {
             preventConsoleErrorWhenClosingDrawer(event)
             input.onClick?.()
           },
+          role: 'menuitem',
           'aria-label': input.primary,
           'data-testid': input.dataTestId,
           class: cn(input.class, BASE_CLASS, toColorClass(input)),

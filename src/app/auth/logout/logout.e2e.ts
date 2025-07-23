@@ -26,14 +26,10 @@ describe('logout', () => {
 const doOpenLogoutConfirmation = async (f: IFixtureApp) => {
   const before = await f.frontend.findByTestId(TEST_ID_LOGOUT_CONFIRMATION)
   await eventually(async () => expect(await before?.isVisible()).toBeFalsy())
-  await doClickLogoutListItem(f)
-  const after = await f.frontend.findByTestId(TEST_ID_LOGOUT_CONFIRMATION)
-  await eventually(async () => expect(await after?.isVisible()).toBeTruthy())
-  return after!
-}
-
-const doClickLogoutListItem = async (f: IFixtureApp) => {
   const logoutListItem = await f.frontend.findByTestId(TEST_ID_LOGOUT_LIST_ITEM_BUTTON)
   expect(logoutListItem).toBeTruthy()
   await logoutListItem!.do({ t: 'click' })
+  const after = await f.frontend.findByTestId(TEST_ID_LOGOUT_CONFIRMATION)
+  await eventually(async () => expect(await after?.isVisible()).toBeTruthy())
+  return after!
 }

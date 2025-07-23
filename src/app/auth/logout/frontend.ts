@@ -63,7 +63,6 @@ const View = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: 
     body: input.ctx.t('auth.logout-of-gamezilla.app-body'),
     confirmText: input.ctx.t('auth.logout'),
     cancelText: input.ctx.t('app.cancel'),
-
     id: 'logout',
     position: 'bottom',
     onClose: () => input.dispatch({ t: 'logout-drawer-closed' }),
