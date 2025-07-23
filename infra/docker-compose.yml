@@ -22,6 +22,8 @@ services:
         NODE_ENV: ${NODE_ENV:?NODE_ENV is required}
     ports:
       - '${BACKEND_PORT:?BACKEND_PORT is required}:${BACKEND_PORT:?BACKEND_PORT is required}'
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 
