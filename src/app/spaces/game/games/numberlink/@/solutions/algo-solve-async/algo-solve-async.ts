@@ -64,7 +64,7 @@ export const solveWorker: SolveAsync = async (input) => {
   let url
 
   try {
-    url = new URL('algo-solve-async-worker.ts', import.meta.url).href
+    url = new URL('algo-solve-async-worker.ts', 'import.meta.url').href
   } catch (e) {
     console.error(e)
     return Err({

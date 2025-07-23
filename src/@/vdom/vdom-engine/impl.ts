@@ -5,11 +5,15 @@ import { ICreateElement, IRender, IVirtualDomEngine } from './interface'
 export let render: IRender
 export let h: ICreateElement
 
+const set = (vdomEngine: IVirtualDomEngine) => {
+  render = vdomEngine.render
+  h = vdomEngine.createElement
+}
+
 const initialize = async (vdomImpl: VDomImpl) => {
   if (typeof window === 'undefined') return
   const vdomEngine = await init(vdomImpl)
-  render = vdomEngine.render
-  h = vdomEngine.createElement
+  set(vdomEngine)
 }
 
 const init = async (vdomImpl: VDomImpl): Promise<IVirtualDomEngine> => {
@@ -30,6 +34,10 @@ const init = async (vdomImpl: VDomImpl): Promise<IVirtualDomEngine> => {
       const { ImplSnabbdom } = await import('./impl-snabbdom')
       return ImplSnabbdom.init({ t: 'snabbdom' })
     }
+    case 'react-native': {
+      const { ImplReactNative } = await import('./impl-react-native')
+      return ImplReactNative.init({ t: 'react-native' })
+    }
   }
 }
 
@@ -38,4 +46,5 @@ const event = Sub.create<{ t: 'changed-vdom-impl'; vdomImpl: VDomImpl }>()
 export const VDomEngine = {
   initialize,
   event,
+  set,
 }

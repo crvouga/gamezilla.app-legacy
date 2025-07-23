@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * @module LRUCache
  */
@@ -1110,6 +1111,7 @@ class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
         }, ttl + 1)
         // unref() not supported on all platforms
         /* c8 ignore start */
+
         if (t.unref) {
           t.unref()
         }

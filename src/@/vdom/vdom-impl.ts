@@ -2,7 +2,7 @@ import { minBy } from '../array/min-by'
 import { TranslatedText } from '../l18n'
 import { editDistance } from '../string/edit-distance'
 
-const ALL = ['inferno', 'preact', 'react', 'snabbdom'] as const
+const ALL = ['inferno', 'preact', 'react', 'snabbdom', 'react-native'] as const
 
 const HIDDEN: VDomImpl[] = []
 
@@ -51,6 +51,8 @@ const toName = (impl: VDomImpl): TranslatedText => {
       return TranslatedText.of('React')
     case 'snabbdom':
       return TranslatedText.of('Snabbdom')
+    case 'react-native':
+      return TranslatedText.of('React Native')
   }
 }
 

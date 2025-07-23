@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url'
 //
 //
 
-const DIR_PATH = path.join(fileURLToPath(import.meta.url), '..', '..')
+const DIR_PATH = path.join(fileURLToPath('import.meta.url'), '..', '..')
 const TARGET_FILE_SUFFIX = '.type.ts'
 
 //

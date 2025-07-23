@@ -7,14 +7,10 @@ import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Msg } from '~/@/msg/msg'
 import { Navigation } from '~/@/navigation'
-import { PgliteInstance } from '~/@/pglite/pglite-instance'
-import { PgliteWorkerInstance } from '~/@/pglite/pglite-worker-instance/pglite-worker-instance'
-import { IPgliteInstance } from '~/@/pglite/types'
-import { Psql } from '~/@/psql'
 import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screens/generated/screens'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
-import { FrontendSqlDb } from '~/@/sql-db/frontend-impl'
+import { ISqlDb } from '~/@/sql-db/interface'
 import { Sub } from '~/@/sub'
 import { CrudTransactionDb } from '~/@/sync-engine/crud-transaction-db/impl'
 import { SyncEngineClient } from '~/@/sync-engine/sync-engine-client'
@@ -29,7 +25,7 @@ import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Viewport } from '~/@/viewport'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
-import { Logger } from '../@/logger'
+import { ILogger } from '../@/logger'
 import { APP_SOUND } from './@/frontend/app-sound'
 import { AppFrontendCtx, AppFrontendCtxBase, isAppFrontendCtx } from './@/frontend/ctx'
 import { PreloadSoundsCmd } from './@/frontend/preload-sounds-cmd.$msg'
@@ -48,13 +44,13 @@ import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract as contract,
 import { toBackendConnectionStatus } from './wire/backend-connection/backend-connection-status'
 import { WireFrontend } from './wire/frontend'
 
-const initCtx = async (config: { backendUrl: Url; topicUrl: Url }): Promise<FrontendCtxModule> => {
-  const logger = Logger.init({
-    t: 'console',
-    namespace: ['frontend'],
-    newLinePerMsg: false,
-    maxLogLevel: 'debug',
-  })
+const initCtx = async (config: {
+  backendUrl: Url
+  topicUrl: Url
+  sqlDb: ISqlDb
+  logger: ILogger
+}): Promise<FrontendCtxModule> => {
+  const logger = config.logger.child(['app'])
 
   const clientSessionId = ClientSessionIdStorage().get()
 
@@ -81,25 +77,6 @@ const initCtx = async (config: { backendUrl: Url; topicUrl: Url }): Promise<Fron
     syncSubscriptionRate: TimeSpan.seconds(3),
     codec: topicMsgCodec,
   })
-
-  let pglite: Promise<IPgliteInstance>
-  pglite ??= PgliteWorkerInstance({ t: 'indexed-db', databaseName: 'db' })
-  pglite ??= PgliteInstance({ t: 'indexed-db', databaseName: 'db' })
-  pglite ??= PgliteInstance({ t: 'in-memory' })
-  pglite ??= PgliteWorkerInstance({ t: 'in-memory' })
-
-  const sqlDb = FrontendSqlDb.init({
-    t: 'pglite',
-    pglite,
-    logger,
-  })
-
-  const psql = Psql({ sqlDb })
-
-  if (typeof window !== 'undefined') {
-    // @ts-ignore
-    window.q = psql.psql
-  }
 
   const navigatorLanguage = LanguageCodeISO_639_1.getLangFromNavigator() ?? 'en'
 
@@ -135,7 +112,12 @@ const initCtx = async (config: { backendUrl: Url; topicUrl: Url }): Promise<Fron
 
   const syncEngine = SyncEngineClient({
     logger: logger.setMaxLogLevel('debug'),
-    crudTransactionDb: CrudTransactionDb.init({ t: 'sql-db', logger, sqlDb, migrationPolicy }),
+    crudTransactionDb: CrudTransactionDb.init({
+      t: 'sql-db',
+      logger,
+      sqlDb: config.sqlDb,
+      migrationPolicy,
+    }),
   })
 
   const ctx: AppFrontendCtxBase = {
@@ -146,7 +128,7 @@ const initCtx = async (config: { backendUrl: Url; topicUrl: Url }): Promise<Fron
     viewport,
     navigation,
     clientSessionId,
-    sqlDb,
+    sqlDb: config.sqlDb,
     logger,
     now: UnixMs.now(),
     navigatorLanguage,

@@ -8,7 +8,7 @@ export const throttleByKey = <TArgs extends unknown[]>(config: {
   behavior: ThrottleBehavior
 }) => {
   const lastCall = new Map<string, number>()
-  const pendingCalls = new Map<string, { args: TArgs; timeout: NodeJS.Timeout }>()
+  const pendingCalls = new Map<string, { args: TArgs; timeout: ReturnType<typeof setTimeout> }>()
 
   return (...args: TArgs) => {
     const key = config.keyFn(...args)

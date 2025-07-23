@@ -106,6 +106,6 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
   }
 }
 
-export const ImplReact = {
+export const ImplReactNative = {
   init,
 }
