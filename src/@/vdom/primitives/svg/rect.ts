@@ -1,7 +1,6 @@
-import { h, tag } from '../../h'
+import { h } from '~/@/vdom/vdom-engine/impl'
+import { RECT_TAG } from '../../tags'
 import { VDom } from '../../vdom'
-
-export const RECT_TAG = tag('rect')
 
 export const Rect = ({
   children,

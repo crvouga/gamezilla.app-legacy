@@ -1,7 +1,6 @@
-import { h, tag } from '../../h'
+import { h } from '~/@/vdom/vdom-engine/impl'
+import { DEFS_TAG } from '../../tags'
 import { VDom } from '../../vdom'
-
-export const DEFS_TAG = tag('defs')
 
 export const Defs = ({
   children,

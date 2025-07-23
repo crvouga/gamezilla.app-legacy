@@ -1,7 +1,6 @@
-import { h, tag } from '../../h'
+import { h } from '~/@/vdom/vdom-engine/impl'
+import { RADIAL_GRADIENT_TAG } from '../../tags'
 import { VDom } from '../../vdom'
-
-export const RADIAL_GRADIENT_TAG = tag('radialGradient')
 
 export const RadialGradient = ({
   children,

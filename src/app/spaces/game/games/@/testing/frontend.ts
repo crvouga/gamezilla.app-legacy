@@ -1,4 +1,3 @@
-import { EventId } from '~/@/event-sourced/event'
 import { UnixMs } from '~/@/time/unix-ms'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
@@ -27,8 +26,6 @@ export async function testSpaceFrontendCtx(): Promise<SpaceFrontendCtx> {
       }),
     },
     space: {
-      game: null,
-      latestEventId: EventId.generate(),
       type: 'started',
       hostId: currentUserId,
       spaceId: currentSpaceId,

@@ -1,7 +1,6 @@
-import { h, tag } from '../../h'
+import { h } from '~/@/vdom/vdom-engine/impl'
+import { PATH_TAG } from '../../tags'
 import { VDom } from '../../vdom'
-
-export const PATH_TAG = tag('path')
 
 export const Path = ({
   children,

@@ -1,7 +1,6 @@
-import { h, tag } from '../../h'
+import { h } from '~/@/vdom/vdom-engine/impl'
+import { LINE_TAG } from '../../tags'
 import { VDom } from '../../vdom'
-
-export const LINE_TAG = tag('line')
 
 export const Line = ({
   children,

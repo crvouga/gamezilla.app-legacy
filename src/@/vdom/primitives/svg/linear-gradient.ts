@@ -1,7 +1,6 @@
-import { h, tag } from '../../h'
+import { h } from '~/@/vdom/vdom-engine/impl'
+import { LINEAR_GRADIENT_TAG } from '../../tags'
 import { VDom } from '../../vdom'
-
-export const LINEAR_GRADIENT_TAG = tag('linearGradient')
 
 export const LinearGradient = ({
   children,

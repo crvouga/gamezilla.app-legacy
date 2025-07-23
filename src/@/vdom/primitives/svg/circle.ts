@@ -1,7 +1,6 @@
-import { h, tag } from '../../h'
+import { h } from '~/@/vdom/vdom-engine/impl'
+import { CIRCLE_TAG } from '../../tags'
 import { VDom } from '../../vdom'
-
-export const CIRCLE_TAG = tag('circle')
 
 export const Circle = ({
   children,

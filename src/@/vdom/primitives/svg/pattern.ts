@@ -1,7 +1,6 @@
-import { h, tag } from '../../h'
+import { h } from '~/@/vdom/vdom-engine/impl'
+import { PATTERN_TAG } from '../../tags'
 import { VDom } from '../../vdom'
-
-export const PATTERN_TAG = tag('pattern')
 
 export const Pattern = ({
   children,

@@ -1,24 +1,26 @@
 import { createElement, Fragment } from 'react'
-import { CANVAS_TAG } from '../primitives/canvas'
-import { FRAGMENT_TAG } from '../primitives/frag'
-import { IMAGE_TAG } from '../primitives/image'
-import { CIRCLE_TAG } from '../primitives/svg/circle'
-import { CLIP_PATH_TAG } from '../primitives/svg/clip-path'
-import { DEFS_TAG } from '../primitives/svg/defs'
-import { G_TAG } from '../primitives/svg/g'
-import { LINE_TAG } from '../primitives/svg/line'
-import { LINEAR_GRADIENT_TAG } from '../primitives/svg/linear-gradient'
-import { MASK_TAG } from '../primitives/svg/mask'
-import { PATH_TAG } from '../primitives/svg/path'
-import { PATTERN_TAG } from '../primitives/svg/pattern'
-import { RADIAL_GRADIENT_TAG } from '../primitives/svg/radial-gradient'
-import { RECT_TAG } from '../primitives/svg/rect'
-import { STOP_TAG } from '../primitives/svg/stop'
-import { SVG_TAG } from '../primitives/svg/svg'
-import { SVG_TEXT_TAG } from '../primitives/svg/text'
-import { TEXT_TAG } from '../primitives/text'
-import { TEXT_INPUT_TAG } from '../primitives/text-input'
-import { PRESSABLE_TAG } from '../primitives/pressable'
+import {
+  CANVAS_TAG,
+  CIRCLE_TAG,
+  CLIP_PATH_TAG,
+  DEFS_TAG,
+  FRAGMENT_TAG,
+  G_TAG,
+  IMAGE_TAG,
+  LINE_TAG,
+  LINEAR_GRADIENT_TAG,
+  MASK_TAG,
+  PATH_TAG,
+  PATTERN_TAG,
+  PRESSABLE_TAG,
+  RADIAL_GRADIENT_TAG,
+  RECT_TAG,
+  STOP_TAG,
+  SVG_TAG,
+  SVG_TEXT_TAG,
+  TEXT_INPUT_TAG,
+  TEXT_TAG,
+} from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { normalizeChildren, normalizePropsInPlace } from './react'
 

@@ -1,6 +1,5 @@
-import { h, tag } from '../../h'
-
-export const SVG_TEXT_TAG = tag('text')
+import { h } from '~/@/vdom/vdom-engine/impl'
+import { SVG_TEXT_TAG } from '../../tags'
 
 export const SvgText = ({
   text,

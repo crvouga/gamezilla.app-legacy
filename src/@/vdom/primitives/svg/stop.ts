@@ -1,7 +1,6 @@
-import { h, tag } from '../../h'
+import { h } from '~/@/vdom/vdom-engine/impl'
 import { VDom } from '../../vdom'
-
-export const STOP_TAG = tag('stop')
+import { STOP_TAG } from '../../tags'
 
 export const Stop = ({
   children,

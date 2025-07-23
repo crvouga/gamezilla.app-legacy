@@ -1,7 +1,6 @@
-import { h, tag } from '../../h'
+import { h } from '~/@/vdom/vdom-engine/impl'
+import { MASK_TAG } from '../../tags'
 import { VDom } from '../../vdom'
-
-export const MASK_TAG = tag('mask')
 
 export const Mask = ({
   children,
