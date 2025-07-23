@@ -1,5 +1,7 @@
 import { createElement, Fragment } from 'react'
+import { Text, View } from 'react-native'
 import {
+  BOX_TAG,
   CANVAS_TAG,
   CIRCLE_TAG,
   CLIP_PATH_TAG,
@@ -41,8 +43,11 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
         case PRESSABLE_TAG: {
           throw new Error('Not implemented')
         }
+        case BOX_TAG: {
+          return createElement(View, props, ...children) as any
+        }
         case TEXT_TAG: {
-          throw new Error('Not implemented')
+          return createElement(Text, props, ...children) as any
         }
         case TEXT_INPUT_TAG: {
           throw new Error('Not implemented')

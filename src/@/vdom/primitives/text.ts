@@ -20,6 +20,7 @@ export interface TextProps {
   onMouseOut?: (event: unknown) => void
   onMouseOver?: (event: unknown) => void
   text: string
+  style?: Record<string, unknown>
 }
 
 export const Text = ({ text, ...props }: TextProps): VDom => {

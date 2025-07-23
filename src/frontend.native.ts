@@ -1,7 +1,10 @@
 import { registerRootComponent } from 'expo'
-import { createElement } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { useSyncExternalStore } from 'react'
+import { StyleSheet } from 'react-native'
 import { Program } from '~/@/program/program'
+import { Box } from '~/@/vdom/primitives/box'
+import { Text } from '~/@/vdom/primitives/text'
+import { h } from '~/@/vdom/vdom-engine/impl'
 import { AppFrontend } from '~/app/frontend'
 import { HttpProtocol } from './@/http/protocol'
 import { Logger } from './@/logger'
@@ -11,12 +14,27 @@ import { Url } from './@/url/url'
 import { VDomEngine } from './@/vdom/vdom-engine/impl'
 import { ImplReactNative } from './@/vdom/vdom-engine/impl-react-native'
 
+let latestRenderInput: any = null
+let listeners: (() => void)[] = []
+const renderStore = {
+  get: () => latestRenderInput,
+  subscribe: (listener: () => void) => {
+    listeners.push(listener)
+    return () => {
+      listeners = listeners.filter((l) => l !== listener)
+    }
+  },
+  update: (newValue: any) => {
+    latestRenderInput = newValue
+    listeners.forEach((l) => l())
+  },
+}
+
 const App = () => {
-  return createElement(
-    View,
-    { style: styles.container },
-    createElement(Text, { style: styles.text }, 'Open up App.ts to start working on your app!___'),
-  )
+  const renderInput = useSyncExternalStore(renderStore.subscribe, renderStore.get)
+  if (!renderInput) return h(Box, { style: styles.container }, [Text({ style: styles.text, text: 'Loading...' })])
+
+  return h(Box, { style: styles.container }, [Text({ style: styles.text, text: JSON.stringify(renderInput, null, 2) })])
 }
 
 const styles = StyleSheet.create({
@@ -63,11 +81,12 @@ const main = async () => {
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
     render: (input) => {
       console.log('render', input)
+      renderStore.update(input)
     },
     debugger: DebuggerReduxDevTools,
   })
 
-  registerRootComponent(App)
+  registerRootComponent(App as any)
 }
 
 main()
