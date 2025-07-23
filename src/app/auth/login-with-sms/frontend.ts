@@ -7,6 +7,7 @@ import { TextField } from '~/@/ui/text-field'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Frag } from '~/@/vdom/primitives/frag'
+import { Text } from '~/@/vdom/primitives/text'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { FocusViewCmd } from '~/app/@/frontend/focus-view-cmd.$msg'
@@ -233,6 +234,7 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
     onSubmit: () => input.dispatch({ t: 'user-clicked-send-code-button' }),
     renderInputs: () =>
       h(Frag, {}, [
+        Text({ class: 'hidden', text: JSON.stringify(input.model.sent) }),
         h(TextField, {
           id: 'phoneNumberInput',
           testId: 'phone-number-input',
@@ -274,6 +276,7 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
       }),
     renderInputs: () =>
       h(Frag, {}, [
+        Text({ class: 'hidden', text: JSON.stringify(input.model.verified) }),
         h(Typography, {
           role: 'status',
           class: 'text-lg',
