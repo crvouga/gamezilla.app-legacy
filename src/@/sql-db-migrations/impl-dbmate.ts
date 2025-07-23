@@ -14,68 +14,61 @@ export type ImplDbMate = {
   sqlDb: ISqlDb
 }
 
+const ADVISORY_LOCK_ID = 424242
+
 const init = (config: ImplDbMate): ISqlDbMigration => {
   const logger = config.logger.child(['dbmate'])
   logger.info('Initializing dbmate migration')
 
   return {
     async up() {
+      let locked = false
       try {
-        logger.info('Starting database migration')
-        const execPromise = promisify(exec)
-        logger.info('Running dbmate up command')
-        const databaseUrl = config.databaseUrl.dangerouslyReadValue()
-        logger.info('Attempting to acquire database lock')
-        const locked = await config.sqlDb.query({ schema: s.unknown, sql: `SELECT pg_advisory_lock(424242)`, vars: {} })
-        if (isErr(locked)) {
-          logger.error('Failed to lock database', { error: locked.error })
-          return Err(locked.error)
-        }
-        logger.info('Successfully acquired database lock')
-
-        logger.info('Executing dbmate up command')
-        const { stdout, stderr } = await execPromise(`npx dbmate up`, {
-          env: {
-            ...process.env,
-            DATABASE_URL: databaseUrl,
-          },
-        })
-        logger.info('Dbmate command completed')
-
-        logger.info('Attempting to release database lock')
-        const unlocked = await config.sqlDb.query({
+        const lockRes = await config.sqlDb.query({
           schema: s.unknown,
-          sql: `SELECT pg_advisory_unlock(424242)`,
+          sql: `SELECT pg_advisory_lock(${ADVISORY_LOCK_ID})`,
           vars: {},
         })
-        if (isErr(unlocked)) {
-          logger.error('Failed to unlock database', { error: unlocked.error })
-          return Err(unlocked.error)
+        if (isErr(lockRes)) {
+          logger.error('Failed to lock database', { error: lockRes.error })
+          return Err(lockRes.error)
         }
-        logger.info('Successfully released database lock')
+        locked = true
+        logger.info('Successfully acquired database lock')
+
+        const { stdout, stderr } = await promisify(exec)(`npx dbmate up`, {
+          env: {
+            ...process.env,
+            DATABASE_URL: config.databaseUrl.dangerouslyReadValue(),
+          },
+        })
 
         if (stdout) {
-          logger.info('Dbmate command output:')
-          for (const line of stdout.split('\n')) {
-            logger.info(line)
-          }
-          logger.info('Database migration completed successfully')
-          return Ok(null)
+          for (const line of stdout.split('\n')) logger.info(line)
         }
 
         if (stderr) {
-          logger.error('Dbmate command errors:')
-          for (const line of stderr.split('\n')) {
-            logger.error(line)
-          }
+          for (const line of stderr.split('\n')) logger.error(line)
           return Err(stderr)
         }
 
-        logger.info('Database migration completed with no output')
         return Ok(null)
       } catch (error) {
         logger.error('Database migration failed', { error: String(error) })
         return Err(String(error))
+      } finally {
+        if (locked) {
+          const unlockRes = await config.sqlDb.query({
+            schema: s.unknown,
+            sql: `SELECT pg_advisory_unlock(${ADVISORY_LOCK_ID})`,
+            vars: {},
+          })
+          if (isErr(unlockRes)) {
+            logger.error('Failed to unlock database', { error: unlockRes.error })
+          } else {
+            logger.info('Successfully released database lock')
+          }
+        }
       }
     },
   }
