@@ -15,6 +15,7 @@ import Svg, {
   Stop,
   Text as SvgText,
 } from 'react-native-svg'
+import { PrimitiveProps } from '../primitive-props'
 import {
   BOX_TAG,
   CANVAS_TAG,
@@ -53,6 +54,7 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
       return createElement(Text, {}, ['Not implemented'])
     },
     createElement: (tag: any, props: any, children: any) => {
+      props = PrimitiveProps.intoReactNativeStandard(props)
       normalizePropsInPlace(props, tag)
       children = normalizeChildren(children)
 

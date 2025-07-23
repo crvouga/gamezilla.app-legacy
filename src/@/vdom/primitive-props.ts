@@ -38,6 +38,15 @@ const intoWebStandard = (props: PrimitiveProps) => {
   }
 }
 
+const intoReactNativeStandard = (props: PrimitiveProps) => {
+  return {
+    ...props,
+    onPress: props.onPressDown,
+    onPressUp: props.onPressUp,
+  }
+}
+
 export const PrimitiveProps = {
   intoWebStandard,
+  intoReactNativeStandard,
 }
