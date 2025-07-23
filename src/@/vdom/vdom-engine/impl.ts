@@ -34,10 +34,6 @@ const init = async (vdomImpl: VDomImpl): Promise<IVirtualDomEngine> => {
       const { ImplSnabbdom } = await import('./impl-snabbdom')
       return ImplSnabbdom.init({ t: 'snabbdom' })
     }
-    case 'react-native': {
-      const { ImplReactNative } = await import('./impl-react-native')
-      return ImplReactNative.init({ t: 'react-native' })
-    }
   }
 }
 

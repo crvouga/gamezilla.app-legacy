@@ -1,8 +1,8 @@
+import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 import { defineConfig } from 'vite'
 import { DotEnv } from './src/@/dotenv/dotenv'
 import { FileSystem } from './src/@/file-system'
-import tailwindcss from '@tailwindcss/vite'
 
 await DotEnv.load({ fs: FileSystem.init({ t: 'node' }), paths: ['.env'] })
 
@@ -30,15 +30,13 @@ export default defineConfig({
     'process.env.TOPIC_URL': `"${TOPIC_URL}"`,
   },
   optimizeDeps: {
-    exclude: ['@electric-sql/pglite', 'react-native'],
+    exclude: ['@electric-sql/pglite'],
   },
   worker: {
     format: 'es',
   },
   resolve: {
     alias: {
-      'react-native-svg': path.resolve(__dirname, 'src/app/@/react-native-svg.mock.ts'),
-      'react-native': 'react-native-web',
       '~': path.resolve(__dirname, 'src'),
       inferno: process.env.NODE_ENV === 'production' ? 'inferno' : 'inferno/dist/index.dev.mjs',
     },
