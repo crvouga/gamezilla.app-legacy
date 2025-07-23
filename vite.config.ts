@@ -15,9 +15,15 @@ if (!TOPIC_URL) throw new Error('TOPIC_URL is not set')
 const NODE_ENV = process.env.NODE_ENV
 if (!NODE_ENV) throw new Error('NODE_ENV is not set')
 
+const FRONTEND_PORT = Number(process.env.FRONTEND_PORT)
+if (Number.isNaN(FRONTEND_PORT)) throw new Error('FRONTEND_PORT is not set')
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [tailwindcss()],
+  server: {
+    port: Number(FRONTEND_PORT),
+  },
   define: {
     'process.env.NODE_ENV': `"${NODE_ENV}"`,
     'process.env.BACKEND_URL': `"${BACKEND_URL}"`,

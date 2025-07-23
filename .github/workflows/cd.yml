@@ -11,10 +11,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: Test
+  setup:
+    name: Setup
     runs-on: ubuntu-latest
-    timeout-minutes: 15
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -35,33 +34,87 @@ jobs:
       - name: Create env file
         run: pnpm run env:ci
 
-      - name: Run type checker
-        run: pnpm exec tsc
+  type-check:
+    name: Type Check
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec tsc
 
-      - name: Check circular dependencies
-        run: pnpm run cir-deps
+  circular-deps:
+    name: Check Circular Dependencies
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run cir-deps
 
-      - name: Run unit tests
-        run: pnpm run unit
+  unit-tests:
+    name: Unit Tests
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run unit
 
-      - name: Start infra
-        run: pnpm e2e:up
+  integration-tests:
+    name: Integration Tests
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run env:ci
+      - run: pnpm run db:up
+      - run: pnpm run int
 
-      - name: Wait for infra to be ready
-        run: sleep 10
-
-      - name: Run db:up
-        run: pnpm run db:up
-
-      - name: Run integration tests
-        run: pnpm run int
-
-      - name: Setup e2e
-        run: pnpm e2e:ci:setup
-
-      - name: Run e2e tests
-        run: pnpm run e2e:ci
-
+  e2e-tests:
+    name: E2E Tests
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run env:ci
+      - run: pnpm e2e:up
+      - run: sleep 10
+      - run: pnpm run db:up
+      - run: pnpm e2e:ci:setup
+      - run: pnpm run e2e:ci
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -72,7 +125,7 @@ jobs:
 
   deploy:
     name: Deploy
-    needs: [test]
+    needs: [type-check, circular-deps, unit-tests, integration-tests, e2e-tests]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     if: github.ref == 'refs/heads/main'
