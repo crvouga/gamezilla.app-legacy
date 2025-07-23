@@ -30,6 +30,7 @@ import { WireBackend } from './wire/backend'
 const initCtx = async (config: {
   port: number
   topicUrl: string
+  backendUrl: string
   isProd: boolean
   logger: ILogger
   sqlDb: ISqlDb
@@ -71,8 +72,8 @@ const initCtx = async (config: {
     Cors.middleware(
       CorsPolicy.init({
         t: 'allow-sub-domains',
-        allowedDomains: [],
-        allowServerDomain: true,
+        allowedDomains: [config.backendUrl],
+        allowRequestHostDomain: true,
         logger,
       }),
     ),

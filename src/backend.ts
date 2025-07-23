@@ -5,6 +5,7 @@ import { Logger } from './@/logger'
 import { SecretString } from './@/secrets/secret-string'
 import { SqlDbMigration } from './@/sql-db-migrations/impl'
 import { BackendSqlDb } from './@/sql-db/backend-impl'
+import { Url } from './@/url/url'
 
 const main = async () => {
   const logger = Logger.init({ t: 'console', namespace: ['backend'], newLinePerMsg: false, maxLogLevel: 'debug' })
@@ -24,6 +25,10 @@ const main = async () => {
   if (!TOPIC_URL) throw new Error('TOPIC_URL is not set')
   logger.info(`Topic URL set to ${TOPIC_URL}`)
 
+  const BACKEND_URL = process.env.BACKEND_URL
+  if (!BACKEND_URL) throw new Error('BACKEND_URL is not set')
+  logger.info(`Backend URL set to ${BACKEND_URL}`)
+
   const DATABASE_URL = SecretString.init('DATABASE_URL', process.env.DATABASE_URL)
   if (!DATABASE_URL) throw new Error('DATABASE_URL is not set')
   logger.info('Database URL loaded')
@@ -40,11 +45,18 @@ const main = async () => {
   await sqlDbMigration.up()
   logger.info('Database migrations completed')
 
+  const backendUrl = Url.derive(BACKEND_URL, IS_PROD ? 'https' : 'http')
+  logger.info(`Backend URL set to ${backendUrl}`)
+
+  const topicUrl = Url.derive(TOPIC_URL, IS_PROD ? 'https' : 'http')
+  logger.info(`Topic URL set to ${topicUrl}`)
+
   logger.info('Initializing backend context')
   const ctx = await AppBackend.initCtx({
     isProd: IS_PROD,
     port: BACKEND_PORT,
-    topicUrl: TOPIC_URL,
+    backendUrl,
+    topicUrl,
     sqlDb,
     logger,
   })

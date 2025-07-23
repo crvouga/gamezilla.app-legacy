@@ -7,7 +7,7 @@ describe('ImplAllowSubDomains', () => {
     const policy = ImplAllowSubDomains.init({
       t: 'allow-sub-domains',
       allowedDomains: ['example.com'],
-      allowServerDomain: false,
+      allowRequestHostDomain: false,
       logger: Logger.init({ t: 'noop' }),
     })
 
@@ -28,7 +28,7 @@ describe('ImplAllowSubDomains', () => {
     const policy = ImplAllowSubDomains.init({
       t: 'allow-sub-domains',
       allowedDomains: ['example.com'],
-      allowServerDomain: false,
+      allowRequestHostDomain: false,
       logger: Logger.init({ t: 'noop' }),
     })
 
@@ -48,7 +48,7 @@ describe('ImplAllowSubDomains', () => {
     const policy = ImplAllowSubDomains.init({
       t: 'allow-sub-domains',
       allowedDomains: [],
-      allowServerDomain: true,
+      allowRequestHostDomain: true,
       logger: Logger.init({ t: 'noop' }),
     })
 
@@ -69,7 +69,7 @@ describe('ImplAllowSubDomains', () => {
     const policy = ImplAllowSubDomains.init({
       t: 'allow-sub-domains',
       allowedDomains: ['example.com'],
-      allowServerDomain: false,
+      allowRequestHostDomain: false,
       logger: Logger.init({ t: 'noop' }),
     })
 
@@ -90,7 +90,7 @@ describe('ImplAllowSubDomains', () => {
     const policy = ImplAllowSubDomains.init({
       t: 'allow-sub-domains',
       allowedDomains: ['example.com'],
-      allowServerDomain: false,
+      allowRequestHostDomain: false,
       logger: Logger.init({ t: 'noop' }),
     })
 
@@ -110,7 +110,7 @@ describe('ImplAllowSubDomains', () => {
     const policy = ImplAllowSubDomains.init({
       t: 'allow-sub-domains',
       allowedDomains: ['example.com'],
-      allowServerDomain: false,
+      allowRequestHostDomain: false,
       logger: Logger.init({ t: 'noop' }),
     })
 
@@ -126,7 +126,7 @@ describe('ImplAllowSubDomains', () => {
     const policy = ImplAllowSubDomains.init({
       t: 'allow-sub-domains',
       allowedDomains: ['example.com'],
-      allowServerDomain: false,
+      allowRequestHostDomain: false,
       logger: Logger.init({ t: 'noop' }),
     })
 

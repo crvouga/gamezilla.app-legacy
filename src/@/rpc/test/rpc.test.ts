@@ -35,7 +35,7 @@ export const FixtureHttp = async (): Promise<Fixture> => {
       CorsPolicy.init({
         t: 'allow-sub-domains',
         allowedDomains: [],
-        allowServerDomain: true,
+        allowRequestHostDomain: true,
         logger,
       }),
     ),
