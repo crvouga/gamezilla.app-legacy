@@ -1,5 +1,5 @@
 import { createElement, Fragment } from 'react'
-import { Text, View } from 'react-native'
+import { Pressable, Text, View } from 'react-native'
 import {
   BOX_TAG,
   CANVAS_TAG,
@@ -33,7 +33,8 @@ export type ImplReactNative = {
 const init = (_config: ImplReactNative): IVirtualDomEngine => {
   return {
     render: (_vDom, _node) => {
-      throw new Error('Not implemented')
+      // throw new Error('Not implemented')
+      return createElement(Text, {}, ['Not implemented'])
     },
     createElement: (tag: any, props: any, children: any) => {
       normalizePropsInPlace(props, tag)
@@ -41,7 +42,7 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
 
       switch (tag) {
         case PRESSABLE_TAG: {
-          throw new Error('Not implemented')
+          return createElement(Pressable, props, ...children) as any
         }
         case BOX_TAG: {
           return createElement(View, props, ...children) as any
@@ -50,55 +51,72 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
           return createElement(Text, props, ...children) as any
         }
         case TEXT_INPUT_TAG: {
-          throw new Error('Not implemented')
+          // throw new Error('Not implemented')
+          return createElement(Text, {}, ['Not implemented'])
         }
         case IMAGE_TAG: {
-          throw new Error('Not implemented')
+          // throw new Error('Not implemented')
+          return createElement(Text, {}, ['Not implemented'])
         }
         case CANVAS_TAG: {
-          throw new Error('Not implemented')
+          // throw new Error('Not implemented')
+          return createElement(Text, {}, ['Not implemented'])
         }
         case SVG_TAG: {
-          throw new Error('Not implemented')
+          // throw new Error('Not implemented')
+          return createElement(Text, {}, ['Not implemented'])
         }
         case SVG_TEXT_TAG: {
-          throw new Error('Not implemented')
+          // throw new Error('Not implemented')
+          return createElement(Text, {}, ['Not implemented'])
         }
         case CIRCLE_TAG: {
-          throw new Error('Not implemented')
+          // throw new Error('Not implemented')
+          return createElement(Text, {}, ['Not implemented'])
         }
         case RECT_TAG: {
-          throw new Error('Not implemented')
+          // throw new Error('Not implemented')
+          return createElement(Text, {}, ['Not implemented'])
         }
         case LINE_TAG: {
-          throw new Error('Not implemented')
+          // throw new Error('Not implemented')
+          return createElement(Text, {}, ['Not implemented'])
         }
         case LINEAR_GRADIENT_TAG: {
-          throw new Error('Not implemented')
+          // throw new Error('Not implemented')
+          return createElement(Text, {}, ['Not implemented'])
         }
         case RADIAL_GRADIENT_TAG: {
-          throw new Error('Not implemented')
+          // throw new Error('Not implemented')
+          return createElement(Text, {}, ['Not implemented'])
         }
         case MASK_TAG: {
-          throw new Error('Not implemented')
+          // throw new Error('Not implemented')
+          return createElement(Text, {}, ['Not implemented'])
         }
         case PATH_TAG: {
-          throw new Error('Not implemented')
+          // throw new Error('Not implemented')
+          return createElement(Text, {}, ['Not implemented'])
         }
         case PATTERN_TAG: {
-          throw new Error('Not implemented')
+          // throw new Error('Not implemented')
+          return createElement(Text, {}, ['Not implemented'])
         }
         case STOP_TAG: {
-          throw new Error('Not implemented')
+          // throw new Error('Not implemented')
+          return createElement(Text, {}, ['Not implemented'])
         }
         case DEFS_TAG: {
-          throw new Error('Not implemented')
+          // throw new Error('Not implemented')
+          return createElement(Text, {}, ['Not implemented'])
         }
         case G_TAG: {
-          throw new Error('Not implemented')
+          // throw new Error('Not implemented')
+          return createElement(Text, {}, ['Not implemented'])
         }
         case CLIP_PATH_TAG: {
-          throw new Error('Not implemented')
+          // throw new Error('Not implemented')
+          return createElement(Text, {}, ['Not implemented'])
         }
         case FRAGMENT_TAG: {
           return createElement(Fragment, props, ...children) as any

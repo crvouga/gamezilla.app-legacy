@@ -33,8 +33,9 @@ const renderStore = {
 const App = () => {
   const renderInput = useSyncExternalStore(renderStore.subscribe, renderStore.get)
   if (!renderInput) return h(Box, { style: styles.container }, [Text({ style: styles.text, text: 'Loading...' })])
+  return h(AppFrontend.View, renderInput)
 
-  return h(Box, { style: styles.container }, [Text({ style: styles.text, text: JSON.stringify(renderInput, null, 2) })])
+  //   return h(Box, { style: styles.container }, [Text({ style: styles.text, text: JSON.stringify(renderInput, null, 2) })])
 }
 
 const styles = StyleSheet.create({
@@ -80,8 +81,8 @@ const main = async () => {
     update: (input) => AppFrontend.update({ ...input, ctx }),
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
     render: (input) => {
-      console.log('render', input)
-      renderStore.update(input)
+      console.log('render', { ...input, ctx })
+      renderStore.update({ ...input, ctx })
     },
     debugger: DebuggerReduxDevTools,
   })
