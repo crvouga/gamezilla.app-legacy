@@ -5,7 +5,6 @@ import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
 import { h } from '~/@/vdom/vdom-engine/impl'
 import { AppFrontend } from '~/app/frontend'
-import '../global.css'
 import { HttpProtocol } from './@/http/protocol'
 import { Logger } from './@/logger'
 import { DebuggerReduxDevTools } from './@/program/debugger'
@@ -13,6 +12,7 @@ import { FrontendSqlDb } from './@/sql-db/frontend-impl'
 import { Url } from './@/url/url'
 import { VDomEngine } from './@/vdom/vdom-engine/impl'
 import { ImplReactNative } from './@/vdom/vdom-engine/impl-react-native'
+import './frontend.native.css'
 
 let latestRenderInput: any = null
 let listeners: (() => void)[] = []
