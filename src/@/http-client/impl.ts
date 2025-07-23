@@ -1,12 +1,16 @@
-import * as ImplFetch from './impl-fetch'
+import { ImplFetch } from './impl-fetch'
 import { IHttpClient } from './interface'
 
-export type Config = ImplFetch.Config
+export type HttpClient = ImplFetch
 
-export const HttpClient = (config: Config): IHttpClient => {
+const init = (config: HttpClient): IHttpClient => {
   switch (config.t) {
     case 'fetch': {
-      return ImplFetch.HttpClient(config)
+      return ImplFetch.init(config)
     }
   }
+}
+
+export const HttpClient = {
+  init,
 }

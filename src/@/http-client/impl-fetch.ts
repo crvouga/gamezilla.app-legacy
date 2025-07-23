@@ -1,21 +1,27 @@
 import { IHttpClient } from './interface'
 
-export type Config = {
+export type ImplFetch = {
   t: 'fetch'
   mapHeaders?: (headers: Headers) => Headers
   credentials?: 'include' | 'omit'
   baseUrl?: string
 }
 
-export const HttpClient = (config: Config): IHttpClient => {
+const init = (config: ImplFetch): IHttpClient => {
   return {
     async fetch(request) {
+      const headers = config.mapHeaders?.(request.headers) ?? request.headers
+
       const response = await fetch(request, {
         credentials: config.credentials,
-        headers: config.mapHeaders?.(request.headers) ?? request.headers,
+        headers,
       })
 
       return response
     },
   }
+}
+
+export const ImplFetch = {
+  init,
 }

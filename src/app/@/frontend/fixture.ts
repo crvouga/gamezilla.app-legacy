@@ -79,7 +79,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
       averagePing: TimeSpan.milliseconds(100),
       latestPing: TimeSpan.milliseconds(100),
     },
-    httpClient: HttpClient({
+    httpClient: HttpClient.init({
       t: 'fetch',
     }),
     queryCache: QueryCache.init,

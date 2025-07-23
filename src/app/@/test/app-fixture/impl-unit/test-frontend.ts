@@ -50,7 +50,7 @@ export const TestFrontend = async (config: {
     sessionId,
   })
 
-  const httpClient = HttpClient({ t: 'fetch' })
+  const httpClient = HttpClient.init({ t: 'fetch' })
 
   const navigation = Navigation({ t: 'web-standard', logger })
 

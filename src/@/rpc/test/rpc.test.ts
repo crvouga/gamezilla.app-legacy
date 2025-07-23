@@ -47,7 +47,7 @@ export const FixtureHttp = async (): Promise<Fixture> => {
 
   RPC.registerRespond({ httpServer, contract, server, logger })
 
-  const httpClient = HttpClient({
+  const httpClient = HttpClient.init({
     t: 'fetch',
     mapHeaders: (headers) => {
       headers.set('Origin', 'http://localhost:2222')

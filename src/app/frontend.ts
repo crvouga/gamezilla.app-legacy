@@ -58,7 +58,7 @@ const initCtx = async (config: { backendUrl: Url; topicUrl: Url }): Promise<Fron
 
   const clientSessionId = ClientSessionIdStorage().get()
 
-  const httpClient = HttpClient({
+  const httpClient = HttpClient.init({
     t: 'fetch',
   })
 
