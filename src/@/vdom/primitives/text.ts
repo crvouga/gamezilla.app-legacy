@@ -1,6 +1,7 @@
 import type { AriaRole } from '~/@/html/aria-role'
 import { h } from '~/@/vdom/vdom-engine/impl'
 import { VDom } from '../vdom'
+import { TEXT_TAG } from '../tags'
 
 export interface TextProps {
   class?: string
@@ -22,6 +23,5 @@ export interface TextProps {
 }
 
 export const Text = ({ text, ...props }: TextProps): VDom => {
-  // @ts-ignore
-  return h(TEXT_TAG, props, [text])
+  return h(TEXT_TAG, props, [text as unknown as VDom])
 }
