@@ -6,7 +6,7 @@ import { PubSub } from '~/@/pub-sub'
 import { ITopicBasedPubSub } from '~/@/pub-sub-topic-based'
 import { ISqlDb } from '~/@/sql-db/interface'
 import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
-import * as ImplSql from './impl-sql'
+import * as ImplSql from './impl-sql-db'
 import { WithCache } from './impl-with-cache'
 import type { IUserSessionDb } from './interface'
 

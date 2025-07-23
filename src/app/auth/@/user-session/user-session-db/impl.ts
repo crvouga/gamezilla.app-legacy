@@ -1,6 +1,6 @@
 import * as ImplInMemory from './impl-in-memory'
-import * as ImplSql from './impl-sql'
-import * as ImplSqlWithCache from './impl-sql-with-cache'
+import * as ImplSql from './impl-sql-db'
+import * as ImplSqlWithCache from './impl-sql-db-with-cache'
 import type { IUserSessionDb } from './interface'
 
 export type Config = ImplInMemory.Config | ImplSql.Config | ImplSqlWithCache.Config

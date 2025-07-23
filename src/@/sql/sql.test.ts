@@ -1,4 +1,6 @@
 import { describe, expect, test } from '~/@/test-runner'
+import { Uuid } from '../id/uuid'
+import { UnixMs } from '../time/unix-ms'
 import * as Sql from './sql'
 
 describe('SQL', () => {
@@ -245,6 +247,25 @@ describe('SQL', () => {
       user2: 'user:2',
       user3: 'user:3',
     })
+    expect(actual).toEqual(expected)
+  })
+
+  test('edge cases with semi colons', async () => {
+    const sql = `INSERT INTO user_session (id, session_id, client_session_id, user_id, created_at_unix_ms) VALUES (:id, :session_id, :client_session_id, :user_id, :created_at_unix_ms)`
+    const userSessionId = `user-session:${Uuid.generate()}`
+    const sessionId = `session:${Uuid.generate()}`
+    const clientSessionId = `client-session:${Uuid.generate()}`
+    const userId = `user:${Uuid.generate()}`
+    const createdAtUnixMs = UnixMs.now()
+    const vars = {
+      id: userSessionId,
+      session_id: sessionId,
+      client_session_id: clientSessionId,
+      user_id: userId,
+      created_at_unix_ms: createdAtUnixMs,
+    }
+    const actual = Sql.to(sql, vars)
+    const expected = `INSERT INTO user_session (id, session_id, client_session_id, user_id, created_at_unix_ms) VALUES ('${userSessionId}', '${sessionId}', '${clientSessionId}', '${userId}', ${createdAtUnixMs})`
     expect(actual).toEqual(expected)
   })
 })
