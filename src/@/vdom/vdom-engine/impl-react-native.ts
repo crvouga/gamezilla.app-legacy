@@ -1,5 +1,20 @@
 import { createElement, Fragment } from 'react'
-import { Pressable, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
+import Svg, {
+  Circle,
+  ClipPath,
+  Defs,
+  G,
+  Line,
+  LinearGradient,
+  Mask,
+  Path,
+  Pattern,
+  RadialGradient,
+  Rect,
+  Stop,
+  Text as SvgText,
+} from 'react-native-svg'
 import {
   BOX_TAG,
   CANVAS_TAG,
@@ -24,7 +39,8 @@ import {
   TEXT_TAG,
 } from '../tags'
 import { IVirtualDomEngine } from './interface'
-import { normalizeChildren, normalizePropsInPlace } from './react'
+import { normalizeChildren } from './react'
+import { STYLESHEET } from './stylesheet'
 
 export type ImplReactNative = {
   t: 'react-native'
@@ -37,7 +53,9 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
       return createElement(Text, {}, ['Not implemented'])
     },
     createElement: (tag: any, props: any, children: any) => {
-      normalizePropsInPlace(props, tag)
+      // normalizePropsInPlace(props, tag)
+      const style = createStyleFromClass(props?.class)
+      props.style = style
       children = normalizeChildren(children)
 
       switch (tag) {
@@ -63,60 +81,46 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
           return createElement(Text, {}, ['Not implemented'])
         }
         case SVG_TAG: {
-          // throw new Error('Not implemented')
-          return createElement(Text, {}, ['Not implemented'])
+          return createElement(Svg, props, ...children) as any
         }
         case SVG_TEXT_TAG: {
-          // throw new Error('Not implemented')
-          return createElement(Text, {}, ['Not implemented'])
+          return createElement(SvgText, props, ...children) as any
         }
         case CIRCLE_TAG: {
-          // throw new Error('Not implemented')
-          return createElement(Text, {}, ['Not implemented'])
+          return createElement(Circle, props, ...children) as any
         }
         case RECT_TAG: {
-          // throw new Error('Not implemented')
-          return createElement(Text, {}, ['Not implemented'])
+          return createElement(Rect, props, ...children) as any
         }
         case LINE_TAG: {
-          // throw new Error('Not implemented')
-          return createElement(Text, {}, ['Not implemented'])
+          return createElement(Line, props, ...children) as any
         }
         case LINEAR_GRADIENT_TAG: {
-          // throw new Error('Not implemented')
-          return createElement(Text, {}, ['Not implemented'])
+          return createElement(LinearGradient, props, ...children) as any
         }
         case RADIAL_GRADIENT_TAG: {
-          // throw new Error('Not implemented')
-          return createElement(Text, {}, ['Not implemented'])
+          return createElement(RadialGradient, props, ...children) as any
         }
         case MASK_TAG: {
-          // throw new Error('Not implemented')
-          return createElement(Text, {}, ['Not implemented'])
+          return createElement(Mask, props, ...children) as any
         }
         case PATH_TAG: {
-          // throw new Error('Not implemented')
-          return createElement(Text, {}, ['Not implemented'])
+          return createElement(Path, props, ...children) as any
         }
         case PATTERN_TAG: {
-          // throw new Error('Not implemented')
-          return createElement(Text, {}, ['Not implemented'])
+          return createElement(Pattern, props, ...children) as any
         }
         case STOP_TAG: {
-          // throw new Error('Not implemented')
-          return createElement(Text, {}, ['Not implemented'])
+          return createElement(Stop, props, ...children) as any
         }
         case DEFS_TAG: {
-          // throw new Error('Not implemented')
-          return createElement(Text, {}, ['Not implemented'])
+          return createElement(Defs, props, ...children) as any
         }
         case G_TAG: {
-          // throw new Error('Not implemented')
-          return createElement(Text, {}, ['Not implemented'])
+          return createElement(G, props, ...children) as any
         }
         case CLIP_PATH_TAG: {
-          // throw new Error('Not implemented')
-          return createElement(Text, {}, ['Not implemented'])
+          return createElement(ClipPath, props, ...children) as any
         }
         case FRAGMENT_TAG: {
           return createElement(Fragment, props, ...children) as any
@@ -132,3 +136,23 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
 export const ImplReactNative = {
   init,
 }
+
+const stylesheet = StyleSheet.create(STYLESHEET)
+
+const list: string[] = []
+const createStyleFromClass = (className: unknown) => {
+  if (typeof className !== 'string') return {}
+  let styles = {}
+  for (const c of className.split(' ')) {
+    const s = stylesheet[c as keyof typeof stylesheet]
+    if (s) styles = { ...styles, ...s }
+    else {
+      list.push(c)
+    }
+  }
+  return styles
+}
+
+setInterval(() => {
+  console.log(list.join(' '))
+}, 1000)

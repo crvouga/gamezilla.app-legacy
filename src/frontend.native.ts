@@ -1,6 +1,5 @@
 import { registerRootComponent } from 'expo'
 import { useSyncExternalStore } from 'react'
-import { StyleSheet } from 'react-native'
 import { Program } from '~/@/program/program'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
@@ -32,24 +31,14 @@ const renderStore = {
 
 const App = () => {
   const renderInput = useSyncExternalStore(renderStore.subscribe, renderStore.get)
-  if (!renderInput) return h(Box, { style: styles.container }, [Text({ style: styles.text, text: 'Loading...' })])
+  if (!renderInput) return h(Box, { class: 'bg-black' }, [Text({ class: 'text-white', text: 'Loading...' })])
+
   return h(AppFrontend.View, renderInput)
 
-  //   return h(Box, { style: styles.container }, [Text({ style: styles.text, text: JSON.stringify(renderInput, null, 2) })])
+  // return h(Box, { class: 'bg-black' }, [
+  //   Text({ class: 'text-white', text: JSON.stringify(renderInput, null, 2).slice(0, 1000) }),
+  // ])
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'black',
-    color: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    color: 'white',
-  },
-})
 
 const main = async () => {
   const logger = Logger.init({ t: 'console', namespace: ['frontend'], newLinePerMsg: false, maxLogLevel: 'debug' })
@@ -71,7 +60,11 @@ const main = async () => {
   const backendUrl = Url.derive(BACKEND_URL, httpProtocol)
   const topicUrl = Url.derive(TOPIC_URL, httpProtocol)
 
-  const sqlDb = FrontendSqlDb.init({ t: 'noop' })
+  const sqlDb = FrontendSqlDb.init({
+    t: 'noop',
+    // logger,
+    // pglite: PgliteInstance({ t: 'indexed-db', databaseName: 'pglite-db' }),
+  })
 
   const ctx = await AppFrontend.initCtx({ backendUrl, topicUrl, sqlDb, logger })
 
@@ -81,7 +74,6 @@ const main = async () => {
     update: (input) => AppFrontend.update({ ...input, ctx }),
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
     render: (input) => {
-      console.log('render', { ...input, ctx })
       renderStore.update({ ...input, ctx })
     },
     debugger: DebuggerReduxDevTools,
