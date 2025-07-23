@@ -4,15 +4,7 @@
     // "erasableSyntaxOnly": true,
     "importHelpers": true,
     "target": "esnext",
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "esnext",
-      "WebWorker",
-      "es2016",
-      "dom",
-      "ES2015"
-    ],
+    "lib": ["DOM", "DOM.Iterable", "esnext", "WebWorker", "es2016", "dom", "ES2015"],
     "module": "esnext",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -57,25 +49,15 @@
     "noEmit": false,
     "allowImportingTsExtensions": false,
     "moduleDetection": "force",
-    "types": [
-      "vite/client"
-    ],
+    "types": ["vite/client"],
     "allowJs": false,
     //
     "paths": {
-      "~/*": [
-        "./src/*"
-      ]
+      "~/*": ["./src/*"]
     },
     "skipLibCheck": true
     // "resolveJsonModule": true
   },
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    "vite.config.ts",
-    "src/**/*",
-    "nativewind-env.d.ts"
-  ]
+  "exclude": ["node_modules"],
+  "include": ["vite.config.ts", "src/**/*", "nativewind-env.d.ts"]
 }
