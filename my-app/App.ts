@@ -5,15 +5,19 @@ export default function App() {
   return createElement(
     View,
     { style: styles.container },
-    createElement(Text, null, 'Open up App.tsx to start working on your app!'),
+    createElement(Text, { style: styles.text }, 'Open up App.ts to start working on your app!___'),
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'black',
+    color: 'white',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  text: {
+    color: 'white',
   },
 })
