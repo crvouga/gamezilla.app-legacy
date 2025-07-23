@@ -35,8 +35,8 @@ const main = async () => {
   const topicUrl = Url.derive(TOPIC_URL, windowProtocol)
 
   let pglite: Promise<IPgliteInstance>
-  pglite ??= PgliteWorkerInstance({ t: 'in-memory' })
   pglite ??= PgliteWorkerInstance({ t: 'indexed-db', databaseName: 'db' })
+  pglite ??= PgliteWorkerInstance({ t: 'in-memory' })
   pglite ??= PgliteInstance({ t: 'indexed-db', databaseName: 'db' })
   pglite ??= PgliteInstance({ t: 'in-memory' })
 

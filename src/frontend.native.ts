@@ -11,7 +11,7 @@ import { Url } from './@/url/url'
 import { VDomEngine } from './@/vdom/vdom-engine/impl'
 import { ImplReactNative } from './@/vdom/vdom-engine/impl-react-native'
 
-export function App() {
+const App = () => {
   return createElement(
     View,
     { style: styles.container },
@@ -36,7 +36,7 @@ const main = async () => {
   const logger = Logger.init({ t: 'console', namespace: ['frontend'], newLinePerMsg: false, maxLogLevel: 'debug' })
 
   logger.info('Initializing VDOM engine')
-  const vdomEngine = await ImplReactNative.init({ t: 'react-native' })
+  const vdomEngine = ImplReactNative.init({ t: 'react-native' })
   VDomEngine.set(vdomEngine)
   logger.info('VDOM engine initialized')
 
