@@ -1,7 +1,8 @@
 import type { AriaRole } from '~/@/html/aria-role'
 import { h } from '~/@/vdom/vdom-engine/impl'
-import { VDom } from '../vdom'
 import { TEXT_TAG } from '../tags'
+import { VDom } from '../vdom'
+import { StyleAttribute } from '../vdom-engine/interface'
 
 export interface TextProps {
   class?: string
@@ -20,7 +21,7 @@ export interface TextProps {
   onMouseOut?: (event: unknown) => void
   onMouseOver?: (event: unknown) => void
   text: string
-  style?: Record<string, unknown>
+  style?: StyleAttribute
 }
 
 export const Text = ({ text, ...props }: TextProps): VDom => {
