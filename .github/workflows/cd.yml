@@ -69,6 +69,8 @@ jobs:
           version: latest
       - run: pnpm install --frozen-lockfile
       - run: pnpm run env:ci
+      - run: pnpm local:up
+      - run: sleep 10
       - run: pnpm run db:up
       - run: pnpm run int
 
