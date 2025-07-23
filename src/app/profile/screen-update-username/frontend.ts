@@ -55,7 +55,7 @@ const View: FrontendModule['View'] = (input) => {
     navBar: {
       title: input.ctx.t('profile.update-username.update-username'),
       back: {
-        onClick: () => input.dispatch({ t: 'profile.update-username.clicked-back' }),
+        onPressDown: () => input.dispatch({ t: 'profile.update-username.clicked-back' }),
       },
     },
     patchAction: {

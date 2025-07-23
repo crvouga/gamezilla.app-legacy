@@ -332,7 +332,7 @@ export const View: Frontend['View'] = (input) => {
         buttons: [
           GameMainMenu.buttons.playComputer({
             ctx: input.ctx,
-            onClick: () =>
+            onPressDown: () =>
               input.dispatch({
                 t: 'input-mode',
                 mode: 'vs-bot',
@@ -341,7 +341,7 @@ export const View: Frontend['View'] = (input) => {
           }),
           GameMainMenu.buttons.playFriend({
             ctx: input.ctx,
-            onClick: () =>
+            onPressDown: () =>
               input.dispatch({
                 t: 'input-mode',
                 mode: 'vs-user',
@@ -352,7 +352,7 @@ export const View: Frontend['View'] = (input) => {
             title: input.ctx.t('chess.puzzle-title'),
             description: input.ctx.t('chess.puzzle-description'),
             renderIcon: (input) => h(IconPuzzlePiece, input),
-            onClick: () =>
+            onPressDown: () =>
               input.dispatch({
                 t: 'input-mode',
                 mode: 'puzzle',

@@ -23,7 +23,7 @@ export const SurfaceHeader = (input: {
       input.onClose &&
         h(IconButton, {
           label: input.ctx.t('app.close'),
-          onClick: (event) => {
+          onPressDown: (event) => {
             preventConsoleErrorWhenClosingDrawer(event)
             input.onClose?.()
           },

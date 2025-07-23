@@ -1,5 +1,6 @@
 import { Fragment, render } from 'inferno'
 import { createElement } from 'inferno-create-element'
+import { PrimitiveProps } from '../primitive-props'
 import { FRAGMENT_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 
@@ -13,6 +14,7 @@ const init = (_config: ImplInferno): IVirtualDomEngine => {
       render(vDom, node)
     },
     createElement: (tag: any, props: any, children: any) => {
+      props = PrimitiveProps.intoWebStandard(props)
       switch (tag) {
         case FRAGMENT_TAG: {
           return createElement(Fragment, props, children) as any

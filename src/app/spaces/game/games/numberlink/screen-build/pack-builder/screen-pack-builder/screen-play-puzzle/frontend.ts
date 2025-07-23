@@ -156,7 +156,7 @@ const toParentScreenProps = (input: Parameters<FrontendModule['View']>[0]): Pare
       subtitle:
         screen.puzzleResult.t === 'got' ? input.ctx.t('numberlink-puzzle-name', screen.puzzleResult.c.name) : null,
       back: {
-        onClick: () =>
+        onPressDown: () =>
           input.dispatch({
             t: 'got-msg-space',
             c: {
@@ -191,7 +191,7 @@ const toParentScreenProps = (input: Parameters<FrontendModule['View']>[0]): Pare
             icon: (input) => h(IconChevronLeft, input),
             label: input.ctx.t('app.prev'),
             disabled: !canGoPrevious,
-            onClick: () => {
+            onPressDown: () => {
               input.dispatch({
                 t: 'got-msg-space',
                 c: {
@@ -207,14 +207,14 @@ const toParentScreenProps = (input: Parameters<FrontendModule['View']>[0]): Pare
             icon: (input) => h(IconChevronRight, input),
             label: input.ctx.t('app.next'),
             disabled: !canGoNext,
-            onClick: onNextPuzzle,
+            onPressDown: onNextPuzzle,
           },
           {
             id: input.ctx.t('app.remove'),
             icon: (input) => h(IconDeleteForever, input),
             label: input.ctx.t('app.remove'),
             color: 'danger',
-            onClick: () =>
+            onPressDown: () =>
               input.dispatch({
                 t: 'got-msg-space',
                 c: {

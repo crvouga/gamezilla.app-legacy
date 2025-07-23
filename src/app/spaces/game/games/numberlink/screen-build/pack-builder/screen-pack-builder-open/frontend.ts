@@ -69,7 +69,7 @@ const View: FrontendModule['View'] = (input) => {
     navBar: {
       title: input.ctx.t('game.numberlink.pack-builder'),
       back: {
-        onClick: () =>
+        onPressDown: () =>
           input.dispatch({
             t: 'got-msg-space',
             c: { t: 'user-clicked-back-button', userId: input.ctx.currentUser.userId },
@@ -84,7 +84,7 @@ const View: FrontendModule['View'] = (input) => {
         onQueryChanged: (query) => {
           console.log('query changed', query)
         },
-        onClick: (pack) =>
+        onPressDown: (pack) =>
           input.dispatch({
             t: 'got-msg-space',
             c: {

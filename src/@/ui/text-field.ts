@@ -1,10 +1,10 @@
 import { TranslatedText } from '~/@/l18n'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import { TextInput } from '~/@/vdom/primitives/text-input'
 import { Pressable } from '~/@/vdom/primitives/pressable'
+import { TextInput } from '~/@/vdom/primitives/text-input'
 import type { VDom } from '~/@/vdom/vdom'
-import { SvgText } from '../vdom/primitives/svg/text'
+import { Text } from '../vdom/primitives/text'
 import { cn } from './cn'
 import { IconXMark } from './icon'
 import { PAPER_CLASS_NAME } from './paper'
@@ -26,7 +26,7 @@ export const TextField = (input: {
   onChange: (value: string) => void
 }) => {
   return h(Box, { class: 'flex w-full flex-col gap-1' }, [
-    SvgText({ class: cn('text-base', input.error && 'text-red-500'), text: input.label }),
+    Text({ class: cn('text-base', input.error && 'text-red-500'), text: input.label }),
     h(
       Box,
       {
@@ -81,7 +81,7 @@ export const TextField = (input: {
               class: 'rounded-md px-3 ring-blue-500 outline-none focus:ring-2',
               'aria-label': 'Clear input',
               type: 'button',
-              onClick: (e: any) => {
+              onPressDown: (e: any) => {
                 e.preventDefault()
                 const self = document.getElementById(input.id)
                 if (self instanceof HTMLInputElement) {
@@ -105,7 +105,7 @@ export const TextField = (input: {
           'data-info': input.error ? 'false' : 'true',
           class: cn('text-sm', input.error && 'text-red-500'),
         },
-        [SvgText({ text: input.helperText ?? '' })],
+        [Text({ text: input.helperText ?? '' })],
       ),
   ])
 }

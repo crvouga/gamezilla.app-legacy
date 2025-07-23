@@ -64,7 +64,7 @@ const viewResetAction = (input: {
   return [
     PrebuiltActions.reset({
       ctx: input.ctx,
-      onClick: () => input.dispatch({ t: 'user-clicked-reset' }),
+      onPressDown: () => input.dispatch({ t: 'user-clicked-reset' }),
       disabled,
     }),
   ]

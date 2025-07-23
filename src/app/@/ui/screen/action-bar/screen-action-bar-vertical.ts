@@ -78,7 +78,7 @@ const ScreenActionButton = (input: ScreenAction) => {
       'aria-disabled': isDisabled,
       'aria-label': input.label,
       'aria-hidden': input.hidden,
-      onClick: input.onClick,
+      onPressDown: input.onPressDown,
       class: cn(
         'relative flex w-full min-w-32 flex-col items-center rounded-lg p-4 xl:flex-row',
         toColorClasses(input),

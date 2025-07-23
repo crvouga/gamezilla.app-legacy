@@ -2,10 +2,10 @@ import { TranslatedText } from '~/@/l18n'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import type { VDom } from '~/@/vdom/vdom'
+import { Text } from '../vdom/primitives/text'
 import { Clickable } from './clickable'
 import { cn } from './cn'
 import { Spinner } from './spinner'
-import { Text } from '../vdom/primitives/text'
 
 export type ButtonVariant = 'contained' | 'outlined' | 'text' | 'soft'
 
@@ -15,18 +15,13 @@ export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg'
 
 type Combo = `${ButtonVariant}-${ButtonColor}`
 
-export type ButtonEvent = {
-  stopPropagation: () => void
-  currentTarget: HTMLButtonElement
-}
-
 export type ButtonInput = {
   fab?: boolean
   text?: TranslatedText
   disabled?: boolean
   type?: 'button'
   class?: string
-  onClick?: (event: ButtonEvent) => void
+  onPressDown?: (event: unknown) => void
   renderIconStart?: (input: { class?: string }) => VDom
   variant?: ButtonVariant
   color?: ButtonColor
@@ -39,10 +34,9 @@ export const Button = (input: ButtonInput) => {
   return h(
     Clickable,
     {
-      dataTestId: input.dataTestId,
+      'data-testid': input.dataTestId,
       disabled: input.disabled || input.loading,
-      type: input.type ?? 'button',
-      'data-fab': input.fab ? 'true' : 'false',
+      'data-fab': input.fab,
       class: cn(
         input.class,
         'relative flex flex-row shrink-0 appearance-none flex-nowrap items-center justify-center truncate overflow-hidden rounded font-semibold select-none',
@@ -54,11 +48,7 @@ export const Button = (input: ButtonInput) => {
       ),
       role: 'button',
       'aria-label': input.text ?? '',
-      onClick: (e) =>
-        input.onClick?.({
-          currentTarget: e.currentTarget as HTMLButtonElement,
-          stopPropagation: () => e.stopPropagation(),
-        }),
+      onPressDown: input.onPressDown,
     },
 
     [

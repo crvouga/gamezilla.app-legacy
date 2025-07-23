@@ -47,7 +47,7 @@ const View = (input: {
             id: input.ctx.t('app.undo'),
             icon: (input) => h(IconArrowRotateLeft, input),
             label: input.ctx.t('app.undo'),
-            onClick: () => input.dispatch({ t: 'clicked-undo' }),
+            onPressDown: () => input.dispatch({ t: 'clicked-undo' }),
             disabled: !History.canUndo(input.model.form),
           },
           {
@@ -55,20 +55,20 @@ const View = (input: {
             icon: (input) => h(IconArrowRotateRight, input),
             label: input.ctx.t('app.redo'),
             disabled: !History.canRedo(input.model.form),
-            onClick: () => input.dispatch({ t: 'clicked-redo' }),
+            onPressDown: () => input.dispatch({ t: 'clicked-redo' }),
           },
           {
             id: input.ctx.t('app.clear'),
             icon: (input) => h(IconXMark, input),
             label: input.ctx.t('app.clear'),
             disabled: !ModeEdit.canClear(input.model),
-            onClick: () => input.dispatch({ t: 'clicked-clear' }),
+            onPressDown: () => input.dispatch({ t: 'clicked-clear' }),
           },
           {
             id: input.ctx.t('app.dimensions'),
             icon: (input) => h(IconExpand, input),
             label: input.ctx.t('app.dimensions'),
-            onClick: () => input.dispatch({ t: 'dimensions-form.clicked-open' }),
+            onPressDown: () => input.dispatch({ t: 'dimensions-form.clicked-open' }),
             renderSurface: ({ dropDown }) =>
               h(SurfaceLayout, {
                 id: 'dimensions',

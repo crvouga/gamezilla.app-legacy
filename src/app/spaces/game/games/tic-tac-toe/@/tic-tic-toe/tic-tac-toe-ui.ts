@@ -27,7 +27,7 @@ export const gameTheme = {
 
 const scale = 1_000
 
-export const ViewBoard = ({ board, onClick }: { board: Model; onClick: (position: Position) => void }) => {
+export const ViewBoard = ({ board, onPressDown }: { board: Model; onPressDown: (position: Position) => void }) => {
   return h(Svg, { width: '100%', viewBox: [0, 0, MAX_X * scale, MAX_Y * scale].join(' ') }, [
     h(Rect, { x: '0', y: '0', width: '100%', height: '100%', fill: gameTheme.background }),
     h(
@@ -78,7 +78,7 @@ export const ViewBoard = ({ board, onClick }: { board: Model; onClick: (position
         y: Number(position.row) * scale,
         width: 1 * scale,
         height: 1 * scale,
-        onClick: () => onClick(position),
+        onPressDown: () => onPressDown(position),
         fill: 'transparent',
       }),
     ),

@@ -1,0 +1,43 @@
+import { AriaRole } from '../html/aria-role'
+import { VDom } from './vdom'
+
+export type PrimitiveProps = {
+  key?: string | number | boolean | null | undefined
+  children?: VDom[]
+  id?: string
+  class?: string
+  role?: AriaRole
+  'aria-role'?: AriaRole
+  'aria-label'?: string
+  'aria-selected'?: boolean
+  'aria-hidden'?: boolean
+  'aria-disabled'?: boolean
+  'aria-checked'?: boolean
+  'data-testid'?: string
+  disabled?: boolean
+  tabIndex?: number | null | undefined
+  style?: unknown
+  onPressDown?: (event: unknown) => void
+  onPressUp?: (event: unknown) => void
+  onKeyDown?: (event: unknown) => void
+  'data-fab'?: boolean
+  'data-info'?: boolean
+  'data-error'?: boolean
+  'data-warning'?: boolean
+  'data-success'?: boolean
+  //
+  [key: string]: unknown
+}
+
+const intoWebStandard = (props: PrimitiveProps) => {
+  return {
+    ...props,
+    onClick: props.onPressDown,
+    onPointerUp: props.onPressUp,
+    onKeyDown: props.onKeyDown,
+  }
+}
+
+export const PrimitiveProps = {
+  intoWebStandard,
+}

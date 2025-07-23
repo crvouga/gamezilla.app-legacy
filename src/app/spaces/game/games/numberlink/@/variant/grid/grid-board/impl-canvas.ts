@@ -115,7 +115,7 @@ const View = ({
     class: cn('aspect-square w-full', isDragging ? 'cursor-grabbing' : 'cursor-grab'),
     watch: model,
     // paint: (value, ctx) => paint(value, ctx),
-    onMouseDown: (event_: unknown) => {
+    onPressDown: (event_: unknown) => {
       const event = event_ as MouseEvent
       // event.preventDefault()
       // event.stopImmediatePropagation()
@@ -142,10 +142,7 @@ const View = ({
         onPressDown?.(nodeId)
       }
     },
-    onMouseUp: (event) => {
-      // event.preventDefault()
-      // event.stopImmediatePropagation()
-      // event.stopPropagation()
+    onPressUp: (event: any) => {
       const canvas = event.currentTarget as HTMLCanvasElement
       const rect = canvas.getBoundingClientRect()
       const x = (event.clientX - rect.left) / rect.width

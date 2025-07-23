@@ -90,7 +90,7 @@ export const View = ({
       buttons: [
         GameMainMenu.buttons.playFriend({
           ctx,
-          onClick: () =>
+          onPressDown: () =>
             dispatch({
               t: 'input-mode',
               mode: 'vs-user',
@@ -98,7 +98,7 @@ export const View = ({
         }),
         GameMainMenu.buttons.playComputer({
           ctx,
-          onClick: () =>
+          onPressDown: () =>
             dispatch({
               t: 'input-mode',
               mode: 'vs-bot',

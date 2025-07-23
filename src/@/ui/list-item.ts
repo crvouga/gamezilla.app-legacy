@@ -13,7 +13,7 @@ type Input = {
   end?: () => VDom
   primary: TranslatedText
   secondary?: TranslatedText
-  onClick?: () => void
+  onPressDown?: () => void
   color?: Color
   dataTestId?: string
   link?: boolean
@@ -21,22 +21,21 @@ type Input = {
 }
 
 export const ListItem = (input: Input) => {
-  const element = input.onClick ? 'button' : 'div'
+  const element = input.onPressDown ? 'button' : 'div'
   switch (element) {
     case 'button': {
       return h(
         ClickableTransparent,
         {
           role: 'menuitem',
-          onClick: (event) => {
+          onPressDown: (event) => {
             preventConsoleErrorWhenClosingDrawer(event)
-            input.onClick?.()
+            input.onPressDown?.()
           },
           'aria-label': input.primary,
-          dataTestId: input.dataTestId,
-          name: input.primary,
+          'data-testid': input.dataTestId,
           class: cn(input.class, BASE_CLASS, toColorClass(input)),
-          'aria-selected': input.selected ? 'true' : 'false',
+          'aria-selected': input.selected,
         },
         [
           h(ListItemContent, {
@@ -52,15 +51,15 @@ export const ListItem = (input: Input) => {
       return h(
         Box,
         {
-          onClick: (event: unknown) => {
+          onPressDown: (event: unknown) => {
             preventConsoleErrorWhenClosingDrawer(event)
-            input.onClick?.()
+            input.onPressDown?.()
           },
           role: 'menuitem',
           'aria-label': input.primary,
           'data-testid': input.dataTestId,
           class: cn(input.class, BASE_CLASS, toColorClass(input)),
-          'aria-selected': input.selected ? 'true' : 'false',
+          'aria-selected': input.selected,
         },
         [
           h(ListItemContent, {

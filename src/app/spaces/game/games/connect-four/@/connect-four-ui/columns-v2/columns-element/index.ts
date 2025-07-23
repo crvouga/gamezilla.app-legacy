@@ -121,7 +121,7 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
 
         if (columns) {
           initColumns({
-            onClick: (columnIndex) => {
+            onPressDown: (columnIndex) => {
               this.onColumnClick(columnIndex)
             },
             parentNode: columns,

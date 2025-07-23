@@ -61,7 +61,7 @@ type MainMenuButton = {
   renderIcon: (input: { class: string }) => VDom
   title: TranslatedText
   description: TranslatedText
-  onClick: () => void
+  onPressDown: () => void
 }
 
 export const View = (props: {
@@ -80,7 +80,7 @@ export const View = (props: {
       parentScreen: props.ctx.parentScreen,
       ctx: props.ctx,
       dataTestId: props.dataTestId,
-      navBar: { title: props.title, back: { onClick: props.onBack } },
+      navBar: { title: props.title, back: { onPressDown: props.onBack } },
     })
   }
 
@@ -89,7 +89,7 @@ export const View = (props: {
     parentScreen: props.ctx.parentScreen,
     dataTestId: props.dataTestId,
     ctx: props.ctx,
-    navBar: { title: props.title, back: { onClick: props.onBack } },
+    navBar: { title: props.title, back: { onPressDown: props.onBack } },
     renderCoverArt: props.renderCoverArt,
     renderBody: () =>
       h(Box, { class: 'flex w-full flex-col gap-6 px-6', role: 'menu' }, [
@@ -108,7 +108,7 @@ const ViewMainMenuButton = (props: MainMenuButton) => {
     ClickablePaper,
     {
       class: 'flex flex-row w-full items-center gap-4 rounded p-6',
-      onClick: props.onClick,
+      onPressDown: props.onPressDown,
       role: 'menuitem',
       'aria-label': props.title,
     },
@@ -132,7 +132,7 @@ const ViewMainMenuButton = (props: MainMenuButton) => {
 }
 
 export const buttons = {
-  playFriend: (input: { onClick: () => void; ctx: { t: Translator } }): MainMenuButton => {
+  playFriend: (input: { onPressDown: () => void; ctx: { t: Translator } }): MainMenuButton => {
     return {
       ...input,
       renderIcon: (input) => h(IconUsers, input),
@@ -141,7 +141,7 @@ export const buttons = {
     }
   },
 
-  playComputer: (input: { onClick: () => void; ctx: { t: Translator } }): MainMenuButton => {
+  playComputer: (input: { onPressDown: () => void; ctx: { t: Translator } }): MainMenuButton => {
     return {
       ...input,
       renderIcon: (input) => h(IconRobot, input),

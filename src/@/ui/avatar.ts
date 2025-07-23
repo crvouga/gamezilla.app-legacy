@@ -9,7 +9,7 @@ type AvatarProps = {
   src?: string | null | undefined
   alt?: string | null | undefined
   class?: string
-  onClick?: () => void
+  onPressDown?: () => void
 }
 
 const isImage = (src: string | null | undefined): boolean => {
@@ -19,7 +19,7 @@ const isImage = (src: string | null | undefined): boolean => {
 export const Avatar = (props: AvatarProps) => {
   if (isImage(props.src)) {
     return h(Image, {
-      onClick: props.onClick,
+      onPressDown: props.onPressDown,
       src: props.src ?? '',
       alt: props.alt ?? 'user avatar',
       class: cn(
@@ -32,7 +32,7 @@ export const Avatar = (props: AvatarProps) => {
   return h(
     Box,
     {
-      onClick: props.onClick,
+      onPressDown: props.onPressDown,
       class: cn('inline-block aspect-square flex-shrink-0 overflow-hidden rounded-full bg-white/40', props.class),
     },
     [

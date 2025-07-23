@@ -64,7 +64,7 @@ const View = (input: { query: Model; ctx: FlowFrontendCtxBase; onChange: (query:
           size: 'sm',
           renderStartIcon: (input) => h(IconArrowDownShortWide, input),
           label: input.ctx.t('app.last-updated-at-desc'),
-          onClick: () => dispatch({ t: 'toggled-last-updated-chip' }),
+          onPressDown: () => dispatch({ t: 'toggled-last-updated-chip' }),
         }),
 
       typeof input.query.order.createdAt === 'string' &&
@@ -72,7 +72,7 @@ const View = (input: { query: Model; ctx: FlowFrontendCtxBase; onChange: (query:
           size: 'sm',
           renderStartIcon: (input) => h(IconArrowDownShortWide, input),
           label: input.ctx.t('app.created-at-desc'),
-          onClick: () => dispatch({ t: 'toggled-created-at-chip' }),
+          onPressDown: () => dispatch({ t: 'toggled-created-at-chip' }),
         }),
     ].filter(Boolean),
   )

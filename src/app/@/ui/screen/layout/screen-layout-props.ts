@@ -29,7 +29,7 @@ export type PostActionProps = {
 }
 
 export type NavBarBackProps = {
-  onClick?: () => void
+  onPressDown?: () => void
   renderSurface?: (input: { dropDown: DropDownConfig }) => VDom
 }
 

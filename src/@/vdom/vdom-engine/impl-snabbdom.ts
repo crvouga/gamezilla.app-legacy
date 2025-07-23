@@ -11,6 +11,7 @@ import {
 } from 'snabbdom'
 import { FRAGMENT_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
+import { PrimitiveProps } from '../primitive-props'
 
 export type ImplSnabbdom = {
   t: 'snabbdom'
@@ -42,6 +43,7 @@ const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
         // Reusable objects to reduce allocations
         let reusableAttrs: Attrs = {}
         let reusableOn: On = {}
+        props = PrimitiveProps.intoWebStandard(props)
 
         children = processChildren(children ?? props?.children)
 

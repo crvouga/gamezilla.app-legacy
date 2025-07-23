@@ -220,7 +220,7 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
           {
             class: 'absolute inset-0 flex flex-col items-center justify-center bg-black/70',
             disabled: input.isSpectating,
-            onClick: !input.isSpectating ? input.onPlayAgain : undefined,
+            onPressDown: !input.isSpectating ? input.onPlayAgain : undefined,
           },
           [
             h(Box, { class: 'flex-1' }),
@@ -238,7 +238,7 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
           {
             class: 'absolute inset-0 flex flex-col items-center justify-center bg-black/60',
             disabled: input.isSpectating,
-            onClick: !input.isSpectating ? input.onPlayAgain : undefined,
+            onPressDown: !input.isSpectating ? input.onPlayAgain : undefined,
           },
           [
             h(Box, { class: 'flex-1' }),

@@ -8,7 +8,7 @@ import { cn } from './cn'
 type IconButtonSize = 'xs' | 'sm' | 'md' | 'lg'
 
 export const IconButton = (input: {
-  onClick?: (event: { currentTarget?: EventTarget | null }) => void
+  onPressDown?: (event: unknown) => void
   label: TranslatedText
   renderIcon: (input: { class: string }) => VDom
   class?: string
@@ -24,11 +24,10 @@ export const IconButton = (input: {
         toSizeClassName(input.size ?? 'md'),
         input.class,
       ),
-      onClick: input.onClick,
+      onPressDown: input.onPressDown,
       'aria-label': input.ariaLabel ?? input.label,
-      title: input.label,
-      dataTestId: input.dataTestId,
-      type: 'button',
+      'data-testid': input.dataTestId,
+      role: 'button',
     },
     [
       input.renderIcon({

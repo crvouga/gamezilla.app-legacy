@@ -257,7 +257,7 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
       id: input.ctx.t('app.save'),
       icon: (input) => h(IconFloppyDisk, input),
       label: input.ctx.t('app.save'),
-      onClick: () => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-save-button' }),
+      onPressDown: () => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-save-button' }),
       loading: input.model.puzzleSaveChangesRequest?.t === 'loading',
     },
   ]

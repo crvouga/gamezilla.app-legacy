@@ -20,7 +20,7 @@ export const SectionPersonDetails = (input: {
       {
         type: 'button',
         class: 'flex w-full flex-col items-center justify-center gap-2 p-4',
-        onClick: input.onOpenDetails,
+        onPressDown: input.onOpenDetails,
       },
       [
         h(Avatar, { src: input.profile ? UserProfile.toAvatarUrl(input.profile) : '', class: 'size-24' }),
@@ -33,7 +33,7 @@ export const SectionPersonDetails = (input: {
     ),
 
     h(Box, { class: 'w-full px-4 pb-8' }, [
-      h(Button, { onClick: input.onOpenDetails, class: 'w-full', text: input.ctx.t('app.see-profile') }),
+      h(Button, { onPressDown: input.onOpenDetails, class: 'w-full', text: input.ctx.t('app.see-profile') }),
     ]),
   ])
 }

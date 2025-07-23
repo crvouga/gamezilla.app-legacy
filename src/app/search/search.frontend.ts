@@ -138,7 +138,7 @@ export const View = ({
             Pressable,
             {
               type: 'button',
-              onClick: () =>
+              onPressDown: () =>
                 dispatch({
                   t: 'clicked-clear',
                 }),
@@ -157,7 +157,7 @@ export const View = ({
               ClickableTransparent,
               {
                 class: 'flex flex-row w-full items-center gap-4 p-4',
-                onClick: () =>
+                onPressDown: () =>
                   dispatch({
                     t: 'clicked-result',
                     userId: result.userId,

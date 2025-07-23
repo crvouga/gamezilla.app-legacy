@@ -143,7 +143,7 @@ const view: SpaceFrontendModule['View'] = (input) => {
           })
         : null,
       back: {
-        onClick: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
+        onPressDown: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
       },
     },
     renderBody: () =>
@@ -152,7 +152,7 @@ const view: SpaceFrontendModule['View'] = (input) => {
 
         h(SectionPeopleList, {
           ctx: spaceCtx,
-          onClickItem: (userId) => input.dispatch({ t: 'join-space.clicked-person-list-item', userId }),
+          onPressDownItem: (userId) => input.dispatch({ t: 'join-space.clicked-person-list-item', userId }),
           renderItem: (profile, vDom) =>
             h(SurfaceLayout, {
               ctx: spaceCtx,

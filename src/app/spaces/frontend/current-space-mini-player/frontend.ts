@@ -74,7 +74,7 @@ const View = (input: {
         {
           type: 'button',
           class: 'flex flex-row flex-1 items-center gap-3 overflow-hidden',
-          onClick: () => input.dispatch({ t: 'current-space-bar.clicked-current-space-bottom-bar' }),
+          onPressDown: () => input.dispatch({ t: 'current-space-bar.clicked-current-space-bottom-bar' }),
         },
         [
           h(Box, { class: 'p-2' }, [
@@ -114,14 +114,15 @@ const View = (input: {
             h(IconButton, {
               renderIcon: (iconInput) => h(IconXMark, iconInput),
               label: input.ctx.t('spaces.end'),
-              onClick: () => input.dispatch({ t: 'end-space.clicked-end-space-button', spaceId: space.spaceId }),
+              onPressDown: () => input.dispatch({ t: 'end-space.clicked-end-space-button', spaceId: space.spaceId }),
             }),
 
           !isCurrentUserHost &&
             h(IconButton, {
               renderIcon: (iconInput) => h(IconXMark, iconInput),
               label: input.ctx.t('spaces.leave'),
-              onClick: () => input.dispatch({ t: 'leave-space.clicked-leave-space-button', spaceId: space.spaceId }),
+              onPressDown: () =>
+                input.dispatch({ t: 'leave-space.clicked-leave-space-button', spaceId: space.spaceId }),
             }),
         ].filter(Boolean),
       ),

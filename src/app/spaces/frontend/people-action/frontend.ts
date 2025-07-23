@@ -142,7 +142,7 @@ const ViewSurfaces = (
               render: () =>
                 h(SectionPeopleList, {
                   ctx: spaceCtx,
-                  onClickItem: (userId) => input.dispatch({ t: 'people-action.clicked-person-list-item', userId }),
+                  onPressDownItem: (userId) => input.dispatch({ t: 'people-action.clicked-person-list-item', userId }),
                 }),
             },
           }),
@@ -173,7 +173,7 @@ const view = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction |
     id: input.ctx.t('app.people'),
     icon: (inputIcon) => h(IconUserGroup, inputIcon),
     label: input.ctx.t('spaces.people-count', peopleCount),
-    onClick: () => input.dispatch({ t: 'people-action.clicked-people-action' }),
+    onPressDown: () => input.dispatch({ t: 'people-action.clicked-people-action' }),
     badge: peopleCount > 1 ? peopleCount : undefined,
     renderSurface: ({ dropDown }) => h(ViewSurfaces, { ...input, dropDown }),
   }

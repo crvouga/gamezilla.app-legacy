@@ -128,7 +128,7 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
       icon: (input) => h(IconDeleteForever, input),
       label: input.ctx.t('app.delete'),
       color: 'danger',
-      onClick: () => input.dispatch({ t: 'delete-forever.user-clicked-delete-button' }),
+      onPressDown: () => input.dispatch({ t: 'delete-forever.user-clicked-delete-button' }),
       renderSurface: ({ dropDown }) => h(ViewSurface, { ...input, dropDown }),
     },
   ]

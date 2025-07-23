@@ -33,9 +33,9 @@ export const Circle = ({
   children: VDom[]
   'fill-rule'?: string
   'clip-rule'?: string
-  onClick?: (event: unknown) => void
-  onMouseDown?: (event: unknown) => void
-  onMouseUp?: (event: unknown) => void
+
+  onPressDown?: (event: unknown) => void
+  onPressUp?: (event: unknown) => void
   onMouseLeave?: (event: unknown) => void
   onMouseEnter?: (event: unknown) => void
   onMouseMove?: (event: unknown) => void

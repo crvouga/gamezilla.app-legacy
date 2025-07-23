@@ -416,11 +416,11 @@ export const Chessboard = (input: ChessboardInput) => {
       onMouseLeave: onDragCancel(input),
       onTouchCancel: onDragCancel(input),
       onTouchStart: onDragStartOrMove(input),
-      onMouseDown: onDragStartOrMove(input),
+      onPressDown: onDragStartOrMove(input),
       onTouchMove: onDragStartOrMove(input),
       onMouseMove: onDragStartOrMove(input),
       onTouchEnd: onDragEnd(input),
-      onMouseUp: onDragEnd(input),
+      onPressUp: onDragEnd(input),
     },
     [
       h(
@@ -496,7 +496,7 @@ export const Chessboard = (input: ChessboardInput) => {
               y: SCALE * y,
               width: SCALE * 1,
               height: SCALE * 1,
-              onMouseDown: onPieceDragStart({
+              onPressDown: onPieceDragStart({
                 input,
                 piece,
                 source: { x, y },

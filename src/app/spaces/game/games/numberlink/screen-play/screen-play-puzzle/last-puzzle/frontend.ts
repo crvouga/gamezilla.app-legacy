@@ -51,7 +51,7 @@ const ViewDialog = (input: { open: boolean; dispatch: (m: MsgFrontend) => void; 
         h(Button, {
           class: 'w-full',
           text: input.ctx.t('game.numberlink.select-next-pack'),
-          onClick: () =>
+          onPressDown: () =>
             input.dispatch({
               t: 'got-msg-space',
               c: { t: 'user-clicked-select-next-pack', userId: input.ctx.currentUser.userId },
@@ -75,7 +75,7 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
       ctx: input.ctx,
       label: input.ctx.t('game.numberlink.next-pack'),
       color: 'success',
-      onClick: () => {
+      onPressDown: () => {
         input.dispatch({
           t: 'got-msg-space',
           c: { t: 'user-clicked-select-next-pack', userId: input.ctx.currentUser.userId },

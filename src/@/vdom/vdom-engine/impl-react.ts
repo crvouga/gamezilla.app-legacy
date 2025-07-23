@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { FRAGMENT_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { normalizeChildren, normalizePropsInPlace } from './react'
+import { PrimitiveProps } from '../primitive-props'
 
 export type ImplReact = {
   t: 'react'
@@ -22,6 +23,7 @@ const init = (_config: ImplReact): IVirtualDomEngine => {
       return portal
     },
     createElement: (tag: any, props: any, children: any) => {
+      props = PrimitiveProps.intoWebStandard(props)
       normalizePropsInPlace(props, tag)
       children = normalizeChildren(children)
 

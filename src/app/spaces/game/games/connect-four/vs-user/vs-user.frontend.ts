@@ -289,7 +289,7 @@ const View: Module['View'] = (input) => {
                     id: input.ctx.t('app.resign'),
                     icon: (props) => h(IconFlag, props),
                     label: input.ctx.t('app.resign'),
-                    onClick: () => {
+                    onPressDown: () => {
                       input.dispatch({
                         t: 'clicked-resign',
                         userId: input.ctx.currentUser.userId,
@@ -302,7 +302,7 @@ const View: Module['View'] = (input) => {
                     id: input.ctx.t('app.exit'),
                     icon: (props) => h(IconArrowLeft, props),
                     label: input.ctx.t('app.exit'),
-                    onClick: () => {
+                    onPressDown: () => {
                       input.dispatch({
                         t: 'user-stopped-game',
                         userId: input.ctx.currentUser.userId,
@@ -315,7 +315,7 @@ const View: Module['View'] = (input) => {
                     id: input.ctx.t('game.rematch'),
                     icon: (props) => h(IconArrowRotateLeft, props),
                     label: input.ctx.t('game.rematch'),
-                    onClick: () => {
+                    onPressDown: () => {
                       input.dispatch({
                         t: 'user-requested-rematch',
                         userId: input.ctx.currentUser.userId,
@@ -348,7 +348,7 @@ const ViewGameOverMessage = ({
       h(IconSpinner, { class: 'mb-4 h-8 w-8 animate-spin' }),
       h(Button, {
         variant: 'contained',
-        onClick: () =>
+        onPressDown: () =>
           dispatch({
             t: 'user-cancelled-rematch',
             userId: ctx.currentUser.userId,
@@ -368,7 +368,7 @@ const ViewGameOverMessage = ({
       h(Box, { class: 'flex flex-row w-full items-center justify-center gap-4' }, [
         h(Button, {
           variant: 'contained',
-          onClick: () =>
+          onPressDown: () =>
             dispatch({
               t: 'user-responded-to-rematch-request',
               userId: ctx.currentUser.userId,
@@ -379,7 +379,7 @@ const ViewGameOverMessage = ({
         }),
         h(Button, {
           variant: 'contained',
-          onClick: () =>
+          onPressDown: () =>
             dispatch({
               t: 'user-responded-to-rematch-request',
               userId: ctx.currentUser.userId,

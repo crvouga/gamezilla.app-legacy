@@ -27,7 +27,7 @@ const ViewDot = (input: { model: BackendConnectionStatus; ctx: { t: Translator }
   }
 }
 
-const ViewListItem = (input: { model: BackendConnectionStatus; ctx: { t: Translator }; onClick: () => void }) => {
+const ViewListItem = (input: { model: BackendConnectionStatus; ctx: { t: Translator }; onPressDown: () => void }) => {
   const { model, ctx } = input
   switch (model.t) {
     case 'connected': {
@@ -36,7 +36,7 @@ const ViewListItem = (input: { model: BackendConnectionStatus; ctx: { t: Transla
         class: 'text-green-500',
         primary: ctx.t('wire.online'),
         end: () => h(Typography, { text: TimeSpan.format(model.latestPing) }),
-        onClick: input.onClick,
+        onPressDown: input.onPressDown,
       })
     }
 
@@ -45,7 +45,7 @@ const ViewListItem = (input: { model: BackendConnectionStatus; ctx: { t: Transla
         icon: (input) => h(Dot, { class: input.class, colorClassName: 'bg-orange-500' }),
         color: 'warning',
         primary: ctx.t('wire.connecting...'),
-        onClick: input.onClick,
+        onPressDown: input.onPressDown,
       })
     }
 
@@ -54,7 +54,7 @@ const ViewListItem = (input: { model: BackendConnectionStatus; ctx: { t: Transla
         icon: (input) => h(Dot, { class: input.class, colorClassName: 'bg-red-500' }),
         color: 'danger',
         primary: ctx.t('wire.offline'),
-        onClick: input.onClick,
+        onPressDown: input.onPressDown,
       })
     }
   }

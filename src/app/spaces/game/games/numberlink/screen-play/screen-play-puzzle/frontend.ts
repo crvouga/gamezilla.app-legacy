@@ -137,7 +137,7 @@ const ViewHosting: FrontendModule['View'] = (input) => {
     navBar: {
       title: input.ctx.t('game.numberlink.level', puzzleIndex + 1),
       back: {
-        onClick: () =>
+        onPressDown: () =>
           input.dispatch({
             t: 'got-msg-space',
             c: { userId: input.ctx.currentUser.userId, t: 'user-clicked-exit-play-puzzle-screen' },
@@ -198,7 +198,7 @@ const ViewHosting: FrontendModule['View'] = (input) => {
             ...input,
             hidden: (!isSolved && puzzle.t === 'got') || ScreenPlayPuzzleSpace.isLastPuzzle(input.modelSpace.screen),
             color: 'success',
-            onClick: onNextPuzzle,
+            onPressDown: onNextPuzzle,
           }),
 
           ...(puzzle.t === 'got' ? [CopyPuzzleFrontend.viewButtonAction(input)] : []),
@@ -308,7 +308,7 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
         h(Button, {
           text: input.ctx.t('game.numberlink.next-puzzle'),
           class: 'w-full',
-          onClick: () =>
+          onPressDown: () =>
             input.dispatch({
               t: 'got-msg-space',
               c: {

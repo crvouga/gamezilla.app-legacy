@@ -2,6 +2,7 @@ import { Fragment, render } from 'preact'
 import { createElement } from 'preact/compat'
 import { FRAGMENT_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
+import { PrimitiveProps } from '../primitive-props'
 
 export type ImplPreact = {
   t: 'preact'
@@ -13,6 +14,7 @@ const init = (_config: ImplPreact): IVirtualDomEngine => {
       render(vDom as any, node)
     },
     createElement: (tag: any, props: any, children: any) => {
+      props = PrimitiveProps.intoWebStandard(props)
       children = normalizeChildren(children)
 
       switch (tag) {

@@ -79,7 +79,7 @@ const ViewBody: typeof View = (input) => {
     isCurrentUserProfile
       ? h(Box, { class: 'flex flex-row w-full items-center justify-center gap-6 pt-4' }, [
           h(Button, {
-            onClick: () =>
+            onPressDown: () =>
               input.dispatch({ t: 'got-msg-out', c: PushScreenCmd.init({ t: 'profile-edit', n: 'profile' }) }),
             class: 'max-w-64 flex-1',
             renderIconStart: (iconInput) => h(IconUserPen, iconInput),

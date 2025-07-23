@@ -66,7 +66,7 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
       viewBox: `${0} ${0} ${input.model.width} ${input.model.height}`,
       onTouchMove,
       onMouseLeave: left,
-      onMouseUp: left,
+      onPressUp: left,
     },
     [
       h(ViewGrid, input),

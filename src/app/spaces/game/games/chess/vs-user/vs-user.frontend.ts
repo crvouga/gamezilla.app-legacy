@@ -424,7 +424,7 @@ export const View = ({
       h(Box, { class: 'flex flex-row items-center gap-4 p-4' }, [
         h(Button, {
           class: 'flex-1',
-          onClick: onQuit,
+          onPressDown: onQuit,
           renderIconStart: (iconInput) => h(IconArrowLeft, iconInput),
           text: ctx.t('app.exit'),
         }),

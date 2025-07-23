@@ -488,14 +488,14 @@ const toScreenLayoutProps = (input: {
             label: ctx.t('spaces.spaces'),
             icon: (input) => IconGamepad(input),
             color: input.model.frontend.currentScreen.currentScreen.n === 'spaces' ? 'selected' : 'inherit',
-            onClick: pushSpaceList,
+            onPressDown: pushSpaceList,
             id: ctx.t('spaces.spaces'),
           },
           {
             label: ctx.t('profile.profile'),
             icon: (input) => IconUserCircle(input),
             color: input.model.frontend.currentScreen.currentScreen.n === 'profile' ? 'selected' : 'inherit',
-            onClick() {
+            onPressDown() {
               input.dispatch({
                 t: 'frontend',
                 c: { t: 'current-screen', c: { t: 'clicked-link', screen: screenProfile } },

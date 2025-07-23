@@ -132,7 +132,7 @@ const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
     icon: (inputIcon) => h(IconLanguage, inputIcon),
     primary: ctx.t('l18n.language'),
     end: () => Text({ text: ctx.t(model.lang) }),
-    onClick: () => {
+    onPressDown: () => {
       dispatch({ t: 'settings.clicked-open-lang' })
     },
   })
@@ -171,21 +171,21 @@ const ViewMain: FrontendModule['View'] = (props) => {
     parentScreen: props.ctx.parentScreen,
     navBar: {
       title: props.ctx.t('l18n.settings'),
-      back: { onClick: () => props.dispatch({ t: 'settings.clicked-back-button' }) },
+      back: { onPressDown: () => props.dispatch({ t: 'settings.clicked-back-button' }) },
     },
     renderBody: () =>
       h(Box, { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
         h(ListItem, {
           primary: props.ctx.t('l18n.language'),
           end: () => h(Box, {}, [Text({ text: props.ctx.t(props.model.lang) })]),
-          onClick: () => props.dispatch({ t: 'settings.clicked-open-lang' }),
+          onPressDown: () => props.dispatch({ t: 'settings.clicked-open-lang' }),
           link: true,
           icon: (inputIcon) => IconLanguage(inputIcon),
         }),
         h(ListItem, {
           primary: props.ctx.t('l18n.renderer'),
           end: () => h(Box, {}, [Text({ text: VDomImpl.toName(props.model.renderVDomImpl) })]),
-          onClick: () => props.dispatch({ t: 'settings.clicked-open-renderer' }),
+          onPressDown: () => props.dispatch({ t: 'settings.clicked-open-renderer' }),
           icon: (inputIcon) => IconCode(inputIcon),
           link: true,
           dataTestId: TEST_ID_RENDERER_SCREEN_OPEN_BUTTON,
@@ -205,7 +205,7 @@ const ViewLogoutListItem: FrontendModule['View'] = (input) => {
     }
     case 'logged-in': {
       return h(ListItem, {
-        onClick: () => input.dispatch({ t: 'settings.clicked-logout-list-item' }),
+        onPressDown: () => input.dispatch({ t: 'settings.clicked-logout-list-item' }),
         dataTestId: TEST_ID_LOGOUT_LIST_ITEM_BUTTON,
         icon: (input) => h(IconPowerOff, input),
         primary: input.ctx.t('auth.logout'),
@@ -238,14 +238,14 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
             h(
               Clickable,
               {
-                dataTestId: TEST_ID_TOP_BAR_OPEN_BUTTON,
+                'data-testid': TEST_ID_TOP_BAR_OPEN_BUTTON,
                 class: cn(
                   props.ctx.screenSize === 'mobile'
                     ? 'flex flex-row w-full items-center justify-end gap-3 px-3 py-1'
                     : 'flex flex-row w-fit justify-center gap-4 px-6 py-3 pl-8',
                 ),
                 'aria-label': props.ctx.t('app.open-settings'),
-                onClick: () => props.dispatch({ t: 'settings.clicked-top-bar' }),
+                onPressDown: () => props.dispatch({ t: 'settings.clicked-top-bar' }),
               },
               [
                 h(BackendConnectionStatus.ViewDot, {
@@ -265,7 +265,7 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
             h(BackendConnectionStatus.ViewListItem, {
               ctx: props.ctx,
               model: props.ctx.backendConnectionStatus,
-              onClick: () => {},
+              onPressDown: () => {},
             }),
 
             h(SoundFrontend.ViewSoundListItem, {
@@ -281,7 +281,7 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
               primary: props.ctx.t('l18n.settings'),
               link: true,
               dataTestId: TEST_ID_SETTINGS_SCREEN_OPEN_BUTTON,
-              onClick: () => props.dispatch({ t: 'settings.clicked-open-settings' }),
+              onPressDown: () => props.dispatch({ t: 'settings.clicked-open-settings' }),
             }),
           ])
         },

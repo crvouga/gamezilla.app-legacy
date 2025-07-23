@@ -4,7 +4,7 @@ import { h } from '~/@/vdom/h'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 
 type PrebuiltActionInput = Partial<ScreenAction> & {
-  onClick: () => void
+  onPressDown: () => void
   ctx: {
     t: Translator
   }

@@ -20,10 +20,10 @@ const View = (input: {
   currentSlideIndex?: number
   onSlideIndexChanged?: (slideIndex: number) => void
   puzzleIds?: PuzzleId[]
-  onClickPuzzleCell?: (input: { puzzleIndex: number; puzzleId: PuzzleId }) => void
+  onPressDownPuzzleCell?: (input: { puzzleIndex: number; puzzleId: PuzzleId }) => void
   addCell?: {
     include: boolean
-    onClick?: () => void
+    onPressDown?: () => void
   }
 }) => {
   const puzzleIds = input.puzzleIds ?? []
@@ -50,7 +50,7 @@ const View = (input: {
             h(ViewSlideContent, {
               puzzleIds,
               slideIndex,
-              onClickPuzzleCell: input.onClickPuzzleCell,
+              onPressDownPuzzleCell: input.onPressDownPuzzleCell,
               addCell: input.addCell,
             }),
           ],
@@ -66,9 +66,9 @@ const ViewSlideContent = (input: {
   puzzleIds: PuzzleId[]
   addCell?: {
     include: boolean
-    onClick?: () => void
+    onPressDown?: () => void
   }
-  onClickPuzzleCell?: (input: { puzzleIndex: number; puzzleId: PuzzleId }) => void
+  onPressDownPuzzleCell?: (input: { puzzleIndex: number; puzzleId: PuzzleId }) => void
 }) => {
   return h(Box, { class: 'flex w-fit flex-col items-center justify-center gap-1' }, [
     h(ViewSlideHeading, { slideIndex: input.slideIndex, puzzleIds: input.puzzleIds }),
@@ -78,14 +78,14 @@ const ViewSlideContent = (input: {
       renderCell: (inputCell: { x: number; y: number; index: number; puzzleId: PuzzleId | null; empty: boolean }) => {
         const isAddCell = inputCell.index === input.puzzleIds.length && input.addCell?.include
 
-        if (isAddCell) return h(ViewAddCell, { onClick: input.addCell?.onClick })
+        if (isAddCell) return h(ViewAddCell, { onPressDown: input.addCell?.onPressDown })
 
         const { puzzleId } = inputCell
 
         if (!puzzleId) return h(ViewEmptyCell, {})
 
         return h(ViewPuzzleCell, {
-          onClick: () => input.onClickPuzzleCell?.({ puzzleId, puzzleIndex: inputCell.index }),
+          onPressDown: () => input.onPressDownPuzzleCell?.({ puzzleId, puzzleIndex: inputCell.index }),
           index: inputCell.index,
         })
       },
@@ -169,22 +169,22 @@ const range = (length: number): number[] => {
   return Array.from({ length }, (_, i) => i)
 }
 
-const ViewAddCell = (input: { onClick?: () => void }) => {
+const ViewAddCell = (input: { onPressDown?: () => void }) => {
   return h(
     ClickablePaper,
     {
-      onClick: input.onClick,
+      onPressDown: input.onPressDown,
       class: 'flex flex-row h-full w-full items-center justify-center overflow-hidden rounded border-2',
     },
     [h(IconPlus, { class: 'h-8 w-8' })],
   )
 }
 
-const ViewPuzzleCell = ({ onClick, index }: { onClick: () => void; index: number }) => {
+const ViewPuzzleCell = ({ onPressDown, index }: { onPressDown: () => void; index: number }) => {
   return h(
     ClickablePaper,
     {
-      onClick,
+      onPressDown: onPressDown,
       class: 'flex flex-row h-full w-full items-center justify-center overflow-hidden rounded text-lg font-normal',
     },
     [Text({ text: String(index + 1) })],
@@ -203,11 +203,11 @@ export const _ViewLoadingCell = () => {
   })
 }
 
-export const _ViewErrorCell = ({ onClick, index }: { onClick: () => void; index: number }) => {
+export const _ViewErrorCell = ({ onPressDown, index }: { onPressDown: () => void; index: number }) => {
   return h(
     Clickable,
     {
-      onClick,
+      onPressDown,
       class:
         'flex flex-row h-full w-full items-center justify-center overflow-hidden rounded bg-orange-500/50 text-xl font-bold',
     },

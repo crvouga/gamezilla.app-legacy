@@ -25,7 +25,7 @@ export const DrawerComponent = (props: DrawerProps) => {
       h(Box, {
         class: 'w-full flex-1',
         'aria-label': props.ctx.t('drawer.close'),
-        onClick: (event: unknown) => {
+        onPressDown: (event: unknown) => {
           preventConsoleErrorWhenClosingDrawer(event)
           props.onClose()
         },

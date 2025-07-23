@@ -19,7 +19,7 @@ const MAX_AVATAR_COUNT = 3
 export const ViewSpaceCard = (input: {
   ctx: AppFrontendCtxBase
   state: SpaceProjectionStarted
-  onClick?: () => void
+  onPressDown?: () => void
   key?: unknown
 }) => {
   const host = input.ctx.profilesByUserId[input.state.hostId]
@@ -29,7 +29,7 @@ export const ViewSpaceCard = (input: {
     return [profile]
   })
 
-  return h(ViewRoot, { onClick: input.onClick }, [
+  return h(ViewRoot, { onPressDown: input.onPressDown }, [
     h(ViewLiveIndicator, { ctx: input.ctx }),
     h(ViewSpaceCardGame, { gameName: input.state.game?.t ?? null, ctx: input.ctx }),
     h(ViewSpaceCardHost, { host, ctx: input.ctx }),
@@ -37,13 +37,15 @@ export const ViewSpaceCard = (input: {
   ])
 }
 
-const ViewRoot = (input: { onClick?: () => void; children?: VDom }) => {
+const ViewRoot = (input: { onPressDown?: () => void; children?: VDom }) => {
   const class_ = cn(
     SPACE_CARD_GRADIENT_CLASS_NAME,
     'flex w-full shrink-0 flex-col gap-3 overflow-hidden rounded-md bg-gradient-to-tr p-4',
   )
-  if (typeof input.onClick === 'function') {
-    return h(Clickable, { onClick: input.onClick, disabled: !input.onClick, class: class_ }, [input.children])
+  if (typeof input.onPressDown === 'function') {
+    return h(Clickable, { onPressDown: input.onPressDown, disabled: !input.onPressDown, class: class_ }, [
+      input.children,
+    ])
   }
   return h(Box, { class: class_ }, [input.children])
 }

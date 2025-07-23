@@ -63,7 +63,7 @@ const View: FrontendModule['View'] = (input) => {
     navBar: {
       title: input.ctx.t('game.numberlink.puzzle-builder'),
       back: {
-        onClick: () =>
+        onPressDown: () =>
           input.dispatch({
             t: 'got-msg-space',
             c: { t: 'user-clicked-back-button', userId: input.ctx.currentUser.userId },

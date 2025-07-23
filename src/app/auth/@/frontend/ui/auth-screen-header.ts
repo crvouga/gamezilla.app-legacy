@@ -23,7 +23,7 @@ export const AuthScreenHeader = (input: {
         class: '-ml-2',
         label: input.ctx.t('app.back'),
         renderIcon: (iconInput) => h(IconArrowLeft, iconInput),
-        onClick: input.onBack,
+        onPressDown: input.onBack,
         ariaLabel: input.ctx.t('app.back'),
       }),
       h(Typography, {

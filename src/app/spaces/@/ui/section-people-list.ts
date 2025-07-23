@@ -14,7 +14,7 @@ import { Text } from '~/@/vdom/primitives/text'
 
 export const SectionPeopleList = (input: {
   ctx: SpaceFrontendCtx
-  onClickItem: (userId: UserId) => void
+  onPressDownItem: (userId: UserId) => void
   renderItem?: (profile: UserProfile, vDom: VDom) => VDom
   title?: string
 }) => {
@@ -35,7 +35,7 @@ export const SectionPeopleList = (input: {
               key: profile.id,
               profile: profile,
               ctx: input.ctx,
-              onClick: () => input.onClickItem(profile.userId),
+              onPressDown: () => input.onPressDownItem(profile.userId),
             }),
           ),
         ]),
@@ -48,13 +48,13 @@ const PersonListItem = (input: {
   key?: string
   profile: ReturnType<typeof SpaceFrontendCtx.toProfiles>[number]
   ctx: SpaceFrontendCtx
-  onClick: () => void
+  onPressDown: () => void
 }) => {
   return h(
     Clickable,
     {
       key: input.key,
-      onClick: input.onClick,
+      onPressDown: input.onPressDown,
       class: 'flex flex-row w-full items-center gap-2 p-2 px-6',
     },
     [

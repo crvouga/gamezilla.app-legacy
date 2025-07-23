@@ -17,7 +17,7 @@ export const SwitchButton = ({
     h(
       Pressable,
       {
-        onClick: onToggle,
+        onPressDown: onToggle,
         accessibilityRole: 'switch',
         accessibilityState: { checked },
         'aria-label': label,

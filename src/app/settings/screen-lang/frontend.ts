@@ -72,7 +72,7 @@ const View: FrontendModule['View'] = (input) => {
     parentScreen: input.ctx.parentScreen,
     navBar: {
       title: input.ctx.t('l18n.language'),
-      back: { onClick: () => input.dispatch({ t: 'lang.clicked-back-button' }) },
+      back: { onPressDown: () => input.dispatch({ t: 'lang.clicked-back-button' }) },
     },
     renderBody: () =>
       h(Box, { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
@@ -101,7 +101,7 @@ const ViewChooseLangListItem = (input: {
     link: true,
     primary: TranslatedText.of(primary),
     end: () => h(Box, {}, [Text({ text: input.ctx.t(input.langCode) })]),
-    onClick: () => input.dispatch({ t: 'lang.clicked-lang', lang: input.langCode }),
+    onPressDown: () => input.dispatch({ t: 'lang.clicked-lang', lang: input.langCode }),
     icon: (inputIcon) => h(RadioInputIcon, { class: inputIcon.class, status: toStatus(input) }),
   })
 }

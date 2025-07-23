@@ -33,7 +33,7 @@ const ids = {
 export const ViewColumnsSvg = ({
   id,
   columns,
-  onClick,
+  onPressDown,
   onHover,
   disabled,
   model,
@@ -71,7 +71,7 @@ export const ViewColumnsSvg = ({
       ...[...new Array(COLUMN_COUNT)].map((_, columnIndex) =>
         h(Rect, {
           class: cn(
-            disabled || !onClick
+            disabled || !onPressDown
               ? undefined
               : (columns[columnIndex]?.length ?? 0) >= MAX_COLUMN_HEIGHT
                 ? 'cursor-not-allowed'
@@ -82,9 +82,9 @@ export const ViewColumnsSvg = ({
               onHover(columnIndex)
             }
           },
-          onClick: () => {
-            if (!disabled && isColumnIndex(columnIndex) && onClick) {
-              onClick(columnIndex)
+          onPressDown: () => {
+            if (!disabled && isColumnIndex(columnIndex) && onPressDown) {
+              onPressDown(columnIndex)
             }
           },
           key: columnIndex,

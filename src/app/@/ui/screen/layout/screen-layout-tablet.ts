@@ -108,7 +108,7 @@ const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps 
                 fab: true,
                 variant: 'contained',
                 size: 'md',
-                onClick: screen.postAction.onSubmit,
+                onPressDown: screen.postAction.onSubmit,
                 disabled: screen.postAction.submitDisabled,
                 loading: screen.postAction.submitLoading,
                 text: screen.postAction.submitText,

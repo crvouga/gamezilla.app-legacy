@@ -250,7 +250,7 @@ export const View = (input: {
 
         h(ViewBoard, {
           board: board,
-          onClick: (position) => input.dispatch({ t: 'input-move', position }),
+          onPressDown: (position) => input.dispatch({ t: 'input-move', position }),
         }),
       ]),
     actionBar: {
@@ -261,7 +261,7 @@ export const View = (input: {
             id: input.ctx.t('app.exit'),
             icon: (props) => h(IconArrowLeft, props),
             label: input.ctx.t('app.exit'),
-            onClick: () =>
+            onPressDown: () =>
               input.dispatch({
                 t: 'stop-game',
               }),
@@ -270,7 +270,7 @@ export const View = (input: {
             id: input.ctx.t('game.swap-sides'),
             icon: (props) => h(IconRightLeft, props),
             label: input.ctx.t('game.swap-sides'),
-            onClick: () =>
+            onPressDown: () =>
               input.dispatch({
                 t: 'swap-sides',
               }),
@@ -279,7 +279,7 @@ export const View = (input: {
             id: input.ctx.t('app.restart'),
             icon: (props) => h(IconArrowRotateLeft, props),
             label: input.ctx.t('app.restart'),
-            onClick: () =>
+            onPressDown: () =>
               input.dispatch({
                 t: 'restart',
               }),

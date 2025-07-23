@@ -33,7 +33,7 @@ const View: FrontendModule['View'] = (input) => {
     navBar: {
       title: input.ctx.t('numberlink-pack-name', packBuilder.pack.name),
       back: {
-        onClick: () =>
+        onPressDown: () =>
           input.dispatch({
             t: 'got-msg-space',
             c: {
@@ -54,7 +54,7 @@ const View: FrontendModule['View'] = (input) => {
             c: { t: 'screen-pack-builder.user-changed-slide', newSlideIndex, userId: input.ctx.currentUser.userId },
           })
         },
-        onClickPuzzleCell: ({ puzzleIndex, puzzleId }) => {
+        onPressDownPuzzleCell: ({ puzzleIndex, puzzleId }) => {
           const puzzle = PuzzleDbQueryCache.entity(input.ctx, puzzleId)
           input.dispatch({
             t: 'got-msg-space',
@@ -67,7 +67,7 @@ const View: FrontendModule['View'] = (input) => {
         },
         addCell: {
           include: true,
-          onClick: () => {
+          onPressDown: () => {
             input.dispatch({
               t: 'got-msg-space',
               c: {
@@ -86,7 +86,7 @@ const View: FrontendModule['View'] = (input) => {
             id: input.ctx.t('app.edit-name'),
             icon: (input) => h(IconPen, input),
             label: input.ctx.t('app.edit-name'),
-            onClick: () => {
+            onPressDown: () => {
               input.dispatch({
                 t: 'got-msg-space',
                 c: {

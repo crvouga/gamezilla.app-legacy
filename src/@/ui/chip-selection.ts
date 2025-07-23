@@ -36,7 +36,7 @@ export const ChipSelection = <T>({
           {
             key: String(option.value),
             disabled: disabled,
-            'aria-pressed': value === option.value ? 'true' : 'false',
+            'aria-selected': value === option.value,
             role: 'button',
             class: [
               // Bigger padding, larger text, dark mode colors
@@ -46,7 +46,7 @@ export const ChipSelection = <T>({
                 : 'bg-neutral-800 text-neutral-100 border-neutral-700 hover:bg-neutral-700',
               disabled ? 'opacity-50 pointer-events-none' : '',
             ].join(' '),
-            onClick: () => {
+            onPressDown: () => {
               if (!disabled && value !== option.value) {
                 onChange?.(option.value)
               }

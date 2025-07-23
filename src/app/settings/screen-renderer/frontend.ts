@@ -63,7 +63,7 @@ const View: FrontendModule['View'] = (input) => {
     navBar: {
       title: input.ctx.t('l18n.renderer'),
       back: {
-        onClick: () => input.dispatch({ t: 'renderer.clicked-back-button' }),
+        onPressDown: () => input.dispatch({ t: 'renderer.clicked-back-button' }),
       },
     },
     renderBody: () =>
@@ -78,7 +78,7 @@ const View: FrontendModule['View'] = (input) => {
             primary: VDomImpl.toName(vDomImpl),
             secondary: isDefault && false ? input.ctx.t('l18n.default') : undefined,
             dataTestId: TEST_ID_RENDERER_MENU_ITEM(vDomImpl),
-            onClick: () => input.dispatch({ t: 'renderer.clicked-renderer', vDomImpl }),
+            onPressDown: () => input.dispatch({ t: 'renderer.clicked-renderer', vDomImpl }),
             end: () => RadioInputIcon({ class: 'size-7', status: isSelected ? 'selected' : 'unselected' }),
             selected: isSelected,
           })

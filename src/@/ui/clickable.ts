@@ -1,59 +1,24 @@
-import { AriaRole } from '../html/aria-role'
-import { VDom } from '../vdom/vdom'
 import { h } from '~/@/vdom/h'
+import { PrimitiveProps } from '../vdom/primitive-props'
+import { Pressable } from '../vdom/primitives/pressable'
 import { cn } from './cn'
 import { PAPER_CLASS_NAME } from './paper'
-import { Pressable } from '../vdom/primitives/pressable'
 
-export type ClickableEvent = {
-  stopPropagation: () => void
-  currentTarget: EventTarget | null
-}
-
-export type ClickableProps = {
-  class?: string
-  children?: VDom[]
-  onClick?: (event: ClickableEvent) => void
-  role?: AriaRole
-  name?: string
-  title?: string
-  type?: 'button' | 'submit' | 'reset'
-  tabIndex?: number
-  disabled?: boolean
-  dataTestId?: string
-  'aria-label'?: string
-  'aria-hidden'?: boolean
-  'aria-disabled'?: boolean
-  key?: string
-  [key: string]: unknown
-}
-
-export const Clickable = ({ dataTestId, ...input }: ClickableProps) => {
+export const Clickable = (props: PrimitiveProps) => {
   return h(
     Pressable,
     {
-      ...input,
-      'aria-hidden': input['aria-hidden'] ? 'true' : 'false',
-      'aria-disabled': input['aria-disabled'] ? 'true' : 'false',
-      'data-testid': dataTestId,
-      'aria-label': input['aria-label'],
-      type: input.type ?? 'button',
-      onClick: input.onClick,
-      disabled: input.disabled,
-      role: input.role,
-      name: input.name,
-      tabIndex: input.tabIndex,
-      title: input.title,
+      ...props,
       class: cn(
         'touch-manipulation enabled:cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 enabled:active:opacity-75',
-        input.class,
+        props.class,
       ),
     },
-    input.children ?? [],
+    props.children ?? [],
   )
 }
 
-export const ClickableTransparent = (input: ClickableProps) => {
+export const ClickableTransparent = (input: PrimitiveProps) => {
   return h(
     Clickable,
     {
@@ -64,7 +29,7 @@ export const ClickableTransparent = (input: ClickableProps) => {
   )
 }
 
-export const ClickablePaper = (input: ClickableProps) => {
+export const ClickablePaper = (input: PrimitiveProps) => {
   return h(
     Clickable,
     {

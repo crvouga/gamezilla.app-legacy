@@ -1,57 +1,7 @@
 import { h } from '~/@/vdom/vdom-engine/impl'
-import { VDom } from '../../vdom'
+import { PrimitiveSvgProps } from '../../primitive-svg-props'
 import { STOP_TAG } from '../../tags'
 
-export const Stop = ({
-  children,
-  ...input
-}: {
-  width?: number | string
-  height?: number | string
-  viewBox?: string
-  class?: string
-  r?: number | string
-  cx?: number | string
-  cy?: number | string
-  key?: string | number | undefined
-  xmlns?: string
-  x?: number | string
-  y?: number | string
-  fill?: string
-  'fill-opacity'?: number | string
-  stroke?: string
-  'stroke-width'?: number | string
-  xmlnsXlink?: string
-  'font-size'?: number | string
-  offset?: number | string
-  stopColor?: string | number
-  'stroke-linecap'?: string
-  id?: string
-  xmlSpace?: string
-  'stroke-linejoin'?: string
-  'stroke-miterlimit'?: number | string
-  preserveAspectRatio?: string
-  version?: string
-  children: VDom[]
-  'fill-rule'?: string
-  'clip-rule'?: string
-  onClick?: (event: unknown) => void
-  onMouseDown?: (event: unknown) => void
-  onMouseUp?: (event: unknown) => void
-  onMouseLeave?: (event: unknown) => void
-  onMouseEnter?: (event: unknown) => void
-  onMouseMove?: (event: unknown) => void
-  onMouseOut?: (event: unknown) => void
-  onMouseOver?: (event: unknown) => void
-  onTouchMove?: (event: unknown) => void
-  onTouchStart?: (event: unknown) => void
-  onTouchEnd?: (event: unknown) => void
-  onTouchCancel?: (event: unknown) => void
-  onTouchEnter?: (event: unknown) => void
-  onTouchLeave?: (event: unknown) => void
-  onTouchOver?: (event: unknown) => void
-  onContextMenu?: (event: unknown) => void
-  opacity?: number | string
-}) => {
+export const Stop = ({ children, ...input }: PrimitiveSvgProps) => {
   return h(STOP_TAG, input, children)
 }

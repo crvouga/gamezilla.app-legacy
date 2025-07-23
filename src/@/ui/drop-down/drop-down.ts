@@ -34,7 +34,7 @@ export const DropDown = (props: {
   }
 
   return h(Box, {}, [
-    h(Backdrop, { open: props.open, onClick: onClose, onKeyDown }),
+    h(Backdrop, { open: props.open, onPressDown: onClose, onKeyDown }),
     h(Box, { id: props.id, class: cn('relative', props.class, props.open && 'z-50'), onKeyDown }, [
       props.renderReference(),
       h(Transition, { id: `${props.id}-transition`, mode: 'in-out', onEnter, onExit }, [
@@ -47,11 +47,11 @@ export const DropDown = (props: {
   ])
 }
 
-const Backdrop = (props: { open: boolean; onClick: () => void; onKeyDown: (e: unknown) => void }) => {
+const Backdrop = (props: { open: boolean; onPressDown: () => void; onKeyDown: (e: unknown) => void }) => {
   if (!props.open) return null
   return h(Pressable, {
     class: 'fixed inset-0 z-40 bg-black/50',
-    onClick: props.onClick,
+    onPressDown: props.onPressDown,
     onKeyDown: props.onKeyDown,
   })
 }

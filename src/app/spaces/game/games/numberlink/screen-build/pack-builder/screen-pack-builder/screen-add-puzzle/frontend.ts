@@ -83,7 +83,7 @@ const View: FrontendModule['View'] = (input) => {
     navBar: {
       title: input.ctx.t('game.numberlink.add-puzzle'),
       back: {
-        onClick: () =>
+        onPressDown: () =>
           input.dispatch({
             t: 'got-msg-space',
             c: {

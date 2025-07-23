@@ -312,7 +312,7 @@ export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void 
             return
           }
         },
-        onClick: (e: unknown) => {
+        onPressDown: (e: unknown) => {
           // @ts-ignore
           dispatch(['ClickedBoard', mouseEventToPosition(e)])
         },

@@ -3,7 +3,7 @@ import { VDom } from '~/@/vdom/vdom'
 
 export type Chip = {
   label: TranslatedText
-  onClick: () => void
+  onPressDown: () => void
 }
 
 export type ListLayoutProps<T> = {

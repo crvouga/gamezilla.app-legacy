@@ -195,7 +195,7 @@ export const ViewBoard = ({
               cy: y,
               r: 0.5,
               fill: 'transparent',
-              onClick: () =>
+              onPressDown: () =>
                 onPress?.({
                   x,
                   y,

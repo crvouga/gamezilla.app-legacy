@@ -83,7 +83,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
                 h(ViewSpaceCard, {
                   key: spaceProjection.spaceId,
                   ctx: { ...input.ctx, currentUser: input.ctx.currentUser },
-                  onClick: () =>
+                  onPressDown: () =>
                     input.dispatch({ t: 'list-spaces.clicked-space-card', spaceId: spaceProjection.spaceId }),
                   state: spaceProjection,
                 }),

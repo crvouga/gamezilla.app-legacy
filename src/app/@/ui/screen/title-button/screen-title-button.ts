@@ -7,12 +7,12 @@ import { h } from '~/@/vdom/h'
 export const ScreenTitleButton = (input: {
   title: TranslatedText
   buttonText: TranslatedText
-  onClick: () => void
+  onPressDown: () => void
 }) => {
   return h(Box, { class: 'flex flex-1 flex-col items-center justify-center gap-4' }, [
     h(Typography, { variant: 'title', text: input.title }),
     h(Button, {
-      onClick: input.onClick,
+      onPressDown: input.onPressDown,
       size: 'lg',
       variant: 'contained',
       color: 'primary',

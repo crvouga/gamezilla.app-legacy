@@ -229,7 +229,7 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
       id: input.ctx.t('app.edit-name'),
       icon: (input) => h(IconPen, input),
       label: input.ctx.t('app.edit-name'),
-      onClick: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-button' }),
+      onPressDown: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-button' }),
       renderSurface: ({ dropDown, screenActionLocation }) =>
         h(ViewSurface, { ...input, ctx: input.ctx, dropDown, screenActionLocation }),
     },

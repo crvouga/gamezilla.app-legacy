@@ -179,7 +179,7 @@ const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View
     dataTestId: 'numberlink/puzzle-builder-screen',
     navBar: {
       back: {
-        onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
+        onPressDown: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
         renderSurface: ({ dropDown }) => h(SaveChangesFrontend.ViewUnsavedChangesSurface, { ...input, dropDown }),
       },
       title: input.ctx.t('numberlink-puzzle-name', puzzleBuilder.puzzle.name),
@@ -222,7 +222,7 @@ const viewToggleModeAction = (
           icon: (input) => h(IconPlay, input),
           label: input.ctx.t('game.numberlink.play-mode'),
           classNames: { button: 'text-blue-500' },
-          onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
+          onPressDown: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
         },
       ]
     }
@@ -233,7 +233,7 @@ const viewToggleModeAction = (
           icon: (input) => h(IconPen, input),
           label: input.ctx.t('game.numberlink.edit-mode'),
           classNames: { button: 'text-amber-500' },
-          onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
+          onPressDown: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
         },
       ]
     }

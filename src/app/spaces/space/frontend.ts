@@ -107,7 +107,7 @@ const ViewSpaceNotFound = (input: { ctx: FrontendCtxModule; dispatch: (m: MsgFro
   return h(ScreenTitleButton, {
     title: input.ctx.t('spaces.space-not-found'),
     buttonText: input.ctx.t('spaces.exit-space'),
-    onClick: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
+    onPressDown: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
   })
 }
 

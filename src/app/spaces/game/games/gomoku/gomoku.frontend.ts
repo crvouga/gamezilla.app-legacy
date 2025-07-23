@@ -259,7 +259,7 @@ export const View = ({
         buttons: [
           GameMainMenu.buttons.playComputer({
             ctx,
-            onClick: () =>
+            onPressDown: () =>
               dispatch({
                 t: 'input-mode',
                 userId: ctx.currentUser.userId,
@@ -269,7 +269,7 @@ export const View = ({
 
           GameMainMenu.buttons.playFriend({
             ctx,
-            onClick: () =>
+            onPressDown: () =>
               dispatch({
                 t: 'input-mode',
                 userId: ctx.currentUser.userId,

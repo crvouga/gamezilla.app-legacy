@@ -31,7 +31,7 @@ export const ViewColumnsCanvas = (input: ViewColumnsInput) => {
   return h(Canvas, {
     id: 'view-columns-canvas',
     class: 'w-full cursor-pointer',
-    onClick: (e: MouseEvent) => {
+    onPressDown: (e: MouseEvent) => {
       const target = e.currentTarget as HTMLCanvasElement
       const rect = target.getBoundingClientRect()
       const elementRelativeX = e.clientX - rect.left
@@ -45,8 +45,8 @@ export const ViewColumnsCanvas = (input: ViewColumnsInput) => {
         }),
       )
 
-      if (input.onClick && isColumnIndex(columnIndex)) {
-        input.onClick(columnIndex)
+      if (input.onPressDown && isColumnIndex(columnIndex)) {
+        input.onPressDown(columnIndex)
         return
       }
     },
