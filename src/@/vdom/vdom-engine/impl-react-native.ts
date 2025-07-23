@@ -1,5 +1,5 @@
 import { createElement, Fragment } from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, Text, View } from 'react-native'
 import Svg, {
   Circle,
   ClipPath,
@@ -39,8 +39,7 @@ import {
   TEXT_TAG,
 } from '../tags'
 import { IVirtualDomEngine } from './interface'
-import { normalizeChildren } from './react'
-import { STYLESHEET } from './stylesheet'
+import { normalizeChildren, normalizePropsInPlace } from './react'
 
 export type ImplReactNative = {
   t: 'react-native'
@@ -53,9 +52,7 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
       return createElement(Text, {}, ['Not implemented'])
     },
     createElement: (tag: any, props: any, children: any) => {
-      // normalizePropsInPlace(props, tag)
-      const style = createStyleFromClass(props?.class)
-      props.style = style
+      normalizePropsInPlace(props, tag)
       children = normalizeChildren(children)
 
       switch (tag) {
@@ -136,23 +133,3 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
 export const ImplReactNative = {
   init,
 }
-
-const stylesheet = StyleSheet.create(STYLESHEET)
-
-const list: string[] = []
-const createStyleFromClass = (className: unknown) => {
-  if (typeof className !== 'string') return {}
-  let styles = {}
-  for (const c of className.split(' ')) {
-    const s = stylesheet[c as keyof typeof stylesheet]
-    if (s) styles = { ...styles, ...s }
-    else {
-      list.push(c)
-    }
-  }
-  return styles
-}
-
-setInterval(() => {
-  console.log(list.join(' '))
-}, 1000)
