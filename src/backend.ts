@@ -7,7 +7,7 @@ import { SqlDbMigration } from './@/sql-db-migrations/impl'
 import { BackendSqlDb } from './@/sql-db/backend-impl'
 
 const main = async () => {
-  const logger = Logger.init({ t: 'console', namespace: ['backend'], newLinePerMsg: false, maxLogLevel: 'info' })
+  const logger = Logger.init({ t: 'console', namespace: ['backend'], newLinePerMsg: false, maxLogLevel: 'debug' })
 
   logger.info('Starting backend')
 
