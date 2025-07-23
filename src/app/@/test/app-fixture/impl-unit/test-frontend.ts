@@ -16,7 +16,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { ITopicClient } from '~/@/topic/topic-client/types'
 import { h, render, VDomEngine } from '~/@/vdom/h'
-import { VDomImpl } from '~/@/vdom/vdom-impl'
+import { ImplWeb } from '~/@/vdom/vdom-engine/impl-web'
 import { Viewport } from '~/@/viewport'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { SessionId } from '~/@/wire/session-id'
@@ -131,8 +131,8 @@ export const TestFrontend = async (config: {
   await navigation.clear()
   document.body.innerHTML = '<div id="root"></div>'
   const root = document.getElementById('root')!
-  const vdomImpl = VDomImpl.getUrl()
-  await VDomEngine.initialize(vdomImpl)
+  const vdomEngine = await ImplWeb.init({t: 'inferno'})
+  VDomEngine.set(vdomEngine)
 
   const program = await Program.run({
     init: () => AppFrontend.init({ ctx }),

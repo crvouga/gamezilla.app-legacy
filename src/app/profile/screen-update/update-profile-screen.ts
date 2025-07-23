@@ -25,7 +25,7 @@ export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFronten
     navBar: {
       title: input.ctx.t('profile.edit-profile'),
       back: {
-        // onPressDown: () => input.dispatch({ t: 'clicked-back-button', from: { t: 'profile-update' } }),
+        // onPress: () => input.dispatch({ t: 'clicked-back-button', from: { t: 'profile-update' } }),
       },
     },
     renderBody: () =>
@@ -35,20 +35,20 @@ export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFronten
             src: UserProfile.toAvatarUrl(profile),
             class: 'size-16',
             //   alt: input.ctx.t('avatar-title'),
-            // onPressDown: () => input.dispatch({ t: 'clicked-avatar' }),
+            // onPress: () => input.dispatch({ t: 'clicked-avatar' }),
           }),
           h(Button, {
             size: 'sm',
             color: 'primary',
             variant: 'text',
             class: 'block',
-            // onPressDown: () => input.dispatch({ t: 'clicked-change-avatar-button' }),
+            // onPress: () => input.dispatch({ t: 'clicked-change-avatar-button' }),
             text: input.ctx.t('profile.update-avatar'),
           }),
         ]),
 
         h(ViewField, {
-          // onPressDown: () => input.dispatch({ t: 'clicked-update-username-button' }),
+          // onPress: () => input.dispatch({ t: 'clicked-update-username-button' }),
           label: input.ctx.t('username.username-label'),
           value: input.ctx.t('username', profile.username),
         }),
@@ -56,10 +56,10 @@ export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFronten
   })
 }
 
-const ViewField = (input: { label: TranslatedText; value: TranslatedText; onPressDown?: () => void }) => {
+const ViewField = (input: { label: TranslatedText; value: TranslatedText; onPress?: () => void }) => {
   return h(
     Clickable,
-    { onPressDown: input.onPressDown, class: 'flex flex-row w-full items-center justify-start px-4 py-2' },
+    { onPress: input.onPress, class: 'flex flex-row w-full items-center justify-start px-4 py-2' },
     [
       h(Box, { class: 'flex flex-1 flex-col items-start' }, [
         h(Typography, { variant: 'label', text: input.label }),

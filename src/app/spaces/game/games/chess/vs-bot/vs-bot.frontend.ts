@@ -444,7 +444,7 @@ export const View = ({
             id: ctx.t('app.exit'),
             icon: (props) => h(IconArrowLeft, props),
             label: ctx.t('app.exit'),
-            onPressDown: onClose,
+            onPress: onClose,
           },
         ],
       },

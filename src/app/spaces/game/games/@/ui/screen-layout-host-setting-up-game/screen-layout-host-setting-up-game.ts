@@ -13,7 +13,7 @@ export const ScreenLayoutHostSettingUpGame = (input: {
     title: TranslatedText
     subtitle?: TranslatedText | null
     back?: {
-      onPressDown?: () => void
+      onPress?: () => void
     }
   }
   ctx: {

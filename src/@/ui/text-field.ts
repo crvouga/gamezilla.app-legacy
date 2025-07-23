@@ -81,7 +81,7 @@ export const TextField = (input: {
               class: 'rounded-md px-3 ring-blue-500 outline-none focus:ring-2',
               'aria-label': 'Clear input',
               type: 'button',
-              onPressDown: (e: any) => {
+              onPress: (e: any) => {
                 e.preventDefault()
                 const self = document.getElementById(input.id)
                 if (self instanceof HTMLInputElement) {

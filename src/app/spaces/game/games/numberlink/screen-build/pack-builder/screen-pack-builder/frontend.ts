@@ -91,7 +91,7 @@ const ButtonExitBuilder: Pick<FrontendModule, 'update' | 'View'> = {
       renderIconStart: (inputIcons) => h(IconArrowLeft, inputIcons),
       class: 'w-full',
       text: input.ctx.t('app.exit'),
-      onPressDown: () =>
+      onPress: () =>
         input.dispatch({
           t: 'got-msg-space',
           c: {

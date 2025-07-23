@@ -174,7 +174,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
       'data-success': input.toast.variant === 'success' ? 'true' : 'false',
       class:
         'pointer-events-none absolute top-0 left-0 z-40 flex flex-row w-full items-center justify-center overflow-visible p-4',
-      onPressDown: () => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast }),
+      onPress: () => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast }),
       onPressUp: () => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast }),
       onTouchStart: () => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast }),
       onTouchEnd: () => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast }),
@@ -200,7 +200,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
                 {
                   type: 'button',
                   class: 'font-bold',
-                  onPressDown: () =>
+                  onPress: () =>
                     input.dispatch({ t: 'clicked-see-error', errorMsg: errorMsg, toastId: input.toast.toastId }),
                 },
                 [Text({ text: 'See Error' })],
@@ -211,7 +211,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
                 type: 'button',
                 role: 'button',
                 'aria-label': input.ctx.t('app.dismiss'),
-                onPressDown: () => input.dispatch({ t: 'clicked-dismiss-button', toastId: input.toast.toastId }),
+                onPress: () => input.dispatch({ t: 'clicked-dismiss-button', toastId: input.toast.toastId }),
               },
               [h(IconXMark, { class: 'h-5 w-5' })],
             ),

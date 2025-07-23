@@ -35,7 +35,7 @@ const View = (input: {
         h(NumberlinkVariantBoard.View, {
           model: ModeEdit.toNumberlink(input.model),
           onDraggedOver: (nodeId) => input.dispatch({ t: 'dragged-over', nodeId }),
-          onPressDown: (nodeId) => input.dispatch({ t: 'pressed-down-node', nodeId }),
+          onPress: (nodeId) => input.dispatch({ t: 'pressed-down-node', nodeId }),
           onPressUp: (nodeId) => input.dispatch({ t: 'pressed-up-node', nodeId }),
         }),
       ]),
@@ -47,7 +47,7 @@ const View = (input: {
             id: input.ctx.t('app.undo'),
             icon: (input) => h(IconArrowRotateLeft, input),
             label: input.ctx.t('app.undo'),
-            onPressDown: () => input.dispatch({ t: 'clicked-undo' }),
+            onPress: () => input.dispatch({ t: 'clicked-undo' }),
             disabled: !History.canUndo(input.model.form),
           },
           {
@@ -55,20 +55,20 @@ const View = (input: {
             icon: (input) => h(IconArrowRotateRight, input),
             label: input.ctx.t('app.redo'),
             disabled: !History.canRedo(input.model.form),
-            onPressDown: () => input.dispatch({ t: 'clicked-redo' }),
+            onPress: () => input.dispatch({ t: 'clicked-redo' }),
           },
           {
             id: input.ctx.t('app.clear'),
             icon: (input) => h(IconXMark, input),
             label: input.ctx.t('app.clear'),
             disabled: !ModeEdit.canClear(input.model),
-            onPressDown: () => input.dispatch({ t: 'clicked-clear' }),
+            onPress: () => input.dispatch({ t: 'clicked-clear' }),
           },
           {
             id: input.ctx.t('app.dimensions'),
             icon: (input) => h(IconExpand, input),
             label: input.ctx.t('app.dimensions'),
-            onPressDown: () => input.dispatch({ t: 'dimensions-form.clicked-open' }),
+            onPress: () => input.dispatch({ t: 'dimensions-form.clicked-open' }),
             renderSurface: ({ dropDown }) =>
               h(SurfaceLayout, {
                 id: 'dimensions',

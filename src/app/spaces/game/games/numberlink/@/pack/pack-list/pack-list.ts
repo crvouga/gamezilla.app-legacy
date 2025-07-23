@@ -19,7 +19,7 @@ const View = (input: {
   ctx: FlowFrontendCtxBase
   query: PackQuery
   onQueryChanged: (query: PackQuery) => void
-  onPressDown: (pack: Pack) => void
+  onPress: (pack: Pack) => void
 }) => {
   const packs = PackDbQueryCache.read(input.ctx, input.query)
   const isLoading = PackDbQueryCache.isLoading(input.ctx, input.query)
@@ -44,7 +44,7 @@ const View = (input: {
             ctx: input.ctx,
             key: pack.id,
             pack: pack,
-            onPressDown: () => input.onPressDown(pack),
+            onPress: () => input.onPress(pack),
           }),
         ),
 
@@ -54,12 +54,12 @@ const View = (input: {
   ])
 }
 
-const ViewPackListItem = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pack; onPressDown: () => void }) => {
+const ViewPackListItem = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pack; onPress: () => void }) => {
   return h(
     ClickableTransparent,
     {
       class: 'flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden px-4 py-6 text-left',
-      onPressDown: input.onPressDown,
+      onPress: input.onPress,
     },
     [
       false && h(IconBox, { class: 'h-9 w-9 shrink-0' }),

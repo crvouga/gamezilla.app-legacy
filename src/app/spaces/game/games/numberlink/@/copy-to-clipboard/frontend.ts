@@ -62,7 +62,7 @@ const viewAction = ({ ctx, dispatch }: { ctx: AppFrontendCtx; dispatch: (m: MsgF
       id: ctx.t('game.numberlink.copy-puzzle-to-clipboard'),
       icon: (input) => h(IconCopy, input),
       label: ctx.t('game.numberlink.copy-puzzle-to-clipboard'),
-      onPressDown: () =>
+      onPress: () =>
         dispatch({
           t: 'user-clicked-copy-to-clipboard',
         }),

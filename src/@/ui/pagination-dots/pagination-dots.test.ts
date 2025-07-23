@@ -29,13 +29,13 @@ describe('PaginationDots', () => {
   test('clicked dots', async () => {
     const f = await Fixture()
     const clickedIndex = Sub.queued<number>()
-    f.render(h(PaginationDots, { activeIndex: 0, count: 3, onPressDown: (index) => clickedIndex.pub(index) }))
+    f.render(h(PaginationDots, { activeIndex: 0, count: 3, onPress: (index) => clickedIndex.pub(index) }))
     const [firstDot] = await f.client.find(toPaginationDotSelector(1))
     await firstDot!.do({ t: 'click' })
     expect(await Sub.take(clickedIndex)).toEqual(1)
   })
 
-  test('should NOT be buttons if no onPressDown is provided', async () => {
+  test('should NOT be buttons if no onPress is provided', async () => {
     const f = await Fixture()
     f.render(h(PaginationDots, { activeIndex: 0, count: 3 }))
     const nodes = await f.client.find('button')

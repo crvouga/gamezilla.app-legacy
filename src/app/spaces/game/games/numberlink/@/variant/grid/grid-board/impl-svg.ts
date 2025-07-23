@@ -271,7 +271,7 @@ const ViewClickable = (
     map(VariantGrid.yieldNodes(input.model), (node) => {
       return ViewClickableNode({
         node,
-        onPressDown: input.onPressDown,
+        onPress: input.onPress,
         onPressUp: input.onPressUp,
         draggedOver: input.draggedOver,
       })
@@ -280,7 +280,7 @@ const ViewClickable = (
 }
 
 const ViewClickableNode = (
-  input: Pick<BoardInput<VariantGrid.Model>, 'onPressDown' | 'onPressUp'> & {
+  input: Pick<BoardInput<VariantGrid.Model>, 'onPress' | 'onPressUp'> & {
     node: VariantGrid.Node
     draggedOver?: (nodeId: NodeId) => void
   },
@@ -293,7 +293,7 @@ const ViewClickableNode = (
     height: '1',
     fill: 'transparent',
     onPointerDown: () => {
-      input.onPressDown?.(input.node.nodeId)
+      input.onPress?.(input.node.nodeId)
     },
     onPointerUp: () => {
       input.onPressUp?.(input.node.nodeId)

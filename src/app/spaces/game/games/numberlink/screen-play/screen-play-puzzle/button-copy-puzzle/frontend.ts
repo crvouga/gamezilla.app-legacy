@@ -89,7 +89,7 @@ export const viewButtonAction = ({
     id: ctx.t('app.copy'),
     icon: (input) => h(IconCopy, input),
     label: ctx.t('app.copy'),
-    onPressDown: () =>
+    onPress: () =>
       dispatch({
         t: 'got-msg-space',
         c: {

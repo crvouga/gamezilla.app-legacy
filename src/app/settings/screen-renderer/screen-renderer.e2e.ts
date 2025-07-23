@@ -1,5 +1,5 @@
 import { describe, expect, test } from '~/@/test-runner'
-import { VDomImpl } from '~/@/vdom/vdom-impl'
+import { VDomImplWeb } from '~/@/vdom/vdom-impl-web'
 import { FixtureAppE2E } from '~/app/@/test/app-fixture/impl'
 import { doClickBackButton } from '~/app/@/test/flows/do-click-back-button'
 import { doOpenRendererScreen } from '../@/test/do-open-renderer-screen'
@@ -23,7 +23,7 @@ describe('screen renderer', () => {
     const f = await Fixture(e)
     await doOpenSettingsScreen(f)
     await doOpenRendererScreen(f)
-    for (const vDomImpl of VDomImpl.VISIBLE) {
+    for (const vDomImpl of VDomImplWeb.VISIBLE) {
       const option = await f.frontend.findByTestId(TEST_ID_RENDERER_MENU_ITEM(vDomImpl))
       expect(option).toBeTruthy()
     }
@@ -34,7 +34,7 @@ describe('screen renderer', () => {
     await doOpenSettingsScreen(f)
     await doOpenRendererScreen(f)
 
-    const vDomImpl = VDomImpl.VISIBLE[Math.floor(VDomImpl.VISIBLE.length * Math.random())] ?? 'preact'
+    const vDomImpl = VDomImplWeb.VISIBLE[Math.floor(VDomImplWeb.VISIBLE.length * Math.random())] ?? 'preact'
 
     const option = await f.frontend.findByTestId(TEST_ID_RENDERER_MENU_ITEM(vDomImpl))
     expect(option).toBeTruthy()

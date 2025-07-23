@@ -16,7 +16,7 @@ export const ScreenNavBarMobile = (input: {
     t: Translator
   }
   back?: {
-    onPressDown?: () => void
+    onPress?: () => void
     renderSurface?: (input: { dropDown: DropDownConfig }) => VDom
   } | null
 }) => {
@@ -24,7 +24,7 @@ export const ScreenNavBarMobile = (input: {
 
   const renderSurface =
     input.back?.renderSurface ?? ((input: { dropDown: DropDownConfig }) => input.dropDown.reference?.render())
-  const shouldRenderBack = input.back && typeof input.back.onPressDown === 'function'
+  const shouldRenderBack = input.back && typeof input.back.onPress === 'function'
   return h(
     Box,
     {
@@ -39,7 +39,7 @@ export const ScreenNavBarMobile = (input: {
             reference: {
               render: () =>
                 h(IconButton, {
-                  onPressDown: input.back?.onPressDown,
+                  onPress: input.back?.onPress,
                   class: '-ml-2',
                   label: input.ctx.t('app.exit'),
                   ariaLabel: input.ctx.t('app.back'),

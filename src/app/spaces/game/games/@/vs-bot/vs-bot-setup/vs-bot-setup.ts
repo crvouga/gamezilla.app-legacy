@@ -156,7 +156,7 @@ export const View = ({
       navBar: {
         title,
         back: {
-          onPressDown: onQuit,
+          onPress: onQuit,
         },
       },
       renderCoverArt,
@@ -207,7 +207,7 @@ export const View = ({
           variant: 'contained',
           color: 'primary',
           class: 'flex-1',
-          onPressDown: onStartGame,
+          onPress: onStartGame,
           text: ctx.t('game.start-game'),
         }),
       ]),
@@ -238,7 +238,7 @@ export const View = ({
             Box,
             {},
             botVariants.map((botLevel) => {
-              const onPressDown = () => {
+              const onPress = () => {
                 botLevel.onSelect()
                 dispatch({
                   t: 'closed-modal',
@@ -249,7 +249,7 @@ export const View = ({
                 {
                   key: botLevel.label,
                   class: 'flex flex-row w-full items-center gap-3 p-4 text-left text-xl font-bold',
-                  onPressDown,
+                  onPress,
                 },
                 [
                   botLevel.renderIcon({
@@ -281,7 +281,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
             {
               role: 'button',
               class: 'grid h-14 w-14 place-items-center overflow-hidden rounded-full',
-              onPressDown: player.onStartPlaying,
+              onPress: player.onStartPlaying,
             },
             [h(IconQuestionMark, { class: 'text-secondary h-10 w-10' })],
           ),
@@ -325,7 +325,7 @@ const PlayerButtons = ({
   return h(Box, { class: 'col-span-3 flex flex-col gap-2' }, [
     !human.userId &&
       h(Button, {
-        onPressDown: player.onStartPlaying,
+        onPress: player.onStartPlaying,
         class: 'w-full',
         color: 'primary',
         text: ctx.t('game.start-playing'),
@@ -333,7 +333,7 @@ const PlayerButtons = ({
     player.t === 'user' &&
       ctx.currentUser.userId === player.userId &&
       h(Button, {
-        onPressDown: player.onStopPlaying,
+        onPress: player.onStopPlaying,
         class: 'w-full',
         variant: 'text',
         color: 'primary',
@@ -342,7 +342,7 @@ const PlayerButtons = ({
     player.t === 'bot' &&
       human.userId === ctx.currentUser.userId &&
       h(Button, {
-        onPressDown: onSwapSides,
+        onPress: onSwapSides,
         class: 'w-full',
         variant: 'text',
         color: 'primary',
@@ -351,7 +351,7 @@ const PlayerButtons = ({
     player.t === 'bot' &&
       human.userId === ctx.currentUser.userId &&
       h(Button, {
-        onPressDown: () =>
+        onPress: () =>
           dispatch({
             t: 'clicked-change-bot',
           }),

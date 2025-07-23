@@ -149,7 +149,7 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
     id: input.ctx.t('spaces.end'),
     icon: (inputIcon) => h(IconArrowLeftOnRect, { ...inputIcon }),
     label: input.ctx.t('spaces.end'),
-    onPressDown: () => input.dispatch({ t: 'end-space.clicked-end-space-button', spaceId: currentUserSpaceId }),
+    onPress: () => input.dispatch({ t: 'end-space.clicked-end-space-button', spaceId: currentUserSpaceId }),
     color: 'danger',
   }
 }
@@ -158,7 +158,7 @@ const ViewSpaceEnded: SpaceFrontendModule['View'] = (input) => {
   return h(ScreenTitleButton, {
     title: input.ctx.t('spaces.space-ended'),
     buttonText: input.ctx.t('spaces.exit-space'),
-    onPressDown: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
+    onPress: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
   })
 }
 

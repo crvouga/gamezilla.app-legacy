@@ -149,7 +149,7 @@ export const ViewSoundListItem = (input: {
   }
 }) => {
   return h(ListItem, {
-    onPressDown: () =>
+    onPress: () =>
       input.dispatch({
         t: 'sound.toggle-mute',
       }),

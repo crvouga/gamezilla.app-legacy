@@ -10,7 +10,7 @@ export type ViewColumnsInput = {
     columnIndex: ColumnIndex
     playerType: PlayerType
   }
-  onPressDown?: (columnIndex: ColumnIndex) => void
+  onPress?: (columnIndex: ColumnIndex) => void
   onHover?: (columnINdex: ColumnIndex) => void
   disabled?: boolean
   gameId?: string | number | null

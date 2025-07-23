@@ -22,7 +22,7 @@ export const Dialog = (input: {
       'data-open': input.open ? 'true' : 'false',
       'aria-hidden': input.open ? 'false' : 'true',
       'data-testid': input.testId,
-      onPressDown: (e: { target: any; currentTarget: any }) => {
+      onPress: (e: { target: any; currentTarget: any }) => {
         if (e.target === e.currentTarget) {
           input.onClose()
           return

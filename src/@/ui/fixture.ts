@@ -4,6 +4,7 @@ import { Logger } from '../logger'
 import { TimeSpan } from '../time/time-span'
 import { render, VDomEngine } from '../vdom/h'
 import { VDom } from '../vdom/vdom'
+import { ImplWeb } from '../vdom/vdom-engine/impl-web'
 
 export const BaseFixture = async () => {
   const client = await TestClient.init({
@@ -15,7 +16,8 @@ export const BaseFixture = async () => {
 
   document.body.innerHTML = '<div id="root"></div>'
   const root = document.getElementById('root')!
-  await VDomEngine.initialize('inferno')
+  const vdomEngine = await ImplWeb.init({t: 'inferno'})
+  VDomEngine.set(vdomEngine)
 
   return {
     client,

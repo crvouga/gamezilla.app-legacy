@@ -11,7 +11,7 @@ export const toPaginationDotSelector = (index: number) => `[data-pagination-dot-
 export const PaginationDots = (input: {
   count: number
   activeIndex: number
-  onPressDown?: (index: number) => void
+  onPress?: (index: number) => void
 }) => {
   if (input.count <= 1) return null
 
@@ -31,13 +31,13 @@ export const PaginationDots = (input: {
         'aria-selected': i === input.activeIndex,
         'aria-label': `Page ${i + 1}`,
       }
-      if (input.onPressDown) {
-        return h(Clickable, { ...baseProps, onPressDown: () => input.onPressDown?.(i) })
+      if (input.onPress) {
+        return h(Clickable, { ...baseProps, onPress: () => input.onPress?.(i) })
       }
       return h(Box, {
         ...baseProps,
         'aria-selected': baseProps['aria-selected'] ? 'true' : 'false',
-        onPressDown: () => input.onPressDown?.(i),
+        onPress: () => input.onPress?.(i),
       })
     }),
   )

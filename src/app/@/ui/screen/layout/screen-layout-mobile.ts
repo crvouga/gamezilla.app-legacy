@@ -29,7 +29,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
                 size: 'lg',
                 variant: 'contained',
                 fab: true,
-                onPressDown: input.postAction.onSubmit,
+                onPress: input.postAction.onSubmit,
                 disabled: input.postAction.submitDisabled,
                 loading: input.postAction.submitLoading,
                 text: input.postAction.submitText,

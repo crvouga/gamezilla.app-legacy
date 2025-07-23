@@ -1,17 +1,18 @@
 import { registerRootComponent } from 'expo'
+import { ComponentType } from 'react'
 import { Program } from '~/@/program/program'
 import { h } from '~/@/vdom/vdom-engine/impl'
 import { AppFrontend } from '~/app/frontend'
 import { HttpProtocol } from './@/http/protocol'
 import { Logger } from './@/logger'
-import { Store, useStore } from './@/react/store'
+import { StoreSingleListener, useStore } from './@/react/store'
 import { FrontendSqlDb } from './@/sql-db/frontend-impl'
 import { Url } from './@/url/url'
 import { VDomEngine } from './@/vdom/vdom-engine/impl'
 import { ImplReactNative } from './@/vdom/vdom-engine/impl-react-native'
 import './frontend.native.css'
 
-const store = Store<Parameters<typeof AppFrontend.View>[0] | null>(null)
+const store = StoreSingleListener<Parameters<typeof AppFrontend.View>[0] | null>(null)
 const App = () => {
   const input = useStore(store)
   if (!input) return null
@@ -55,7 +56,7 @@ const main = async () => {
     render: (input) => store.update({ ...input, ctx }),
   })
 
-  registerRootComponent(App as any)
+  registerRootComponent(App as ComponentType<unknown>)
 }
 
 main()

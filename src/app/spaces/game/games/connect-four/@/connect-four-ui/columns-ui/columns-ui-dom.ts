@@ -31,10 +31,10 @@ type Position = {
 
 export const create = ({
   initialColumns,
-  onPressDown,
+  onPress,
 }: {
   initialColumns: Columns
-  onPressDown?: (columnIndex: ColumnIndex) => void
+  onPress?: (columnIndex: ColumnIndex) => void
 }) => {
   let root: HTMLElement | null = null
   let svg: SVGElement | null = null
@@ -208,7 +208,7 @@ export const create = ({
       column.setAttribute('style', 'cursor: pointer;')
       column.addEventListener('click', () => {
         if (isColumnIndex(columnIndex)) {
-          onPressDown?.(columnIndex)
+          onPress?.(columnIndex)
         }
       })
 

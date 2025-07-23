@@ -241,7 +241,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
         AuthScreenHeaderCta({ ctx: input.ctx }),
 
         Button({
-          onPressDown: () => input.dispatch({ t: 'clicked-login-with-phone' }),
+          onPress: () => input.dispatch({ t: 'clicked-login-with-phone' }),
           size: 'lg',
           dataTestId: TEST_ID_CONTINUE_WITH_PHONE_BUTTON,
           class: 'w-full',

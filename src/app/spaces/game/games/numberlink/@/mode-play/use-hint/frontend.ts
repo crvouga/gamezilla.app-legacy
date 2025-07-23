@@ -29,7 +29,7 @@ const viewAction = (input: {
       icon: (input) => h(IconLightbulb, input),
       label: input.ctx.t('game.hint'),
       disabled: isSolved,
-      onPressDown: () => {
+      onPress: () => {
         const numberlink = toNumberlink(input.model, input.ctx.numberlink)
         const hash = SolutionHash.init(numberlink)
         const solutions = SolutionsDbQueryCache.read(input.ctx, hash)

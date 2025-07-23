@@ -29,7 +29,7 @@ export const Tabs = <TTab extends string>({
           h(
             ClickableTransparent,
             {
-              onPressDown: () => onSelect(tab),
+              onPress: () => onSelect(tab),
               class: cn(
                 'flex flex-row h-full w-full items-center justify-center py-3 text-xl font-bold',
                 index !== tabs.length - 1 && 'border-r-2',

@@ -1,6 +1,7 @@
 import { Program } from '~/@/program/program'
 import { AppFrontend } from '~/app/frontend'
 import { HttpProtocol } from './@/http/protocol'
+import { Logger } from './@/logger'
 import { PgliteInstance } from './@/pglite/pglite-instance'
 import { PgliteWorkerInstance } from './@/pglite/pglite-worker-instance/pglite-worker-instance'
 import { IPgliteInstance } from './@/pglite/types'
@@ -9,14 +10,11 @@ import { Psql } from './@/psql'
 import { FrontendSqlDb } from './@/sql-db/frontend-impl'
 import { Url } from './@/url/url'
 import { h, render, VDomEngine } from './@/vdom'
-import { VDomImpl } from './@/vdom/vdom-impl'
-import { Logger } from './@/logger'
+import { ImplWeb } from './@/vdom/vdom-engine/impl-web'
+import { VDomImplWeb } from './@/vdom/vdom-impl-web'
 
 const main = async () => {
   const logger = Logger.init({ t: 'console', namespace: ['frontend'], newLinePerMsg: false, maxLogLevel: 'debug' })
-
-  const VDOM_IMPL = VDomImpl.getUrl()
-  logger.info('VDOM_IMPL', VDOM_IMPL)
 
   const BACKEND_URL = process.env.BACKEND_URL
   if (!BACKEND_URL) throw new Error('BACKEND_URL is not set')
@@ -27,7 +25,10 @@ const main = async () => {
   logger.info('TOPIC_URL', TOPIC_URL)
 
   let root = initRoot()
-  await VDomEngine.initialize(VDOM_IMPL)
+  const VDOM_IMPL = VDomImplWeb.getUrl()
+  logger.info('VDOM_IMPL', VDOM_IMPL)
+  const vdomEngine = await ImplWeb.init({ t: VDOM_IMPL })
+  VDomEngine.set(vdomEngine)
 
   const windowProtocol = HttpProtocol.fromWindow() ?? 'https'
 
@@ -60,9 +61,10 @@ const main = async () => {
     debugger: DebuggerReduxDevTools,
   })
 
-  VDomEngine.event.sub(async (input) => {
-    VDomImpl.setUrl(input.vdomImpl)
-    await VDomEngine.initialize(input.vdomImpl)
+  VDomImplWeb.events.sub(async (event) => {
+    VDomImplWeb.setUrl(event.vdomImpl)
+    const vdomEngine = await ImplWeb.init({ t: event.vdomImpl })
+    VDomEngine.set(vdomEngine)
     root = initRoot()
     program.render()
   })

@@ -42,7 +42,7 @@ const View = (input: {
         Clickable,
         {
           class: 'flex flex-row w-fit items-center gap-4 px-4 py-2',
-          onPressDown: () => input.onHeaderCheckboxClick?.(puzzles.map((p) => p.id)),
+          onPress: () => input.onHeaderCheckboxClick?.(puzzles.map((p) => p.id)),
         },
         [
           h(Checkbox, { state: toTopLevelCheckboxState({ totalCount, selectedCount }) }),
@@ -67,7 +67,7 @@ const View = (input: {
           ctx: input.ctx,
           selected: input.selected?.some((id) => id === puzzle.id) ?? false,
           puzzle: puzzle,
-          onPressDown: () => input.onItemClick(puzzle),
+          onPress: () => input.onItemClick(puzzle),
         }),
       ),
 
@@ -99,7 +99,7 @@ const ViewListItem = (input: {
   query: PuzzleQuery
   ctx: { t: Translator; now: UnixMs }
   puzzle: Puzzle
-  onPressDown?: () => void
+  onPress?: () => void
   selected: boolean
 }) => {
   return h(
@@ -107,7 +107,7 @@ const ViewListItem = (input: {
     {
       key: input.puzzle.id,
       class: 'box-border flex flex-row w-full items-center text-left',
-      onPressDown: input.onPressDown,
+      onPress: input.onPress,
     },
     [
       input.selectable && h(Box, { class: 'px-4' }, [h(Checkbox, { state: input.selected ? 'checked' : 'unchecked' })]),

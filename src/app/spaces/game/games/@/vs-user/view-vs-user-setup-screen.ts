@@ -76,7 +76,7 @@ const PlayerButtons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerP
         class: 'w-full',
         variant: 'text',
         color: 'primary',
-        onPressDown: player.onStopPlaying,
+        onPress: player.onStopPlaying,
         text: ctx.t('game.stop-playing'),
       }),
 
@@ -85,7 +85,7 @@ const PlayerButtons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerP
         class: 'w-full',
         variant: 'contained',
         color: 'primary',
-        onPressDown: player.onStartPlaying,
+        onPress: player.onStartPlaying,
         text: ctx.t('game.start-playing'),
       }),
   ])
@@ -96,7 +96,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
     Box,
     {
       class: 'col-span-3 grid w-full cursor-pointer grid-cols-2 place-items-center text-center',
-      onPressDown: player.userId === ctx.currentUser.userId ? player.onStopPlaying : player.onStartPlaying,
+      onPress: player.userId === ctx.currentUser.userId ? player.onStopPlaying : player.onStartPlaying,
     },
     [
       player.userId
@@ -110,7 +110,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
             {
               role: 'button',
               class: 'grid h-14 w-14 place-items-center overflow-hidden rounded-full',
-              onPressDown: player.onStartPlaying,
+              onPress: player.onStartPlaying,
             },
             [h(IconQuestionMark, { class: 'text-secondary h-10 w-10' })],
           ),
@@ -167,7 +167,7 @@ export const VsUserSetupScreen = ({
       navBar: {
         title,
         back: {
-          onPressDown: onQuit,
+          onPress: onQuit,
         },
       },
       renderCoverArt: renderCoverArt,
@@ -181,7 +181,7 @@ export const VsUserSetupScreen = ({
           variant: 'contained',
           color: 'primary',
           class: 'flex-1',
-          onPressDown: onStartGame,
+          onPress: onStartGame,
           text: ctx.t('game.start-game'),
         }),
       ]),

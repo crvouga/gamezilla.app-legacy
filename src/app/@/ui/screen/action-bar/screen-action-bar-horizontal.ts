@@ -78,7 +78,7 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
                 icon: (input) => h(IconEllipsisVertical, input),
                 label: input.ctx.t('app.more'),
                 size: input.size,
-                onPressDown: input.limit?.onToggle ?? (() => {}),
+                onPress: input.limit?.onToggle ?? (() => {}),
               }),
           },
         },
@@ -97,7 +97,7 @@ const SurfaceMoreContent = (input: { actions: (ScreenAction | null)[] }) => {
         key: action.id,
         icon: action.icon,
         primary: action.label,
-        onPressDown: action.onPressDown,
+        onPress: action.onPress,
         color: action.color,
       })
       if (!action.renderSurface) return listItemButton
@@ -171,7 +171,7 @@ const ScreenActionButton = (input: ScreenAction & { class?: string }) => {
       'aria-disabled': isDisabled,
       'aria-label': input.label,
       'aria-hidden': input.hidden,
-      onPressDown: input.onPressDown,
+      onPress: input.onPress,
       class: cn(
         'relative flex flex-1 flex-col items-center gap-0.5 truncate p-2 font-normal',
         'disabled:cursor-not-allowed disabled:opacity-50',

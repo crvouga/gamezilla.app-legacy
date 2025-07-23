@@ -1,18 +1,19 @@
 import { minBy } from '../array/min-by'
 import { TranslatedText } from '../l18n'
 import { editDistance } from '../string/edit-distance'
+import { Sub } from '../sub'
 
 const ALL = ['inferno', 'preact', 'react', 'snabbdom'] as const
 
-const HIDDEN: VDomImpl[] = []
+const HIDDEN: VDomImplWeb[] = []
 
-export type VDomImpl = (typeof ALL)[number]
+export type VDomImplWeb = (typeof ALL)[number]
 
-const of = (impl: VDomImpl): VDomImpl => {
+const of = (impl: VDomImplWeb): VDomImplWeb => {
   return impl
 }
 
-const from = (s: unknown): VDomImpl | null => {
+const from = (s: unknown): VDomImplWeb | null => {
   if (typeof s !== 'string') {
     return null
   }
@@ -24,24 +25,24 @@ const from = (s: unknown): VDomImpl | null => {
 
 const SEARCH_PARAM_KEY = 'vdom'
 
-const FALLBACK: VDomImpl = 'inferno'
+const FALLBACK: VDomImplWeb = 'inferno'
 
-const getUrl = (): VDomImpl => {
+const getUrl = (): VDomImplWeb => {
   if (typeof window === 'undefined') return FALLBACK
   const searchParams = new URLSearchParams(window.location.search)
   const vdomImplParam = searchParams.get(SEARCH_PARAM_KEY)
-  const vdomImpl = VDomImpl.from(vdomImplParam)
+  const vdomImpl = VDomImplWeb.from(vdomImplParam)
   return vdomImpl ?? FALLBACK
 }
 
-const setUrl = (vdomImpl: VDomImpl) => {
+const setUrl = (vdomImpl: VDomImplWeb) => {
   const searchParams = new URLSearchParams(window.location.search)
   searchParams.set(SEARCH_PARAM_KEY, vdomImpl)
   window.history.replaceState(null, '', `${window.location.pathname}?${searchParams.toString()}`)
   window.dispatchEvent(new Event('popstate'))
 }
 
-const toName = (impl: VDomImpl): TranslatedText => {
+const toName = (impl: VDomImplWeb): TranslatedText => {
   switch (impl) {
     case 'inferno':
       return TranslatedText.of('Inferno')
@@ -56,7 +57,11 @@ const toName = (impl: VDomImpl): TranslatedText => {
 
 const VISIBLE = ALL.filter((vDomImpl) => !HIDDEN.includes(vDomImpl))
 
-export const VDomImpl = {
+const events = Sub.create<{ t: 'changed-vdom-impl'; vdomImpl: VDomImplWeb }>()
+
+
+export const VDomImplWeb = {
+  events,
   ALL,
   from,
   of,

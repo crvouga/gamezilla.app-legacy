@@ -211,7 +211,7 @@ const View: Module['View'] = (input) => {
         buttons: [
           GameMainMenu.buttons.playFriend({
             ctx: input.ctx,
-            onPressDown: () =>
+            onPress: () =>
               input.dispatch({
                 mode: 'vs-user',
                 t: 'user-changed-mode',
@@ -220,7 +220,7 @@ const View: Module['View'] = (input) => {
           }),
           GameMainMenu.buttons.playComputer({
             ctx: input.ctx,
-            onPressDown: () =>
+            onPress: () =>
               input.dispatch({
                 mode: 'vs-bot',
                 t: 'user-changed-mode',

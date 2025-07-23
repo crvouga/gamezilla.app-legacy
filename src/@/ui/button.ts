@@ -21,7 +21,7 @@ export type ButtonInput = {
   disabled?: boolean
   type?: 'button'
   class?: string
-  onPressDown?: (event: unknown) => void
+  onPress?: (event: unknown) => void
   renderIconStart?: (input: { class?: string }) => VDom
   variant?: ButtonVariant
   color?: ButtonColor
@@ -48,7 +48,7 @@ export const Button = (input: ButtonInput) => {
       ),
       role: 'button',
       'aria-label': input.text ?? '',
-      onPressDown: input.onPressDown,
+      onPress: input.onPress,
     },
 
     [

@@ -1,8 +1,8 @@
-import { VDomImpl } from '~/@/vdom/vdom-impl'
+import { VDomImplWeb } from '~/@/vdom/vdom-impl-web'
 
 export type ModelFrontend = {
-  renderVDomImpl: VDomImpl
-  renderVDomImplInitial: VDomImpl
+  renderVDomImpl: VDomImplWeb
+  renderVDomImplInitial: VDomImplWeb
 }
 
-export type MsgFrontend = { t: 'renderer.clicked-back-button' } | { t: 'renderer.clicked-renderer'; vDomImpl: VDomImpl }
+export type MsgFrontend = { t: 'renderer.clicked-back-button' } | { t: 'renderer.clicked-renderer'; vDomImpl: VDomImplWeb }

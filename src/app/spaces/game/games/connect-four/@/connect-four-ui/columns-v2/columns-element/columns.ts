@@ -2,9 +2,9 @@ import { COLUMN_COUNT, type ColumnIndex, MAX_COLUMN_HEIGHT, isColumnIndex } from
 
 export const initColumns = ({
   parentNode,
-  onPressDown,
+  onPress,
 }: {
-  onPressDown: (columnIndex: ColumnIndex) => void
+  onPress: (columnIndex: ColumnIndex) => void
   parentNode: SVGGElement
 }) => {
   const cleanUps: (() => void)[] = []
@@ -19,7 +19,7 @@ export const initColumns = ({
     column.setAttribute('stroke', 'none')
     const listener = () => {
       if (isColumnIndex(columnIndex)) {
-        onPressDown(columnIndex)
+        onPress(columnIndex)
       }
     }
     column.addEventListener('click', listener)

@@ -18,7 +18,7 @@ const View = (input: {
     navBar: {
       title: input.ctx.t('profile.update-avatar'),
       back: {
-        // onPressDown: () => input.dispatch({ t: 'clicked-back-button', from: { t: 'profile-avatar' } }),
+        // onPress: () => input.dispatch({ t: 'clicked-back-button', from: { t: 'profile-avatar' } }),
       },
     },
     renderBody: () =>

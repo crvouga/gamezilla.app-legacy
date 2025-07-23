@@ -32,7 +32,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
       navBar: {
         title: input.ctx.t('spaces.games'),
         back: {
-          onPressDown: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
+          onPress: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
         },
       },
     })
@@ -45,7 +45,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
     navBar: {
       title: input.ctx.t('spaces.games'),
       back: {
-        onPressDown: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
+        onPress: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
       },
     },
     renderBody: () => h(ViewHostGameSelection, { ctx: spaceCtx, dispatch: input.dispatch }),
@@ -72,7 +72,7 @@ const GameTile = (input: { gameName: GameName; ctx: SpaceFrontendCtx; dispatch: 
         type: 'button',
         role: 'button',
         'aria-label': input.gameName,
-        onPressDown: () => input.dispatch({ t: 'game.clicked-game-tile', gameName: input.gameName }),
+        onPress: () => input.dispatch({ t: 'game.clicked-game-tile', gameName: input.gameName }),
       },
       [h(GameCoverArt, { rounded: true, gameName: input.gameName })],
     ),

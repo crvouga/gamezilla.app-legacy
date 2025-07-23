@@ -42,7 +42,7 @@ export const AuthScreenFormLayout = (input: {
           size: 'lg',
           class: 'w-full',
           variant: 'contained',
-          onPressDown: input.onSubmit,
+          onPress: input.onSubmit,
           text: input.submitText,
           loading: input.submitLoading,
           disabled: input.submitDisabled,

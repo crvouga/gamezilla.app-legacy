@@ -246,7 +246,7 @@ const ViewMainMenu: FrontendModule['View'] = (input) => {
         renderIcon: (input) => h(IconGamepad, input),
         title: ctx.t('game.numberlink.play'),
         description: ctx.t('game.numberlink.play-description'),
-        onPressDown: () => {
+        onPress: () => {
           input.dispatch({
             t: 'got-msg-space',
             c: { t: 'user-changed-mode', mode: 'play', userId: input.ctx.currentUser.userId },
@@ -257,7 +257,7 @@ const ViewMainMenu: FrontendModule['View'] = (input) => {
         renderIcon: (input) => h(IconScrewdriverWrench, input),
         title: ctx.t('game.numberlink.build'),
         description: ctx.t('game.numberlink.build-description'),
-        onPressDown: () => {
+        onPress: () => {
           input.dispatch({
             t: 'got-msg-space',
             c: { t: 'user-changed-mode', mode: 'build', userId: input.ctx.currentUser.userId },

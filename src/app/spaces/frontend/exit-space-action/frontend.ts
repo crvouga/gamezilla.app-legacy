@@ -23,7 +23,7 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
     id: input.ctx.t('app.exit'),
     icon: (inputIcon) => h(IconDoorOpen, inputIcon),
     label: input.ctx.t('app.exit'),
-    onPressDown: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
+    onPress: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
   }
 }
 

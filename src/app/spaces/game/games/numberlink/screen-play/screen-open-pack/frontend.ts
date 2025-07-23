@@ -66,7 +66,7 @@ const View: FrontendModule['View'] = (input) => {
     navBar: {
       title: input.ctx.t('game.numberlink.select-a-pack'),
       back: {
-        onPressDown: () =>
+        onPress: () =>
           input.dispatch({
             t: 'got-msg-space',
             c: { t: 'user-clicked-exit-play-mode-button', userId: input.ctx.currentUser.userId },
@@ -80,7 +80,7 @@ const View: FrontendModule['View'] = (input) => {
         onQueryChanged: (query) => {
           console.log('query', query)
         },
-        onPressDown: (pack) =>
+        onPress: (pack) =>
           input.dispatch({
             t: 'got-msg-space',
             c: { userId: input.ctx.currentUser.userId, t: 'user-clicked-open-pack-puzzle-grid-item', pack },

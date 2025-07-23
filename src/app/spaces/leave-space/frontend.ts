@@ -109,7 +109,7 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
     id: input.ctx.t('spaces.leave'),
     icon: (inputIcon) => h(IconArrowLeftOnRect, inputIcon),
     label: input.ctx.t('spaces.leave'),
-    onPressDown: () => input.dispatch({ t: 'leave-space.clicked-leave-space-button', spaceId }),
+    onPress: () => input.dispatch({ t: 'leave-space.clicked-leave-space-button', spaceId }),
     color: 'danger',
   }
 }

@@ -16,7 +16,7 @@ export const ScreenNavBarTablet = (input: {
     t: Translator
   }
   back?: {
-    onPressDown?: () => void
+    onPress?: () => void
     renderSurface?: (input: { dropDown: DropDownConfig }) => VDom
   } | null
   renderEnd?: () => VDom
@@ -32,7 +32,7 @@ export const ScreenNavBarTablet = (input: {
           reference: {
             render: () =>
               IconButton({
-                onPressDown: input.back?.onPressDown,
+                onPress: input.back?.onPress,
                 class: '-ml-2',
                 size: 'lg',
                 label: input.ctx.t('app.exit'),

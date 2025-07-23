@@ -78,7 +78,7 @@ const View: FrontendModule['View'] = (input) => {
     navBar: {
       title: input.ctx.t('numberlink-pack-name', pack.name),
       back: {
-        onPressDown: () =>
+        onPress: () =>
           input.dispatch({
             t: 'got-msg-space',
             c: { t: 'user-clicked-exit-screen-open-pack', userId: input.ctx.currentUser.userId },
@@ -99,7 +99,7 @@ const View: FrontendModule['View'] = (input) => {
             },
           }),
         puzzleIds: pack.puzzleIds,
-        onPressDownPuzzleCell: ({ puzzleIndex, puzzleId }) => {
+        onPressPuzzleCell: ({ puzzleIndex, puzzleId }) => {
           const puzzle = PuzzleDbQueryCache.entity(input.ctx, puzzleId)
           input.dispatch({
             t: 'got-msg-space',

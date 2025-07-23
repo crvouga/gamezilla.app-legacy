@@ -107,7 +107,7 @@ const View = ({
   model,
   isDragging,
 
-  onPressDown,
+  onPress,
   onDraggedOver,
   onPressUp,
 }: BoardInput<VariantGrid.Model>) => {
@@ -115,7 +115,7 @@ const View = ({
     class: cn('aspect-square w-full', isDragging ? 'cursor-grabbing' : 'cursor-grab'),
     watch: model,
     // paint: (value, ctx) => paint(value, ctx),
-    onPressDown: (event_: unknown) => {
+    onPress: (event_: unknown) => {
       const event = event_ as MouseEvent
       // event.preventDefault()
       // event.stopImmediatePropagation()
@@ -139,7 +139,7 @@ const View = ({
           x: xIndex,
           y: yIndex,
         })
-        onPressDown?.(nodeId)
+        onPress?.(nodeId)
       }
     },
     onPressUp: (event: any) => {
@@ -218,7 +218,7 @@ const View = ({
           x: xIndex,
           y: yIndex,
         })
-        onPressDown?.(nodeId)
+        onPress?.(nodeId)
       }
     },
     onTouchEnd: (event_: unknown) => {

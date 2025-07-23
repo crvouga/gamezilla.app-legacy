@@ -13,7 +13,7 @@ type Input = {
   end?: () => VDom
   primary: TranslatedText
   secondary?: TranslatedText
-  onPressDown?: () => void
+  onPress?: () => void
   color?: Color
   dataTestId?: string
   link?: boolean
@@ -21,16 +21,16 @@ type Input = {
 }
 
 export const ListItem = (input: Input) => {
-  const element = input.onPressDown ? 'button' : 'div'
+  const element = input.onPress ? 'button' : 'div'
   switch (element) {
     case 'button': {
       return h(
         ClickableTransparent,
         {
           role: 'menuitem',
-          onPressDown: (event) => {
+          onPress: (event) => {
             preventConsoleErrorWhenClosingDrawer(event)
-            input.onPressDown?.()
+            input.onPress?.()
           },
           'aria-label': input.primary,
           'data-testid': input.dataTestId,
@@ -51,9 +51,9 @@ export const ListItem = (input: Input) => {
       return h(
         Box,
         {
-          onPressDown: (event: unknown) => {
+          onPress: (event: unknown) => {
             preventConsoleErrorWhenClosingDrawer(event)
-            input.onPressDown?.()
+            input.onPress?.()
           },
           role: 'menuitem',
           'aria-label': input.primary,

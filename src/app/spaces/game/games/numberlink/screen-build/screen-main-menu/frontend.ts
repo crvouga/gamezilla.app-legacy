@@ -59,7 +59,7 @@ const View: FrontendModule['View'] = (input) => {
         renderIcon: (input) => h(IconPuzzlePiece, input),
         title: input.ctx.t('game.numberlink.open-puzzle-builder-title'),
         description: input.ctx.t('game.numberlink.open-puzzle-builder-description'),
-        onPressDown: () =>
+        onPress: () =>
           input.dispatch({
             t: 'got-msg-space',
             c: {
@@ -73,7 +73,7 @@ const View: FrontendModule['View'] = (input) => {
         renderIcon: (input) => h(IconBox, input),
         title: input.ctx.t('game.numberlink.open-pack-builder-title'),
         description: input.ctx.t('game.numberlink.open-pack-builder-description'),
-        onPressDown: () =>
+        onPress: () =>
           input.dispatch({
             t: 'got-msg-space',
             c: {

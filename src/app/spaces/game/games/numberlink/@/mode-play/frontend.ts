@@ -36,7 +36,7 @@ const View = (input: {
       showCoordinates: false,
       isDragging: input.model.status.t === 'dragging',
       onDraggedOver: (nodeId) => input.dispatch({ t: 'user-dragged-over-node', nodeId }),
-      onPressDown: (nodeId) => input.dispatch({ t: 'user-pressed-down-node', nodeId }),
+      onPress: (nodeId) => input.dispatch({ t: 'user-pressed-down-node', nodeId }),
       onPressUp: (nodeId) => input.dispatch({ t: 'user-pressed-up-node', nodeId }),
       onLeave: () => input.dispatch({ t: 'user-dragging-left' }),
       autocompleteEdge:
@@ -64,7 +64,7 @@ const viewResetAction = (input: {
   return [
     PrebuiltActions.reset({
       ctx: input.ctx,
-      onPressDown: () => input.dispatch({ t: 'user-clicked-reset' }),
+      onPress: () => input.dispatch({ t: 'user-clicked-reset' }),
       disabled,
     }),
   ]

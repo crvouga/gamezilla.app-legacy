@@ -46,7 +46,7 @@ export const ChipSelection = <T>({
                 : 'bg-neutral-800 text-neutral-100 border-neutral-700 hover:bg-neutral-700',
               disabled ? 'opacity-50 pointer-events-none' : '',
             ].join(' '),
-            onPressDown: () => {
+            onPress: () => {
               if (!disabled && value !== option.value) {
                 onChange?.(option.value)
               }

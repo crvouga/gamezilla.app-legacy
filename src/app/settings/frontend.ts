@@ -9,7 +9,7 @@ import { IconCode, IconGear, IconLanguage, IconPowerOff } from '~/@/ui/icon'
 import { ListItem } from '~/@/ui/list-item'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
-import { VDomImpl } from '~/@/vdom/vdom-impl'
+import { VDomImplWeb } from '~/@/vdom/vdom-impl-web'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
@@ -132,7 +132,7 @@ const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
     icon: (inputIcon) => h(IconLanguage, inputIcon),
     primary: ctx.t('l18n.language'),
     end: () => Text({ text: ctx.t(model.lang) }),
-    onPressDown: () => {
+    onPress: () => {
       dispatch({ t: 'settings.clicked-open-lang' })
     },
   })
@@ -171,21 +171,21 @@ const ViewMain: FrontendModule['View'] = (props) => {
     parentScreen: props.ctx.parentScreen,
     navBar: {
       title: props.ctx.t('l18n.settings'),
-      back: { onPressDown: () => props.dispatch({ t: 'settings.clicked-back-button' }) },
+      back: { onPress: () => props.dispatch({ t: 'settings.clicked-back-button' }) },
     },
     renderBody: () =>
       h(Box, { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
         h(ListItem, {
           primary: props.ctx.t('l18n.language'),
           end: () => h(Box, {}, [Text({ text: props.ctx.t(props.model.lang) })]),
-          onPressDown: () => props.dispatch({ t: 'settings.clicked-open-lang' }),
+          onPress: () => props.dispatch({ t: 'settings.clicked-open-lang' }),
           link: true,
           icon: (inputIcon) => IconLanguage(inputIcon),
         }),
         h(ListItem, {
           primary: props.ctx.t('l18n.renderer'),
-          end: () => h(Box, {}, [Text({ text: VDomImpl.toName(props.model.renderVDomImpl) })]),
-          onPressDown: () => props.dispatch({ t: 'settings.clicked-open-renderer' }),
+          end: () => h(Box, {}, [Text({ text: VDomImplWeb.toName(props.model.renderVDomImpl) })]),
+          onPress: () => props.dispatch({ t: 'settings.clicked-open-renderer' }),
           icon: (inputIcon) => IconCode(inputIcon),
           link: true,
           dataTestId: TEST_ID_RENDERER_SCREEN_OPEN_BUTTON,
@@ -205,7 +205,7 @@ const ViewLogoutListItem: FrontendModule['View'] = (input) => {
     }
     case 'logged-in': {
       return h(ListItem, {
-        onPressDown: () => input.dispatch({ t: 'settings.clicked-logout-list-item' }),
+        onPress: () => input.dispatch({ t: 'settings.clicked-logout-list-item' }),
         dataTestId: TEST_ID_LOGOUT_LIST_ITEM_BUTTON,
         icon: (input) => h(IconPowerOff, input),
         primary: input.ctx.t('auth.logout'),
@@ -245,7 +245,7 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
                     : 'flex flex-row w-fit justify-center gap-4 px-6 py-3 pl-8',
                 ),
                 'aria-label': props.ctx.t('app.open-settings'),
-                onPressDown: () => props.dispatch({ t: 'settings.clicked-top-bar' }),
+                onPress: () => props.dispatch({ t: 'settings.clicked-top-bar' }),
               },
               [
                 h(BackendConnectionStatus.ViewDot, {
@@ -265,7 +265,7 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
             h(BackendConnectionStatus.ViewListItem, {
               ctx: props.ctx,
               model: props.ctx.backendConnectionStatus,
-              onPressDown: () => {},
+              onPress: () => {},
             }),
 
             h(SoundFrontend.ViewSoundListItem, {
@@ -281,7 +281,7 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
               primary: props.ctx.t('l18n.settings'),
               link: true,
               dataTestId: TEST_ID_SETTINGS_SCREEN_OPEN_BUTTON,
-              onPressDown: () => props.dispatch({ t: 'settings.clicked-open-settings' }),
+              onPress: () => props.dispatch({ t: 'settings.clicked-open-settings' }),
             }),
           ])
         },

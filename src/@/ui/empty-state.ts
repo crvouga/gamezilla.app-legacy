@@ -11,7 +11,7 @@ export const EmptyState = (input: {
   label: TranslatedText
   // action?: {
   //   label: TranslatedText
-  //   onPressDown: () => void
+  //   onPress: () => void
   //   renderIconStart?: (input: { class?: string }) => VDom
   // } | null
 }) => {
@@ -30,7 +30,7 @@ export const EmptyState = (input: {
         //     text={input.action.label}
         //     color='primary'
         //     variant='contained'
-        //     onPressDown={input.action.onPressDown}
+        //     onPress={input.action.onPress}
         //     renderIconStart={input.action.renderIconStart}
         //   />
         // )}

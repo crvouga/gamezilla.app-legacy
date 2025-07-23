@@ -12,16 +12,16 @@ export type ChipProps = {
   renderStartIcon?: (input: { class: string }) => VDom
   label: TranslatedText
   size: ChipSize
-  onPressDown?: () => void
+  onPress?: () => void
 }
 
 export const Chip = (input: ChipProps) => {
   return h(
     Tag,
     {
-      tagName: typeof input.onPressDown === 'function' ? 'button' : 'div',
+      tagName: typeof input.onPress === 'function' ? 'button' : 'div',
       class: cn('flex flex-row items-center gap-1 truncate border border-white/30 font-semibold', toSizeClass(input)),
-      onPressDown: input.onPressDown,
+      onPress: input.onPress,
     },
     [
       input.renderStartIcon?.({
@@ -39,7 +39,7 @@ const Tag = ({
 }: {
   children: VDom
   tagName: 'div' | 'button'
-  onPressDown?: () => void
+  onPress?: () => void
   class?: string
 }) => {
   switch (tagName) {
