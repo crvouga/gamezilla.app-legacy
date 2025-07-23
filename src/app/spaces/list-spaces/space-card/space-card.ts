@@ -65,7 +65,7 @@ const ViewSpaceCardGame = (input: { gameName: GameName | null; ctx: AppFrontendC
 
   return h(Box, { class: 'flex flex-row items-center justify-start gap-2' }, [
     h(GameCoverArt, { rounded: true, class: 'size-12', gameName: input.gameName }),
-    h(Typography, { variant: 'title', class: 'truncate text-lg font-normal', text: input.ctx.t(input.gameName) }),
+    h(Typography, { variant: 'body', class: 'truncate text-lg font-normal', text: input.ctx.t(input.gameName) }),
   ])
 }
 
@@ -75,7 +75,7 @@ const ViewSpaceCardHost = (input: { host?: UserProfile | null; ctx: AppFrontendC
     h(Box, { class: 'flex flex-row flex-1 items-center justify-start gap-2 overflow-x-hidden' }, [
       input.host &&
         h(Typography, {
-          variant: 'title',
+          variant: 'body',
           class: 'truncate text-left text-lg font-normal',
           text: input.ctx.t('username', input.host.username),
         }),

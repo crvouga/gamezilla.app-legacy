@@ -16,7 +16,7 @@ export const DrawerComponent = (props: DrawerProps) => {
       role: 'dialog',
       'aria-label': props.ariaLabel,
       class: cn(
-        'absolute inset-0 z-50 flex flex-row bg-black/80 transition-opacity duration-200',
+        'absolute inset-0 z-50 flex flex-col bg-black/80 transition-opacity duration-200',
         props.position === 'bottom' ? 'flex-col' : 'flex-col-reverse',
         props.open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0',
       ),

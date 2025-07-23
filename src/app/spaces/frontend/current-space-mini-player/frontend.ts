@@ -89,7 +89,7 @@ const View = (input: {
 
           h(Box, { class: 'flex flex-1 flex-col gap-0.5 overflow-hidden py-3 pr-3' }, [
             h(Typography, {
-              variant: 'title',
+              variant: 'body',
               class: 'truncate text-left text-lg font-normal',
               text: hostProfile
                 ? input.ctx.t('spaces.current-space', {
