@@ -125,9 +125,11 @@ export const ViewStatusBar = (input: VsBotInput & { status: Status }) => {
       class: 'relative h-8 w-full',
     },
     [
-      h(Box, { key: statusToKey(input.status), class: 'absolute inset-0 flex items-center justify-center gap-1' }, [
-        ViewStatusBarContent(input),
-      ]),
+      h(
+        Box,
+        { key: statusToKey(input.status), class: 'absolute inset-0 flex flex-row items-center justify-center gap-1' },
+        [ViewStatusBarContent(input)],
+      ),
     ],
   )
 }
@@ -224,7 +226,7 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
             h(Box, { class: 'flex-1' }),
             h(Winner, { ...input, winner: gameOver.winner }),
             input.onPlayAgain && !input.isSpectating
-              ? h(Box, { class: 'flex flex-1 items-center justify-center pb-2 text-2xl font-bold' }, [
+              ? h(Box, { class: 'flex flex-row flex-1 items-center justify-center pb-2 text-2xl font-bold' }, [
                   Text({ text: 'Tap to play again' }),
                 ])
               : h(Box, { class: 'flex-1' }),
@@ -242,9 +244,11 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
             h(Box, { class: 'flex-1' }),
             h(Draw, input),
             input.onPlayAgain && !input.isSpectating
-              ? h(Box, { class: 'flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0' }, [
-                  Text({ text: 'Tap to play again' }),
-                ])
+              ? h(
+                  Box,
+                  { class: 'flex flex-row flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0' },
+                  [Text({ text: 'Tap to play again' })],
+                )
               : h(Box, { class: 'flex-1' }),
           ],
         ),
@@ -264,7 +268,7 @@ const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { win
   ])
 
   const playerOneSlot = h(Box, { class: 'flex flex-col items-center justify-center gap-3' }, [
-    h(Box, { class: 'flex items-center justify-center gap-3' }, [
+    h(Box, { class: 'flex flex-row items-center justify-center gap-3' }, [
       playerOne.renderIcon({
         class: 'size-16',
       }),
@@ -278,7 +282,7 @@ const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { win
   ])
 
   const playerTwoSlot = h(Box, { class: 'flex flex-col items-center justify-center gap-3' }, [
-    h(Box, { class: 'flex items-center justify-center gap-3' }, [
+    h(Box, { class: 'flex flex-row items-center justify-center gap-3' }, [
       playerTwo.renderIcon({
         class: 'size-16',
       }),
@@ -315,7 +319,7 @@ const Draw = (input: Input) => {
     input.human.player === 'player-two' ? humanSlot : botSlot,
   ])
 
-  return h(Box, { class: 'flex h-full w-full flex-1 items-center justify-center' }, [
+  return h(Box, { class: 'flex flex-row h-full w-full flex-1 items-center justify-center' }, [
     h(Box, {}, [playerOneSlot, playerTwoSlot]),
     h(Box, {}, [Text({ text: 'Tie' })]),
   ])
@@ -335,8 +339,8 @@ export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn
     h(Typography, { class: 'truncate', variant: 'body', text: bot.label }),
   ])
 
-  return h(Box, { class: 'flex w-full items-center gap-3 px-3' }, [
-    h(Box, { class: 'flex w-1/2 items-center justify-center overflow-hidden' }, [
+  return h(Box, { class: 'flex flex-row w-full items-center gap-3 px-3' }, [
+    h(Box, { class: 'flex flex-row w-1/2 items-center justify-center overflow-hidden' }, [
       h(Slot, { active: turn === 'player-one' }, [
         h(Box, {}, [
           playerOne.renderIcon({
@@ -346,7 +350,7 @@ export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn
         human.player === 'player-one' ? humanSlot : botSlot,
       ]),
     ]),
-    h(Box, { class: 'flex w-1/2 items-center justify-center overflow-hidden' }, [
+    h(Box, { class: 'flex flex-row w-1/2 items-center justify-center overflow-hidden' }, [
       h(Slot, { active: turn === 'player-two' }, [
         playerTwo.renderIcon({
           class: 'size-6',
@@ -362,7 +366,7 @@ const Slot = ({ active, children }: { active: boolean; children?: VDom }) => {
     Paper,
     {
       class: cn(
-        'flex max-w-full flex-1 items-center gap-2 rounded-md bg-black p-2 text-sm transition-colors duration-200 ease-in-out',
+        'flex flex-row max-w-full flex-1 items-center gap-2 rounded-md bg-black p-2 text-sm transition-colors duration-200 ease-in-out',
         active && 'border-b-blue-500',
       ),
     },

@@ -25,7 +25,7 @@ export const SectionPersonDetails = (input: {
       [
         h(Avatar, { src: input.profile ? UserProfile.toAvatarUrl(input.profile) : '', class: 'size-24' }),
         input.profile && h(Typography, { variant: 'title', text: input.ctx.t('username', input.profile?.username) }),
-        h(Box, { class: 'flex items-center gap-2' }, [
+        h(Box, { class: 'flex flex-row items-center gap-2' }, [
           input.ctx.space.hostId === input.profile?.userId && h(ViewHostChip, { ctx: input.ctx }),
           input.ctx.currentUser.userId === input.profile?.userId && h(ViewYouChip, { ctx: input.ctx }),
         ]),

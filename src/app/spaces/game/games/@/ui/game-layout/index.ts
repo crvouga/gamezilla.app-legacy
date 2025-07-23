@@ -34,7 +34,7 @@ export const LayoutGame = ({
         h(
           Box,
           {
-            class: 'flex w-full items-center justify-center bg-blue-500 py-1 text-sm font-semibold text-white',
+            class: 'flex flex-row w-full items-center justify-center bg-blue-500 py-1 text-sm font-semibold text-white',
           },
           [Text({ text: ctx.t('game.you-are-spectating') })],
         ),

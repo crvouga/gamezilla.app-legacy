@@ -32,7 +32,7 @@ export const TextField = (input: {
       {
         class: cn(
           PAPER_CLASS_NAME,
-          'flex h-fit w-full flex-row overflow-hidden rounded-md border-2',
+          'flex flex-row h-fit w-full overflow-hidden rounded-md border-2',
           input.error && 'border-2 border-red-500 text-red-500',
           !input.error && 'ring-blue-500 focus-within:ring-2',
         ),
@@ -68,7 +68,7 @@ export const TextField = (input: {
             input.onChange(valueNew)
           },
           class: cn(
-            'flex flex-1 appearance-none items-center gap-2 bg-transparent p-3 py-4 text-xl outline-none',
+            'flex flex-row flex-1 appearance-none items-center gap-2 bg-transparent p-3 py-4 text-xl outline-none',
             '[&:-webkit-autofill]:!bg-transparent [&:-webkit-autofill]:!text-white [&:-webkit-autofill]:!shadow-[0_0_0_1000px_#000000_inset] [&:-webkit-autofill]:![-webkit-text-fill-color:white]',
           ),
         }),

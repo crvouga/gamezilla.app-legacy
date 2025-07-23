@@ -20,7 +20,7 @@ export const IconButton = (input: {
     ClickableTransparent,
     {
       class: cn(
-        'display flex items-center justify-center overflow-hidden rounded-full',
+        'display flex flex-row items-center justify-center overflow-hidden rounded-full',
         toSizeClassName(input.size ?? 'md'),
         input.class,
       ),

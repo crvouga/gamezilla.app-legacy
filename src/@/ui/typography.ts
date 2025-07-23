@@ -76,6 +76,6 @@ export const Typography = (input: Props) => {
       'data-title': input.variant === 'title' ? 'true' : 'false',
       'data-testid': input.dataTestId,
     },
-    [Text({ text: input.text })],
+    [Text({ text: input.text, class: 'text-inherit font-inherit' })],
   )
 }

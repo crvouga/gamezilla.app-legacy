@@ -33,7 +33,7 @@ export const TEST_ID_NUMBERLINK_PACK_BUILDER_SCREEN = 'numberlink-pack-builder-s
 const View: FrontendModule['View'] = (input) => {
   return h(
     Box,
-    { class: 'w-full h-full flex flex-col flex-1', 'data-testid': TEST_ID_NUMBERLINK_PACK_BUILDER_SCREEN },
+    { class: 'flex w-full h-full flex flex-col flex-1', 'data-testid': TEST_ID_NUMBERLINK_PACK_BUILDER_SCREEN },
     [h(ViewScreen, input), h(EditPackNameFrontend.ViewSurface, input)],
   )
 }

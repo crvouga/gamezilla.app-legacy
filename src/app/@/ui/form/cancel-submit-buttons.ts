@@ -18,7 +18,7 @@ export const CancelSubmitButtons = (input: {
   return h(
     Box,
     {
-      class: 'flex w-full items-center gap-4 px-6 pt-4 pb-6',
+      class: 'flex flex-row w-full items-center gap-4 px-6 pt-4 pb-6',
     },
     [
       h(Button, {

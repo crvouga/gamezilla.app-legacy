@@ -13,19 +13,23 @@ export const SurfaceHeader = (input: {
   onClose: () => void
   testId?: string
 }) => {
-  return h(Box, { class: 'flex w-full items-center justify-center px-6 pt-4 pb-0', 'data-testid': input.testId }, [
-    h(Box, { class: 'flex-1' }, [
-      input.title && h(Typography, { text: input.title, variant: 'title', sizeClassName: 'text-2xl' }),
-    ]),
-    input.onClose &&
-      h(IconButton, {
-        label: input.ctx.t('app.close'),
-        onClick: (event) => {
-          preventConsoleErrorWhenClosingDrawer(event)
-          input.onClose?.()
-        },
-        class: '-mr-1',
-        renderIcon: (inputIcon) => h(IconXMark, inputIcon),
-      }),
-  ])
+  return h(
+    Box,
+    { class: 'flex flex-row w-full items-center justify-center px-6 pt-4 pb-0', 'data-testid': input.testId },
+    [
+      h(Box, { class: 'flex-1' }, [
+        input.title && h(Typography, { text: input.title, variant: 'title', sizeClassName: 'text-2xl' }),
+      ]),
+      input.onClose &&
+        h(IconButton, {
+          label: input.ctx.t('app.close'),
+          onClick: (event) => {
+            preventConsoleErrorWhenClosingDrawer(event)
+            input.onClose?.()
+          },
+          class: '-mr-1',
+          renderIcon: (inputIcon) => h(IconXMark, inputIcon),
+        }),
+    ],
+  )
 }

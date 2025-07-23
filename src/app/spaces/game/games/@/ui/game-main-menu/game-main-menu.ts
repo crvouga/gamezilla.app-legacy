@@ -107,7 +107,7 @@ const ViewMainMenuButton = (props: MainMenuButton) => {
   return h(
     ClickablePaper,
     {
-      class: 'flex w-full items-center gap-4 rounded p-6',
+      class: 'flex flex-row w-full items-center gap-4 rounded p-6',
       onClick: props.onClick,
       role: 'menuitem',
       'aria-label': props.title,

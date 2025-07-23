@@ -28,7 +28,7 @@ export const ScreenNavBarMobile = (input: {
   return h(
     Box,
     {
-      class: 'flex h-16 w-full shrink-0 items-center truncate px-6 text-center',
+      class: 'flex flex-row h-16 w-full shrink-0 items-center truncate px-6 text-center',
     },
     [
       shouldRenderBack &&

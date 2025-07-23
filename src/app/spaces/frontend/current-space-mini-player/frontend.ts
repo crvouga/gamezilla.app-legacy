@@ -63,7 +63,7 @@ const View = (input: {
     Box,
     {
       class: cn(
-        'flex w-full flex-row items-center justify-center overflow-hidden rounded-lg text-inherit',
+        'flex flex-row w-full flex-row items-center justify-center overflow-hidden rounded-lg text-inherit',
         SPACE_CARD_GRADIENT_CLASS_NAME,
         'rounded-lg',
       ),
@@ -73,7 +73,7 @@ const View = (input: {
         Pressable,
         {
           type: 'button',
-          class: 'flex flex-1 items-center gap-3 overflow-hidden',
+          class: 'flex flex-row flex-1 items-center gap-3 overflow-hidden',
           onClick: () => input.dispatch({ t: 'current-space-bar.clicked-current-space-bottom-bar' }),
         },
         [

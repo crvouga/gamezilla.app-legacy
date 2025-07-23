@@ -115,7 +115,7 @@ const CheckmarkAnimation = (input: { open: boolean; duration?: TimeSpan | null |
     },
     [
       input.open &&
-        h(Box, { class: 'pointer-events-none absolute inset-0 flex items-center justify-center opacity-0' }, [
+        h(Box, { class: 'pointer-events-none absolute inset-0 flex flex-row items-center justify-center opacity-0' }, [
           h(IconCheckmark, { class: 'pointer-events-none aspect-square w-full opacity-50' }),
         ]),
     ],

@@ -17,7 +17,7 @@ export const ProfileListItem = ({
   profile?: UserProfile | null
   subtitle?: TranslatedText
 }) => {
-  return h(Box, { class: 'flex w-full items-center gap-2 p-2' }, [
+  return h(Box, { class: 'flex flex-row w-full items-center gap-2 p-2' }, [
     h(Avatar, { class: 'size-12', src: profile ? UserProfile.toAvatarUrl(profile) : '' }),
     h(
       Box,

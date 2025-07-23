@@ -242,7 +242,7 @@ export const View = ({
     h(ViewStatusBar, { model }),
 
     h(Box, { class: 'flex w-full flex-1 flex-col items-center justify-center' }, [
-      h(Box, { class: 'flex w-full items-center gap-2 px-3 py-2' }, [
+      h(Box, { class: 'flex flex-row w-full items-center gap-2 px-3 py-2' }, [
         h(Avatar, {
           src: UserProfile.toAvatarUrl(ctx.profilesByUserId[ctx.space.hostId]),
           class: 'h-10 w-10',
@@ -256,7 +256,7 @@ export const View = ({
             color: 'text-secondary',
             class: '-mb-1/2 text-xs',
           }),
-          h(Box, { class: 'flex items-center gap-1' }, [
+          h(Box, { class: 'flex flex-row items-center gap-1' }, [
             h(Box, { class: 'text-xl font-semibold' }, [Text({ text: String(model.profile?.eloRating ?? '...') })]),
 
             model.t === 'solved' &&
@@ -275,7 +275,7 @@ export const View = ({
           ]),
         ]),
 
-        h(Box, { class: 'flex items-center justify-end gap-2' }, [
+        h(Box, { class: 'flex flex-row items-center justify-end gap-2' }, [
           h(TickingClock, { sec: durationMs ? Math.floor(durationMs / 1_000) : 0 }),
           h(Typography, {
             text: TranslatedText.of(durationMs ? formatDuration(durationMs) : '-:--'),
@@ -285,7 +285,7 @@ export const View = ({
         ]),
       ]),
 
-      h(Paper, { class: 'relative flex aspect-square w-full items-center justify-end overflow-hidden' }, [
+      h(Paper, { class: 'relative flex flex-row aspect-square w-full items-center justify-end overflow-hidden' }, [
         h(Chessboard, {
           id: 'puzzle-chess-board',
           orientation: model.t === 'loading' ? undefined : toPlayerColor(model.puzzle),
@@ -328,12 +328,12 @@ export const View = ({
       ]),
 
       h(Box, { class: 'grid w-full grid-cols-2 px-2 py-1' }, [
-        h(Box, { class: 'flex items-center justify-start gap-1 text-xs' }, [
+        h(Box, { class: 'flex flex-row items-center justify-start gap-1 text-xs' }, [
           h(Typography, { text: TranslatedText.of('Puzzle Rating'), color: 'text-secondary' }),
           h(Box, {}, [Text({ text: model.t === 'loading' ? '...' : String(model.puzzle.rating) })]),
         ]),
 
-        h(Box, { class: 'flex flex-1 items-center justify-end gap-1 text-right text-xs' }, [
+        h(Box, { class: 'flex flex-row flex-1 items-center justify-end gap-1 text-right text-xs' }, [
           h(Typography, { text: TranslatedText.of('Moved'), color: 'text-secondary' }),
           h(Typography, {
             text: TranslatedText.of(model.t === 'loading' ? '0' : (model.moves?.length ?? '0').toString()),
@@ -441,20 +441,20 @@ export const BottomBarActions = ({
 
 const ViewStatusBar = (input: { model: ModelFrontend }) => {
   if (input.model.t === 'loading') {
-    return h(Box, { class: 'flex w-full items-center justify-center p-2' }, [
+    return h(Box, { class: 'flex flex-row w-full items-center justify-center p-2' }, [
       h(Box, { class: 'text-xl' }, [Text({ text: '...' })]),
     ])
   }
 
   if (input.model.t === 'incorrect') {
-    return h(Box, { class: 'flex w-full items-center justify-center gap-2 bg-red-500 p-2 text-white' }, [
+    return h(Box, { class: 'flex flex-row w-full items-center justify-center gap-2 bg-red-500 p-2 text-white' }, [
       h(IconXMark, { class: 'size-6' }),
       h(Box, { class: 'text-xl' }, [Text({ text: 'Incorrect' })]),
     ])
   }
 
   if (input.model.t === 'solved') {
-    return h(Box, { class: 'flex w-full items-center justify-center gap-2 bg-green-500 p-2 text-white' }, [
+    return h(Box, { class: 'flex flex-row w-full items-center justify-center gap-2 bg-green-500 p-2 text-white' }, [
       h(IconCheckmarkCircle, { class: 'size-6' }),
       h(Box, { class: 'text-xl' }, [Text({ text: 'Correct' })]),
     ])
@@ -465,7 +465,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
       Box,
       {
         class: cn(
-          'flex w-full items-center justify-center gap-2 p-2',
+          'flex flex-row w-full items-center justify-center gap-2 p-2',
           toPlayerColor(input.model.puzzle) === 'b' ? 'bg-black text-white' : 'bg-white text-black',
         ),
       },
@@ -484,7 +484,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
   }
 
   if (input.model.t === 'solved-with-hint') {
-    return h(Paper, { class: 'flex w-full items-center justify-center gap-2 p-2 text-white' }, [
+    return h(Paper, { class: 'flex flex-row w-full items-center justify-center gap-2 p-2 text-white' }, [
       h(IconCheckmarkCircle, { class: 'size-6' }),
       h(Box, { class: 'text-xl' }, [Text({ text: 'Solved with hint' })]),
     ])

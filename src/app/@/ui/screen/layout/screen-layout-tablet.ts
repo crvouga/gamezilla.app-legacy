@@ -12,7 +12,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
   return h(
     Box,
     {
-      class: 'relative flex w-full flex-1 flex-row overflow-hidden',
+      class: 'relative flex flex-row w-full flex-1 flex-row overflow-hidden',
     },
     [
       h(ActionBars, { position: 'start', input: input }),
@@ -39,7 +39,7 @@ const ActionBars = (props: { position: 'start' | 'end'; input: ScreenLayoutProps
     Box,
     {
       class: cn(
-        'flex h-full flex-1 flex-row items-start',
+        'flex flex-row h-full flex-1 flex-row items-start',
         props.position === 'start' ? 'justify-end' : 'justify-start',
       ),
     },
@@ -97,9 +97,9 @@ const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps 
         subtitle: screen.navBar.subtitle,
         renderEnd: () =>
           (screen.patchAction || screen.postAction) &&
-          h(Box, { class: 'flex items-center justify-end' }, [
+          h(Box, { class: 'flex flex-row items-center justify-end' }, [
             screen.patchAction &&
-              h(Box, { class: 'flex min-w-64 items-center justify-end' }, [
+              h(Box, { class: 'flex flex-row min-w-64 items-center justify-end' }, [
                 h(CancelSubmitButtons, { ...screen.patchAction, size: 'md' }),
               ]),
             screen.postAction &&

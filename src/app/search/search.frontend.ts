@@ -117,10 +117,10 @@ export const View = ({
   const results = matchSort(Object.values(model.searchResults), (item) => item.username, model.searchText)
 
   return h(Box, {}, [
-    h(Box, { class: 'flex h-full w-full flex-col' }, [
+    h(Box, { class: 'flex flex-row h-full w-full flex-col' }, [
       // input
       h(Box, { class: 'w-full p-4' }, [
-        h(Paper, { class: 'flex w-full items-center gap-2 rounded-full px-4 py-2' }, [
+        h(Paper, { class: 'flex flex-row w-full items-center gap-2 rounded-full px-4 py-2' }, [
           h(IconMagnifyingGlass, { class: 'size-6' }),
           h(TextInput, {
             id: searchInputId,
@@ -156,7 +156,7 @@ export const View = ({
             h(
               ClickableTransparent,
               {
-                class: 'flex w-full items-center gap-4 p-4',
+                class: 'flex flex-row w-full items-center gap-4 p-4',
                 onClick: () =>
                   dispatch({
                     t: 'clicked-result',

@@ -37,6 +37,7 @@ import {
   SVG_TEXT_TAG,
   TEXT_INPUT_TAG,
   TEXT_TAG,
+  TRANSITION_ELEMENT_TAG,
 } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { normalizeChildren, normalizePropsInPlace } from './react'
@@ -121,6 +122,9 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
         }
         case FRAGMENT_TAG: {
           return createElement(Fragment, props, ...children) as any
+        }
+        case TRANSITION_ELEMENT_TAG: {
+          return createElement(View, props, ...children) as any
         }
         default: {
           return createElement(tag, props, ...children) as any

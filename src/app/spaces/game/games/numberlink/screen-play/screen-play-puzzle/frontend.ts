@@ -148,7 +148,7 @@ const ViewHosting: FrontendModule['View'] = (input) => {
       h(
         Box,
         {
-          class: 'flex w-full flex-1 items-center justify-center',
+          class: 'flex flex-row w-full flex-1 items-center justify-center',
           'data-puzzle-id': puzzle.t === 'got' ? puzzle.c.id : null,
         },
         [
@@ -243,7 +243,7 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
           profile: input.ctx.profilesByUserId[input.ctx.space.hostId],
           subtitle: input.ctx.t('game.player'),
         }),
-        h(Box, { class: 'flex flex-1 items-center justify-center' }, [
+        h(Box, { class: 'flex flex-row flex-1 items-center justify-center' }, [
           puzzle.t === 'got'
             ? h(ModePlayFrontend.View, {
                 disabled: true,

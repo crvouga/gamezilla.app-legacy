@@ -421,7 +421,7 @@ export const View = ({
   if (model.spaceModel.type === 'setup') {
     return h(Box, {}, [
       h(Box, { class: 'flex-1' }),
-      h(Box, { class: 'flex items-center gap-4 p-4' }, [
+      h(Box, { class: 'flex flex-row items-center gap-4 p-4' }, [
         h(Button, {
           class: 'flex-1',
           onClick: onQuit,

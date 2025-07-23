@@ -44,7 +44,7 @@ export const ListItem = (input: Input) => {
             icon: input.icon,
             secondary: input.secondary,
           }),
-          input.end && h(Box, { class: 'shrink-0 flex items-center gap-2' }, [input.end()]),
+          input.end && h(Box, { class: 'shrink-0 flex flex-row items-center gap-2' }, [input.end()]),
         ],
       )
     }
@@ -81,7 +81,7 @@ const ListItemContent = (input: {
   end?: () => VDom
   secondary?: TranslatedText
 }) => {
-  return h(Box, { class: 'flex flex-1 items-center gap-3 truncate' }, [
+  return h(Box, { class: 'flex flex-row flex-1 items-center gap-3 truncate' }, [
     input.icon?.({ class: 'size-8' }),
     h(Box, { class: 'flex flex-col gap-1 text-left' }, [
       h(Typography, {
@@ -94,7 +94,7 @@ const ListItemContent = (input: {
   ])
 }
 
-const BASE_CLASS = 'flex w-full shrink-0 items-center truncate h-16 px-4 text-xl font-bold'
+const BASE_CLASS = 'flex flex-row w-full shrink-0 items-center truncate h-16 px-4 text-xl font-bold'
 
 type Color = 'default' | 'danger' | 'warning' | 'success' | 'inherit' | 'selected'
 

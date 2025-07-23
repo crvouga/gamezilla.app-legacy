@@ -31,7 +31,7 @@ const renderDefaultCoverArt = (input: { class: string }) => {
     {
       class: cn(
         TEXT_SECONDARY_CLASS_NAME,
-        'flex items-center justify-center overflow-hidden rounded-lg p-4',
+        'flex flex-row items-center justify-center overflow-hidden rounded-lg p-4',
         input.class,
       ),
     },

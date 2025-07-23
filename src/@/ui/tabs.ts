@@ -17,7 +17,7 @@ export const Tabs = <TTab extends string>({
   onSelect: (tab: TTab) => void
 }) => {
   return h(Box, {
-    class: 'flex w-full items-center',
+    class: 'flex flex-row w-full items-center',
     children: tabs.map((tab, index) =>
       h(
         Box,
@@ -31,7 +31,7 @@ export const Tabs = <TTab extends string>({
             {
               onClick: () => onSelect(tab),
               class: cn(
-                'flex h-full w-full items-center justify-center py-3 text-xl font-bold',
+                'flex flex-row h-full w-full items-center justify-center py-3 text-xl font-bold',
                 index !== tabs.length - 1 && 'border-r-2',
                 selected === tab ? 'border-b-blue-500 text-blue-500' : 'text-neutral-300',
               ),

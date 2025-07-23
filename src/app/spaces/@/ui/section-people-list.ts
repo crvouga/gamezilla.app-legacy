@@ -26,7 +26,7 @@ export const SectionPeopleList = (input: {
     h(SectionTitle, { text: input.ctx.t('app.people') }),
     h(
       Box,
-      { class: 'flex w-full flex-col' },
+      { class: 'flex flex-row w-full flex-col' },
       profiles.map((profile) =>
         h(Frag, { key: profile.id }, [
           renderItem(
@@ -55,7 +55,7 @@ const PersonListItem = (input: {
     {
       key: input.key,
       onClick: input.onClick,
-      class: 'flex w-full items-center gap-2 p-2 px-6',
+      class: 'flex flex-row w-full items-center gap-2 p-2 px-6',
     },
     [
       h(Avatar, { class: 'size-12', src: UserProfile.toAvatarUrl(input.profile) }),

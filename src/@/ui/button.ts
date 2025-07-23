@@ -45,7 +45,7 @@ export const Button = (input: ButtonInput) => {
       'data-fab': input.fab ? 'true' : 'false',
       class: cn(
         input.class,
-        'relative flex shrink-0 appearance-none flex-nowrap items-center justify-center truncate overflow-hidden rounded font-semibold select-none',
+        'relative flex flex-row shrink-0 appearance-none flex-nowrap items-center justify-center truncate overflow-hidden rounded font-semibold select-none',
         toColorClass(input),
         toSizeClass(input),
         input.fab && 'rounded-3xl shadow-2xl',
@@ -62,12 +62,18 @@ export const Button = (input: ButtonInput) => {
     },
 
     [
-      h(Box, { class: cn('flex h-full w-full items-center justify-center', input.loading && 'text-transparent') }, [
-        h(Box, { class: 'flex-none' }, [input.renderIconStart?.({ class: cn(toIconSizeClass(input), 'mr-2') })]),
-        h(Box, { class: 'truncate' }, [Text({ text: input.text ?? '' })]),
-      ]),
+      h(
+        Box,
+        { class: cn('flex flex-row h-full w-full items-center justify-center', input.loading && 'text-transparent') },
+        [
+          h(Box, { class: 'flex-none' }, [input.renderIconStart?.({ class: cn(toIconSizeClass(input), 'mr-2') })]),
+          h(Box, { class: 'truncate' }, [Text({ text: input.text ?? '' })]),
+        ],
+      ),
       input.loading &&
-        h(Box, { class: 'absolute inset-0 flex items-center justify-center' }, [h(Spinner, { class: 'size-8' })]),
+        h(Box, { class: 'absolute inset-0 flex flex-row items-center justify-center' }, [
+          h(Spinner, { class: 'size-8' }),
+        ]),
     ],
   )
 }

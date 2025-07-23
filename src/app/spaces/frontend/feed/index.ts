@@ -19,7 +19,7 @@ const View = ({
 }) => {
   const msgEvt: WithEventId<MsgSpace> | null = null
 
-  return h(Box, { class: 'flex h-6 w-full items-center justify-center p-1' }, [
+  return h(Box, { class: 'flex flex-row h-6 w-full items-center justify-center p-1' }, [
     spaceState.type === 'started' && msgEvt ? h(ViewFeedItem, { ctx, msgEvt, state: spaceState }) : null,
   ])
 }

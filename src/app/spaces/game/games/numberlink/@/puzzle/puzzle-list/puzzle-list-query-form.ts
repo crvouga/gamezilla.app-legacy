@@ -48,7 +48,7 @@ const View = (input: { query: Model; ctx: FlowFrontendCtxBase; onChange: (query:
   }
   return h(
     Box,
-    { class: 'flex w-full gap-2 px-4 py-4 pt-2' },
+    { class: 'flex flex-row w-full gap-2 px-4 py-4 pt-2' },
     [
       input.query.where.createdBy?.equals === input.ctx.currentUser.userId &&
         h(Chip, {

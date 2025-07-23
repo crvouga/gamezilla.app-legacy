@@ -173,7 +173,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
       'data-info': input.toast.variant === 'info' ? 'true' : 'false',
       'data-success': input.toast.variant === 'success' ? 'true' : 'false',
       class:
-        'pointer-events-none absolute top-0 left-0 z-40 flex w-full items-center justify-center overflow-visible p-4',
+        'pointer-events-none absolute top-0 left-0 z-40 flex flex-row w-full items-center justify-center overflow-visible p-4',
       onMouseDown: () => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast }),
       onMouseUp: () => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast }),
       onTouchStart: () => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast }),
@@ -186,7 +186,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
           Box,
           {
             class: cn(
-              'pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden rounded-lg border p-3 text-lg text-white shadow-2xl',
+              'pointer-events-auto z-40 flex flex-row w-full items-center justify-between overflow-hidden rounded-lg border p-3 text-lg text-white shadow-2xl',
               input.toast.variant === 'info' && PAPER_CLASS_NAME,
               input.toast.variant === 'success' && PAPER_CLASS_NAME,
               input.toast.variant === 'error' && 'border-red-400 bg-red-500',

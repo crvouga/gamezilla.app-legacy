@@ -41,7 +41,7 @@ const View = (input: {
       h(
         Clickable,
         {
-          class: 'flex w-fit items-center gap-4 px-4 py-2',
+          class: 'flex flex-row w-fit items-center gap-4 px-4 py-2',
           onClick: () => input.onHeaderCheckboxClick?.(puzzles.map((p) => p.id)),
         },
         [
@@ -106,13 +106,13 @@ const ViewListItem = (input: {
     ClickableTransparent,
     {
       key: input.puzzle.id,
-      class: 'box-border flex w-full items-center text-left',
+      class: 'box-border flex flex-row w-full items-center text-left',
       onClick: input.onClick,
     },
     [
       input.selectable && h(Box, { class: 'px-4' }, [h(Checkbox, { state: input.selected ? 'checked' : 'unchecked' })]),
 
-      h(Box, { class: 'flex aspect-square h-24 w-24 shrink-0 items-center justify-center overflow-hidden' }, [
+      h(Box, { class: 'flex flex-row aspect-square h-24 w-24 shrink-0 items-center justify-center overflow-hidden' }, [
         h(NumberlinkVariantBoard.View, { disabled: true, model: input.puzzle.model }),
       ]),
 

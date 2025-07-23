@@ -13,7 +13,7 @@ export const Badge = (input: { badgeContent: VDom; id: string; children: VDom[] 
           Box,
           {
             class:
-              'absolute top-0.5 right-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white',
+              'absolute top-0.5 right-0.5 flex flex-row size-5 shrink-0 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white',
           },
           [input.badgeContent],
         ),

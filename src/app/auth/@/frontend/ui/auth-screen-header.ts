@@ -16,7 +16,7 @@ export const AuthScreenHeader = (input: {
   return h(
     Box,
     {
-      class: 'flex w-full flex-row items-center justify-start gap-2',
+      class: 'flex flex-row w-full flex-row items-center justify-start gap-2',
     },
     [
       h(IconButton, {

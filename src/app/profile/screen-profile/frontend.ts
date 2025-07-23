@@ -77,7 +77,7 @@ const ViewBody: typeof View = (input) => {
     }),
 
     isCurrentUserProfile
-      ? h(Box, { class: 'flex w-full items-center justify-center gap-6 pt-4' }, [
+      ? h(Box, { class: 'flex flex-row w-full items-center justify-center gap-6 pt-4' }, [
           h(Button, {
             onClick: () =>
               input.dispatch({ t: 'got-msg-out', c: PushScreenCmd.init({ t: 'profile-edit', n: 'profile' }) }),

@@ -29,7 +29,7 @@ export const Select = <T>(props: {
         id: props.id,
         class: cn(
           PAPER_CLASS_NAME,
-          'flex appearance-none items-center rounded-md border p-3 py-4 text-xl outline-none',
+          'flex flex-row appearance-none items-center rounded-md border p-3 py-4 text-xl outline-none',
           props.error && 'border-red-500 text-red-500',
           !props.error && 'border-neutral-600 ring-blue-500 focus:ring-2',
         ),

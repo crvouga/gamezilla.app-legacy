@@ -148,7 +148,7 @@ export const View = ({
           renderBotIcon: bot.renderIcon,
         }
 
-  return h(Box, { class: 'flex w-full flex-1 flex-col' }, [
+  return h(Box, { class: 'flex flex-row w-full flex-1 flex-col' }, [
     h(ScreenLayoutGameCoverArt, {
       id: 'vs-bot-setup',
       parentScreen: ctx.parentScreen,
@@ -201,7 +201,7 @@ export const View = ({
     }),
 
     ctx.currentUser.userId === ctx.space.hostId &&
-      h(Box, { class: 'flex items-center gap-4 p-4' }, [
+      h(Box, { class: 'flex flex-row items-center gap-4 p-4' }, [
         h(Button, {
           disabled: !canStartGame,
           variant: 'contained',
@@ -248,7 +248,7 @@ export const View = ({
                 Clickable,
                 {
                   key: botLevel.label,
-                  class: 'flex w-full items-center gap-3 p-4 text-left text-xl font-bold',
+                  class: 'flex flex-row w-full items-center gap-3 p-4 text-left text-xl font-bold',
                   onClick,
                 },
                 [

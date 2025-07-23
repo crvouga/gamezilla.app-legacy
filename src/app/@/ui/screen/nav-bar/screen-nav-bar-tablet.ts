@@ -67,5 +67,5 @@ export const ScreenNavBarTablet = (input: {
 }
 
 export const ScreenNavBarTabletRoot = (input: { children: VDom }) => {
-  return h(Box, { class: 'flex h-24 w-full shrink-0 items-center px-6' }, [input.children])
+  return h(Box, { class: 'flex flex-row h-24 w-full shrink-0 items-center px-6' }, [input.children])
 }

@@ -175,7 +175,7 @@ export const VsUserSetupScreen = ({
     }),
 
     ctx.currentUser.userId === ctx.space.hostId &&
-      h(Box, { class: 'flex w-full items-center gap-4 p-4' }, [
+      h(Box, { class: 'flex flex-row w-full items-center gap-4 p-4' }, [
         h(Button, {
           disabled: !canStartGame,
           variant: 'contained',

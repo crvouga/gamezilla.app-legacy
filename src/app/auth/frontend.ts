@@ -249,7 +249,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
           text: input.ctx.t('auth.continue-with-phone'),
         }),
 
-        h(Box, { class: 'flex w-full items-center justify-center py-1' }, [
+        h(Box, { class: 'flex flex-row w-full items-center justify-center py-1' }, [
           Typography({
             variant: 'body',
             class: 'text-base font-bold uppercase',

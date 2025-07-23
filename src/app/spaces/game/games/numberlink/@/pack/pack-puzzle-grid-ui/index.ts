@@ -37,7 +37,7 @@ const View = (input: {
         onSlideIndexChanged: (newSlideIndex: number) => input.onSlideIndexChanged?.(newSlideIndex),
         id: input.id ?? 'pack-puzzle-grid-swiper-container',
         slideIndex: input.currentSlideIndex ?? 0,
-        class: 'flex h-full w-full items-center justify-center',
+        class: 'flex flex-row h-full w-full items-center justify-center',
       },
       Array.from({ length: slideCount }).map((_, slideIndex) =>
         h(
@@ -104,7 +104,7 @@ const ViewSlideHeading = (input: { slideIndex: number; puzzleIds: PuzzleId[] }) 
 
   return h(Typography, {
     text: TranslatedText.of(`${startPosition} - ${endPositionPuzzle}`),
-    class: 'flex w-full items-center justify-start p-1 text-2xl',
+    class: 'flex flex-row w-full items-center justify-start p-1 text-2xl',
     role: 'heading',
   })
 }
@@ -147,7 +147,7 @@ const ViewGridCell = (input: {
     Box,
     {
       role: 'gridcell',
-      class: 'flex aspect-square h-12 w-12 items-center justify-center overflow-hidden p-1 sm:h-16 sm:w-16',
+      class: 'flex flex-row aspect-square h-12 w-12 items-center justify-center overflow-hidden p-1 sm:h-16 sm:w-16',
     },
     [
       input.renderCell({
@@ -174,7 +174,7 @@ const ViewAddCell = (input: { onClick?: () => void }) => {
     ClickablePaper,
     {
       onClick: input.onClick,
-      class: 'flex h-full w-full items-center justify-center overflow-hidden rounded border-2',
+      class: 'flex flex-row h-full w-full items-center justify-center overflow-hidden rounded border-2',
     },
     [h(IconPlus, { class: 'h-8 w-8' })],
   )
@@ -185,7 +185,7 @@ const ViewPuzzleCell = ({ onClick, index }: { onClick: () => void; index: number
     ClickablePaper,
     {
       onClick,
-      class: 'flex h-full w-full items-center justify-center overflow-hidden rounded text-lg font-normal',
+      class: 'flex flex-row h-full w-full items-center justify-center overflow-hidden rounded text-lg font-normal',
     },
     [Text({ text: String(index + 1) })],
   )
@@ -193,13 +193,13 @@ const ViewPuzzleCell = ({ onClick, index }: { onClick: () => void; index: number
 
 const ViewEmptyCell = () => {
   return h(Box, {
-    class: 'flex h-full w-full items-center justify-center overflow-hidden rounded border-2 opacity-70',
+    class: 'flex flex-row h-full w-full items-center justify-center overflow-hidden rounded border-2 opacity-70',
   })
 }
 
 export const _ViewLoadingCell = () => {
   return h(Paper, {
-    class: 'flex h-full w-full animate-pulse items-center justify-center overflow-hidden rounded opacity-70',
+    class: 'flex flex-row h-full w-full animate-pulse items-center justify-center overflow-hidden rounded opacity-70',
   })
 }
 
@@ -209,7 +209,7 @@ export const _ViewErrorCell = ({ onClick, index }: { onClick: () => void; index:
     {
       onClick,
       class:
-        'flex h-full w-full items-center justify-center overflow-hidden rounded bg-orange-500/50 text-xl font-bold',
+        'flex flex-row h-full w-full items-center justify-center overflow-hidden rounded bg-orange-500/50 text-xl font-bold',
     },
     [Text({ text: String(index + 1) })],
   )

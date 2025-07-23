@@ -44,7 +44,7 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
   const firstActions = input.actions.slice(0, limit)
   const lastActions = input.actions.slice(limit)
   const hasLastActions = lastActions.some((button) => button !== null)
-  return h(Box, { class: cn('flex w-full shrink-0 items-center', toHeightClass(size)), role: 'toolbar' }, [
+  return h(Box, { class: cn('flex flex-row w-full shrink-0 items-center', toHeightClass(size)), role: 'toolbar' }, [
     ...firstActions.map((action) => {
       if (!action) return null
 
@@ -115,11 +115,11 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
   const size = input.size ?? 'md'
   return h(
     Box,
-    { class: cn('flex w-full shrink-0 items-center justify-between', toHeightClass(size)), role: 'toolbar' },
+    { class: cn('flex flex-row w-full shrink-0 items-center justify-between', toHeightClass(size)), role: 'toolbar' },
     [
       h(
         Box,
-        { class: 'flex items-center' },
+        { class: 'flex flex-row items-center' },
         input.start.map((action) => {
           if (!action) return null
 
@@ -138,7 +138,7 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
 
       h(
         Box,
-        { class: 'flex items-center' },
+        { class: 'flex flex-row items-center' },
         input.end.map((action) => {
           if (!action) return null
 
@@ -202,7 +202,7 @@ const ScreenActionButton = (input: ScreenAction & { class?: string }) => {
       ),
 
       input.loading &&
-        h(Box, { class: 'absolute inset-0 flex h-full w-full items-center justify-center' }, [
+        h(Box, { class: 'absolute inset-0 flex flex-row h-full w-full items-center justify-center' }, [
           h(Spinner, { class: toIconSizeClasses(size) }),
         ]),
     ],

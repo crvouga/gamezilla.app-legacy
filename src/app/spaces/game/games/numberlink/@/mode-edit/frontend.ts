@@ -117,7 +117,7 @@ const View = (input: {
 
 const ViewStatus: typeof View = (input) => {
   const position = ModeEdit.toCurrentPlacingTerminalPosition(input.model) === 'start' ? 'first' : 'last'
-  return h(Box, { class: 'flex w-full items-center justify-center gap-1 p-2' }, [
+  return h(Box, { class: 'flex flex-row w-full items-center justify-center gap-1 p-2' }, [
     h(Typography, {
       variant: 'body',
       text: input.ctx.t('game.numberlink.placing', { position }),

@@ -276,7 +276,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
     ctx: input.ctx,
     renderBody: () =>
       h(BoardLayout, {}, [
-        h(Box, { class: 'flex w-full items-center justify-center gap-1 p-2' }, [
+        h(Box, { class: 'flex flex-row w-full items-center justify-center gap-1 p-2' }, [
           Text({ text: input.ctx.t('game.numberlink.playing') }),
         ]),
         h(ModePlayFrontend.View, {

@@ -241,11 +241,11 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
                 dataTestId: TEST_ID_TOP_BAR_OPEN_BUTTON,
                 class: cn(
                   props.ctx.screenSize === 'mobile'
-                    ? 'flex w-full items-center justify-end gap-3 px-3 py-1'
-                    : 'flex w-fit justify-center gap-4 px-6 py-3 pl-8',
+                    ? 'flex flex-row w-full items-center justify-end gap-3 px-3 py-1'
+                    : 'flex flex-row w-fit justify-center gap-4 px-6 py-3 pl-8',
                 ),
                 'aria-label': props.ctx.t('app.open-settings'),
-                onClick: () => props.dispatch({ t: 'settings.clicked-top-bar' }),
+                onPress: () => props.dispatch({ t: 'settings.clicked-top-bar' }),
               },
               [
                 h(BackendConnectionStatus.ViewDot, {
@@ -260,8 +260,8 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
         },
       },
       body: {
-        render: () =>
-          h(Box, { 'data-testid': TEST_ID_TOP_BAR_DROP_DOWN_SURFACE }, [
+        render: () => {
+          return h(Box, { 'data-testid': TEST_ID_TOP_BAR_DROP_DOWN_SURFACE }, [
             h(BackendConnectionStatus.ViewListItem, {
               ctx: props.ctx,
               model: props.ctx.backendConnectionStatus,
@@ -283,7 +283,8 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
               dataTestId: TEST_ID_SETTINGS_SCREEN_OPEN_BUTTON,
               onClick: () => props.dispatch({ t: 'settings.clicked-open-settings' }),
             }),
-          ]),
+          ])
+        },
       },
     }),
   ])

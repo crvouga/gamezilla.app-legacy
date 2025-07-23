@@ -6,7 +6,7 @@ const Info = (input: { text: string }) => {
   return h(Typography, {
     text: TranslatedText.of(input.text),
     color: 'text-secondary',
-    class: 'flex w-full items-center justify-center text-xs',
+    class: 'flex flex-row w-full items-center justify-center text-xs',
   })
 }
 

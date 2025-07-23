@@ -20,7 +20,7 @@ export const Chip = (input: ChipProps) => {
     Tag,
     {
       tagName: typeof input.onClick === 'function' ? 'button' : 'div',
-      class: cn('flex items-center gap-1 truncate border border-white/30 font-semibold', toSizeClass(input)),
+      class: cn('flex flex-row items-center gap-1 truncate border border-white/30 font-semibold', toSizeClass(input)),
       onClick: input.onClick,
     },
     [

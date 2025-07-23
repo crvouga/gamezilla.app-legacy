@@ -14,7 +14,7 @@ export const PaginationDots = (input: { count: number; activeIndex: number; onCl
   return h(
     Box,
     {
-      class: 'flex items-center justify-center space-x-2',
+      class: 'flex flex-row items-center justify-center space-x-2',
       role: 'tablist',
       'aria-label': 'Pagination Dots',
       'data-testid': PAGINATION_DOTS_TEST_ID,
