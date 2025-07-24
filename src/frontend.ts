@@ -12,6 +12,7 @@ import { Url } from './@/url/url'
 import { h, render, VDomEngine } from './@/vdom'
 import { ImplWeb } from './@/vdom/vdom-engine/impl-web'
 import { VDomImplWeb } from './@/vdom/vdom-impl-web'
+import './frontend.css'
 
 const main = async () => {
   const logger = Logger.init({ t: 'console', namespace: ['frontend'], newLinePerMsg: false, maxLogLevel: 'debug' })
@@ -24,7 +25,8 @@ const main = async () => {
   if (!TOPIC_URL) throw new Error('TOPIC_URL is not set')
   logger.info('TOPIC_URL', TOPIC_URL)
 
-  let root = initRoot()
+  const root = document.createElement('div')
+  document.body.prepend(root)
   const VDOM_IMPL = VDomImplWeb.getUrl()
   logger.info('VDOM_IMPL', VDOM_IMPL)
   const vdomEngine = await ImplWeb.init({ t: VDOM_IMPL })
@@ -65,15 +67,9 @@ const main = async () => {
     VDomImplWeb.setUrl(event.vdomImpl)
     const vdomEngine = await ImplWeb.init({ t: event.vdomImpl })
     VDomEngine.set(vdomEngine)
-    root = initRoot()
+    root.innerHTML = ''
     program.render()
   })
-}
-
-const initRoot = () => {
-  document.body.innerHTML = '<div id="root"></div>'
-  const root = document.getElementById('root')!
-  return root
 }
 
 main()

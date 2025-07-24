@@ -19,7 +19,6 @@ import { UnixMs } from '~/@/time/unix-ms'
 import { TopicClient } from '~/@/topic/topic-client/topic-client'
 import { IconGamepad, IconUserCircle } from '~/@/ui/icon'
 import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
-import { SpinnerBlock } from '~/@/ui/spinner-block'
 import { Url } from '~/@/url/url'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -31,6 +30,7 @@ import { AppFrontendCtx, AppFrontendCtxBase, isAppFrontendCtx } from './@/fronte
 import { PreloadSoundsCmd } from './@/frontend/preload-sounds-cmd.$msg'
 import { topicMsgCodec } from './@/topic-msg-codec'
 import { ViewAppRoot } from './@/ui/app-root/app-root'
+import { SplashScreen } from './@/ui/logo/splash-screen'
 import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
 import { toCurrentUserState } from './auth/current-user/frontend'
 import { AuthFrontend } from './auth/frontend'
@@ -394,7 +394,7 @@ const ViewScreen = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispa
       const currentUser = toCurrentUserState({ model: input.model.auth.currentUser, ctx: input.ctx })
       switch (currentUser.t) {
         case 'loading':
-          return h(SpinnerBlock, {})
+          return h(SplashScreen, {})
         case 'logged-out':
           return h(ViewScreenLoggedOut, { model: input.model, dispatch: input.dispatch, ctx: input.ctx })
         case 'logged-in':

@@ -10,7 +10,7 @@ import { FrontendSqlDb } from './@/sql-db/frontend-impl'
 import { Url } from './@/url/url'
 import { VDomEngine } from './@/vdom/vdom-engine/impl'
 import { ImplReactNative } from './@/vdom/vdom-engine/impl-react-native'
-import './frontend.native.css'
+import './frontend.css'
 
 const store = StoreSingleListener<Parameters<typeof AppFrontend.View>[0] | null>(null)
 const App = () => {

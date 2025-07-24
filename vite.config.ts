@@ -1,4 +1,4 @@
-import tailwindcss from '@tailwindcss/vite'
+// import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 import { defineConfig } from 'vite'
 import { DotEnv } from './src/@/dotenv/dotenv'
@@ -20,7 +20,7 @@ if (Number.isNaN(FRONTEND_PORT)) throw new Error('FRONTEND_PORT is not set')
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [tailwindcss()],
+  // plugins: [tailwindcss()],
   server: {
     port: Number(FRONTEND_PORT),
   },
