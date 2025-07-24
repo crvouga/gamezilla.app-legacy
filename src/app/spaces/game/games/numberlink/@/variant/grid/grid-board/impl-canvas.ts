@@ -109,7 +109,7 @@ const View = ({
 
   onPress,
   onDraggedOver,
-  onPressUp,
+  onPressOut,
 }: BoardInput<VariantGrid.Model>) => {
   return h(Canvas, {
     class: cn('aspect-square w-full', isDragging ? 'cursor-grabbing' : 'cursor-grab'),
@@ -142,7 +142,7 @@ const View = ({
         onPress?.(nodeId)
       }
     },
-    onPressUp: (event: any) => {
+    onPressOut: (event: any) => {
       const canvas = event.currentTarget as HTMLCanvasElement
       const rect = canvas.getBoundingClientRect()
       const x = (event.clientX - rect.left) / rect.width
@@ -163,7 +163,7 @@ const View = ({
           y: yIndex,
         })
 
-        onPressUp?.(nodeId)
+        onPressOut?.(nodeId)
       }
     },
     onMouseMove: (event_: unknown) => {
@@ -245,7 +245,7 @@ const View = ({
           x: xIndex,
           y: yIndex,
         })
-        onPressUp?.(nodeId)
+        onPressOut?.(nodeId)
       }
     },
     onTouchMove: (event_: unknown) => {

@@ -18,7 +18,7 @@ export type PrimitiveProps = {
   tabIndex?: number | null | undefined
   style?: unknown
   onPress?: (event: unknown) => void
-  onPressUp?: (event: unknown) => void
+  onPressOut?: (event: unknown) => void
   onKeyDown?: (event: unknown) => void
   'data-fab'?: boolean
   'data-info'?: boolean
@@ -33,7 +33,7 @@ const intoWebStandard = (props: PrimitiveProps) => {
   return {
     ...props,
     onClick: props.onPress,
-    onPointerUp: props.onPressUp,
+    onPointerUp: props.onPressOut,
     onKeyDown: props.onKeyDown,
   }
 }
@@ -41,8 +41,6 @@ const intoWebStandard = (props: PrimitiveProps) => {
 const intoReactNativeStandard = (props: PrimitiveProps) => {
   return {
     ...props,
-    onPress: props.onPress,
-    onPressUp: props.onPressUp,
   }
 }
 

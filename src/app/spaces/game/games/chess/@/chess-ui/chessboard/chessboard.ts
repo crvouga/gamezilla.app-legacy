@@ -420,7 +420,7 @@ export const Chessboard = (input: ChessboardInput) => {
       onTouchMove: onDragStartOrMove(input),
       onMouseMove: onDragStartOrMove(input),
       onTouchEnd: onDragEnd(input),
-      onPressUp: onDragEnd(input),
+      onPressOut: onDragEnd(input),
     },
     [
       h(

@@ -294,7 +294,7 @@ const ViewJoystick = ({
               onAbort: onDone,
               onPress: () => onChange(direction),
               onMouseOver: () => onChange(direction),
-              onPressUp: onDone,
+              onPressOut: onDone,
             })
           }),
         ]),

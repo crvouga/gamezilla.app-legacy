@@ -35,7 +35,7 @@ export const Circle = ({
   'clip-rule'?: string
 
   onPress?: (event: unknown) => void
-  onPressUp?: (event: unknown) => void
+  onPressOut?: (event: unknown) => void
   onMouseLeave?: (event: unknown) => void
   onMouseEnter?: (event: unknown) => void
   onMouseMove?: (event: unknown) => void

@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* 
 @import 'tailwindcss';
 
@@ -12,9 +16,6 @@
     }
 }
 */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 ::-webkit-scrollbar {
     width: 8px;

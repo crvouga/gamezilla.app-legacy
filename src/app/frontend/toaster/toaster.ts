@@ -175,7 +175,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
       class:
         'pointer-events-none absolute top-0 left-0 z-40 flex flex-row w-full items-center justify-center overflow-visible p-4',
       onPress: () => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast }),
-      onPressUp: () => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast }),
+      onPressOut: () => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast }),
       onTouchStart: () => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast }),
       onTouchEnd: () => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast }),
       onContextMenu: (e: any) => e.preventDefault(),

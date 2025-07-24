@@ -66,7 +66,7 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
       viewBox: `${0} ${0} ${input.model.width} ${input.model.height}`,
       onTouchMove,
       onMouseLeave: left,
-      onPressUp: left,
+      onPressOut: left,
     },
     [
       h(ViewGrid, input),
@@ -272,7 +272,7 @@ const ViewClickable = (
       return ViewClickableNode({
         node,
         onPress: input.onPress,
-        onPressUp: input.onPressUp,
+        onPressOut: input.onPressOut,
         draggedOver: input.draggedOver,
       })
     }),
@@ -280,7 +280,7 @@ const ViewClickable = (
 }
 
 const ViewClickableNode = (
-  input: Pick<BoardInput<VariantGrid.Model>, 'onPress' | 'onPressUp'> & {
+  input: Pick<BoardInput<VariantGrid.Model>, 'onPress' | 'onPressOut'> & {
     node: VariantGrid.Node
     draggedOver?: (nodeId: NodeId) => void
   },
@@ -296,7 +296,7 @@ const ViewClickableNode = (
       input.onPress?.(input.node.nodeId)
     },
     onPointerUp: () => {
-      input.onPressUp?.(input.node.nodeId)
+      input.onPressOut?.(input.node.nodeId)
     },
     onPointerEnter: () => {
       input.draggedOver?.(input.node.nodeId)
