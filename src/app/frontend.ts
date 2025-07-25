@@ -29,7 +29,7 @@ import { APP_SOUND } from './@/frontend/app-sound'
 import { AppFrontendCtx, AppFrontendCtxBase, isAppFrontendCtx } from './@/frontend/ctx'
 import { PreloadSoundsCmd } from './@/frontend/preload-sounds-cmd.$msg'
 import { topicMsgCodec } from './@/topic-msg-codec'
-import { ViewAppRoot } from './@/ui/app-root/app-root'
+import { AppRoot } from './@/ui/app-root/app-root'
 import { SplashScreen } from './@/ui/logo/splash-screen'
 import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
 import { toCurrentUserState } from './auth/current-user/frontend'
@@ -353,7 +353,7 @@ const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }):
 const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
   const frontendCtx = toCtx(input)
 
-  return h(ViewAppRoot, {}, [
+  return h(AppRoot, {}, [
     h(SettingsFrontend.ViewTopBar, {
       model: input.model.settings,
       dispatch: (c) => input.dispatch({ t: 'settings', c }),

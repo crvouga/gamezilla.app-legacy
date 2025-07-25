@@ -2,7 +2,7 @@ import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
 
-export const ViewAppRoot = (input: { children: VDom[] }) => {
+export const AppRoot = (input: { children: VDom[] }) => {
   return h(
     Box,
     {
