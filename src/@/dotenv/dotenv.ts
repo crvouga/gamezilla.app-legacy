@@ -51,8 +51,15 @@ const loadOne = async (config: { fs: IFileSystem; path: string; precedence: DotE
       const cleanValue = value.replace(/^['"](.*)['"]$/, '$1')
 
       if (typeof process !== 'undefined' && process.env) {
-        if (config.precedence === 'overwrite-env-var' || !process.env[key]) {
-          process.env[key] = cleanValue
+        switch (config.precedence) {
+          case 'overwrite-env-var':
+            process.env[key] = cleanValue
+            break
+          case 'skip-existing-env-var':
+            if (process.env[key] === undefined) {
+              process.env[key] = cleanValue
+            }
+            break
         }
       }
     }
