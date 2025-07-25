@@ -23,7 +23,6 @@ jobs:
         with:
           version: latest
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run env:ci
       - name: Check Circular Dependencies
         run: pnpm cir-deps
 
@@ -39,7 +38,6 @@ jobs:
         with:
           version: latest
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run env:ci
       - run: pnpm tc
 
   unit:
@@ -54,7 +52,6 @@ jobs:
         with:
           version: latest
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run env:ci
       - run: pnpm unit
 
   integration:
@@ -69,7 +66,6 @@ jobs:
         with:
           version: latest
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run env:ci
       - name: Start Infrastructure
         run: pnpm infra:up
       - name: Wait for Services
@@ -90,7 +86,6 @@ jobs:
         with:
           version: latest
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run env:ci
       - name: Start Infrastructure
         run: pnpm infra:up
       - name: Wait for Services

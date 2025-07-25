@@ -1,10 +1,12 @@
 import { join } from 'path'
 import { type IFileSystem } from '~/@/file-system'
 
+export type DotEnvPrecedence = 'overwrite-env-var' | 'skip-existing-env-var'
 /**
+
  * Loads environment variables from a .env file
  */
-const loadOne = async (config: { fs: IFileSystem; path: string }): Promise<void> => {
+const loadOne = async (config: { fs: IFileSystem; path: string; precedence: DotEnvPrecedence }): Promise<void> => {
   const envPath = join(process.cwd(), config.path)
 
   const exists = await config.fs.exists(envPath)
@@ -48,8 +50,10 @@ const loadOne = async (config: { fs: IFileSystem; path: string }): Promise<void>
 
       const cleanValue = value.replace(/^['"](.*)['"]$/, '$1')
 
-      if (typeof process !== 'undefined' && process.env && !process.env[key]) {
-        process.env[key] = cleanValue
+      if (typeof process !== 'undefined' && process.env) {
+        if (config.precedence === 'overwrite-env-var' || !process.env[key]) {
+          process.env[key] = cleanValue
+        }
       }
     }
   } catch (err) {
@@ -60,9 +64,9 @@ const loadOne = async (config: { fs: IFileSystem; path: string }): Promise<void>
 /**
  * Loads environment variables from a .env file
  */
-const load = async (config: { fs: IFileSystem; paths: string[] }): Promise<void> => {
+const load = async (config: { fs: IFileSystem; paths: string[]; precedence: DotEnvPrecedence }): Promise<void> => {
   for (const path of config.paths) {
-    await loadOne({ fs: config.fs, path })
+    await loadOne({ fs: config.fs, path, precedence: config.precedence })
   }
 }
 

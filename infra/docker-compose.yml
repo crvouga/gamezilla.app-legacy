@@ -6,25 +6,25 @@ services:
       context: ../
       dockerfile: infra/frontend.Dockerfile
       args:
-        NODE_ENV: ${NODE_ENV:?NODE_ENV is required}
-        BACKEND_URL: ${BACKEND_URL:?BACKEND_URL is required}
-        TOPIC_URL: ${TOPIC_URL:?TOPIC_URL is required}
+        NODE_ENV: development
+        BACKEND_URL: http://localhost:5556
+        TOPIC_URL: http://localhost:5557
     ports:
-      - '${FRONTEND_PORT:?FRONTEND_PORT is required}:80'
+      - '5555:80'
 
   backend:
     build:
       context: ../
       dockerfile: infra/backend.Dockerfile
       args:
-        NODE_ENV: ${NODE_ENV:?NODE_ENV is required}
+        NODE_ENV: development
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
-      - BACKEND_PORT=${BACKEND_PORT:?BACKEND_PORT is required}
-      - TOPIC_PORT=${TOPIC_PORT:?TOPIC_PORT is required}
-      - BACKEND_URL=${BACKEND_URL:?BACKEND_URL is required}
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
+      - BACKEND_PORT=5556
+      - TOPIC_PORT=5557
+      - BACKEND_URL=http://localhost:5556
     ports:
-      - '${BACKEND_PORT:?BACKEND_PORT is required}:${BACKEND_PORT:?BACKEND_PORT is required}'
+      - '5556:5556'
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 
@@ -33,9 +33,9 @@ services:
       context: ../
       dockerfile: infra/topic.Dockerfile
     ports:
-      - '${TOPIC_PORT:?TOPIC_PORT is required}:${TOPIC_PORT:?TOPIC_PORT is required}'
+      - '5557:5557'
     environment:
-      - TOPIC_PORT=${TOPIC_PORT:?TOPIC_PORT is required}
+      - TOPIC_PORT=5557
     depends_on:
       nats:
         condition: service_started
@@ -45,7 +45,7 @@ services:
       context: ../
       dockerfile: infra/nats.Dockerfile
     ports:
-      - '${NATS_PORT:?NATS_PORT is required}:${NATS_PORT:?NATS_PORT is required}'
+      - '4222:4222'
 
   postgres:
     build:
@@ -53,16 +53,16 @@ services:
       dockerfile: infra/postgres.Dockerfile
     restart: always
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
-      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB is required}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
       POSTGRES_PORT: 5432
     ports:
-      - '${POSTGRES_PORT:?POSTGRES_PORT is required}:5432'
+      - '5432:5432'
     tmpfs:
       - /var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:?POSTGRES_USER is required} -p 5432']
+      test: ['CMD-SHELL', 'pg_isready -U postgres -p 5432']
       interval: 10s
       timeout: 5s
       retries: 5

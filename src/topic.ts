@@ -12,7 +12,7 @@ import { topicMsgCodec } from './app/@/topic-msg-codec'
 import { BackendConnectionBackend } from './app/wire/backend-connection/backend'
 
 const main = async () => {
-  await DotEnv.load({ fs: FileSystem.init({ t: 'node' }), paths: ['.env'] })
+  await DotEnv.load({ fs: FileSystem.init({ t: 'node' }), paths: ['.env'], precedence: 'skip-existing-env-var' })
 
   const logger = Logger.init({
     t: 'console',

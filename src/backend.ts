@@ -13,7 +13,7 @@ const main = async () => {
   logger.info('Starting backend')
 
   logger.info('Loading environment variables from .env file')
-  await DotEnv.load({ fs: FileSystem.init({ t: 'node' }), paths: ['.env'] })
+  await DotEnv.load({ fs: FileSystem.init({ t: 'node' }), paths: ['.env'], precedence: 'skip-existing-env-var' })
   logger.info('Environment variables loaded')
 
   logger.info('Loading configuration from environment')
