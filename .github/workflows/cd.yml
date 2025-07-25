@@ -11,8 +11,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  type-check:
-    name: Type Check
+  ci:
+    name: CI
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,111 +24,30 @@ jobs:
           version: latest
       - run: pnpm install --frozen-lockfile
       - run: pnpm run env:local
-      - run: pnpm exec tsc
-
-  circular-deps:
-    name: Check Circular Dependencies
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run env:local
-      - run: pnpm run cir-deps
-
-  unit-tests:
-    name: Unit Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run env:local
-      - run: pnpm run unit
-
-  integration-tests:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run env:local
-      - run: pnpm local:up
-      - run: sleep 10
-      - run: pnpm run db:up
-      - run: pnpm run int
-      - run: pnpm local:down
-        if: always()
-
-  e2e-tests:
-    name: E2E Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run env:local
-      - run: pnpm e2e:up
-      - run: sleep 10
-      - run: pnpm run db:up
-      - run: pnpm e2e:ci:setup
-      - run: pnpm run e2e:ci
-      - run: pnpm e2e:down
-        if: always()
+      - run: pnpm run ci
       - name: Upload test results
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: test-results/
           retention-days: 7
 
-  deploy:
-    name: Deploy
-    needs: [type-check, circular-deps, unit-tests, integration-tests, e2e-tests]
+  cd:
+    name: CD
+    needs: [ci]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     if: github.ref == 'refs/heads/main'
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v2
         with:
           version: latest
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Run database migrations
-        env:
+      - run: pnpm install --frozen-lockfile
+      - env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: pnpm run db:up

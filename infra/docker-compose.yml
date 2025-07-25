@@ -20,8 +20,6 @@ services:
       dockerfile: infra/backend.Dockerfile
       args:
         NODE_ENV: ${NODE_ENV:?NODE_ENV is required}
-    ports:
-      - '${BACKEND_PORT:?BACKEND_PORT is required}:${BACKEND_PORT:?BACKEND_PORT is required}'
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
     extra_hosts:
@@ -32,13 +30,12 @@ services:
     build:
       context: ../
       dockerfile: infra/topic.Dockerfile
-    ports:
-      - '${TOPIC_PORT:?TOPIC_PORT is required}:${TOPIC_PORT:?TOPIC_PORT is required}'
     depends_on:
       nats:
         condition: service_started
 
   nats:
+    profiles: ['local', 'e2e']
     build:
       context: ../
       dockerfile: infra/nats.Dockerfile
@@ -46,6 +43,7 @@ services:
       - '${NATS_PORT:?NATS_PORT is required}:${NATS_PORT:?NATS_PORT is required}'
 
   postgres:
+    profiles: ['local', 'e2e']
     build:
       context: ../
       dockerfile: infra/postgres.Dockerfile
