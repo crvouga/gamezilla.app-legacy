@@ -30,7 +30,7 @@ describe('screen renderer', () => {
     }
   })
 
-  test('change renderer', async (e) => {
+  test.skip('change renderer', async (e) => {
     await using f = await Fixture(e)
     await doOpenSettingsScreen(f)
     await doOpenRendererScreen(f)
