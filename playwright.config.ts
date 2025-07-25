@@ -3,7 +3,7 @@ import { DotEnv } from './src/@/dotenv/dotenv'
 import { FileSystem } from './src/@/file-system'
 import { Url } from './src/@/url/url'
 
-DotEnv.load({ fs: FileSystem.init({ t: 'node' }), paths: ['.env'] })
+DotEnv.load({ fs: FileSystem.init({ t: 'node' }), paths: ['.env'], precedence: 'skip-existing-env-var' })
 
 const PLAYWRIGHT_BASE_URL = Url.derive(process.env.PLAYWRIGHT_BASE_URL ?? '', 'https')
 
