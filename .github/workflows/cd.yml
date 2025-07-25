@@ -38,6 +38,7 @@ jobs:
         with:
           version: latest
       - run: pnpm install --frozen-lockfile
+      - run: pnpm run env:local
       - run: pnpm tc
 
   unit:
@@ -52,6 +53,7 @@ jobs:
         with:
           version: latest
       - run: pnpm install --frozen-lockfile
+      - run: pnpm run env:local
       - run: pnpm unit
 
   integration:
@@ -70,6 +72,7 @@ jobs:
         run: pnpm infra:up
       - name: Wait for Services
         run: sleep 3
+      - run: pnpm run env:local
       - name: Database Migration
         run: pnpm db:up
       - run: pnpm int
@@ -90,6 +93,7 @@ jobs:
         run: pnpm infra:up
       - name: Wait for Services
         run: sleep 3
+      - run: pnpm run env:local
       - name: Database Migration
         run: pnpm db:up
       - name: Setup E2E Tests
