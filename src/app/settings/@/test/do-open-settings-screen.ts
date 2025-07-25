@@ -1,21 +1,16 @@
 import { expect } from '~/@/test-runner'
 import { IFixtureApp } from '~/app/@/test/app-fixture/interface'
-import {
-  TEST_ID_SETTINGS_SCREEN,
-  TEST_ID_SETTINGS_SCREEN_OPEN_BUTTON,
-  TEST_ID_TOP_BAR_DROP_DOWN_SURFACE,
-  TEST_ID_TOP_BAR_OPEN_BUTTON,
-} from '../../frontend'
+import { TEST_ID_SETTINGS_SCREEN, TEST_ID_TOP_BAR_SURFACE, TEST_ID_TOP_BAR_SURFACE_OPEN_BUTTON } from '../../frontend'
 
 export const doOpenSettingsScreen = async (f: IFixtureApp) => {
-  const topBarOpenButton = await f.frontend.findByTestId(TEST_ID_TOP_BAR_OPEN_BUTTON)
+  const topBarOpenButton = await f.frontend.findByTestId(TEST_ID_TOP_BAR_SURFACE_OPEN_BUTTON)
   expect(topBarOpenButton).toBeTruthy()
   await topBarOpenButton!.do({ t: 'click' })
   //
-  const topBarDropDownSurface = await f.frontend.findByTestId(TEST_ID_TOP_BAR_DROP_DOWN_SURFACE)
+  const topBarDropDownSurface = await f.frontend.findByTestId(TEST_ID_TOP_BAR_SURFACE)
   expect(topBarDropDownSurface).toBeTruthy()
   //
-  const settingsScreenOpenButton = await f.frontend.findByTestId(TEST_ID_SETTINGS_SCREEN_OPEN_BUTTON)
+  const settingsScreenOpenButton = await f.frontend.findByRole('menuitem', 'Settings')
   expect(settingsScreenOpenButton).toBeTruthy()
   await settingsScreenOpenButton!.do({ t: 'click' })
   //

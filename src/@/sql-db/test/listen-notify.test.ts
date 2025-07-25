@@ -1,5 +1,5 @@
 import 'fake-indexeddb/auto'
-import { PgliteInstance } from '~/@/pglite/pglite-instance'
+import { Pglite } from '~/@/pglite/impl'
 import { sleep } from '~/@/promise/sleep'
 import { SecretString } from '~/@/secrets/secret-string'
 import { describe, expect, test } from '~/@/test-runner'
@@ -24,7 +24,7 @@ const Fixtures = async () => {
     configs.push({
       t: 'pglite',
       logger: Logger.init({ t: 'console', newLinePerMsg: false, namespace: ['sql-db'], maxLogLevel: 'debug' }),
-      pglite: PgliteInstance({ t: 'in-memory' }),
+      pglite: Pglite.init({ t: 'main-thread', config: { t: 'in-memory' } }),
     })
   }
 

@@ -27,14 +27,12 @@ export type ButtonInput = {
   color?: ButtonColor
   size?: ButtonSize
   loading?: boolean
-  dataTestId?: string
 }
 
 export const Button = (input: ButtonInput) => {
   return h(
     Clickable,
     {
-      'data-testid': input.dataTestId,
       disabled: input.disabled || input.loading,
       'data-fab': input.fab,
       class: cn(

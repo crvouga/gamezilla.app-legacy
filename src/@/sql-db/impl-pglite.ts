@@ -3,13 +3,13 @@ import type { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
 import { deterministicJsonStringify } from '../json/deterministic-stringify'
 import type { ILogger } from '../logger/interface'
-import { IPgliteInstance, IPgliteWorkerInstance } from '../pglite/types'
+import { IPglite } from '../pglite/types'
 import { PubSub, Sub } from '../sub'
 import { ISqlDb } from './interface'
 
 export type ImplPglite = {
   t: 'pglite'
-  pglite: Promise<IPgliteInstance | IPgliteWorkerInstance>
+  pglite: Promise<IPglite>
   logger: ILogger
 }
 

@@ -2,9 +2,7 @@ import { Program } from '~/@/program/program'
 import { AppFrontend } from '~/app/frontend'
 import { HttpProtocol } from './@/http/protocol'
 import { Logger } from './@/logger'
-import { PgliteInstance } from './@/pglite/pglite-instance'
-import { PgliteWorkerInstance } from './@/pglite/pglite-worker-instance/pglite-worker-instance'
-import { IPgliteInstance } from './@/pglite/types'
+import { Pglite } from './@/pglite/impl'
 import { DebuggerReduxDevTools } from './@/program/debugger'
 import { Psql } from './@/psql'
 import { FrontendSqlDb } from './@/sql-db/frontend-impl'
@@ -37,15 +35,9 @@ const main = async () => {
   const backendUrl = Url.derive(BACKEND_URL, windowProtocol)
   const topicUrl = Url.derive(TOPIC_URL, windowProtocol)
 
-  let pglite: Promise<IPgliteInstance>
-  pglite ??= PgliteWorkerInstance({ t: 'indexed-db', databaseName: 'db' })
-  pglite ??= PgliteWorkerInstance({ t: 'in-memory' })
-  pglite ??= PgliteInstance({ t: 'indexed-db', databaseName: 'db' })
-  pglite ??= PgliteInstance({ t: 'in-memory' })
-
   const sqlDb = FrontendSqlDb.init({
     t: 'pglite',
-    pglite,
+    pglite: Pglite.init({ t: 'main-thread', config: { t: 'indexed-db', databaseName: 'db' } }),
     logger,
   })
 
@@ -64,11 +56,16 @@ const main = async () => {
   })
 
   VDomImplWeb.events.sub(async (event) => {
-    VDomImplWeb.setUrl(event.vdomImpl)
-    const vdomEngine = await ImplWeb.init({ t: event.vdomImpl })
-    VDomEngine.set(vdomEngine)
-    root.innerHTML = ''
-    program.render()
+    switch (event.t) {
+      case 'changed-vdom-impl': {
+        VDomImplWeb.setUrl(event.vdomImpl)
+        const vdomEngine = await ImplWeb.init({ t: event.vdomImpl })
+        VDomEngine.set(vdomEngine)
+        root.innerHTML = ''
+        program.render()
+        break
+      }
+    }
   })
 }
 

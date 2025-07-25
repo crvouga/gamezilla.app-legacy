@@ -1,10 +1,14 @@
 import { live } from '@electric-sql/pglite/live'
 import { PGliteWorker } from '@electric-sql/pglite/worker'
-import { PgliteConfig, IPgliteInstance } from '../types'
-// @ts-ignore
-import PGWorker from './worker.js?worker'
+import PGWorker from './pglite-worker.js?worker'
+import { IPglite, PgliteConfig } from './types'
 
-export const PgliteWorkerInstance = async (config: PgliteConfig): Promise<IPgliteInstance> => {
+export type ImplWorkerThread = {
+  t: 'worker-thread'
+  config: PgliteConfig
+}
+
+const init = async (config: ImplWorkerThread): Promise<IPglite> => {
   const pglite = new PGliteWorker(
     new PGWorker({
       // @ts-ignore
@@ -12,7 +16,7 @@ export const PgliteWorkerInstance = async (config: PgliteConfig): Promise<IPglit
       name: 'pglite-worker',
     }),
     {
-      meta: config,
+      meta: config.config,
       extensions: {
         live,
       },
@@ -21,4 +25,8 @@ export const PgliteWorkerInstance = async (config: PgliteConfig): Promise<IPglit
 
   // @ts-ignore
   return pglite
+}
+
+export const ImplWorkerThread = {
+  init,
 }

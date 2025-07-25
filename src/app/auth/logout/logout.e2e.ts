@@ -4,7 +4,6 @@ import { FixtureAppE2E, IFixtureApp } from '~/app/@/test/app-fixture'
 import { doDismissAlert } from '~/app/@/test/flows/do-dismiss-alert'
 import { doLoginWithSms } from '~/app/@/test/flows/do-login-with-sms'
 import { doOpenSettingsScreen } from '~/app/settings/@/test/do-open-settings-screen'
-import { TEST_ID_LOGOUT_LIST_ITEM_BUTTON } from '~/app/settings/frontend'
 import { TEST_ID_LOGIN_SCREEN } from '../frontend'
 import { TEST_ID_LOGOUT_CONFIRMATION } from './frontend'
 
@@ -28,7 +27,7 @@ describe('logout', () => {
 const doOpenLogoutConfirmation = async (f: IFixtureApp) => {
   const before = await f.frontend.findByTestId(TEST_ID_LOGOUT_CONFIRMATION)
   await eventually(async () => expect(await before?.isVisible()).toBeFalsy())
-  const logoutListItem = await f.frontend.findByTestId(TEST_ID_LOGOUT_LIST_ITEM_BUTTON)
+  const logoutListItem = await f.frontend.findByRole('menuitem', 'Logout')
   expect(logoutListItem).toBeTruthy()
   await logoutListItem!.do({ t: 'click' })
   const after = await f.frontend.findByTestId(TEST_ID_LOGOUT_CONFIRMATION)

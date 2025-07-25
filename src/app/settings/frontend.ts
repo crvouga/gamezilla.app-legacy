@@ -1,5 +1,4 @@
 import { Eff } from '~/@/eff'
-import { Box } from '~/@/vdom/primitives/box'
 import { TranslatedText } from '~/@/l18n'
 import { Sub } from '~/@/sub'
 import { Clickable } from '~/@/ui/clickable'
@@ -9,6 +8,8 @@ import { IconCode, IconGear, IconLanguage, IconPowerOff } from '~/@/ui/icon'
 import { ListItem } from '~/@/ui/list-item'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Text } from '~/@/vdom/primitives/text'
 import { VDomImplWeb } from '~/@/vdom/vdom-impl-web'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
@@ -23,7 +24,6 @@ import { ScreenLangFrontend } from './screen-lang/frontend'
 import { ScreenRendererFrontend } from './screen-renderer/frontend'
 import { SoundFrontend } from './sound'
 import type { FrontendModule, MsgFrontend } from './types'
-import { Text } from '~/@/vdom/primitives/text'
 
 const init: FrontendModule['init'] = (input) => {
   const lang = ScreenLangFrontend.init(input)
@@ -156,12 +156,9 @@ const View: FrontendModule['View'] = (input) => {
   }
 }
 
-export const TEST_ID_SETTINGS_SCREEN = 'settings/settings-screen'
-export const TEST_ID_SETTINGS_SCREEN_OPEN_BUTTON = 'settings/settings-screen-open-button'
-export const TEST_ID_RENDERER_SCREEN_OPEN_BUTTON = 'settings/renderer-screen-open-button'
-export const TEST_ID_LOGOUT_LIST_ITEM_BUTTON = 'settings/logout-list-item-button'
-export const TEST_ID_TOP_BAR_OPEN_BUTTON = 'settings/top-bar-open-button'
-export const TEST_ID_TOP_BAR_DROP_DOWN_SURFACE = 'settings/top-bar-drop-down-surface'
+export const TEST_ID_SETTINGS_SCREEN = 'settings-screen'
+export const TEST_ID_TOP_BAR_SURFACE_OPEN_BUTTON = 'top-bar/surface-open-button'
+export const TEST_ID_TOP_BAR_SURFACE = 'top-bar/surface'
 
 const ViewMain: FrontendModule['View'] = (props) => {
   return h(ScreenLayout, {
@@ -188,7 +185,6 @@ const ViewMain: FrontendModule['View'] = (props) => {
           onPress: () => props.dispatch({ t: 'settings.clicked-open-renderer' }),
           icon: (inputIcon) => IconCode(inputIcon),
           link: true,
-          dataTestId: TEST_ID_RENDERER_SCREEN_OPEN_BUTTON,
         }),
         h(ViewLogoutListItem, props),
         h(Gutter, { variant: 'screen' }),
@@ -206,7 +202,6 @@ const ViewLogoutListItem: FrontendModule['View'] = (input) => {
     case 'logged-in': {
       return h(ListItem, {
         onPress: () => input.dispatch({ t: 'settings.clicked-logout-list-item' }),
-        dataTestId: TEST_ID_LOGOUT_LIST_ITEM_BUTTON,
         icon: (input) => h(IconPowerOff, input),
         primary: input.ctx.t('auth.logout'),
         end: () =>
@@ -238,7 +233,7 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
             h(
               Clickable,
               {
-                'data-testid': TEST_ID_TOP_BAR_OPEN_BUTTON,
+                'data-testid': TEST_ID_TOP_BAR_SURFACE_OPEN_BUTTON,
                 class: cn(
                   props.ctx.screenSize === 'mobile'
                     ? 'flex flex-row w-full items-center justify-end gap-3 px-3 py-1'
@@ -261,7 +256,7 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
       },
       body: {
         render: () => {
-          return h(Box, { 'data-testid': TEST_ID_TOP_BAR_DROP_DOWN_SURFACE }, [
+          return h(Box, { 'data-testid': TEST_ID_TOP_BAR_SURFACE }, [
             h(BackendConnectionStatus.ViewListItem, {
               ctx: props.ctx,
               model: props.ctx.backendConnectionStatus,
@@ -280,7 +275,6 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
               icon: (inputIcon) => h(IconGear, inputIcon),
               primary: props.ctx.t('l18n.settings'),
               link: true,
-              dataTestId: TEST_ID_SETTINGS_SCREEN_OPEN_BUTTON,
               onPress: () => props.dispatch({ t: 'settings.clicked-open-settings' }),
             }),
           ])

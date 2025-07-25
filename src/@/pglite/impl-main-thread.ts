@@ -1,6 +1,11 @@
-import { IPgliteInstance, PgliteConfig } from './types'
+import { IPglite, PgliteConfig } from './types'
 
-export const PgliteInstance = async (config: PgliteConfig): Promise<IPgliteInstance> => {
+export type ImplMainThread = {
+  t: 'main-thread'
+  config: PgliteConfig
+}
+
+const init = async (config: ImplMainThread): Promise<IPglite> => {
   const { PGlite, MemoryFS, IdbFs } = await import('@electric-sql/pglite')
   const { live } = await import('@electric-sql/pglite/live')
 
@@ -18,8 +23,12 @@ export const PgliteInstance = async (config: PgliteConfig): Promise<IPgliteInsta
       live,
     },
     relaxedDurability: true,
-    fs: configToFs(config),
+    fs: configToFs(config.config),
   })
 
   return pglite
+}
+
+export const ImplMainThread = {
+  init,
 }

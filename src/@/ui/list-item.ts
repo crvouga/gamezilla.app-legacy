@@ -15,7 +15,6 @@ type Input = {
   secondary?: TranslatedText
   onPress?: () => void
   color?: Color
-  dataTestId?: string
   link?: boolean
   selected?: boolean
 }
@@ -33,7 +32,6 @@ export const ListItem = (input: Input) => {
             input.onPress?.()
           },
           'aria-label': input.primary,
-          'data-testid': input.dataTestId,
           class: cn(input.class, BASE_CLASS, toColorClass(input)),
           'aria-selected': input.selected,
         },
@@ -57,7 +55,6 @@ export const ListItem = (input: Input) => {
           },
           role: 'menuitem',
           'aria-label': input.primary,
-          'data-testid': input.dataTestId,
           class: cn(input.class, BASE_CLASS, toColorClass(input)),
           'aria-selected': input.selected,
         },

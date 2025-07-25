@@ -5,7 +5,7 @@ import { Sub } from '../sub'
 
 const ALL = ['inferno', 'preact', 'react', 'snabbdom'] as const
 
-const HIDDEN: VDomImplWeb[] = []
+const HIDDEN: VDomImplWeb[] = ['preact']
 
 export type VDomImplWeb = (typeof ALL)[number]
 
@@ -58,7 +58,6 @@ const toName = (impl: VDomImplWeb): TranslatedText => {
 const VISIBLE = ALL.filter((vDomImpl) => !HIDDEN.includes(vDomImpl))
 
 const events = Sub.create<{ t: 'changed-vdom-impl'; vdomImpl: VDomImplWeb }>()
-
 
 export const VDomImplWeb = {
   events,

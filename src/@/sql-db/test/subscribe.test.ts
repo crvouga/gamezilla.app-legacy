@@ -1,6 +1,6 @@
 import 'fake-indexeddb/auto'
 import { FileSystem } from '~/@/file-system'
-import { PgliteInstance } from '~/@/pglite/pglite-instance'
+import { Pglite } from '~/@/pglite/impl'
 import { sleep } from '~/@/promise/sleep'
 import { describe, expect, test } from '~/@/test-runner'
 import { TimeSpan } from '~/@/time/time-span'
@@ -25,7 +25,7 @@ const Fixtures = async () => {
     fs: FileSystem.init({ t: 'node' }),
   })
 
-  const pglite = PgliteInstance({ t: 'in-memory' })
+  const pglite = Pglite.init({ t: 'main-thread', config: { t: 'in-memory' } })
 
   configs.push({
     t: 'pglite',

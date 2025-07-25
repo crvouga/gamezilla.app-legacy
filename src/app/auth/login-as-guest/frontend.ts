@@ -111,7 +111,6 @@ export const TEST_ID_CONTINUE_AS_GUEST_BUTTON = 'auth/continue-as-guest-button'
 
 const ViewButton: FrontendModule['View'] = (input) => {
   return h(Button, {
-    dataTestId: TEST_ID_CONTINUE_AS_GUEST_BUTTON,
     onPress: () => input.dispatch({ t: 'clicked-continue-as-guest-button' }),
     renderIconStart: (iconInput) => h(IconUserCircle, iconInput),
     text: input.ctx.t('auth.continue-as-guest'),

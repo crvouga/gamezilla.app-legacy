@@ -52,7 +52,6 @@ const update: FrontendModule['update'] = (input) => {
 }
 
 export const TEST_ID_RENDERER_SCREEN = 'settings/renderer-screen'
-export const TEST_ID_RENDERER_MENU_ITEM = (vDomImpl: VDomImplWeb) => `settings/renderer-menu-item-${vDomImpl}`
 
 const View: FrontendModule['View'] = (input) => {
   return h(ScreenLayout, {
@@ -77,9 +76,8 @@ const View: FrontendModule['View'] = (input) => {
             key: vDomImpl,
             primary: VDomImplWeb.toName(vDomImpl),
             secondary: isDefault && false ? input.ctx.t('l18n.default') : undefined,
-            dataTestId: TEST_ID_RENDERER_MENU_ITEM(vDomImpl),
             onPress: () => input.dispatch({ t: 'renderer.clicked-renderer', vDomImpl }),
-            end: () => RadioInputIcon({ class: 'size-7', status: isSelected ? 'selected' : 'unselected' }),
+            end: () => h(RadioInputIcon, { class: 'size-7', status: isSelected ? 'selected' : 'unselected' }),
             selected: isSelected,
           })
         }),

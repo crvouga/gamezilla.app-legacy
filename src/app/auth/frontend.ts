@@ -3,12 +3,12 @@ import { TranslatedText } from '~/@/l18n'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Avatar } from '~/@/ui/avatar'
-import { Box } from '~/@/vdom/primitives/box'
 import { Button } from '~/@/ui/button'
 import { IconMobilePhone, IconUserCircle } from '~/@/ui/icon'
 import { ListItem } from '~/@/ui/list-item'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { UserProfile } from '../@/data/user-profile'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
@@ -224,8 +224,6 @@ const View: FrontendModule['View'] = (input) => {
   }
 }
 
-export const TEST_ID_CONTINUE_WITH_PHONE_BUTTON = 'auth/continue-with-phone-button'
-
 export const TEST_ID_LOGIN_SCREEN = 'auth/login-screen'
 
 const ViewLoginScreen: FrontendModule['View'] = (input) => {
@@ -238,19 +236,18 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
     },
     [
       h(Box, { class: 'flex w-full flex-1 flex-col gap-6' }, [
-        AuthScreenHeaderCta({ ctx: input.ctx }),
+        h(AuthScreenHeaderCta, { ctx: input.ctx }),
 
-        Button({
+        h(Button, {
           onPress: () => input.dispatch({ t: 'clicked-login-with-phone' }),
           size: 'lg',
-          dataTestId: TEST_ID_CONTINUE_WITH_PHONE_BUTTON,
           class: 'w-full',
           renderIconStart: (iconInput) => h(IconMobilePhone, iconInput),
           text: input.ctx.t('auth.continue-with-phone'),
         }),
 
         h(Box, { class: 'flex flex-row w-full items-center justify-center py-1' }, [
-          Typography({
+          h(Typography, {
             variant: 'body',
             class: 'text-base font-bold uppercase',
             color: 'text-secondary',
@@ -258,7 +255,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
           }),
         ]),
 
-        ContinueAsGuestFrontend.ViewButton({
+        h(ContinueAsGuestFrontend.ViewButton, {
           ctx: input.ctx,
           dispatch: (c) => input.dispatch({ t: 'got-login-as-guest-msg', c }),
           model: input.model.continueAsGuest,
