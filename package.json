@@ -7,7 +7,6 @@
   "scripts": {
     "app": "pnpm exec concurrently \"pnpm run frontend\" \"pnpm run topic\" \"pnpm run backend\"",
     "backend": "pnpm exec tsx watch ./src/backend.ts",
-    "ci": "pnpm cir-deps && pnpm tc && pnpm unit && pnpm local:up && pnpm int && pnpm e2e:up && pnpm e2e",
     "cg": "pnpm cg:l18n && pnpm cg:screens && pnpm cg:events && pnpm cg:msg-shared",
     "cg:events": "pnpm exec tsx ./src/@/events/events-gen.ts",
     "cg:guard": "pnpm exec tsx ./src/@/guards/guards-gen.ts",
@@ -17,6 +16,7 @@
     "cg:watch": "pnpm exec tsx watch cg",
     "check": "pnpm cir-deps && pnpm exec tsc",
     "check-imports": "pnpm exec tsx scripts/check-imports.ts",
+    "ci": "pnpm cir-deps && pnpm tc && pnpm unit && pnpm local:up && pnpm db:up && pnpm int && pnpm e2e:up && pnpm e2e",
     "cir-deps": "pnpm cir-deps:backend && pnpm cir-deps:topic && pnpm cir-deps:frontend",
     "cir-deps:backend": "pnpm exec dpdm --no-warning --no-tree --exit-code circular:1 ./src/backend.ts",
     "cir-deps:frontend": "pnpm exec dpdm --no-warning --no-tree --exit-code circular:1 ./src/frontend.ts",
