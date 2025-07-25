@@ -17,7 +17,7 @@ export type ViewColumnsInput = {
   gameOverOverlay?: () => VDom | VDom[] | null
 }
 
-export const columnsInputSub = Sub.create<ViewColumnsInput>()
+export const columnsInputSub = Sub.init<ViewColumnsInput>()
 
 export type Model = {
   discs: Transition.Model<Disc>

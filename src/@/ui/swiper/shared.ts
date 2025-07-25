@@ -13,4 +13,4 @@ export type SwiperInput = PrivateSwiperInput & {
   children?: VDom
 }
 
-export const swiperInput = Sub.create<SwiperInput>()
+export const swiperInput = Sub.init<SwiperInput>()

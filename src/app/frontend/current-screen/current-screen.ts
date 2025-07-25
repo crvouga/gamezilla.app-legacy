@@ -22,14 +22,14 @@ const encodeScreen = (screen: Screen): string => {
   return btoa(JSON.stringify(screen))
 }
 
-const decodeScreen = (screen: unknown): Screen => {
+const decodeScreen = (screen: unknown): Screen | null => {
   try {
     if (typeof screen !== 'string') {
-      return FALLBACK
+      return null
     }
     return JSON.parse(atob(screen))
   } catch {
-    return FALLBACK
+    return null
   }
 }
 
@@ -41,7 +41,7 @@ export const init = (input: {
   model: Model
   eff?: Eff
 } => {
-  const currentScreen = decodeScreen(input.ctx.navigation.get(SCREEN_QUERY_PARAM_NAME))
+  const currentScreen = decodeScreen(input.ctx.navigation.get(SCREEN_QUERY_PARAM_NAME)) ?? FALLBACK
 
   return {
     model: { currentScreen },
@@ -52,7 +52,7 @@ export const init = (input: {
 }
 
 export type Msg =
-  | { t: 'screen-changed'; screen: Screen }
+  | { t: 'screen-changed'; screen: Screen | null }
   | { t: 'clicked-link'; screen: Screen }
   | { t: 'clicked-back' }
 
@@ -146,17 +146,22 @@ const updateFromMsg: typeof update = (input) => {
     }
 
     case 'screen-changed': {
+      const screen = msg.screen ?? FALLBACK
+
       return {
-        model: { currentScreen: msg.screen },
-        msgOut: [ScreenChangedEvt.init(msg.screen)],
+        model: { currentScreen: screen },
+        msgOut: [ScreenChangedEvt.init(screen)],
       }
     }
   }
 }
 
 export const subscriptions = (input: { ctx: AppFrontendCtxBase }): Sub<Msg> => {
-  return Sub.map(input.ctx.navigation.sub(SCREEN_QUERY_PARAM_NAME), (value) => ({
-    t: 'screen-changed',
-    screen: decodeScreen(value),
-  }))
+  return Sub.map(
+    input.ctx.navigation.sub(SCREEN_QUERY_PARAM_NAME),
+    (value): Msg => ({
+      t: 'screen-changed',
+      screen: decodeScreen(value),
+    }),
+  )
 }

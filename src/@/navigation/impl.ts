@@ -1,14 +1,18 @@
-import * as ImplInMemory from './impl-in-memory'
-import * as ImplWebStandard from './impl-web-standard'
+import { ImplInMemory } from './impl-in-memory'
+import { ImplWebStandard } from './impl-web-standard'
 import { INavigation } from './interface'
 
-export type Config = ImplWebStandard.Config | ImplInMemory.Config
+export type Navigation = ImplWebStandard | ImplInMemory
 
-export const Navigation = (config: Config): INavigation => {
+const init = (config: Navigation): INavigation => {
   switch (config.t) {
     case 'web-standard':
-      return ImplWebStandard.Navigation(config)
+      return ImplWebStandard.init(config)
     case 'in-memory':
-      return ImplInMemory.Navigation(config)
+      return ImplInMemory.init(config)
   }
+}
+
+export const Navigation = {
+  init,
 }

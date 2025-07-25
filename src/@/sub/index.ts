@@ -3,7 +3,7 @@ export type Sub<Msg> = {
 }
 
 export type PubSub<Msg> = Sub<Msg> & {
-  pub: (msg: Msg) => Promise<void>
+  pub: (msg: Msg) => unknown
   subscriberCount: () => number
 }
 
@@ -18,7 +18,6 @@ const take = <A>(sub: Sub<A>, abortSignal?: AbortSignal) => {
 
     abortSignal?.addEventListener('abort', () => {
       unsubscribe?.()
-      // reject(new Error('Subscription aborted'))
     })
   })
 }
@@ -81,33 +80,24 @@ const queued = <Msg>(): PubSub<Msg> => {
   }
 }
 
-const create = <Msg>(): PubSub<Msg> => {
-  const subscribers = new Set<(msg: Msg) => Promise<unknown> | unknown>()
-
+const init = <Msg>(): PubSub<Msg> => {
+  const subscribers: ((msg: Msg) => unknown)[] = []
   return {
     subscriberCount() {
-      return subscribers.size
+      return subscribers.length
     },
     sub(subscriber) {
-      subscribers.add(subscriber)
-
-      return () => {
-        subscribers.delete(subscriber)
-      }
+      subscribers.push(subscriber)
+      return () => subscribers.splice(subscribers.indexOf(subscriber), 1)
     },
-    async pub(msg: Msg) {
-      for (const subscriber of subscribers) {
-        subscriber(msg)
-      }
+    pub(msg: Msg) {
+      subscribers.forEach((subscriber) => subscriber(msg))
     },
   }
 }
 
 const map = <A, B>(sub: Sub<A>, f: (a: A) => B): Sub<B> => {
-  return {
-    ...sub,
-    sub: (subscriber) => sub.sub((a) => subscriber(f(a))),
-  }
+  return { sub: (s) => sub.sub((a) => s(f(a))) }
 }
 
 const batch = <Msg extends {}>(arr: Sub<Msg>[]): Sub<Msg> => {
@@ -157,7 +147,7 @@ export const Sub = {
   deduplicate,
   none,
   where,
-  create,
+  init,
   queued,
   takeEvery,
 }

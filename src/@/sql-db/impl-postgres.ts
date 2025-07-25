@@ -38,7 +38,7 @@ const init = (config: ImplPostgres): ISqlDb => {
     },
   })
 
-  const events = Sub.create<{ t: 'queried' }>()
+  const events = Sub.init<{ t: 'queried' }>()
 
   const query: ISqlDb['query'] = async (input) => {
     const sql = Sql.to(input.sql, input.vars)
@@ -105,7 +105,7 @@ const init = (config: ImplPostgres): ISqlDb => {
         return Sub.map(sub as Sub<Row[]>, mapper)
       }
 
-      const subNew = Sub.create<unknown>()
+      const subNew = Sub.init<unknown>()
 
       subsByQuery.set(queryKey, subNew)
       const pub = async () => {

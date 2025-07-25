@@ -109,8 +109,8 @@ DROP TABLE IF EXISTS space
 const toSpaceProjectionUserPrimaryKey = (spaceId: SpaceId, userId: UserId) => `${spaceId}-${userId}`
 
 export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
-  const input: PubSub<SpaceDbInputMsg> = config.input ?? Sub.create()
-  const output: PubSub<SpaceDbOutputMsg> = config.output ?? Sub.create()
+  const input: PubSub<SpaceDbInputMsg> = config.input ?? Sub.init()
+  const output: PubSub<SpaceDbOutputMsg> = config.output ?? Sub.init()
 
   await config.migrationPolicy.execute({
     logger: config.logger,

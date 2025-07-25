@@ -10,8 +10,8 @@ import { Config, SpaceDb } from '../impl'
 import { SpaceDbInputMsg, SpaceDbOutputMsg } from '../interface'
 
 const Fixture = async (config: Config) => {
-  const input = Sub.create<SpaceDbInputMsg>()
-  const output = Sub.create<SpaceDbOutputMsg>()
+  const input = Sub.init<SpaceDbInputMsg>()
+  const output = Sub.init<SpaceDbOutputMsg>()
   const spacesDb = await SpaceDb({ ...config, input, output })
   const spaceId = SpaceId.generate()
   const hostId = UserId.generate()

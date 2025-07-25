@@ -15,8 +15,8 @@ import { TestClient } from '~/@/test-client'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { ITopicClient } from '~/@/topic/topic-client/types'
-import { h, render, VDomEngine } from '~/@/vdom/h'
-import { ImplWeb } from '~/@/vdom/vdom-engine/impl-web'
+import { h, render } from '~/@/vdom/h'
+import { SwapVDomEngine } from '~/@/vdom/swap-vdom-engine'
 import { Viewport } from '~/@/viewport'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { SessionId } from '~/@/wire/session-id'
@@ -52,7 +52,7 @@ export const TestFrontend = async (config: {
 
   const httpClient = HttpClient.init({ t: 'fetch' })
 
-  const navigation = Navigation({ t: 'web-standard', logger })
+  const navigation = Navigation.init({ t: 'web-standard', logger })
 
   const audioPlayer = AudioPlayer.init({ t: 'fake', logger })
 
@@ -129,18 +129,18 @@ export const TestFrontend = async (config: {
   })
 
   await navigation.clear()
-  document.body.innerHTML = '<div id="root"></div>'
-  const root = document.getElementById('root')!
-  const vdomEngine = await ImplWeb.init({t: 'inferno'})
-  VDomEngine.set(vdomEngine)
+
+  const { swapped, getRoot } = await SwapVDomEngine.init()
 
   const program = await Program.run({
     init: () => AppFrontend.init({ ctx }),
     update: (input) => AppFrontend.update({ ...input, ctx }),
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
-    render: (input) => render(h(AppFrontend.View, { ...input, ctx }), root),
+    render: (input) => render(h(AppFrontend.View, { ...input, ctx }), getRoot()),
     crash: (input) => logger.error(input),
   })
+
+  swapped.sub(() => program.render())
 
   const cleanUp = async () => {
     program.cleanUp()

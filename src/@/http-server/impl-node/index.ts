@@ -24,7 +24,7 @@ export const HttpServer = (config: Config): IHttpServer => {
   const logger = config.logger.child(['node'])
   const responds: Respond[] = []
   const middlewares: Middleware[] = []
-  const events = Sub.create<HttpServerEvent>()
+  const events = Sub.init<HttpServerEvent>()
   const webSocketServers = new Map<string, NodeWebSocketServer>()
   const pendingWebSocketHandlers = new Map<string, WebSocketHandler<any>>()
   let server: Server

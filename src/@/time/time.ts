@@ -77,7 +77,7 @@ const interval = <Msg>(intervalId: string, timeSpan: TimeSpan, f: (now: UnixMs) 
     return Sub.map(sub, () => f(UnixMs.now()))
   }
 
-  const subNew = Sub.create<UnixMs>()
+  const subNew = Sub.init<UnixMs>()
 
   intervals.set(key, subNew)
 

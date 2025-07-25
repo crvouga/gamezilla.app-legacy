@@ -52,7 +52,7 @@ const init = (config: ImplBetterSqlite3): ISqlDb => {
   db.exec('PRAGMA foreign_keys = true;')
   db.exec('PRAGMA temp_store = memory;')
 
-  const events = Sub.create<{ t: 'queried' }>()
+  const events = Sub.init<{ t: 'queried' }>()
 
   const query: ISqlDb['query'] = async (input) => {
     const sql = Sql.to(input.sql, input.vars)
@@ -141,7 +141,7 @@ const init = (config: ImplBetterSqlite3): ISqlDb => {
         return Sub.map(sub.sub as Sub<Row[]>, mapper)
       }
 
-      const subNew = Sub.create<unknown>()
+      const subNew = Sub.init<unknown>()
       const pub = async () => {
         const queried = await query(input)
         if (isErr(queried)) return

@@ -38,7 +38,7 @@ const update: FrontendModule['update'] = (input) => {
         },
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
         async eff() {
-          VDomImplWeb.events.pub({ t: 'changed-vdom-impl', vdomImpl: vDomImpl })
+          VDomImplWeb.swapVDomEngine.pub(vDomImpl)
         },
       }
     }

@@ -31,7 +31,7 @@ const getScreenSize = (): ViewportSize => {
   }
 }
 
-const screenSizeSub = Sub.create<ViewportSize>()
+const screenSizeSub = Sub.init<ViewportSize>()
 
 if (typeof window !== 'undefined') {
   window.addEventListener(
@@ -45,7 +45,7 @@ if (typeof window !== 'undefined') {
   )
 }
 
-const documentVisibilityState = Sub.create<ViewportVisibility>()
+const documentVisibilityState = Sub.init<ViewportVisibility>()
 
 const onDocumentVisibilityState = <T>(fn: (state: ViewportVisibility) => T) => {
   return Sub.map(documentVisibilityState, fn)

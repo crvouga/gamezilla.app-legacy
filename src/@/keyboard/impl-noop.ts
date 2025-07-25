@@ -5,8 +5,8 @@ export type Config = {
   t: 'noop'
 }
 
-const keyUps = Sub.create<KeyboardKey>()
-const keyDowns = Sub.create<KeyboardKey>()
+const keyUps = Sub.init<KeyboardKey>()
+const keyDowns = Sub.init<KeyboardKey>()
 
 export const KeyBoard = (_config: Config): IKeyBoard => {
   return {

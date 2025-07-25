@@ -1,9 +1,11 @@
 import { History } from '~/@/history'
-import { Box } from '~/@/vdom/primitives/box'
 import { IconArrowRotateLeft, IconArrowRotateRight, IconExpand, IconXMark } from '~/@/ui/icon'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Circle } from '~/@/vdom/primitives/svg/circle'
+import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { VDom } from '~/@/vdom/vdom'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
@@ -14,8 +16,6 @@ import { GroupId } from '../numberlink/group-id'
 import { BoardLayout } from '../ui/board-layout'
 import { Color } from '../ui/color'
 import { NumberlinkVariantBoard, NumberlinkVariantDimensions } from '../variant'
-import { Svg } from '~/@/vdom/primitives/svg/svg'
-import { Circle } from '~/@/vdom/primitives/svg/circle'
 
 const View = (input: {
   ctx: AppFrontendCtx
@@ -122,7 +122,7 @@ const ViewStatus: typeof View = (input) => {
       variant: 'body',
       text: input.ctx.t('game.numberlink.placing', { position }),
     }),
-    ViewTerminal({
+    h(ViewTerminal, {
       groupId: ModeEdit.toCurrentPlacingGroupId(input.model),
       class: 'size-6',
     }),

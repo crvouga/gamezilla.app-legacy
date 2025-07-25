@@ -43,7 +43,7 @@ const init = <TContract extends TopicContractBase>(config: ImplLocal<TContract>)
 
           if (subscription) return subscription.pubSub
 
-          const pubSub = Sub.create<any>()
+          const pubSub = Sub.init<any>()
 
           const pubSubMapped: PubSub<any> = {
             ...pubSub,
@@ -63,7 +63,7 @@ const init = <TContract extends TopicContractBase>(config: ImplLocal<TContract>)
 
           if (subscription) return subscription.pubSub
 
-          const pubSub = Sub.create<any>()
+          const pubSub = Sub.init<any>()
 
           const pubSubMapped: PubSub<any> = {
             ...pubSub,

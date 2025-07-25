@@ -51,7 +51,7 @@ const init = (_config: ImplHashMap): IPackDb => {
     sub(input, mapper) {
       const queryKey = PackQuery.toKey(input)
       queries.set(queryKey, input)
-      const sub = subs.get(queryKey) ?? Sub.create()
+      const sub = subs.get(queryKey) ?? Sub.init()
       subs.set(queryKey, sub)
       return Sub.map(sub, mapper)
     },

@@ -52,7 +52,7 @@ const init = <TContract extends TopicContractBase>(config: ImplWebSockets<TContr
 
           if (subscription) return subscription.pubSub
 
-          const pubSub = Sub.create<any>()
+          const pubSub = Sub.init<any>()
 
           const pubSubMapped: PubSub<any> = {
             ...pubSub,
@@ -72,7 +72,7 @@ const init = <TContract extends TopicContractBase>(config: ImplWebSockets<TContr
 
           if (subscription) return subscription.pubSub
 
-          const pubSub = Sub.create<any>()
+          const pubSub = Sub.init<any>()
 
           const pubSubMapped: PubSub<any> = {
             ...pubSub,
@@ -99,7 +99,7 @@ const init = <TContract extends TopicContractBase>(config: ImplWebSockets<TContr
 
 const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSockets<TContract>) => {
   const logger = config.logger.child(['topic', 'client'])
-  const msgsToServer = Sub.create<ToServerMsg>()
+  const msgsToServer = Sub.init<ToServerMsg>()
   const subscriptionsByTopic = new Map<TopicString, TopicSubscription>()
   const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription>()
 

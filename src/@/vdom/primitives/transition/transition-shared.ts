@@ -14,4 +14,4 @@ export type TransitionEvent = TransitionInput & {
   type: 'input'
 }
 
-export const transitionSub = Sub.create<TransitionEvent>()
+export const transitionSub = Sub.init<TransitionEvent>()

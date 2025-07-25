@@ -16,7 +16,7 @@ export type Config = {
 
 // Noop WebSocket server implementation
 class NoopWebSocketServer implements IWebSocketServer {
-  public events = Sub.create<WebSocketEvent>()
+  public events = Sub.init<WebSocketEvent>()
 
   publish(_topic: string, _message: string | Buffer): void {
     // No-op
@@ -33,7 +33,7 @@ class NoopWebSocketServer implements IWebSocketServer {
 
 export const HttpServer = (_config: Config): IHttpServer => {
   return {
-    events: Sub.create<HttpServerEvent>(),
+    events: Sub.init<HttpServerEvent>(),
     registerMiddleware: () => {},
     registerRespond: () => {},
     start: () => Promise.resolve(),

@@ -61,7 +61,7 @@ export class NodeWebSocketConnection<TData = any> implements IWebSocketConnectio
 export class NodeWebSocketServer implements IWebSocketServer {
   private connections = new Map<string, NodeWebSocketConnection>()
   private topicSubscriptions = new Map<string, Set<string>>() // topic -> connectionIds
-  public events = Sub.create<WebSocketEvent>()
+  public events = Sub.init<WebSocketEvent>()
 
   constructor() {}
 

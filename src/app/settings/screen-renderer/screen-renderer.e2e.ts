@@ -21,7 +21,7 @@ describe('screen renderer', () => {
   })
 
   test('render renderer options', async (e) => {
-    const f = await Fixture(e)
+    await using f = await Fixture(e)
     await doOpenSettingsScreen(f)
     await doOpenRendererScreen(f)
     for (const vDomImpl of VDomImplWeb.VISIBLE) {
@@ -31,7 +31,7 @@ describe('screen renderer', () => {
   })
 
   test('change renderer', async (e) => {
-    const f = await Fixture(e)
+    await using f = await Fixture(e)
     await doOpenSettingsScreen(f)
     await doOpenRendererScreen(f)
 
@@ -42,9 +42,9 @@ describe('screen renderer', () => {
       const option = await f.frontend.findByRole('menuitem', VDomImplWeb.toName(vDomImpl))
       expect(option).toBeTruthy()
       await option!.do({ t: 'click' })
+      const optionText = await option!.text()
       const [selected] = await f.frontend.find(`[aria-selected="true"]`)
       expect(selected).toBeTruthy()
-      const optionText = await option!.text()
       const selectedText = await selected!.text()
       expect(optionText).toEqual(selectedText)
     }

@@ -127,7 +127,7 @@ const init = (_config: ImplHashMap): IPuzzleDb => {
     },
 
     sub(_input) {
-      return Sub.create()
+      return Sub.init()
     },
   }
 }

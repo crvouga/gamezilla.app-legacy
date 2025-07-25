@@ -15,4 +15,4 @@ export type ColumnsInput = {
   gameOverOverlay?: () => VDom | VDom[] | null
 }
 
-export const columnsInputSub = Sub.create<ColumnsInput>()
+export const columnsInputSub = Sub.init<ColumnsInput>()

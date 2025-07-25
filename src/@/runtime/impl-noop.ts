@@ -8,7 +8,7 @@ export type Config = {
 }
 
 export const Runtime = (_config: Config): IRuntime => {
-  const events = Sub.create<RuntimeEvent>()
+  const events = Sub.init<RuntimeEvent>()
 
   return {
     events,

@@ -23,7 +23,7 @@ jobs:
         with:
           version: latest
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run env:local
+      - run: pnpm run env:ci
       - run: pnpm run ci
       - name: Upload test results
         if: failure()

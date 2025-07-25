@@ -18,7 +18,7 @@ export type Config<TEntity extends Record<string, unknown>, TRelated extends Rec
   logger: ILogger
 }
 
-const globalPubSub = Sub.create<{ t: 'publish' }>()
+const globalPubSub = Sub.init<{ t: 'publish' }>()
 
 export const Db = <TEntity extends Record<string, unknown>, TRelated extends Record<string, unknown>>(
   config: Config<TEntity, TRelated>,
@@ -92,7 +92,7 @@ export const Db = <TEntity extends Record<string, unknown>, TRelated extends Rec
       liveQueriesByQueryKey.set(queryKey, queryInput)
       const existing = pubSubsByQueryKey.get(queryKey)
       if (existing) return existing
-      const pubSub = Sub.create<QueryOutput<TEntity, TRelated>>()
+      const pubSub = Sub.init<QueryOutput<TEntity, TRelated>>()
       pubSubsByQueryKey.set(queryKey, pubSub)
       enqueuePublish()
       return {

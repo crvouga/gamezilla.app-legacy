@@ -82,7 +82,7 @@ const init = (config: ImplPglite): ISqlDb => {
         return Sub.map(sub as Sub<Row[]>, mapper)
       }
 
-      const subNew = Sub.create<unknown>()
+      const subNew = Sub.init<unknown>()
 
       subsByQuery.set(queryKey, subNew)
 

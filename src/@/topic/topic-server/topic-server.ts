@@ -66,7 +66,7 @@ const init = <TContract extends TopicContractBase>(config: TopicServer<TContract
     if (got) return got
     const newSub: TopicSubscription & ServerSubscription = {
       clients: new Set(),
-      pubSub: Sub.create(),
+      pubSub: Sub.init(),
       topicName,
       topicParams,
     }
@@ -79,7 +79,7 @@ const init = <TContract extends TopicContractBase>(config: TopicServer<TContract
     if (got) return got
     const newSub: TopicNameSubscription & ServerSubscription = {
       clients: new Set(),
-      pubSub: Sub.create(),
+      pubSub: Sub.init(),
       topicName,
     }
     subscriptionsByTopicName.set(topicName, newSub)

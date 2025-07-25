@@ -12,4 +12,4 @@ export type IntersectionObserverEmitterEvent = {
   input: IntersectionObserverEmitterInput
 }
 
-export const sub = Sub.create<IntersectionObserverEmitterEvent>()
+export const sub = Sub.init<IntersectionObserverEmitterEvent>()

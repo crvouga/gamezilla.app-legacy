@@ -8,7 +8,7 @@ type Model = { counter: { count: number } }
 type Msg = { t: 'inc' } | { t: 'dec' } | { t: 'set-model'; c: Model }
 
 const Fixture = async () => {
-  const crashes = Sub.create<ProgramCrashReport<Model, Msg>>()
+  const crashes = Sub.init<ProgramCrashReport<Model, Msg>>()
   const program = await Program.run<Model, Msg>({
     crash: (crashReport) => {
       crashes.pub(crashReport)

@@ -85,7 +85,7 @@ const initCtx = async (config: {
     logger,
   })
 
-  const navigation = Navigation({
+  const navigation = Navigation.init({
     t: 'web-standard',
     logger,
   })

@@ -5,8 +5,8 @@ export type Config = {
   t: 'web-standard'
 }
 
-const keyUps = Sub.create<KeyboardKey>()
-const keyDowns = Sub.create<KeyboardKey>()
+const keyUps = Sub.init<KeyboardKey>()
+const keyDowns = Sub.init<KeyboardKey>()
 
 if (typeof window !== 'undefined') {
   document.addEventListener(

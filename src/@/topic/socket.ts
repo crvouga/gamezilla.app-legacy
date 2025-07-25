@@ -4,10 +4,10 @@ import { Sub } from '~/@/sub'
  * A web socket is a connection to a server.
  */
 const create = (config: { url: string }) => {
-  const msgsOpen = Sub.create<{ t: 'opened' }>()
-  const msgsClose = Sub.create<{ t: 'closed' }>()
-  const msgsError = Sub.create<{ t: 'error'; error: Event }>()
-  const msgsFromServer = Sub.create<MessageEvent<any>>()
+  const msgsOpen = Sub.init<{ t: 'opened' }>()
+  const msgsClose = Sub.init<{ t: 'closed' }>()
+  const msgsError = Sub.init<{ t: 'error'; error: Event }>()
+  const msgsFromServer = Sub.init<MessageEvent<any>>()
 
   const ws = new WebSocket(config.url)
 

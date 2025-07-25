@@ -14,7 +14,7 @@ export type Config = {
 export const Runtime = (config: Config): IRuntime => {
   const logger = config.logger.child(['process'])
 
-  const events = Sub.create<RuntimeEvent>()
+  const events = Sub.init<RuntimeEvent>()
 
   const handleShutdown = async () => {
     logger.info('Shutting down...')

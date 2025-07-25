@@ -3,12 +3,12 @@ import { Err, Ok } from '../result'
 import { PubSub, Sub } from '../sub'
 import { INavigation } from './interface'
 
-export type Config = {
+export type ImplWebStandard = {
   t: 'web-standard'
   logger: ILogger
 }
 
-export const Navigation = (config: Config): INavigation => {
+const init = (config: ImplWebStandard): INavigation => {
   const logger = config.logger.child(['navigation'])
   const subsByName: Record<string, PubSub<string | null>> = {}
 
@@ -25,6 +25,7 @@ export const Navigation = (config: Config): INavigation => {
       const sub = subsByName[name]
       if (!sub) return
       const value = get(name)
+      if (typeof value !== 'string') continue
       sub.pub(value)
     }
   }
@@ -92,8 +93,11 @@ export const Navigation = (config: Config): INavigation => {
     sub(name: string) {
       const existing = subsByName[name]
       if (existing) return existing
-      const sub = Sub.create<string | null>()
+      const sub = Sub.init<string | null>()
       subsByName[name] = sub
+      sub.sub((v) => {
+        logger.debug(`sub ${name} ${v}`)
+      })
       return sub
     },
     async clear() {
@@ -108,4 +112,8 @@ export const Navigation = (config: Config): INavigation => {
       }
     },
   }
+}
+
+export const ImplWebStandard = {
+  init,
 }
