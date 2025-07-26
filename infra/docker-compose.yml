@@ -2,67 +2,63 @@ name: gamezilla_app
 
 services:
   frontend:
+    profiles: ['e2e']
     build:
       context: ../
       dockerfile: infra/frontend.Dockerfile
       args:
-        NODE_ENV: development
-        BACKEND_URL: http://localhost:5556
-        TOPIC_URL: http://localhost:5557
+        NODE_ENV: ${NODE_ENV:?NODE_ENV is required}
+        BACKEND_URL: ${BACKEND_URL:?BACKEND_URL is required}
+        TOPIC_URL: ${TOPIC_URL:?TOPIC_URL is required}
     ports:
-      - '5555:80'
+      - '${FRONTEND_PORT:?FRONTEND_PORT is required}:80'
 
   backend:
+    profiles: ['e2e']
     build:
       context: ../
       dockerfile: infra/backend.Dockerfile
       args:
-        NODE_ENV: development
+        NODE_ENV: ${NODE_ENV:?NODE_ENV is required}
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
-      - BACKEND_PORT=5556
-      - TOPIC_PORT=5557
-      - BACKEND_URL=http://localhost:5556
-    ports:
-      - '5556:5556'
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 
   topic:
+    profiles: ['e2e']
     build:
       context: ../
       dockerfile: infra/topic.Dockerfile
-    ports:
-      - '5557:5557'
-    environment:
-      - TOPIC_PORT=5557
     depends_on:
       nats:
         condition: service_started
 
   nats:
+    profiles: ['local', 'e2e']
     build:
       context: ../
       dockerfile: infra/nats.Dockerfile
     ports:
-      - '4222:4222'
+      - '${NATS_PORT:?NATS_PORT is required}:${NATS_PORT:?NATS_PORT is required}'
 
   postgres:
+    profiles: ['local', 'e2e']
     build:
       context: ../
       dockerfile: infra/postgres.Dockerfile
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB is required}
       POSTGRES_PORT: 5432
     ports:
-      - '5432:5432'
+      - '${POSTGRES_PORT:?POSTGRES_PORT is required}:5432'
     tmpfs:
       - /var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres -p 5432']
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:?POSTGRES_USER is required} -p 5432']
       interval: 10s
       timeout: 5s
       retries: 5
