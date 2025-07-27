@@ -14,24 +14,13 @@ export const renderActionBars = (
   if (screen.actionBar) {
     const barPosition = screen.actionBar.position ?? 'bottom'
     const id = screen.actionBar.id ?? `${screen.id}-${barPosition}-actions`
+
     if (barPosition === position) {
       bars.push(
-        h(
-          Box,
-          {
-            key: id,
-            class: barPosition === 'top' ? 'order-first' : 'order-last',
-          },
-          [
-            screen.renderMiniPlayer?.({ key: `${id}-mini-player` }),
-            h(HorizontalActionBar, {
-              ...screen.actionBar,
-              id: id,
-              ctx: ctx,
-              key: id,
-            }),
-          ],
-        ),
+        h(Box, { key: id }, [
+          screen.renderMiniPlayer?.({ key: `${id}-mini-player` }),
+          h(HorizontalActionBar, { ...screen.actionBar, id, ctx, key: id }),
+        ]),
       )
     }
   }

@@ -96,6 +96,7 @@
     "react-native-css-interop": "^0.1.22",
     "react-native-reanimated": "~3.17.5",
     "react-native-safe-area-context": "5.4.0",
+    "react-native-shadow-generator": "^1.1.2",
     "react-native-svg": "15.11.2",
     "react-native-web": "^0.20.0",
     "snabbdom": "^3.6.2",

@@ -9,7 +9,7 @@ import { Typography } from './typography'
 
 type Input = {
   class?: string
-  icon?: (input: { class: string; fill: string; stroke: string }) => VDom
+  icon?: (input: { class: string; width: number; height: number; fill: string; stroke: string }) => VDom
   end?: () => VDom
   primary: TranslatedText
   secondary?: TranslatedText
@@ -73,12 +73,12 @@ export const ListItem = (input: Input) => {
 
 const ListItemContent = (input: {
   primary: TranslatedText
-  icon?: (input: { class: string; fill: string; stroke: string }) => VDom
+  icon?: (input: { class: string; width: number; height: number; fill: string; stroke: string }) => VDom
   end?: () => VDom
   secondary?: TranslatedText
 }) => {
   return h(Box, { class: 'flex flex-row flex-1 items-center gap-3 truncate' }, [
-    input.icon?.({ class: 'size-8', fill: '#fff', stroke: '#fff' }),
+    input.icon?.({ class: 'size-8', width: 24, height: 24, fill: '#fff', stroke: '#fff' }),
     h(Box, { class: 'flex flex-col gap-1 text-left' }, [
       h(Typography, {
         variant: 'body',

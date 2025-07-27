@@ -22,13 +22,13 @@ export type ButtonInput = {
   type?: 'button'
   class?: string
   onPress?: (event: unknown) => void
-  renderIconStart?: (input: { class?: string; fill?: string }) => VDom
+  renderIconStart?: (input: { class?: string; fill?: string; stroke?: string }) => VDom
   variant?: ButtonVariant
   color?: ButtonColor
   size?: ButtonSize
   loading?: boolean
   width?: 'fit' | 'full' | 'flex-1'
-  style?: Record<string, string | number>
+  style?: Record<string, unknown>
 }
 
 export const Button = (input: ButtonInput) => {
@@ -46,11 +46,11 @@ export const Button = (input: ButtonInput) => {
       'data-fab': input.fab,
       class: cn(
         input.class,
-        'relative flex-row flex-shrink-0 flex-nowrap items-center justify-center overflow-hidden rounded font-semibold',
+        'relative flex flex-row items-center justify-center overflow-hidden rounded font-semibold',
         colorPressableClass,
         sizeClassPadding,
         widthClass,
-        input.fab && 'rounded-[30px] shadow-2xl',
+        input.fab && 'rounded-[30px]',
         input.disabled && 'opacity-60',
         input.loading && 'opacity-70',
       ),
@@ -65,27 +65,35 @@ export const Button = (input: ButtonInput) => {
         Box,
         {
           class: cn(
-            'flex flex-row h-full w-full items-center justify-center',
+            'flex flex-row h-full items-center justify-center gap-2',
             input.loading ? 'text-transparent' : null,
           ),
         },
         [
-          h(Box, { class: 'flex-none' }, [
-            input.renderIconStart?.({ class: cn(colorTextClass, iconSizeClass, 'mr-2'), fill: 'currentColor' }),
-          ]),
-          Text({ text: input.text ?? '', class: cn('overflow-hidden font-semibold', colorTextClass, sizeClassText) }),
+          input.renderIconStart?.({
+            class: cn(colorTextClass, iconSizeClass),
+            fill: 'currentColor',
+            stroke: 'currentColor',
+          }),
+          Text({
+            text: input.text ?? '',
+            class: cn('overflow-hidden font-semibold', colorTextClass, sizeClassText),
+          }),
         ],
       ),
       input.loading &&
-        h(Box, { class: 'absolute inset-0 flex-row items-center justify-center' }, [h(Spinner, { class: 'h-8 w-8' })]),
+        h(Box, { class: 'absolute inset-0 flex flex-row items-center justify-center' }, [
+          h(Spinner, { class: 'h-8 w-8' }),
+        ]),
     ],
   )
 }
 
 const toWidthClass = (input: ButtonInput): string => {
-  switch (input.width ?? 'fit') {
+  if (!input.width) return ''
+  switch (input.width) {
     case 'fit':
-      return 'w-fit'
+      return ''
     case 'full':
       return 'w-full'
     case 'flex-1':
@@ -166,28 +174,28 @@ const toClassColorText = (input: ButtonInput): string => {
   const combo: Combo = `${input.variant ?? 'outlined'}-${input.color ?? 'primary'}`
   switch (combo) {
     case 'contained-primary':
-      return 'text-white'
+      return 'text-white fill-white stroke-white'
     case 'contained-danger':
-      return 'text-white'
+      return 'text-white fill-white stroke-white'
     case 'contained-default':
-      return 'text-blue-500'
+      return 'text-blue-500 fill-blue-500 stroke-blue-500'
     case 'text-danger':
-      return 'font-bold text-red-500'
+      return 'font-bold text-red-500 fill-red-500 stroke-red-500'
     case 'outlined-default':
-      return 'text-neutral-300'
+      return 'text-neutral-300 fill-neutral-300 stroke-neutral-300'
     case 'soft-primary':
-      return 'text-blue-200'
+      return 'text-blue-200 fill-blue-200 stroke-blue-200'
     case 'soft-danger':
-      return 'text-red-200'
+      return 'text-red-200 fill-red-200 stroke-red-200'
     case 'soft-default':
-      return 'text-neutral-300'
+      return 'text-neutral-300 fill-neutral-300 stroke-neutral-300'
     case 'text-primary':
-      return 'text-blue-500'
+      return 'text-blue-500 fill-blue-500 stroke-blue-500'
     case 'outlined-danger':
-      return 'text-red-500'
+      return 'text-red-500 fill-red-500 stroke-red-500'
     case 'outlined-primary':
-      return 'text-blue-500'
+      return 'text-blue-500 fill-blue-500 stroke-blue-500'
     case 'text-default':
-      return 'text-neutral-300'
+      return 'text-neutral-300 fill-neutral-300 stroke-neutral-300'
   }
 }

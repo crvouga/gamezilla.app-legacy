@@ -1,21 +1,19 @@
-import { ClickableTransparent } from '~/@/ui/clickable'
-import { Box } from '~/@/vdom/primitives/box'
 import { cn } from '~/@/ui/cn'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
-import { Frag } from '~/@/vdom/primitives/frag'
 import { IconEllipsisVertical } from '~/@/ui/icon'
 import { ListItem } from '~/@/ui/list-item'
-import { Spinner } from '~/@/ui/spinner'
-import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Frag } from '~/@/vdom/primitives/frag'
 import { VDom } from '~/@/vdom/vdom'
-import { SurfaceLayout } from '../../surface/layout/surface-layout'
+import { SurfaceLayout } from '../../../surface/layout/surface-layout'
 import {
   ScreenAction,
   ScreenActionBarProps,
   ScreenActionsSpaceBetween,
   ScreenActionsUniform,
-} from './screen-action-bar-props'
+} from '../screen-action-bar-props'
+import { ScreenActionButton } from './screen-action-button'
 
 const DEFAULT_LIMIT = Infinity
 
@@ -71,12 +69,12 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
           onClose: input.limit?.onToggle ?? (() => {}),
           open: input.limit?.open ?? false,
           body: {
-            render: () => SurfaceMoreContent({ actions: lastActions }),
+            render: () => h(SurfaceMoreContent, { actions: lastActions }),
           },
           dropDown: {
             reference: {
               render: () =>
-                ScreenActionButton({
+                h(ScreenActionButton, {
                   id: input.ctx.t('app.more'),
                   icon: (input) => h(IconEllipsisVertical, input),
                   label: input.ctx.t('app.more'),
@@ -127,7 +125,7 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
         input.start.map((action) => {
           if (!action) return null
 
-          const button = ScreenActionButton({ ...action, size: input.size, class: 'min-w-20' })
+          const button = h(ScreenActionButton, { ...action, size: input.size, class: 'min-w-20' })
 
           if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
 
@@ -146,7 +144,7 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
         input.end.map((action) => {
           if (!action) return null
 
-          const button = ScreenActionButton({ ...action, size: input.size, class: 'min-w-20' })
+          const button = h(ScreenActionButton, { ...action, size: input.size, class: 'min-w-20' })
 
           if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
 
@@ -160,90 +158,6 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
       ),
     ],
   )
-}
-
-const ScreenActionButton = (input: ScreenAction & { class?: string }) => {
-  const isDisabled = input.disabled || input.loading
-  const size = input.size ?? 'md'
-  if (input.hidden) return null
-  return h(
-    ClickableTransparent,
-    {
-      role: 'button',
-      disabled: isDisabled,
-      name: input.label,
-      'aria-disabled': isDisabled,
-      'aria-label': input.label,
-      'aria-hidden': input.hidden,
-      onPress: input.onPress,
-      class: cn(
-        'relative flex flex-1 flex-col items-center gap-0.5 font-normal h-16',
-        'disabled:cursor-not-allowed disabled:opacity-50',
-        toColorClasses(input),
-        input.hidden ? 'hidden' : '',
-        input.classNames?.button,
-        toSizeClasses(size),
-        input.class,
-      ),
-    },
-    [
-      h(
-        Box,
-        {
-          class: cn(
-            'flex h-full w-full flex-col items-center justify-center gap-0.5 truncate',
-            input.loading ? 'opacity-0' : 'opacity-100',
-          ),
-        },
-        [
-          input.icon({ class: toIconSizeClasses(size), fill: '#fff', stroke: '#fff' }),
-          h(Typography, {
-            variant: 'label',
-            text: input.label,
-            class: cn(input.classNames?.label),
-          }),
-        ],
-      ),
-
-      input.loading &&
-        h(Box, { class: 'absolute inset-0 flex flex-row h-full w-full items-center justify-center' }, [
-          h(Spinner, { class: toIconSizeClasses(size) }),
-        ]),
-    ],
-  )
-}
-
-const toColorClasses = (input: ScreenAction): string => {
-  switch (input.color) {
-    case 'danger':
-      return 'text-red-500'
-    case 'success':
-      return 'text-green-500'
-    case 'selected':
-      return 'text-blue-500'
-    default:
-      return ''
-  }
-}
-
-const toSizeClasses = (size: ScreenAction['size']): string => {
-  switch (size) {
-    case 'sm':
-      return 'text-xs h-10'
-    case 'md':
-    default:
-      return 'text-sm h-12'
-  }
-}
-
-const toIconSizeClasses = (size: ScreenAction['size']): string => {
-  switch (size) {
-    case 'sm':
-      return 'w-5 h-5'
-    case 'md':
-    default:
-      return 'w-8 h-8'
-  }
 }
 
 const toHeightClass = (size: ScreenAction['size']): string => {

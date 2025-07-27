@@ -2,6 +2,7 @@ import { createElement, Fragment } from 'react'
 import { Image, Pressable, Text, TextInput, View } from 'react-native'
 import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { cssInterop } from 'nativewind'
 import Svg, {
   Circle,
   ClipPath,
@@ -45,6 +46,47 @@ import {
 } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { normalizeChildren, normalizePropsInPlace } from './react'
+
+cssInterop(Svg, {
+  className: {
+    target: 'style',
+    nativeStyleToProp: { width: true, height: true },
+  },
+})
+
+// cssInterop(Circle, {
+//   className: {
+//     target: 'style',
+//     nativeStyleToProp: {
+//       width: true,
+//       height: true,
+//       stroke: true,
+//       strokeWidth: true,
+//       fill: true,
+//     },
+//   },
+// })
+
+// cssInterop(Rect, {
+//   className: {
+//     target: 'style',
+//     nativeStyleToProp: { width: true, height: true, stroke: true, strokeWidth: true, fill: true },
+//   },
+// })
+
+// cssInterop(Line, {
+//   className: {
+//     target: 'style',
+//     nativeStyleToProp: { width: true, height: true, stroke: true, strokeWidth: true },
+//   },
+// })
+
+// cssInterop(Path, {
+//   className: {
+//     target: 'style',
+//     nativeStyleToProp: { width: true, height: true, stroke: true, strokeWidth: true, fill: true },
+//   },
+// })
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,

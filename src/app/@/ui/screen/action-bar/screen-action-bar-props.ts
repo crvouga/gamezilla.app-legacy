@@ -10,7 +10,7 @@ export type ScreenAction = {
   id: string
   label: TranslatedText
   disabled?: boolean
-  icon: (input: { class: string; fill: string; stroke: string }) => VDom
+  icon: (input: { class: string; width?: number; height?: number; fill?: string; stroke?: string }) => VDom
   classNames?: {
     button?: string
     label?: string
