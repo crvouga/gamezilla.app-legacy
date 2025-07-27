@@ -1,6 +1,7 @@
 import { AudioPlayer } from '~/@/audio-player'
 import { HttpClient } from '~/@/http-client'
 import { KeyValueDb } from '~/@/key-value-db'
+import { KeyValueDbSync } from '~/@/key-value-db-sync'
 import { KeyBoard } from '~/@/keyboard'
 import { Translator } from '~/@/l18n/generated'
 import { Logger } from '~/@/logger'
@@ -36,7 +37,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     logger: Logger.init({ t: 'noop' }),
     kvDb: keyValueDb,
   })
-  const syncEngine = SyncEngineClient({
+  const syncEngine = SyncEngineClient.init({
     logger: Logger.init({ t: 'noop' }),
     crudTransactionDb: CrudTransactionDb.init({
       t: 'sql-db',
@@ -45,14 +46,20 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
       sqlDb: FrontendSqlDb.init({ t: 'noop' }),
     }),
   })
+  const keyValueDbSync = KeyValueDbSync.init({ t: 'hash-map', logger: Logger.init({ t: 'noop' }) })
   const ctx: AppFrontendCtx = {
     syncEngine,
     keyValueDb,
     migrationPolicy,
-    keyboard: KeyBoard({ t: 'noop' }),
+    keyboard: KeyBoard.init({ t: 'noop' }),
     audioPlayer: AudioPlayer.init({ t: 'fake', logger: Logger.init({ t: 'noop' }) }),
-    navigation: Navigation.init({ t: 'in-memory', logger: Logger.init({ t: 'noop' }) }),
-    viewport: Viewport({ t: 'noop' }),
+    navigation: Navigation.init({
+      t: 'key-value-db-sync',
+      keyValueDbSync,
+      key: 'navigation-history',
+      logger: Logger.init({ t: 'noop' }),
+    }),
+    viewport: Viewport.init({ t: 'noop' }),
     clientSessionId: ClientSessionId.generate(),
     parentScreen: null,
     sqlDb: FrontendSqlDb.init({ t: 'noop' }),

@@ -1,7 +1,11 @@
 import { Program } from '~/@/program/program'
 import { AppFrontend } from '~/app/frontend'
+import { AudioPlayer } from './@/audio-player/impl'
 import { HttpProtocol } from './@/http/protocol'
+import { KeyValueDbSync } from './@/key-value-db-sync'
+import { KeyBoard } from './@/keyboard/impl'
 import { Logger } from './@/logger'
+import { Navigation } from './@/navigation/impl'
 import { Pglite } from './@/pglite/impl'
 import { DebuggerReduxDevTools } from './@/program/debugger'
 import { Psql } from './@/psql'
@@ -9,6 +13,7 @@ import { FrontendSqlDb } from './@/sql-db/frontend-impl'
 import { Url } from './@/url/url'
 import { h, render } from './@/vdom'
 import { SwapVDomEngine } from './@/vdom/swap-vdom-engine'
+import { Viewport } from './@/viewport/impl'
 import './frontend.css'
 
 const main = async () => {
@@ -36,7 +41,23 @@ const main = async () => {
   // @ts-expect-error
   window.q = Psql({ sqlDb }).psql
 
-  const ctx = await AppFrontend.initCtx({ backendUrl, topicUrl, sqlDb, logger })
+  const keyValueDbSync = KeyValueDbSync.init({ t: 'web-standard-storage', storage: localStorage, logger })
+  const audioPlayer = AudioPlayer.init({ t: 'fake', logger })
+  const keyboard = KeyBoard.init({ t: 'web-standard' })
+  const viewport = Viewport.init({ t: 'web-standard' })
+  const navigation = Navigation.init({ t: 'web-standard', logger })
+
+  const ctx = await AppFrontend.initCtx({
+    backendUrl,
+    topicUrl,
+    sqlDb,
+    logger,
+    audioPlayer,
+    keyboard,
+    viewport,
+    navigation,
+    keyValueDbSync,
+  })
 
   const { swapped, getRoot } = await SwapVDomEngine.init()
 

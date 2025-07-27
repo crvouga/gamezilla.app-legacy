@@ -1,12 +1,13 @@
-import { AudioPlayer } from '~/@/audio-player'
+import { IAudioPlayer } from '~/@/audio-player'
 import { Eff } from '~/@/eff'
 import { HttpClient } from '~/@/http-client'
 import { KeyValueDb } from '~/@/key-value-db'
-import { KeyBoard } from '~/@/keyboard'
+import { IKeyValueDbSync } from '~/@/key-value-db-sync'
+import { IKeyBoard } from '~/@/keyboard'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Msg } from '~/@/msg/msg'
-import { Navigation } from '~/@/navigation'
+import { INavigation } from '~/@/navigation'
 import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screens/generated/screens'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
@@ -22,7 +23,7 @@ import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
 import { Url } from '~/@/url/url'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import { Viewport } from '~/@/viewport'
+import { IViewport } from '~/@/viewport'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { ILogger } from '../@/logger'
 import { APP_SOUND } from './@/frontend/app-sound'
@@ -49,10 +50,15 @@ const initCtx = async (config: {
   topicUrl: Url
   sqlDb: ISqlDb
   logger: ILogger
+  keyValueDbSync: IKeyValueDbSync
+  audioPlayer: IAudioPlayer
+  keyboard: IKeyBoard
+  viewport: IViewport
+  navigation: INavigation
 }): Promise<FrontendCtxModule> => {
   const logger = config.logger.child(['app'])
 
-  const clientSessionId = ClientSessionIdStorage().get()
+  const clientSessionId = ClientSessionIdStorage.init({ keyValueDbSync: config.keyValueDbSync }).get()
 
   const httpClient = HttpClient.init({
     t: 'fetch',
@@ -80,27 +86,9 @@ const initCtx = async (config: {
 
   const navigatorLanguage = LanguageCodeISO_639_1.getLangFromNavigator() ?? 'en'
 
-  const audioPlayer = AudioPlayer.init({
-    t: 'web-standard',
-    logger,
-  })
-
-  const navigation = Navigation.init({
-    t: 'web-standard',
-    logger,
-  })
-
-  const viewport = Viewport({
-    t: 'web-standard',
-  })
-
-  const keyboard = KeyBoard({
-    t: 'web-standard',
-  })
-
   const keyValueDb = KeyValueDb.init({
-    t: 'web-standard-storage',
-    storage: localStorage,
+    t: 'key-value-db-sync',
+    keyValueDbSync: config.keyValueDbSync,
     logger,
   })
 
@@ -125,10 +113,10 @@ const initCtx = async (config: {
   const ctx: AppFrontendCtxBase = {
     syncEngine,
     migrationPolicy,
-    audioPlayer,
-    keyboard,
-    viewport,
-    navigation,
+    audioPlayer: config.audioPlayer,
+    keyboard: config.keyboard,
+    viewport: config.viewport,
+    navigation: config.navigation,
     clientSessionId,
     sqlDb: config.sqlDb,
     logger,

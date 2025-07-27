@@ -1,7 +1,7 @@
 import { Sub } from '../sub'
 import { IKeyBoard, isKeyboardKey, KeyboardKey } from './interface'
 
-export type Config = {
+export type ImplWebStandard = {
   t: 'web-standard'
 }
 
@@ -32,9 +32,13 @@ if (typeof window !== 'undefined') {
   )
 }
 
-export const KeyBoard = (_config: Config): IKeyBoard => {
+const init = (_config: ImplWebStandard): IKeyBoard => {
   return {
     keyDowns: <T>(callback: (key: KeyboardKey) => T): Sub<T> => Sub.map(keyDowns, callback),
     keyUps: <T>(callback: (key: KeyboardKey) => T): Sub<T> => Sub.map(keyUps, callback),
   }
+}
+
+export const ImplWebStandard = {
+  init,
 }

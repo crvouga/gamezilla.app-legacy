@@ -18,7 +18,7 @@ const TestClient = () => {
   })
   const migrationPolicy = SqlDbMigrationPolicy.init({ t: 'always-run', logger })
   const crudTransactionDb = CrudTransactionDb.init({ t: 'sql-db', logger, migrationPolicy, sqlDb })
-  const syncEngine = SyncEngineClient({ crudTransactionDb, logger })
+  const syncEngine = SyncEngineClient.init({ crudTransactionDb, logger })
   return {
     todoDb,
     syncEngine,

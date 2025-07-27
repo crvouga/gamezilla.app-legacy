@@ -289,7 +289,6 @@ export const SettingsFrontend = {
   init,
   update,
   subscriptions,
-
   View,
   ViewTopBar,
 }

@@ -1,20 +1,40 @@
+import { IKeyValueDbSync } from '../key-value-db-sync'
 import { ILogger } from '../logger'
-import { Ok } from '../result'
+import { Ok, unwrapOr } from '../result'
+import { s } from '../schema'
 import { PubSub, Sub } from '../sub'
 import { INavigation } from './interface'
 
-export type ImplInMemory = {
-  t: 'in-memory'
+export type ImplKeyValueDbSync = {
+  t: 'key-value-db-sync'
+  keyValueDbSync: IKeyValueDbSync
   logger: ILogger
+  key: string
 }
 
-const init = (config: ImplInMemory): INavigation => {
+const HistoryItem = s.obj({
+  name: s.str(),
+  value: s.str(),
+})
+type HistoryItem = s.Infer<typeof HistoryItem>
+
+const init = (config: ImplKeyValueDbSync): INavigation => {
   const logger = config.logger.child(['navigation'])
-  let history: { name: string; value: string }[] = []
+
+  const getHistory = (): HistoryItem[] => {
+    const result = config.keyValueDbSync.get(config.key, s.arr(HistoryItem))
+    return unwrapOr(result, []) ?? []
+  }
+
+  const setHistory = (history: HistoryItem[]) => {
+    config.keyValueDbSync.set(config.key, history)
+  }
+
   const subsByName: Record<string, PubSub<string | null>> = {}
 
   const get = (name: string) => {
-    return history.find((h) => h.name === name)?.value ?? null
+    const history = getHistory()
+    return history.findLast((h) => h.name === name)?.value ?? null
   }
 
   const onChange = () => {
@@ -29,25 +49,31 @@ const init = (config: ImplInMemory): INavigation => {
   return {
     async push(name: string, value: string) {
       logger.debug(`push ${name}=${value}`)
+      const history = getHistory()
       history.push({ name, value })
+      setHistory(history)
       onChange()
       return Ok(null)
     },
     async replace(name: string, value: string) {
       logger.debug(`replace ${name}=${value}`)
+      const history = getHistory()
       if (history.length > 0) {
         history[history.length - 1] = { name, value }
       } else {
         history.push({ name, value })
       }
+      setHistory(history)
       onChange()
       return Ok(null)
     },
     async back() {
       logger.debug('back')
+      const history = getHistory()
       if (history.length > 0) {
         history.pop()
       }
+      setHistory(history)
       onChange()
       return Ok(null)
     },
@@ -64,13 +90,13 @@ const init = (config: ImplInMemory): INavigation => {
       return sub
     },
     async clear() {
-      history = []
+      setHistory([])
       onChange()
       return Ok(null)
     },
   }
 }
 
-export const ImplInMemory = {
+export const ImplKeyValueDbSync = {
   init,
 }

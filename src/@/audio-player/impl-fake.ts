@@ -5,12 +5,12 @@ import { TimeSpan } from '../time/time-span'
 import { UnixMs } from '../time/unix-ms'
 import { IAudioPlayer, PlayedAudioRecord } from './interface'
 
-export type ImplFake = {
+export type AudioPlayerImplFake = {
   t: 'fake'
   logger: ILogger
 }
 
-const init = (config: ImplFake): IAudioPlayer => {
+const init = (config: AudioPlayerImplFake): IAudioPlayer => {
   const logger = config.logger.child(['audio-player'])
   const playedAudio: PlayedAudioRecord[] = []
 
@@ -33,6 +33,6 @@ const init = (config: ImplFake): IAudioPlayer => {
   }
 }
 
-export const ImplFake = {
+export const AudioPlayerImplFake = {
   init,
 }

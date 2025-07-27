@@ -3,13 +3,13 @@ import { ILogger } from '../logger'
 import { ImplStandardSql } from './impl-standard-sql'
 import type { ISqlDb } from './interface'
 
-export type ImplExpoSqlite = {
+export type SqlDbImplExpoSqlite = {
   t: 'expo-sqlite'
   dbName: string
   logger: ILogger
 }
 
-const init = (config: ImplExpoSqlite): ISqlDb => {
+const init = (config: SqlDbImplExpoSqlite): ISqlDb => {
   const db = SQLite.openDatabaseAsync(config.dbName)
 
   const query = async (rawSql: string): Promise<unknown[]> => {
@@ -55,6 +55,6 @@ const init = (config: ImplExpoSqlite): ISqlDb => {
   })
 }
 
-export const ImplExpoSqlite = {
+export const SqlDbImplExpoSqlite = {
   init,
 }

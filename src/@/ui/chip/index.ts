@@ -1,10 +1,10 @@
 import { TranslatedText } from '~/@/l18n'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Text } from '~/@/vdom/primitives/text'
 import { VDom } from '~/@/vdom/vdom'
 import { Clickable } from '../clickable'
 import { cn } from '../cn'
-import { Box } from '~/@/vdom/primitives/box'
-import { Text } from '~/@/vdom/primitives/text'
 
 export type ChipSize = 'sm' | 'lg'
 
@@ -24,10 +24,8 @@ export const Chip = (input: ChipProps) => {
       onPress: input.onPress,
     },
     [
-      input.renderStartIcon?.({
-        class: cn(toIconSizeClass(input), 'shrink-0'),
-      }),
-      h(Box, { class: 'truncate' }, [Text({ text: input.label })]),
+      input.renderStartIcon?.({ class: cn(toIconSizeClass(input), 'shrink-0') }),
+      Text({ text: input.label, class: 'truncate text-white' }),
     ],
   )
 }

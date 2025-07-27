@@ -1,6 +1,7 @@
 import { Logger } from '../logger'
 import { ImplHashMap } from './impl-hash-map'
 import { ImplInMemory } from './impl-in-memory'
+import { ImplKeyValueDbSync } from './impl-key-value-db-sync'
 import { ImplSqlDb } from './impl-sql-db'
 import { ImplWebStandardStorage } from './impl-web-standard-storage'
 import type { IKeyValueDb } from './interface'
@@ -21,6 +22,7 @@ export type Config =
   | WithThrottledWrites
   | WithDistributedInvalidations
   | ImplWebStandardStorage
+  | ImplKeyValueDbSync
 
 const init = (config_: Config): IKeyValueDb => {
   const logger = config_.logger?.child(['key-value-db']) ?? Logger.init({ t: 'noop' })
@@ -60,6 +62,10 @@ const init = (config_: Config): IKeyValueDb => {
 
     case 'web-standard-storage': {
       return ImplWebStandardStorage.init(config)
+    }
+
+    case 'key-value-db-sync': {
+      return ImplKeyValueDbSync.init(config)
     }
   }
 }

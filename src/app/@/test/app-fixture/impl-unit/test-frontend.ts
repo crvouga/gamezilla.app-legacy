@@ -1,6 +1,7 @@
 import { AudioPlayer } from '~/@/audio-player'
 import { HttpClient } from '~/@/http-client'
 import { KeyValueDb } from '~/@/key-value-db'
+import { KeyValueDbSync } from '~/@/key-value-db-sync'
 import { KeyBoard } from '~/@/keyboard'
 import { Translator } from '~/@/l18n/generated'
 import { ILogger, Logger } from '~/@/logger'
@@ -40,7 +41,9 @@ export const TestFrontend = async (config: {
 
   const logger = config.logger.child(['frontend'])
 
-  const clientSessionId = ClientSessionIdStorage().get()
+  const keyValueDbSync = KeyValueDbSync.init({ t: 'hash-map', logger })
+
+  const clientSessionId = ClientSessionIdStorage.init({ keyValueDbSync }).get()
 
   const rpc = RPC.initClient({
     t: 'local',
@@ -56,15 +59,15 @@ export const TestFrontend = async (config: {
 
   const audioPlayer = AudioPlayer.init({ t: 'fake', logger })
 
-  const viewport = Viewport({ t: 'web-standard' })
+  const viewport = Viewport.init({ t: 'web-standard' })
 
-  const keyboard = KeyBoard({ t: 'web-standard' })
+  const keyboard = KeyBoard.init({ t: 'web-standard' })
 
   const keyValueDb = KeyValueDb.init({ t: 'web-standard-storage', storage: localStorage, logger })
 
   const migrationPolicy = SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) })
 
-  const syncEngine = SyncEngineClient({
+  const syncEngine = SyncEngineClient.init({
     crudTransactionDb: CrudTransactionDb.init({
       t: 'sql-db',
       logger: Logger.init({ t: 'noop' }),

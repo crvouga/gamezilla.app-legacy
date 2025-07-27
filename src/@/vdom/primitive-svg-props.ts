@@ -10,6 +10,11 @@ export type PrimitiveSvgProps = PrimitiveProps & {
   xmlns?: string
   x?: number | string
   y?: number | string
+  r?: number | string
+  cx?: number | string
+  cy?: number | string
+  'fill-opacity'?: number | string
+  'font-size'?: number | string
   fill?: string
   stroke?: string
   'stroke-width'?: number | string

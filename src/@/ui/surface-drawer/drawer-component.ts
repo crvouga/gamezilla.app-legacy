@@ -42,7 +42,7 @@ export const DrawerComponent = (props: DrawerProps) => {
         },
         [
           props.position === 'top' && h(Gutter, { variant: 'drawer' }),
-          ...(props.children ?? []),
+          ...(Array.isArray(props.children) ? props.children : [props.children]),
           props.position === 'bottom' && h(Gutter, { variant: 'drawer' }),
         ],
       ),

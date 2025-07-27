@@ -1,15 +1,18 @@
 import { registerRootComponent } from 'expo'
 import { ComponentType } from 'react'
-import { Program } from '~/@/program/program'
-import { h } from '~/@/vdom/vdom-engine/impl'
-import { AppFrontend } from '~/app/frontend'
-import { HttpProtocol } from './@/http/protocol'
+import { h, VDomEngine } from '~/@/vdom/vdom-engine/impl'
+import { AudioPlayer } from './@/audio-player'
+import { KeyValueDbSync } from './@/key-value-db-sync'
+import { KeyBoard } from './@/keyboard'
 import { Logger } from './@/logger'
+import { Navigation } from './@/navigation'
+import { Program } from './@/program/program'
 import { StoreSingleListener, useStore } from './@/react/store'
-import { ImplExpoSqlite } from './@/sql-db/impl-expo-sqlite'
+import { SqlDbImplExpoSqlite } from './@/sql-db/impl-expo-sqlite'
 import { Url } from './@/url/url'
-import { VDomEngine } from './@/vdom/vdom-engine/impl'
 import { ImplReactNative } from './@/vdom/vdom-engine/impl-react-native'
+import { ViewportImplReactNative } from './@/viewport/impl-react-native'
+import { AppFrontend } from './app/frontend'
 import './frontend.css'
 
 const store = StoreSingleListener<Parameters<typeof AppFrontend.View>[0] | null>(null)
@@ -40,13 +43,28 @@ const main = async () => {
   if (!TOPIC_URL) throw new Error('TOPIC_URL is not set')
   logger.info('TOPIC_URL', TOPIC_URL)
 
-  const httpProtocol = HttpProtocol.fromWindow() ?? 'https'
+  const httpProtocol = 'https'
   const backendUrl = Url.derive(BACKEND_URL, httpProtocol)
   const topicUrl = Url.derive(TOPIC_URL, httpProtocol)
 
-  const sqlDb = ImplExpoSqlite.init({ t: 'expo-sqlite', dbName: 'gamezilla.db', logger })
+  const sqlDb = SqlDbImplExpoSqlite.init({ t: 'expo-sqlite', dbName: 'gamezilla.db', logger })
+  const keyValueDbSync = KeyValueDbSync.init({ t: 'web-standard-storage', logger, storage: localStorage })
+  const audioPlayer = AudioPlayer.init({ t: 'fake', logger })
+  const keyboard = KeyBoard.init({ t: 'noop' })
+  const viewport = ViewportImplReactNative.init({ t: 'react-native' })
+  const navigation = Navigation.init({ t: 'key-value-db-sync', keyValueDbSync, key: 'navigation-history', logger })
 
-  const ctx = await AppFrontend.initCtx({ backendUrl, topicUrl, sqlDb, logger })
+  const ctx = await AppFrontend.initCtx({
+    backendUrl,
+    topicUrl,
+    sqlDb,
+    logger,
+    audioPlayer,
+    keyboard,
+    viewport,
+    navigation,
+    keyValueDbSync,
+  })
 
   await Program.run({
     crash: (input) => console.error(input),
@@ -55,8 +73,8 @@ const main = async () => {
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
     render: (input) => store.update({ ...input, ctx }),
   })
-
-  registerRootComponent(App as ComponentType<unknown>)
 }
+
+registerRootComponent(App as ComponentType<unknown>)
 
 main()

@@ -3,7 +3,7 @@ import { ILogger } from '../logger'
 import { UnitInterval } from '../range/unit-interval'
 import { Err, Ok, Result } from '../result'
 import { UnixMs } from '../time/unix-ms'
-import { ImplFake } from './impl-fake'
+import { AudioPlayerImplFake } from './impl-fake'
 import { IAudioPlayer, PlayedAudioRecord } from './interface'
 
 export type ImplWebStandard = {
@@ -15,7 +15,7 @@ const init = (config: ImplWebStandard): IAudioPlayer => {
   const logger = config.logger.child(['audio-player'])
   const playedAudio: PlayedAudioRecord[] = []
   if (typeof document === 'undefined') {
-    return ImplFake.init({ t: 'fake', logger })
+    return AudioPlayerImplFake.init({ t: 'fake', logger })
   }
   return {
     played() {

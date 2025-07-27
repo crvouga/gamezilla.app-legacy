@@ -1,14 +1,18 @@
-import * as ImplNoop from './impl-noop'
-import * as ImplWebStandard from './impl-web-standard'
+import { KeyboardImplNoop } from './impl-noop'
+import { ImplWebStandard } from './impl-web-standard'
 import { IKeyBoard } from './interface'
 
-export type Config = ImplWebStandard.Config | ImplNoop.Config
+export type KeyBoard = ImplWebStandard | KeyboardImplNoop
 
-export const KeyBoard = (config: Config): IKeyBoard => {
+const init = (config: KeyBoard): IKeyBoard => {
   switch (config.t) {
     case 'web-standard':
-      return ImplWebStandard.KeyBoard(config)
+      return ImplWebStandard.init(config)
     case 'noop':
-      return ImplNoop.KeyBoard(config)
+      return KeyboardImplNoop.init(config)
   }
+}
+
+export const KeyBoard = {
+  init,
 }

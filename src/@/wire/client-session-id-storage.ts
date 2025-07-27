@@ -1,52 +1,38 @@
-import { unwrapOr } from '../result'
+import { IKeyValueDbSync } from '../key-value-db-sync'
+import { isErr } from '../result'
+import { s } from '../schema'
 import { ClientSessionId } from './client-session-id'
 
 export type IClientSessionIdStorage = {
   get: () => ClientSessionId
 }
 
-const getStorage = (input?: { storage?: Storage }): Storage => {
-  if (input?.storage) {
-    return input.storage
-  }
-
-  if (typeof window === 'undefined') {
-    return InMemoryStorage()
-  }
-
-  return localStorage
-}
-
-export const ClientSessionIdStorage = (input?: { storage?: Storage }): IClientSessionIdStorage => {
+const init = (input: { keyValueDbSync: IKeyValueDbSync }): IClientSessionIdStorage => {
   const KEY = 'clientSessionId'
-  const storage = getStorage(input)
+  const gen = () => {
+    const clientSessionIdNew = ClientSessionId.generate()
+    input.keyValueDbSync.set(KEY, clientSessionIdNew)
+    return clientSessionIdNew
+  }
   return {
-    get: () => {
-      const clientSessionId = storage.getItem(KEY)
-      if (clientSessionId) {
-        return unwrapOr(ClientSessionId.decode(clientSessionId), ClientSessionId.generate())
-      }
-      const clientSessionIdNew = ClientSessionId.generate()
-      storage.setItem(KEY, clientSessionIdNew)
-      return clientSessionIdNew
+    get() {
+      const gotClientSessionId = input.keyValueDbSync.get(KEY, s.str())
+
+      if (isErr(gotClientSessionId)) return gen()
+
+      const maybeClientSessionId = gotClientSessionId.value
+
+      if (!maybeClientSessionId) return gen()
+
+      const clientSessionId = ClientSessionId.decode(maybeClientSessionId)
+
+      if (isErr(clientSessionId)) return gen()
+
+      return clientSessionId.value
     },
   }
 }
 
-const InMemoryStorage = (): Storage => {
-  const storage = new Map<string, string>()
-  return {
-    getItem: (key) => storage.get(key) ?? null,
-    setItem: (key, value) => {
-      storage.set(key, value)
-    },
-    removeItem: (key) => {
-      storage.delete(key)
-    },
-    clear: () => {
-      storage.clear()
-    },
-    length: 0,
-    key: (index) => Array.from(storage.keys())[index] ?? null,
-  }
+export const ClientSessionIdStorage = {
+  init,
 }

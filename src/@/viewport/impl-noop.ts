@@ -1,11 +1,11 @@
 import { Sub } from '../sub'
 import { IViewport } from './interface'
 
-export type Config = {
+export type ViewportImplNoop = {
   t: 'noop'
 }
 
-export const Viewport = (_config: Config): IViewport => {
+const init = (_config: ViewportImplNoop): IViewport => {
   return {
     visibility: {
       get: () => 'visible',
@@ -16,4 +16,8 @@ export const Viewport = (_config: Config): IViewport => {
       sub: () => Sub.none(),
     },
   }
+}
+
+export const ViewportImplNoop = {
+  init,
 }

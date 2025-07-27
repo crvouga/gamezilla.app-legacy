@@ -1,14 +1,18 @@
-import * as ImplNoop from './impl-noop'
-import * as ImplWebStandard from './impl-web-standard'
+import { ViewportImplNoop } from './impl-noop'
+import { ImplWebStandard } from './impl-web-standard'
 import { IViewport } from './interface'
 
-export type Config = ImplWebStandard.Config | ImplNoop.Config
+export type Viewport = ImplWebStandard | ViewportImplNoop
 
-export const Viewport = (config: Config): IViewport => {
+const init = (config: Viewport): IViewport => {
   switch (config.t) {
     case 'web-standard':
-      return ImplWebStandard.Viewport(config)
+      return ImplWebStandard.init(config)
     case 'noop':
-      return ImplNoop.Viewport(config)
+      return ViewportImplNoop.init(config)
   }
+}
+
+export const Viewport = {
+  init,
 }

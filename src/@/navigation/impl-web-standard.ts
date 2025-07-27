@@ -52,7 +52,7 @@ const init = (config: ImplWebStandard): INavigation => {
         window.history.pushState(null, '', url.toString())
         window.dispatchEvent(new Event('popstate'))
         await new Promise((resolve) => setTimeout(resolve, 1))
-        onChange()
+        // onChange()
         return Ok(null)
       } catch (e) {
         logger.error(e)
@@ -67,7 +67,7 @@ const init = (config: ImplWebStandard): INavigation => {
         window.history.replaceState(null, '', url.toString())
         window.dispatchEvent(new Event('popstate'))
         await new Promise((resolve) => setTimeout(resolve, 1))
-        onChange()
+        // onChange()
         return Ok(null)
       } catch (e) {
         logger.error(e)
@@ -78,8 +78,9 @@ const init = (config: ImplWebStandard): INavigation => {
       try {
         logger.debug('back')
         window.history.back()
+        window.dispatchEvent(new Event('popstate'))
         await new Promise((resolve) => setTimeout(resolve, 1))
-        onChange()
+        // onChange()
         return Ok(null)
       } catch (e) {
         logger.error(e)
@@ -104,7 +105,7 @@ const init = (config: ImplWebStandard): INavigation => {
       try {
         window.history.replaceState(null, '', '/')
         await new Promise((resolve) => setTimeout(resolve, 1))
-        onChange()
+        // onChange()
         return Ok(null)
       } catch (e) {
         logger.error(e)
