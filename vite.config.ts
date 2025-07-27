@@ -1,4 +1,3 @@
-// import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 import { defineConfig } from 'vite'
 import { DotEnv } from './src/@/dotenv/dotenv'
@@ -18,9 +17,7 @@ if (!NODE_ENV) throw new Error('NODE_ENV is not set')
 const FRONTEND_PORT = Number(process.env.FRONTEND_PORT)
 if (Number.isNaN(FRONTEND_PORT)) throw new Error('FRONTEND_PORT is not set')
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  // plugins: [tailwindcss()],
   server: {
     port: Number(FRONTEND_PORT),
   },
@@ -44,7 +41,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    include: ['src/**/*.{test,spec,e2e}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    include: ['src/**/*.{test,e2e}.ts'],
     testTimeout: 1000 * 15,
   },
 })

@@ -19,16 +19,12 @@ const Fixture = async (config: BackendSqlDb) => {
 const Fixtures = async () => {
   const configs: BackendSqlDb[] = []
 
-  const SHOULD_TEST_SQLITE = true
-
-  if (SHOULD_TEST_SQLITE) {
-    configs.push({
-      t: 'better-sqlite3',
-      databasePath: ':memory:',
-      logger: Logger.init({ t: 'noop' }),
-      fs: FileSystem.init({ t: 'node' }),
-    })
-  }
+  configs.push({
+    t: 'better-sqlite3',
+    databasePath: ':memory:',
+    logger: Logger.init({ t: 'noop' }),
+    fs: FileSystem.init({ t: 'node' }),
+  })
 
   const pglite = Pglite.init({ t: 'main-thread', config: { t: 'in-memory' } })
 
@@ -38,10 +34,15 @@ const Fixtures = async () => {
     pglite,
   })
 
-  const DATABASE_URL = SecretString.init('DATABASE_URL', process.env.DATABASE_URL)
-  if (!DATABASE_URL) throw new Error('DATABASE_URL is not set')
+  // configs.push({
+  //   t: 'expo-sqlite',
+  //   dbName: ':memory:',
+  //   logger: Logger.init({ t: 'noop' }),
+  // })
 
   if (IS_INTEGRATION_TEST) {
+    const DATABASE_URL = SecretString.init('DATABASE_URL', process.env.DATABASE_URL)
+    if (!DATABASE_URL) throw new Error('DATABASE_URL is not set')
     configs.push({
       t: 'postgres',
       databaseUrl: DATABASE_URL,
