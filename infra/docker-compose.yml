@@ -2,7 +2,6 @@ name: gamezilla_app
 
 services:
   frontend:
-    profiles: ['e2e']
     build:
       context: ../
       dockerfile: infra/frontend.Dockerfile
@@ -14,7 +13,6 @@ services:
       - '${FRONTEND_PORT:?FRONTEND_PORT is required}:80'
 
   backend:
-    profiles: ['e2e']
     build:
       context: ../
       dockerfile: infra/backend.Dockerfile
@@ -24,18 +22,20 @@ services:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
     extra_hosts:
       - 'host.docker.internal:host-gateway'
+    ports:
+      - '${BACKEND_PORT:?BACKEND_PORT is required}:${BACKEND_PORT:?BACKEND_PORT is required}'
 
   topic:
-    profiles: ['e2e']
     build:
       context: ../
       dockerfile: infra/topic.Dockerfile
     depends_on:
       nats:
         condition: service_started
+    ports:
+      - '${TOPIC_PORT:?TOPIC_PORT is required}:${TOPIC_PORT:?TOPIC_PORT is required}'
 
   nats:
-    profiles: ['local', 'e2e']
     build:
       context: ../
       dockerfile: infra/nats.Dockerfile
@@ -43,7 +43,6 @@ services:
       - '${NATS_PORT:?NATS_PORT is required}:${NATS_PORT:?NATS_PORT is required}'
 
   postgres:
-    profiles: ['local', 'e2e']
     build:
       context: ../
       dockerfile: infra/postgres.Dockerfile

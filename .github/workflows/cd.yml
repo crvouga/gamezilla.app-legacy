@@ -23,8 +23,7 @@ jobs:
         with:
           version: latest
       - run: pnpm install --frozen-lockfile
-      - name: Check Circular Dependencies
-        run: pnpm cir-deps
+      - run: pnpm cir-deps
 
   typecheck:
     name: Type Check
@@ -38,7 +37,7 @@ jobs:
         with:
           version: latest
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run env:local
+      - run: pnpm run env:ci
       - run: pnpm tc
 
   unit:
@@ -53,7 +52,7 @@ jobs:
         with:
           version: latest
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run env:local
+      - run: pnpm run env:ci
       - run: pnpm unit
 
   integration:
@@ -68,11 +67,9 @@ jobs:
         with:
           version: latest
       - run: pnpm install --frozen-lockfile
-      - name: Start Infrastructure
-        run: pnpm infra:up
-      - name: Wait for Services
-        run: sleep 3
-      - run: pnpm run env:local
+      - run: pnpm run env:ci
+      - run: pnpm infra:up
+      - run: sleep 3
       - name: Database Migration
         run: pnpm db:up
       - run: pnpm int
@@ -89,19 +86,13 @@ jobs:
         with:
           version: latest
       - run: pnpm install --frozen-lockfile
-      - name: Start Infrastructure
-        run: pnpm infra:up
-      - name: Wait for Services
-        run: sleep 3
-      - run: pnpm run env:local
-      - name: Database Migration
-        run: pnpm db:up
-      - name: Setup E2E Tests
-        run: pnpm e2e:setup
-      - name: Run E2E Tests
-        run: pnpm e2e
-      - name: Upload test results
-        if: failure()
+      - run: pnpm run env:ci
+      - run: pnpm infra:up
+      - run: sleep 3
+      - run: pnpm db:up
+      - run: pnpm e2e:setup
+      - run: pnpm e2e
+      - if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
