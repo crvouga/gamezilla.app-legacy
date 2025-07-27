@@ -42,7 +42,7 @@ const main = async () => {
   window.q = Psql({ sqlDb }).psql
 
   const keyValueDbSync = KeyValueDbSync.init({ t: 'web-standard-storage', storage: localStorage, logger })
-  const audioPlayer = AudioPlayer.init({ t: 'fake', logger })
+  const audioPlayer = AudioPlayer.init({ t: 'web-standard', logger })
   const keyboard = KeyBoard.init({ t: 'web-standard' })
   const viewport = Viewport.init({ t: 'web-standard' })
   const navigation = Navigation.init({ t: 'web-standard', logger })
