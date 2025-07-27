@@ -1,6 +1,10 @@
 import { TranslatedText } from '~/@/l18n'
+import { h } from '~/@/vdom'
+import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
 
 export const SplashScreen = (_props: { reason?: TranslatedText }) => {
-  return Text({ class: 'h-full w-full flex items-center justify-center text-[64px]', text: '🦕' })
+  return h(Box, { class: 'h-screen w-screen flex items-center justify-center bg-black' }, [
+    Text({ text: '🦕', class: 'text-[64px] text-white' }),
+  ])
 }

@@ -64,7 +64,7 @@ const SKELETON_CLASS = 'animate-pulse text-transparent select-none pointer-event
 
 export const Typography = (input: Props) => {
   const sizeClassName = input.sizeClassName ?? sizeClassNames[input.variant ?? 'body']
-  const colorClassName = input.color && !input.skeleton ? colorClassNames[input.color] : null
+  const colorClassName = input.color && !input.skeleton ? colorClassNames[input.color] : 'text-white'
   return h(
     Box,
     {
@@ -76,6 +76,6 @@ export const Typography = (input: Props) => {
       'data-title': input.variant === 'title' ? 'true' : 'false',
       'data-testid': input.dataTestId,
     },
-    [Text({ text: input.text, class: cn(sizeClassName, 'text-inherit font-bold') })],
+    [Text({ text: input.text, class: cn(sizeClassName, colorClassName, 'font-bold') })],
   )
 }

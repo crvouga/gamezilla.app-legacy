@@ -10,12 +10,11 @@ import { StoreSingleListener, useStore } from './@/react/store'
 import { SqlDbImplExpoSqlite } from './@/sql-db/impl-expo-sqlite'
 import { Url } from './@/url/url'
 import { h, VDomEngine } from './@/vdom'
-import { Text } from './@/vdom/primitives/text'
 import { ImplReactNative } from './@/vdom/vdom-engine/impl-react-native'
 import { ViewportImplReactNative } from './@/viewport/impl-react-native'
+import { SplashScreen } from './app/@/ui/logo/splash-screen'
 import { AppFrontend } from './app/frontend'
 import './frontend.css'
-import { Box } from './@/vdom/primitives/box'
 
 const logger = Logger.init({
   t: 'console',
@@ -34,10 +33,7 @@ const App = () => {
   const input = useStore(store)
 
   if (!input) {
-    return Text({
-      text: 'Loading...',
-      class: 'text-white bg-black text-7xl pt-10',
-    })
+    return h(SplashScreen, {}, [])
   }
 
   return h(AppFrontend.View, input, [])
@@ -86,6 +82,7 @@ const main = async () => {
     keyValueDbSync,
   })
   logger.info('Starting program')
+
   try {
     await Program.run({
       crash: (input) => {

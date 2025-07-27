@@ -22,7 +22,7 @@ export type ButtonInput = {
   type?: 'button'
   class?: string
   onPress?: (event: unknown) => void
-  renderIconStart?: (input: { class?: string }) => VDom
+  renderIconStart?: (input: { class?: string; fill?: string }) => VDom
   variant?: ButtonVariant
   color?: ButtonColor
   size?: ButtonSize
@@ -66,7 +66,7 @@ export const Button = (input: ButtonInput) => {
         },
         [
           h(Box, { class: 'flex-none' }, [
-            input.renderIconStart?.({ class: cn(colorTextClass, iconSizeClass, 'mr-2') }),
+            input.renderIconStart?.({ class: cn(colorTextClass, iconSizeClass, 'mr-2'), fill: 'currentColor' }),
           ]),
           Text({ text: input.text ?? '', class: cn('truncate', colorTextClass, sizeClassText) }),
         ],
@@ -95,13 +95,13 @@ const toIconSizeClass = (input: ButtonInput): string => {
 const toSizeClassPadding = (input: ButtonInput): string => {
   switch (input.size ?? 'lg') {
     case 'lg':
-      return 'px-4 py-3'
+      return 'h-14 px-4'
     case 'md':
-      return 'px-4 py-2'
+      return 'h-12 px-4'
     case 'sm':
-      return 'px-4 py-1.5'
+      return 'h-10 px-4'
     case 'xs':
-      return 'px-3 py-1'
+      return 'h-8 px-3'
   }
 }
 

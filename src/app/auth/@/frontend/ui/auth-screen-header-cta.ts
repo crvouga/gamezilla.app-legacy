@@ -11,7 +11,8 @@ export const AuthScreenHeaderCta = (input: { ctx: { t: Translator } }) => {
       variant: 'title',
     }),
     h(Text, {
-      class: 'bg-gradient-to-b from-blue-400 to-blue-500 bg-clip-text pb-2 text-5xl font-extrabold text-transparent',
+      // class: 'bg-gradient-to-b from-blue-400 to-blue-500 bg-clip-text pb-2 text-5xl font-extrabold text-transparent',
+      class: 'text-blue-500 pb-2 text-5xl font-extrabold',
       text: input.ctx.t('app.gamezilla-app'),
     }),
   ])
