@@ -32,6 +32,7 @@ type Props = {
   dataTestId?: string
   class?: string
   sizeClassName?: string
+  colorClassName?: string
   role?: AriaRole
   color?: 'inherit' | 'text-primary' | 'text-secondary' | null
   align?: 'left' | 'center' | 'right'
@@ -78,7 +79,11 @@ const toTextAlignClass = (input: Props): string => {
 
 export const Typography = (input: Props) => {
   const sizeClassName = input.sizeClassName ?? sizeClassNames[input.variant ?? 'body']
-  const colorClassName = input.color && !input.skeleton ? colorClassNames[input.color] : 'text-white'
+  const colorClassName = input.colorClassName
+    ? input.colorClassName
+    : input.color && !input.skeleton
+      ? colorClassNames[input.color]
+      : 'text-white'
   return h(
     Box,
     {
@@ -96,6 +101,11 @@ export const Typography = (input: Props) => {
       'data-title': input.variant === 'title' ? 'true' : 'false',
       'data-testid': input.dataTestId,
     },
-    [Text({ text: input.text, class: cn(sizeClassName, colorClassName, 'font-bold', toTextAlignClass(input)) })],
+    [
+      Text({
+        text: input.text,
+        class: cn(sizeClassName, colorClassName, toTextAlignClass(input)),
+      }),
+    ],
   )
 }

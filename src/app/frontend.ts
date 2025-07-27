@@ -18,7 +18,7 @@ import { SyncEngineClient } from '~/@/sync-engine/sync-engine-client'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { TopicClient } from '~/@/topic/topic-client/topic-client'
-import { IconGamepad, IconUserCircle } from '~/@/ui/icon'
+import { IconGamepad, IconUser } from '~/@/ui/icon'
 import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
 import { Url } from '~/@/url/url'
 import { h } from '~/@/vdom/h'
@@ -483,7 +483,7 @@ const toScreenLayoutProps = (input: {
           },
           {
             label: ctx.t('profile.profile'),
-            icon: (input) => h(IconUserCircle, input),
+            icon: (input) => h(IconUser, input),
             color: input.model.frontend.currentScreen.currentScreen.n === 'profile' ? 'selected' : 'inherit',
             onPress() {
               input.dispatch({

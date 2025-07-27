@@ -10,6 +10,7 @@ export const ScreenActionButton = (input: ScreenAction & { class?: string }) => 
   const isDisabled = input.disabled || input.loading
   const size = input.size ?? 'md'
   if (input.hidden) return null
+  const colorClasses = toColorClasses(input)
   return h(
     ClickableTransparent,
     {
@@ -23,7 +24,7 @@ export const ScreenActionButton = (input: ScreenAction & { class?: string }) => 
       class: cn(
         'relative flex flex-1 flex-col items-center gap-0.5 font-normal h-16',
         'disabled:cursor-not-allowed disabled:opacity-50',
-        toColorClasses(input),
+        colorClasses,
         input.hidden ? 'hidden' : '',
         input.classNames?.button,
         toSizeClasses(size),
@@ -41,22 +42,31 @@ export const ScreenActionButton = (input: ScreenAction & { class?: string }) => 
         },
         [
           input.icon({
-            class: toIconSizeClasses(size),
-            fill: '#fff',
-            stroke: '#fff',
+            class: cn(toIconSizeClasses(size), colorClasses),
+            fill: 'currentColor',
+            stroke: 'currentColor',
           }),
           h(Typography, {
             variant: 'label',
             text: input.label,
-            class: cn(input.classNames?.label),
+            class: cn(input.classNames?.label, colorClasses),
+            colorClassName: colorClasses,
           }),
         ],
       ),
 
       input.loading &&
-        h(Box, { class: 'absolute inset-0 flex flex-row h-full w-full items-center justify-center' }, [
-          h(Spinner, { class: toIconSizeClasses(size) }),
-        ]),
+        h(
+          Box,
+          {
+            class: 'absolute inset-0 flex flex-row h-full w-full items-center justify-center',
+          },
+          [
+            h(Spinner, {
+              class: toIconSizeClasses(size),
+            }),
+          ],
+        ),
     ],
   )
 }
@@ -64,13 +74,13 @@ export const ScreenActionButton = (input: ScreenAction & { class?: string }) => 
 const toColorClasses = (input: ScreenAction): string => {
   switch (input.color) {
     case 'danger':
-      return 'text-red-500'
+      return 'text-red-500 fill-red-500 stroke-red-500'
     case 'success':
-      return 'text-green-500'
+      return 'text-green-500 fill-green-500 stroke-green-500'
     case 'selected':
-      return 'text-blue-500'
+      return 'text-blue-500 fill-blue-500 stroke-blue-500'
     default:
-      return ''
+      return 'text-white fill-white stroke-white'
   }
 }
 
