@@ -34,6 +34,7 @@ type Props = {
   sizeClassName?: string
   role?: AriaRole
   color?: 'inherit' | 'text-primary' | 'text-secondary' | null
+  align?: 'left' | 'center' | 'right'
 }
 
 const toAriaLevel = (input: Props): number | undefined => {
@@ -62,13 +63,32 @@ const toAriaLevel = (input: Props): number | undefined => {
 
 const SKELETON_CLASS = 'animate-pulse text-transparent select-none pointer-events-none bg-neutral-500 rounded'
 
+const toTextAlignClass = (input: Props): string => {
+  switch (input.align) {
+    case 'left':
+      return 'text-left'
+    case 'center':
+      return 'text-center'
+    case 'right':
+      return 'text-right'
+    default:
+      return 'text-left'
+  }
+}
+
 export const Typography = (input: Props) => {
   const sizeClassName = input.sizeClassName ?? sizeClassNames[input.variant ?? 'body']
   const colorClassName = input.color && !input.skeleton ? colorClassNames[input.color] : 'text-white'
   return h(
     Box,
     {
-      class: cn(sizeClassName, colorClassName, input.skeleton ? SKELETON_CLASS : null, input.class),
+      class: cn(
+        sizeClassName,
+        colorClassName,
+        input.skeleton ? SKELETON_CLASS : null,
+        input.class,
+        toTextAlignClass(input),
+      ),
       role: input.role,
       'aria-busy': input.skeleton,
       'aria-level': toAriaLevel(input),
@@ -76,6 +96,6 @@ export const Typography = (input: Props) => {
       'data-title': input.variant === 'title' ? 'true' : 'false',
       'data-testid': input.dataTestId,
     },
-    [Text({ text: input.text, class: cn(sizeClassName, colorClassName, 'font-bold') })],
+    [Text({ text: input.text, class: cn(sizeClassName, colorClassName, 'font-bold', toTextAlignClass(input)) })],
   )
 }

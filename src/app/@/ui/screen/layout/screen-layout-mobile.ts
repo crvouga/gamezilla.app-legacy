@@ -11,14 +11,12 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
   return h(
     Box,
     {
-      class: 'flex w-full flex-1 flex-col overflow-hidden',
+      class: 'flex w-full h-full flex-col overflow-hidden',
     },
     [
-      ...renderActionBars(input.ctx, input),
-
+      ...renderActionBars(input.ctx, input, 'top'),
       h(Box, { class: 'flex flex-1 flex-col overflow-hidden' }, [
         ...renderNavBars(input.ctx, input),
-
         h(Box, { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
           input.renderBody(),
 
@@ -26,6 +24,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
             h(Box, { class: 'absolute right-4 bottom-6' }, [
               h(Button, {
                 color: 'primary',
+                width: 'fit',
                 size: 'lg',
                 variant: 'contained',
                 fab: true,
@@ -37,40 +36,46 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
               }),
             ]),
         ]),
-
         input.patchAction && h(CancelSubmitButtons, input.patchAction),
       ]),
+      ...renderActionBars(input.ctx, input, 'bottom'),
     ],
   )
 }
 
-const renderActionBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps | null): VDom[] => {
+const renderActionBars = (
+  ctx: ScreenLayoutProps['ctx'],
+  screen: ParentScreenProps | null,
+  position: 'top' | 'bottom',
+): VDom[] => {
   if (!screen) return []
   const bars = []
   if (screen.actionBar) {
-    const position = screen.actionBar.position ?? 'bottom'
-    const id = screen.actionBar.id ?? `${screen.id}-${position}-actions`
-    bars.push(
-      h(
-        Box,
-        {
-          key: id,
-          class: position === 'top' ? 'order-first' : 'order-last',
-        },
-        [
-          screen.renderMiniPlayer?.({ key: `${id}-mini-player` }),
-          h(HorizontalActionBar, {
-            ...screen.actionBar,
-            id: id,
-            ctx: ctx,
+    const barPosition = screen.actionBar.position ?? 'bottom'
+    const id = screen.actionBar.id ?? `${screen.id}-${barPosition}-actions`
+    if (barPosition === position) {
+      bars.push(
+        h(
+          Box,
+          {
             key: id,
-          }),
-        ],
-      ),
-    )
+            class: barPosition === 'top' ? 'order-first' : 'order-last',
+          },
+          [
+            screen.renderMiniPlayer?.({ key: `${id}-mini-player` }),
+            h(HorizontalActionBar, {
+              ...screen.actionBar,
+              id: id,
+              ctx: ctx,
+              key: id,
+            }),
+          ],
+        ),
+      )
+    }
   }
   if (screen.parentScreen) {
-    bars.push(...renderActionBars(ctx, screen.parentScreen))
+    bars.push(...renderActionBars(ctx, screen.parentScreen, position))
   }
   return bars
 }

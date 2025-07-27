@@ -27,6 +27,8 @@ export type ButtonInput = {
   color?: ButtonColor
   size?: ButtonSize
   loading?: boolean
+  width: 'fit' | 'full'
+  style?: Record<string, string | number>
 }
 
 export const Button = (input: ButtonInput) => {
@@ -35,6 +37,7 @@ export const Button = (input: ButtonInput) => {
   const sizeClassText = toSizeClassText(input)
   const iconSizeClass = toIconSizeClass(input)
   const colorPressableClass = toClassColorPressable(input)
+  const widthClass = toWidthClass(input)
 
   return h(
     Clickable,
@@ -43,16 +46,18 @@ export const Button = (input: ButtonInput) => {
       'data-fab': input.fab,
       class: cn(
         input.class,
-        'relative flex flex-row shrink-0 appearance-none flex-nowrap items-center justify-center truncate overflow-hidden rounded font-semibold select-none',
+        'relative flex-row flex-shrink-0 flex-nowrap items-center justify-center overflow-hidden rounded font-semibold',
         colorPressableClass,
         sizeClassPadding,
+        widthClass,
         input.fab && 'rounded-[30px] shadow-2xl',
-        input.disabled && 'cursor-not-allowed opacity-60',
-        input.loading && 'cursor-wait opacity-70',
+        input.disabled && 'opacity-60',
+        input.loading && 'opacity-70',
       ),
       role: 'button',
       'aria-label': input.text ?? '',
       onPress: input.onPress,
+      style: input.style,
     },
 
     [
@@ -68,15 +73,22 @@ export const Button = (input: ButtonInput) => {
           h(Box, { class: 'flex-none' }, [
             input.renderIconStart?.({ class: cn(colorTextClass, iconSizeClass, 'mr-2'), fill: 'currentColor' }),
           ]),
-          Text({ text: input.text ?? '', class: cn('truncate', colorTextClass, sizeClassText) }),
+          Text({ text: input.text ?? '', class: cn('overflow-hidden font-semibold', colorTextClass, sizeClassText) }),
         ],
       ),
       input.loading &&
-        h(Box, { class: 'absolute inset-0 flex flex-row items-center justify-center' }, [
-          h(Spinner, { class: 'h-8 w-8' }),
-        ]),
+        h(Box, { class: 'absolute inset-0 flex-row items-center justify-center' }, [h(Spinner, { class: 'h-8 w-8' })]),
     ],
   )
+}
+
+const toWidthClass = (input: ButtonInput): string => {
+  switch (input.width) {
+    case 'fit':
+      return 'w-fit'
+    case 'full':
+      return 'w-full'
+  }
 }
 
 const toIconSizeClass = (input: ButtonInput): string => {
@@ -112,7 +124,7 @@ const toSizeClassText = (input: ButtonInput): string => {
     case 'md':
       return 'text-lg'
     case 'sm':
-      return 'text-md'
+      return 'text-base'
     case 'xs':
       return 'text-sm'
   }
@@ -122,11 +134,11 @@ const toClassColorPressable = (input: ButtonInput): string => {
   const combo: Combo = `${input.variant ?? 'outlined'}-${input.color ?? 'primary'}`
   switch (combo) {
     case 'contained-primary':
-      return 'bg-blue-600 ring-blue-500'
+      return 'bg-blue-600'
     case 'contained-danger':
-      return 'bg-red-600 ring-red-500'
+      return 'bg-red-600'
     case 'contained-default':
-      return 'border-2 border-blue-500/50 ring-blue-500'
+      return 'border-2 border-blue-500/50'
     case 'text-danger':
       return ''
     case 'outlined-default':
@@ -160,7 +172,7 @@ const toClassColorText = (input: ButtonInput): string => {
     case 'text-danger':
       return 'font-bold text-red-500'
     case 'outlined-default':
-      return 'text-neutral-300 text-inherit'
+      return 'text-neutral-300'
     case 'soft-primary':
       return 'text-blue-200'
     case 'soft-danger':

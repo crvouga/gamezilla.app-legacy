@@ -9,9 +9,9 @@ import {
   propsModule,
   styleModule,
 } from 'snabbdom'
-import { FRAGMENT_TAG } from '../tags'
-import { IVirtualDomEngine } from './interface'
 import { PrimitiveProps } from '../primitive-props'
+import { FRAGMENT_TAG, SAFE_AREA_BOX_TAG } from '../tags'
+import { IVirtualDomEngine } from './interface'
 
 export type ImplSnabbdom = {
   t: 'snabbdom'
@@ -53,6 +53,10 @@ const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
 
         if (tag === FRAGMENT_TAG) {
           return fragment(children)
+        }
+
+        if (tag === SAFE_AREA_BOX_TAG) {
+          return h('div', props, children)
         }
 
         let hasAttrs = false

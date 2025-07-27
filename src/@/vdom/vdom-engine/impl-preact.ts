@@ -1,6 +1,6 @@
 import { Fragment, render } from 'preact'
 import { createElement } from 'preact/compat'
-import { FRAGMENT_TAG } from '../tags'
+import { BOX_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { PrimitiveProps } from '../primitive-props'
 
@@ -18,12 +18,12 @@ const init = (_config: ImplPreact): IVirtualDomEngine => {
       children = normalizeChildren(children)
 
       switch (tag) {
-        case FRAGMENT_TAG: {
+        case FRAGMENT_TAG:
           return createElement(Fragment, props, ...children) as any
-        }
-        default: {
+        case SAFE_AREA_BOX_TAG:
+          return createElement(BOX_TAG, props, children) as any
+        default:
           return createElement(tag, props, ...children) as any
-        }
       }
     },
   }

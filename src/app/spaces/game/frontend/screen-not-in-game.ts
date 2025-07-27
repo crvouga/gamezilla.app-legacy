@@ -10,6 +10,7 @@ import { GameName } from '../games/@/game-name'
 import { ScreenLayoutHostSettingUpGame } from '../games/@/ui/screen-layout-host-setting-up-game/screen-layout-host-setting-up-game'
 import { GameCoverArt } from '../games/cover-art'
 import { GAME_NAME_LIST } from '../games/types'
+import { chunk } from '~/@/array/chunk'
 
 const View: SpaceFrontendModule['View'] = (input) => {
   if (!input.ctx.space) return null
@@ -56,10 +57,25 @@ const ViewHostGameSelection = (input: { ctx: SpaceFrontendCtx; dispatch: (msg: M
   return h(
     Box,
     {
-      class: 'grid flex-1 grid-cols-3 justify-between gap-8 p-4 md:grid-cols-4 md:gap-12',
+      class: 'flex flex-1 flex-col gap-4',
     },
-    GAME_NAME_LIST.map((gameName) =>
-      h(GameTile, { key: gameName, gameName, ctx: input.ctx, dispatch: input.dispatch }),
+    chunk(GAME_NAME_LIST, 3).map((gameNames) =>
+      h(
+        Box,
+        { class: 'flex flex-row gap-4' },
+        [...gameNames, null, null, null].slice(0, 3).map((gameName, index) =>
+          h(Box, { class: 'flex-1', key: gameName ?? index }, [
+            gameName
+              ? h(GameTile, {
+                  key: gameName,
+                  gameName,
+                  ctx: input.ctx,
+                  dispatch: input.dispatch,
+                })
+              : null,
+          ]),
+        ),
+      ),
     ),
   )
 }

@@ -276,7 +276,6 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
       }),
     renderInputs: () =>
       h(Frag, {}, [
-        Text({ class: 'hidden', text: JSON.stringify(input.model.verified) }),
         h(Typography, {
           role: 'status',
           class: 'text-lg',

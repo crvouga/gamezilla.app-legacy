@@ -22,9 +22,9 @@ const DEFAULT_LIMIT = Infinity
 export const HorizontalActionBar = (input: ScreenActionBarProps) => {
   switch (input.variant.t) {
     case 'uniform':
-      return HorizontalUniform({ ...input, ...input.variant })
+      return h(HorizontalUniform, { ...input, ...input.variant })
     case 'space-between':
-      return HorizontalSpaceBetween({ ...input, ...input.variant })
+      return h(HorizontalSpaceBetween, { ...input, ...input.variant })
   }
 }
 
@@ -44,46 +44,50 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
   const firstActions = input.actions.slice(0, limit)
   const lastActions = input.actions.slice(limit)
   const hasLastActions = lastActions.some((button) => button !== null)
-  return h(Box, { class: cn('flex flex-row w-full shrink-0 items-center', toHeightClass(size)), role: 'toolbar' }, [
-    ...firstActions.map((action) => {
-      if (!action) return null
+  return h(
+    Box,
+    { class: cn('flex flex-row w-full shrink-0 items-center justify-center', toHeightClass(size)), role: 'toolbar' },
+    [
+      ...firstActions.map((action) => {
+        if (!action) return null
 
-      const button = ScreenActionButton({ ...action, size: input.size })
+        const button = h(ScreenActionButton, { ...action, size: input.size })
 
-      if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
+        if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
 
-      return h(Frag, { key: action.id }, [
-        action.renderSurface({
-          dropDown: toDropDownConfig({ render: () => button }),
-          screenActionLocation: 'bar',
-        }),
-      ])
-    }),
-
-    hasLastActions &&
-      h(SurfaceLayout, {
-        ctx: input.ctx,
-        id: input.id,
-        ariaLabel: input.ctx.t('app.more'),
-        onClose: input.limit?.onToggle ?? (() => {}),
-        open: input.limit?.open ?? false,
-        body: {
-          render: () => SurfaceMoreContent({ actions: lastActions }),
-        },
-        dropDown: {
-          reference: {
-            render: () =>
-              ScreenActionButton({
-                id: input.ctx.t('app.more'),
-                icon: (input) => h(IconEllipsisVertical, input),
-                label: input.ctx.t('app.more'),
-                size: input.size,
-                onPress: input.limit?.onToggle ?? (() => {}),
-              }),
-          },
-        },
+        return h(Frag, { key: action.id }, [
+          action.renderSurface({
+            dropDown: toDropDownConfig({ render: () => button }),
+            screenActionLocation: 'bar',
+          }),
+        ])
       }),
-  ])
+
+      hasLastActions &&
+        h(SurfaceLayout, {
+          ctx: input.ctx,
+          id: input.id,
+          ariaLabel: input.ctx.t('app.more'),
+          onClose: input.limit?.onToggle ?? (() => {}),
+          open: input.limit?.open ?? false,
+          body: {
+            render: () => SurfaceMoreContent({ actions: lastActions }),
+          },
+          dropDown: {
+            reference: {
+              render: () =>
+                ScreenActionButton({
+                  id: input.ctx.t('app.more'),
+                  icon: (input) => h(IconEllipsisVertical, input),
+                  label: input.ctx.t('app.more'),
+                  size: input.size,
+                  onPress: input.limit?.onToggle ?? (() => {}),
+                }),
+            },
+          },
+        }),
+    ],
+  )
 }
 
 const SurfaceMoreContent = (input: { actions: (ScreenAction | null)[] }) => {
@@ -173,7 +177,7 @@ const ScreenActionButton = (input: ScreenAction & { class?: string }) => {
       'aria-hidden': input.hidden,
       onPress: input.onPress,
       class: cn(
-        'relative flex flex-1 flex-col items-center gap-0.5 truncate p-2 font-normal',
+        'relative flex flex-1 flex-col items-center gap-0.5 p-2 font-normal',
         'disabled:cursor-not-allowed disabled:opacity-50',
         toColorClasses(input),
         input.hidden ? 'hidden' : '',
@@ -196,7 +200,7 @@ const ScreenActionButton = (input: ScreenAction & { class?: string }) => {
           h(Typography, {
             variant: 'label',
             text: input.label,
-            class: cn('truncate', input.classNames?.label),
+            class: cn(input.classNames?.label),
           }),
         ],
       ),
@@ -225,20 +229,20 @@ const toColorClasses = (input: ScreenAction): string => {
 const toSizeClasses = (size: ScreenAction['size']): string => {
   switch (size) {
     case 'sm':
-      return 'p-1.5 text-xs'
+      return 'text-xs h-10'
     case 'md':
     default:
-      return 'p-2 text-sm'
+      return 'text-sm h-12'
   }
 }
 
 const toIconSizeClasses = (size: ScreenAction['size']): string => {
   switch (size) {
     case 'sm':
-      return 'size-5'
+      return 'size-5 text-white'
     case 'md':
     default:
-      return 'size-8'
+      return 'size-8 text-white'
   }
 }
 

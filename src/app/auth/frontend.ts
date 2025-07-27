@@ -243,7 +243,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
           h(Button, {
             onPress: () => input.dispatch({ t: 'clicked-login-with-phone' }),
             size: 'lg',
-            class: 'w-full',
+            width: 'full',
             renderIconStart: (iconInput) => h(IconMobilePhone, iconInput),
             text: input.ctx.t('auth.continue-with-phone'),
           }),

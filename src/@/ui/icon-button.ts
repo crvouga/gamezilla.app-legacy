@@ -10,7 +10,7 @@ type IconButtonSize = 'xs' | 'sm' | 'md' | 'lg'
 export const IconButton = (input: {
   onPress?: (event: unknown) => void
   label: TranslatedText
-  renderIcon: (input: { class: string }) => VDom
+  renderIcon: (input: { class: string; fill: string; stroke: string }) => VDom
   class?: string
   size?: IconButtonSize
   dataTestId?: string
@@ -32,6 +32,8 @@ export const IconButton = (input: {
     [
       input.renderIcon({
         class: 'w-full h-full cursor-pointer',
+        fill: 'white',
+        stroke: 'white',
       }),
     ],
   )

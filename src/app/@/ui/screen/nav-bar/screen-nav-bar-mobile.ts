@@ -24,11 +24,13 @@ export const ScreenNavBarMobile = (input: {
 
   const renderSurface =
     input.back?.renderSurface ?? ((input: { dropDown: DropDownConfig }) => input.dropDown.reference?.render())
+
   const shouldRenderBack = input.back && typeof input.back.onPress === 'function'
+
   return h(
     Box,
     {
-      class: 'flex flex-row h-16 w-full shrink-0 items-center truncate px-6 text-center',
+      class: 'flex flex-row h-16 w-full shrink-0 items-center truncate px-6 text-center justify-center',
     },
     [
       shouldRenderBack &&
@@ -59,18 +61,20 @@ export const ScreenNavBarMobile = (input: {
             h(Typography, {
               role: 'heading',
               sizeClassName: 'text-xl font-bold',
-              class: 'truncate px-2',
+              class: 'truncate px-2 text-center',
               variant: 'title',
               text: input.title,
+              align: 'center',
             }),
 
           typeof input.subtitle === 'string' &&
             h(Typography, {
-              class: 'truncate px-2 text-xs',
+              class: 'truncate px-2 text-xs text-center',
               color: 'text-secondary',
               role: 'heading',
               variant: 'subtitle',
               text: input.subtitle,
+              align: 'center',
             }),
         ],
       ),

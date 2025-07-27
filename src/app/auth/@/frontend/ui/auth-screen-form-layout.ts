@@ -36,7 +36,13 @@ export const AuthScreenFormLayout = (input: {
         onBack: input.onBack,
       }),
       h(Box, { class: 'flex w-full flex-col gap-16 pt-4' }, [
-        h(Box, { class: 'flex w-full flex-col gap-6' }, [input.renderInputs()]),
+        h(
+          Box,
+          {
+            class: 'flex w-full flex-col gap-6',
+          },
+          [input.renderInputs()],
+        ),
         h(Button, {
           color: 'primary',
           size: 'lg',
@@ -46,6 +52,7 @@ export const AuthScreenFormLayout = (input: {
           text: input.submitText,
           loading: input.submitLoading,
           disabled: input.submitDisabled,
+          width: 'full',
         }),
       ]),
     ],

@@ -6,11 +6,13 @@ import { cn } from './cn'
 
 export type Props = {
   class?: string
+  fill: string
+  stroke: string
   [key: string]: any
 }
 
 export const IconArrowRightCircle = (input: Props) => {
-  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 512 512', fill: 'currentColor', ...input }, [
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 512 512', ...input }, [
     h(Path, {
       d: 'M0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM281 385c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l71-71L136 280c-13.3 0-24-10.7-24-24s10.7-24 24-24l182.1 0-71-71c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0L393 239c9.4 9.4 9.4 24.6 0 33.9L281 385z',
     }),
@@ -18,7 +20,7 @@ export const IconArrowRightCircle = (input: Props) => {
 }
 
 export const IconArrowDownShortWide = (input: Props) => {
-  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 576 512', fill: 'currentColor', ...input }, [
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 576 512', ...input }, [
     h(Path, {
       d: 'M151.6 469.6C145.5 476.2 137 480 128 480s-17.5-3.8-23.6-10.4l-88-96c-11.9-13-11.1-33.3 2-45.2s33.3-11.1 45.2 2L96 365.7 96 64c0-17.7 14.3-32 32-32s32 14.3 32 32l0 301.7 32.4-35.4c11.9-13 32.2-13.9 45.2-2s13.9 32.2 2 45.2l-88 96zM320 32l32 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-32 0c-17.7 0-32-14.3-32-32s14.3-32 32-32zm0 128l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-96 0c-17.7 0-32-14.3-32-32s14.3-32 32-32zm0 128l160 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-160 0c-17.7 0-32-14.3-32-32s14.3-32 32-32zm0 128l224 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-224 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z',
     }),
@@ -31,8 +33,6 @@ export const IconArrowLeft = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 448 512',
-      fill: 'currentColor',
-      stroke: 'currentColor',
       ...input,
     },
     [
@@ -50,7 +50,7 @@ export const IconArrowLeft = (input: Props) => {
  * @returns 
  */
 export const IconArrowRightOnRect = (input: Props) => {
-  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 512 512', fill: 'currentColor', ...input }, [
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 512 512', ...input }, [
     h(Path, {
       d: 'M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 192 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l210.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128zM160 96c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 32C43 32 0 75 0 128L0 384c0 53 43 96 96 96l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l64 0z',
     }),
@@ -62,7 +62,7 @@ export const IconArrowLeftOnRect = (input: Props) => {
 }
 
 export const IconArrowRight = (input: Props) => {
-  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 448 512', fill: 'currentColor', ...input }, [
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 448 512', ...input }, [
     h(Path, {
       d: 'M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z',
     }),
@@ -70,7 +70,7 @@ export const IconArrowRight = (input: Props) => {
 }
 
 export const IconArrowRotateLeft = (input: Props) => {
-  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 512 512', fill: 'currentColor', ...input }, [
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 512 512', ...input }, [
     h(Path, {
       d: 'M125.7 160H176c17.7 0 32 14.3 32 32s-14.3 32-32 32H48c-17.7 0-32-14.3-32-32V64c0-17.7 14.3-32 32-32s32 14.3 32 32v51.2L97.6 97.6c87.5-87.5 229.3-87.5 316.8 0s87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3s-163.8-62.5-226.3 0L125.7 160z',
     }),
@@ -78,7 +78,7 @@ export const IconArrowRotateLeft = (input: Props) => {
 }
 
 export const IconArrowRotateRight = (input: Props) => {
-  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', fill: 'currentColor', viewBox: '0 0 512 512', ...input }, [
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 512 512', ...input }, [
     h(Path, {
       d: 'M463.5 224H472c13.3 0 24-10.7 24-24V72c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L413.4 96.6c-87.6-86.5-228.7-86.2-315.8 1c-87.5 87.5-87.5 229.3 0 316.8s229.3 87.5 316.8 0c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0c-62.5 62.5-163.8 62.5-226.3 0s-62.5-163.8 0-226.3c62.2-62.2 162.7-62.5 225.3-1L327 183c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8H463.5z',
     }),
@@ -86,21 +86,17 @@ export const IconArrowRotateRight = (input: Props) => {
 }
 
 export const IconBars3 = (input: Props) => {
-  return h(
-    Svg,
-    { xmlns: 'http://www.w3.org/2000/svg', fill: 'none', viewBox: '0 0 24 24', stroke: 'currentColor', ...input },
-    [
-      h(Path, {
-        'stroke-linecap': 'round',
-        'stroke-linejoin': 'round',
-        d: 'M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5',
-      }),
-    ],
-  )
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 24 24', ...input }, [
+    h(Path, {
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+      d: 'M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5',
+    }),
+  ])
 }
 
 export const IconBox = (input: Props) => {
-  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 448 512', fill: 'currentColor', ...input }, [
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 448 512', ...input }, [
     h(Path, {
       d: 'M50.7 58.5L0 160H208V32H93.7C75.5 32 58.9 42.3 50.7 58.5zM240 160H448L397.3 58.5C389.1 42.3 372.5 32 354.3 32H240V160zm208 32H0V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V192z',
     }),
@@ -108,7 +104,7 @@ export const IconBox = (input: Props) => {
 }
 
 export const IconCheckmarkCircle = (input: Props) => {
-  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 24 24', fill: 'currentColor', ...input }, [
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 24 24', ...input }, [
     h(Path, {
       'fill-rule': 'evenodd',
       d: 'M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z',
@@ -123,8 +119,6 @@ export const IconCheckmark = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 448 512',
-      fill: 'currentColor',
-      stroke: 'currentColor',
       ...input,
     },
     [
@@ -141,8 +135,6 @@ export const IconChevronDown = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
-      fill: 'currentColor',
-      stroke: 'currentColor',
       ...input,
     },
     [
@@ -160,8 +152,6 @@ export const IconChevronLeft = (input: Props) => {
       xmlns: 'http://www.w3.org/2000/svg',
       height: '1em',
       viewBox: '0 0 320 512',
-      stroke: 'currentColor',
-      fill: 'currentColor',
       ...input,
     },
     [
@@ -179,8 +169,6 @@ export const IconChevronRight = (input: Props) => {
       xmlns: 'http://www.w3.org/2000/svg',
       height: '1em',
       viewBox: '0 0 320 512',
-      fill: 'currentColor',
-      stroke: 'currentColor',
       ...input,
     },
     [
@@ -197,7 +185,6 @@ export const IconClock = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
-      fill: 'currentColor',
       ...input,
     },
     [
@@ -214,7 +201,6 @@ export const IconCopy = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 448 512',
-      fill: 'currentColor',
       ...input,
     },
     [
@@ -232,8 +218,6 @@ export const IconCrown = (input: Props) => {
       xmlns: 'http://www.w3.org/2000/svg',
       height: '1em',
       viewBox: '0 0 576 512',
-      fill: 'currentColor',
-      stroke: 'currentColor',
       ...input,
     },
     [
@@ -250,8 +234,6 @@ export const IconDeleteForever = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-      fill: 'currentColor',
-      stroke: 'currentColor',
       ...input,
     },
     [
@@ -268,7 +250,6 @@ export const IconDoorOpen = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 576 512',
-      fill: 'currentColor',
       ...input,
     },
     [
@@ -285,8 +266,6 @@ export const IconEllipsisVertical = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 128 512',
-      fill: 'currentColor',
-      stroke: 'currentColor',
       ...input,
     },
     [
@@ -303,7 +282,7 @@ export const IconEnvelope = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -323,7 +302,7 @@ export const IconExpand = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 448 512',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -340,8 +319,7 @@ export const IconFlag = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 448 512',
-      fill: 'currentColor',
-      stroke: 'currentColor',
+
       ...input,
     },
     [
@@ -358,8 +336,7 @@ export const IconFloppyDisk = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 448 512',
-      fill: 'currentColor',
-      stroke: 'currentColor',
+
       ...input,
     },
     [
@@ -376,8 +353,7 @@ export const IconGamepad = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 640 512',
-      fill: 'currentColor',
-      stroke: 'currentColor',
+
       ...input,
     },
     [
@@ -394,7 +370,7 @@ export const IconGear = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -410,7 +386,7 @@ export const IconGoogle = (input: Props) => {
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
-      fill: 'currentColor',
+
       version: '1.1',
       viewBox: '0 0 210 210',
       xmlSpace: 'preserve',
@@ -430,7 +406,7 @@ export const IconHome = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 576 512',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -447,7 +423,7 @@ export const IconInfoCircle = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -466,7 +442,7 @@ export const IconLanguage = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 640 512',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -483,7 +459,7 @@ export const IconLightbulb = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 384 512',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -500,7 +476,7 @@ export const IconMagnifyingGlass = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -519,8 +495,7 @@ export const IconMobilePhone = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-      fill: 'currentColor',
-      stroke: 'currentColor',
+
       ...input,
     },
     [
@@ -540,7 +515,7 @@ export const IconPenToSquare = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -560,8 +535,7 @@ export const IconPen = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
-      fill: 'currentColor',
-      stroke: 'currentColor',
+
       ...input,
     },
     [
@@ -578,7 +552,7 @@ export const IconPhone = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -597,7 +571,7 @@ export const IconPlay = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -618,7 +592,7 @@ export const IconPlus = (input: Props) => {
       fill: 'none',
       viewBox: '0 0 24 24',
       'stroke-width': '1.5',
-      stroke: 'currentColor',
+
       ...input,
     },
     [
@@ -637,7 +611,7 @@ export const IconPowerOff = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -654,7 +628,7 @@ export const IconPuzzlePiece = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -672,7 +646,7 @@ export const IconQuestionMark = (input: Props) => {
       xmlns: 'http://www.w3.org/2000/svg',
       height: '1em',
       viewBox: '0 0 320 512',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -690,7 +664,7 @@ export const IconRightLeft = (input: Props) => {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
       class: 'size-6 fill-current',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -707,7 +681,7 @@ export const IconRobot = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 640 512',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -724,8 +698,7 @@ export const IconScrewdriverWrench = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
-      fill: 'currentColor',
-      stroke: 'currentColor',
+
       ...input,
     },
     [
@@ -741,8 +714,7 @@ export const IconSpinner = (input: Props) => {
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
-      fill: 'currentColor',
-      stroke: 'currentColor',
+
       viewBox: '0 0 24 24',
       ...input,
     },
@@ -767,7 +739,7 @@ export const IconUserCircle = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-      fill: 'currentColor',
+
       ...input,
     },
 
@@ -787,7 +759,7 @@ export const IconUserGroup = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 640 512',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -804,7 +776,7 @@ export const IconUserPen = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 640 512',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -821,7 +793,7 @@ export const IconUsers = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -838,7 +810,7 @@ export const IconVolumeHigh = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 640 512',
-      fill: 'currentColor',
+
       ...input,
     },
 
@@ -856,7 +828,7 @@ export const IconVolumeXMark = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 576 512',
-      fill: 'currentColor',
+
       ...input,
     },
 
@@ -874,7 +846,7 @@ export const IconXMark = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 384 512',
-      fill: 'currentColor',
+
       ...input,
     },
 
@@ -892,7 +864,7 @@ export const IconExclamationCircle = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -911,7 +883,7 @@ export const IconCode = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 640 512',
-      fill: 'currentColor',
+
       ...input,
     },
     [
@@ -928,7 +900,7 @@ export const IconCircle = (input: Props) => {
     {
       viewBox: '0 0 24 24',
       fill: 'none',
-      stroke: 'currentColor',
+
       'stroke-width': '2',
       'stroke-linecap': 'round',
       class: input.class,
@@ -939,7 +911,7 @@ export const IconCircle = (input: Props) => {
         cx: '12',
         cy: '12',
         fill: 'none',
-        stroke: 'currentColor',
+
         'stroke-width': '2',
         'stroke-linecap': 'round',
       }),

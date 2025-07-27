@@ -1,5 +1,6 @@
 import { createElement, Fragment } from 'react'
-import { Pressable, Text, View } from 'react-native'
+import { Image, Pressable, Text, TextInput, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import Svg, {
   Circle,
   ClipPath,
@@ -33,6 +34,7 @@ import {
   PRESSABLE_TAG,
   RADIAL_GRADIENT_TAG,
   RECT_TAG,
+  SAFE_AREA_BOX_TAG,
   STOP_TAG,
   SVG_TAG,
   SVG_TEXT_TAG,
@@ -122,78 +124,54 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
       children = normalizeChildren(children)
 
       switch (tag) {
-        case PRESSABLE_TAG: {
+        case PRESSABLE_TAG:
           return createElement(Pressable, props, ...children) as any
-        }
-        case BOX_TAG: {
+        case SAFE_AREA_BOX_TAG:
+          return createElement(SafeAreaView, props, ...children) as any
+        case BOX_TAG:
           return createElement(View, props, ...children) as any
-        }
-        case TEXT_TAG: {
+        case TEXT_TAG:
           return createElement(Text, props, ...children) as any
-        }
-        case TEXT_INPUT_TAG: {
-          // throw new Error('Not implemented')
+        case TEXT_INPUT_TAG:
+          return createElement(TextInput, props, ...children) as any
+        case IMAGE_TAG:
+          return createElement(Image, props, ...children) as any
+        case CANVAS_TAG:
           return createElement(Text, {}, ['Not implemented'])
-        }
-        case IMAGE_TAG: {
-          // throw new Error('Not implemented')
-          return createElement(Text, {}, ['Not implemented'])
-        }
-        case CANVAS_TAG: {
-          // throw new Error('Not implemented')
-          return createElement(Text, {}, ['Not implemented'])
-        }
-        case SVG_TAG: {
+        case SVG_TAG:
           return createElement(Svg, props, ...children) as any
-        }
-        case SVG_TEXT_TAG: {
+        case SVG_TEXT_TAG:
           return createElement(SvgText, props, ...children) as any
-        }
-        case CIRCLE_TAG: {
+        case CIRCLE_TAG:
           return createElement(Circle, props, ...children) as any
-        }
-        case RECT_TAG: {
+        case RECT_TAG:
           return createElement(Rect, props, ...children) as any
-        }
-        case LINE_TAG: {
+        case LINE_TAG:
           return createElement(Line, props, ...children) as any
-        }
-        case LINEAR_GRADIENT_TAG: {
+        case LINEAR_GRADIENT_TAG:
           return createElement(LinearGradient, props, ...children) as any
-        }
-        case RADIAL_GRADIENT_TAG: {
+        case RADIAL_GRADIENT_TAG:
           return createElement(RadialGradient, props, ...children) as any
-        }
-        case MASK_TAG: {
+        case MASK_TAG:
           return createElement(Mask, props, ...children) as any
-        }
-        case PATH_TAG: {
+        case PATH_TAG:
           return createElement(Path, props, ...children) as any
-        }
-        case PATTERN_TAG: {
+        case PATTERN_TAG:
           return createElement(Pattern, props, ...children) as any
-        }
-        case STOP_TAG: {
+        case STOP_TAG:
           return createElement(Stop, props, ...children) as any
-        }
-        case DEFS_TAG: {
+        case DEFS_TAG:
           return createElement(Defs, props, ...children) as any
-        }
-        case G_TAG: {
+        case G_TAG:
           return createElement(G, props, ...children) as any
-        }
-        case CLIP_PATH_TAG: {
+        case CLIP_PATH_TAG:
           return createElement(ClipPath, props, ...children) as any
-        }
-        case FRAGMENT_TAG: {
+        case FRAGMENT_TAG:
           return createElement(Fragment, props, ...children) as any
-        }
-        case TRANSITION_ELEMENT_TAG: {
+        case TRANSITION_ELEMENT_TAG:
           return createElement(View, props, ...children) as any
-        }
-        default: {
+        default:
           return createElement(tag, props, ...children) as any
-        }
       }
     },
   }

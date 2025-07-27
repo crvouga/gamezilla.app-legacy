@@ -114,6 +114,7 @@ const ViewButton: FrontendModule['View'] = (input) => {
     onPress: () => input.dispatch({ t: 'clicked-continue-as-guest-button' }),
     renderIconStart: (iconInput) => h(IconUserCircle, iconInput),
     text: input.ctx.t('auth.continue-as-guest'),
+    width: 'full',
   })
 }
 
