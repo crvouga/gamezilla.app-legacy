@@ -56,6 +56,9 @@ const ALLOWED_PROPS = new Set([
   'accessibilityState',
   'accessibilityHint',
   'children',
+  'class',
+  'className',
+  'role',
 ])
 
 const sanitizeProps = (props: Record<string, any>): Record<string, any> => {
@@ -110,7 +113,12 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
     createElement: (tag: any, props: any, children: any) => {
       props = PrimitiveProps.intoReactNativeStandard(props)
       normalizePropsInPlace(props, tag)
-      props = sanitizeProps(props)
+
+      // Only sanitize props for primitive components
+      if (tag === PRESSABLE_TAG || tag === BOX_TAG || tag === TEXT_TAG || tag === TEXT_INPUT_TAG) {
+        props = sanitizeProps(props)
+      }
+
       children = normalizeChildren(children)
 
       switch (tag) {

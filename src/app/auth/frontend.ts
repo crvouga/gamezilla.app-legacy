@@ -26,6 +26,7 @@ import { ContinueAsGuestFrontend } from './login-as-guest/frontend'
 import { LoginWithSMSFrontend } from './login-with-sms/frontend'
 import { LogoutFrontend } from './logout/frontend'
 import { FrontendCtxModule, FrontendModule, ModelFrontend, MsgFrontend, rpcContract } from './types'
+import { Text } from '~/@/vdom/primitives/text'
 
 //
 //
@@ -237,6 +238,14 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
     [
       h(Box, { class: 'flex w-full flex-1 flex-col gap-6' }, [
         h(AuthScreenHeaderCta, { ctx: input.ctx }),
+
+        h(Button, {
+          text: 'hello',
+          variant: 'contained',
+          color: 'primary',
+          // onPress: () => input.dispatch({ t: 'clicked-login-with-phone' }),
+          // class: 'w-full',
+        }),
 
         h(Button, {
           onPress: () => input.dispatch({ t: 'clicked-login-with-phone' }),

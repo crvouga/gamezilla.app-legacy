@@ -17,7 +17,7 @@ type Combo = `${ButtonVariant}-${ButtonColor}`
 
 export type ButtonInput = {
   fab?: boolean
-  text?: TranslatedText
+  text?: TranslatedText | string
   disabled?: boolean
   type?: 'button'
   class?: string
@@ -35,6 +35,7 @@ export const Button = (input: ButtonInput) => {
   const sizeClassText = toSizeClassText(input)
   const iconSizeClass = toIconSizeClass(input)
   const colorPressableClass = toClassColorPressable(input)
+
   return h(
     Clickable,
     {
@@ -45,7 +46,7 @@ export const Button = (input: ButtonInput) => {
         'relative flex flex-row shrink-0 appearance-none flex-nowrap items-center justify-center truncate overflow-hidden rounded font-semibold select-none',
         colorPressableClass,
         sizeClassPadding,
-        input.fab && 'rounded-3xl shadow-2xl',
+        input.fab && 'rounded-[30px] shadow-2xl',
         input.disabled && 'cursor-not-allowed opacity-60',
         input.loading && 'cursor-wait opacity-70',
       ),
@@ -57,7 +58,12 @@ export const Button = (input: ButtonInput) => {
     [
       h(
         Box,
-        { class: cn('flex flex-row h-full w-full items-center justify-center', input.loading && 'text-transparent') },
+        {
+          class: cn(
+            'flex flex-row h-full w-full items-center justify-center',
+            input.loading ? 'text-transparent' : null,
+          ),
+        },
         [
           h(Box, { class: 'flex-none' }, [
             input.renderIconStart?.({ class: cn(colorTextClass, iconSizeClass, 'mr-2') }),
@@ -67,7 +73,7 @@ export const Button = (input: ButtonInput) => {
       ),
       input.loading &&
         h(Box, { class: 'absolute inset-0 flex flex-row items-center justify-center' }, [
-          h(Spinner, { class: 'size-8' }),
+          h(Spinner, { class: 'h-8 w-8' }),
         ]),
     ],
   )
@@ -76,13 +82,13 @@ export const Button = (input: ButtonInput) => {
 const toIconSizeClass = (input: ButtonInput): string => {
   switch (input.size ?? 'lg') {
     case 'lg':
-      return 'size-8'
+      return 'h-8 w-8'
     case 'md':
-      return 'size-6'
+      return 'h-6 w-6'
     case 'sm':
-      return 'size-4'
+      return 'h-4 w-4'
     case 'xs':
-      return 'size-3'
+      return 'h-3 w-3'
   }
 }
 

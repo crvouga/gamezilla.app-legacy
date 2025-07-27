@@ -6,8 +6,7 @@ export const AppRoot = (input: { children: VDom[] }) => {
   return h(
     Box,
     {
-      class:
-        'relative flex h-[100dvh] w-[100dvw] flex-col items-center justify-center overflow-hidden bg-black text-white',
+      class: 'relative flex h-screen w-screen flex-col items-center justify-center overflow-hidden bg-black text-white',
     },
     input.children,
   )
