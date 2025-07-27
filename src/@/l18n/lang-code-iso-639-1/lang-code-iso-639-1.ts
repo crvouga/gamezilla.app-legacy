@@ -10,21 +10,7 @@ const is = (code: unknown): code is LanguageCodeISO_639_1 =>
   typeof code === 'string' && ALL.includes(code as LanguageCodeISO_639_1)
 
 const getLangFromNavigator = (): LanguageCodeISO_639_1 | null => {
-  if (typeof window === 'undefined') {
-    return null
-  }
-
-  const lang = window.navigator.language.split('-')[0]
-
-  if (!lang) {
-    return null
-  }
-
-  if (!LanguageCodeISO_639_1.is(lang)) {
-    return null
-  }
-
-  return lang
+  return 'en'
 }
 
 export const LanguageCodeISO_639_1 = {

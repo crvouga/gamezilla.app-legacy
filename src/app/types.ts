@@ -1,6 +1,6 @@
 import { RPC } from '~/@/rpc'
-import { TopicContract } from '~/@/topic/topic-contract'
 import { ITopicClient } from '~/@/topic/topic-client/types'
+import { TopicContract } from '~/@/topic/topic-contract'
 import { AppBackendCtxBase } from './@/backend/ctx'
 import { AppFrontendCtxBase } from './@/frontend/ctx'
 import { AuthTypes } from './auth'
@@ -27,9 +27,18 @@ export type MsgFrontend =
   | { t: 'settings'; c: SettingsTypes.MsgFrontend }
   | { t: 'frontend'; c: FrontendTypes.MsgFrontend }
 
-export const rpcContract = RPC.combineContracts([WireTypes.rpcContract, AuthTypes.rpcContract, SpacesTypes.rpcContract])
+export const rpcContract = RPC.combineContracts([
+  //
 
-export const topicContract = TopicContract.combine([WireTypes.topicContract, SpacesTypes.topicContract])
+  AuthTypes.rpcContract,
+  SpacesTypes.rpcContract,
+])
+
+export const topicContract = TopicContract.combine([
+  //
+  WireTypes.topicContract,
+  SpacesTypes.topicContract,
+])
 
 export type BackendCtxModule = AppBackendCtxBase &
   WireTypes.BackendCtxModule &

@@ -5,7 +5,7 @@ import { s } from '../schema'
 import { PubSub, Sub } from '../sub'
 import { INavigation } from './interface'
 
-export type ImplKeyValueDbSync = {
+export type NavigationImplKeyValueDbSync = {
   t: 'key-value-db-sync'
   keyValueDbSync: IKeyValueDbSync
   logger: ILogger
@@ -18,7 +18,7 @@ const HistoryItem = s.obj({
 })
 type HistoryItem = s.Infer<typeof HistoryItem>
 
-const init = (config: ImplKeyValueDbSync): INavigation => {
+const init = (config: NavigationImplKeyValueDbSync): INavigation => {
   const logger = config.logger.child(['navigation'])
 
   const getHistory = (): HistoryItem[] => {
@@ -97,6 +97,6 @@ const init = (config: ImplKeyValueDbSync): INavigation => {
   }
 }
 
-export const ImplKeyValueDbSync = {
+export const NavigationImplKeyValueDbSync = {
   init,
 }

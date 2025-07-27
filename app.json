@@ -26,8 +26,6 @@
       "favicon": "./public/assets/favicon.png",
       "bundler": "metro"
     },
-    "plugins": [
-      "expo-sqlite"
-    ]
+    "plugins": ["expo-sqlite"]
   }
 }

@@ -1,9 +1,8 @@
-import { RPC } from '~/@/rpc'
 import { ITopicClient } from '~/@/topic/topic-client/types'
 import { AppBackendCtxBase } from '../@/backend/ctx'
 import { BackendConnectionBackend } from './backend-connection/backend'
 import { BackendInstanceBackend } from './backend-instance/backend'
-import { rpcContract, topicContract, type BackendCtxModule } from './types'
+import { topicContract, type BackendCtxModule } from './types'
 
 const initCtx = async (input: {
   ctx: AppBackendCtxBase
@@ -16,12 +15,6 @@ const initCtx = async (input: {
   }
 }
 
-const rpc = (input: { ctx: BackendCtxModule }) => {
-  return RPC.initServer(rpcContract, {
-    ...BackendInstanceBackend.rpc({ ctx: input.ctx }),
-  })
-}
-
 const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
   BackendInstanceBackend.worker(s, input)
   BackendConnectionBackend.worker(s, { topicClient: input.ctx.topic })
@@ -29,6 +22,5 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
 
 export const WireBackend = {
   initCtx,
-  rpc,
   worker,
 }

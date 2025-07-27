@@ -141,7 +141,7 @@ const initCtx = async (config: {
   const auth = await AuthFrontend.initCtx({ ctx, rpc })
   const profile = ProfileFrontend.initCtx({ ctx })
   const spaces = await SpacesFrontend.initCtx({ ctx, rpc, topic })
-  const wire = WireFrontend.initCtx({ ctx, rpc, topic })
+  const wire = WireFrontend.initCtx({ ctx, topic })
 
   const ctxModule: FrontendCtxModule = {
     ...ctx,

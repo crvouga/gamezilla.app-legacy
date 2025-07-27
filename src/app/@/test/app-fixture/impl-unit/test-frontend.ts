@@ -112,7 +112,7 @@ export const TestFrontend = async (config: {
   const auth = await AuthFrontend.initCtx({ ctx: ctxBase, rpc })
   const profile = ProfileFrontend.initCtx({ ctx: ctxBase })
   const spaces = await SpacesFrontend.initCtx({ ctx: ctxBase, rpc, topic: config.topic })
-  const wire = WireFrontend.initCtx({ ctx: ctxBase, rpc, topic: config.topic })
+  const wire = WireFrontend.initCtx({ ctx: ctxBase, topic: config.topic })
 
   const ctx: FrontendCtxModule = {
     ...ctxBase,

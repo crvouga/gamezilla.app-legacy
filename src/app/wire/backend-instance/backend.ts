@@ -1,13 +1,12 @@
 import { p } from '~/@/promise'
-import { Err, isErr, Result, unwrapOr } from '~/@/result'
-import { RPC } from '~/@/rpc'
+import { Err, isErr, Result } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { UnixMs } from '~/@/time/unix-ms'
 import { BackendInstance } from '~/app/@/backend/backend-instance/backend-instance'
 import { BackendInstanceDb } from '~/app/@/backend/backend-instance/backend-instance-db'
 import { BackendInstanceId } from '~/app/@/backend/backend-instance/backend-instance-id'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
-import { rpcContract, type BackendCtxModule } from './types'
+import { type BackendCtxModule } from './types'
 
 const initCtx = async (input: { ctx: AppBackendCtxBase }): Promise<BackendCtxModule> => {
   const backendInstanceDb = BackendInstanceDb({
@@ -113,22 +112,7 @@ const heartbeat = async (
   return put
 }
 
-const rpc = (input: { ctx: BackendCtxModule }) => {
-  return RPC.initServer(rpcContract, {
-    'wire/backend-instance/list-alive': async () => {
-      const listed = await input.ctx.backendInstanceDb.listAlive({
-        minimalHeartRate: BackendInstance.HEARTBEAT,
-      })
-      const backendInstances = unwrapOr(listed, [])
-      return {
-        backendInstances,
-      }
-    },
-  })
-}
-
 export const BackendInstanceBackend = {
   initCtx,
   worker,
-  rpc,
 }

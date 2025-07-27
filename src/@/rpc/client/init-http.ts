@@ -43,6 +43,5 @@ export const initClientHttp = <T extends Base>(config: ClientConfigHttp<T>): Cli
       acc[rpcName] = fn
       return acc
     }, {} as Client<T>)
-
   return client
 }

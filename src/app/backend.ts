@@ -149,7 +149,6 @@ const initCtx = async (config: {
 
 const rpc = (input: { ctx: BackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
-    ...WireBackend.rpc(input),
     ...AuthBackend.rpc(input),
     ...SpacesBackend.rpc(input),
   })

@@ -54,5 +54,12 @@ export function combineContracts<
   I extends Base,
 >(contracts: [A, B, C, D, E, F, G, H, I]): Contract<Prettify<A & B & C & D & E & F & G & H & I>>
 export function combineContracts(contracts: Base[]): any {
-  return contracts.reduce((acc, contract) => ({ ...acc, ...contract }), {})
+  let acc = {}
+  for (const contract of contracts) {
+    acc = {
+      ...acc,
+      ...contract,
+    }
+  }
+  return acc
 }
