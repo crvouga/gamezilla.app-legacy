@@ -64,8 +64,8 @@ services:
       POSTGRES_PORT: 5432
     ports:
       - '${POSTGRES_PORT:?POSTGRES_PORT is required}:5432'
-    tmpfs:
-      - /var/lib/postgresql/data
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:?POSTGRES_USER is required} -p 5432']
       interval: 10s
@@ -75,3 +75,6 @@ services:
       - e2e
       - int
       - local
+
+volumes:
+  postgres_data:
