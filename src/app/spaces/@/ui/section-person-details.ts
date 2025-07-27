@@ -33,7 +33,7 @@ export const SectionPersonDetails = (input: {
     ),
 
     h(Box, { class: 'w-full px-4 pb-8' }, [
-      h(Button, { onPress: input.onOpenDetails, class: 'w-full', text: input.ctx.t('app.see-profile') }),
+      h(Button, { onPress: input.onOpenDetails, width: 'full', text: input.ctx.t('app.see-profile') }),
     ]),
   ])
 }

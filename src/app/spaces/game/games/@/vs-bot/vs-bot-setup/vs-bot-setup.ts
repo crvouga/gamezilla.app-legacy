@@ -206,7 +206,7 @@ export const View = ({
           disabled: !canStartGame,
           variant: 'contained',
           color: 'primary',
-          class: 'flex-1',
+          width: 'full',
           onPress: onStartGame,
           text: ctx.t('game.start-game'),
         }),
@@ -326,7 +326,7 @@ const PlayerButtons = ({
     !human.userId &&
       h(Button, {
         onPress: player.onStartPlaying,
-        class: 'w-full',
+        width: 'full',
         color: 'primary',
         text: ctx.t('game.start-playing'),
       }),
@@ -334,7 +334,7 @@ const PlayerButtons = ({
       ctx.currentUser.userId === player.userId &&
       h(Button, {
         onPress: player.onStopPlaying,
-        class: 'w-full',
+        width: 'full',
         variant: 'text',
         color: 'primary',
         text: ctx.t('game.stop-playing'),
@@ -343,7 +343,7 @@ const PlayerButtons = ({
       human.userId === ctx.currentUser.userId &&
       h(Button, {
         onPress: onSwapSides,
-        class: 'w-full',
+        width: 'full',
         variant: 'text',
         color: 'primary',
         text: ctx.t('game.swap-sides'),
@@ -355,7 +355,7 @@ const PlayerButtons = ({
           dispatch({
             t: 'clicked-change-bot',
           }),
-        class: 'w-full',
+        width: 'full',
         variant: 'text',
         color: 'primary',
         text: ctx.t('game.change-bot'),

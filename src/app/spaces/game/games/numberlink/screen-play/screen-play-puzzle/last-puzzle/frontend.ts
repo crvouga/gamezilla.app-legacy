@@ -51,6 +51,7 @@ const ViewDialog = (input: { open: boolean; dispatch: (m: MsgFrontend) => void; 
         h(Button, {
           class: 'w-full',
           text: input.ctx.t('game.numberlink.select-next-pack'),
+          width: 'full',
           onPress: () =>
             input.dispatch({
               t: 'got-msg-space',

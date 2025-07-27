@@ -97,7 +97,7 @@ const ScreenActionButton = (input: ScreenAction) => {
           ),
         },
         [
-          input.icon({ class: toIconSizeClasses(size) }),
+          input.icon({ class: toIconSizeClasses(size), fill: '#fff', stroke: '#fff' }),
           h(Typography, {
             text: input.label,
             class: cn('truncate text-center xl:text-left xl:text-xl', 'text-inherit', input.classNames?.label),

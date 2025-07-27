@@ -348,6 +348,7 @@ const ViewGameOverMessage = ({
       h(IconSpinner, { class: 'mb-4 h-8 w-8 animate-spin' }),
       h(Button, {
         variant: 'contained',
+        width: 'full',
         onPress: () =>
           dispatch({
             t: 'user-cancelled-rematch',
@@ -376,9 +377,11 @@ const ViewGameOverMessage = ({
             }),
           renderIconStart: (iconInput) => h(IconXMark, iconInput),
           text: ctx.t('app.decline'),
+          width: 'full',
         }),
         h(Button, {
           variant: 'contained',
+          width: 'full',
           onPress: () =>
             dispatch({
               t: 'user-responded-to-rematch-request',

@@ -104,6 +104,7 @@ const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps 
               ]),
             screen.postAction &&
               h(Button, {
+                width: 'full',
                 color: 'primary',
                 fab: true,
                 variant: 'contained',

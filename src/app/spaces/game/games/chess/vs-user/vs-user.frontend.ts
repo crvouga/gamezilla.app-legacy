@@ -423,12 +423,14 @@ export const View = ({
       h(Box, { class: 'flex-1' }),
       h(Box, { class: 'flex flex-row items-center gap-4 p-4' }, [
         h(Button, {
+          width: 'full',
           class: 'flex-1',
           onPress: onQuit,
           renderIconStart: (iconInput) => h(IconArrowLeft, iconInput),
           text: ctx.t('app.exit'),
         }),
         h(Button, {
+          width: 'full',
           variant: 'contained',
           color: 'primary',
           class: 'flex-1',

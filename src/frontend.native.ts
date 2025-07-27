@@ -15,6 +15,7 @@ import { ViewportImplReactNative } from './@/viewport/impl-react-native'
 import { SplashScreen } from './app/@/ui/logo/splash-screen'
 import { AppFrontend } from './app/frontend'
 import './frontend.css'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 const logger = Logger.init({
   t: 'console',
@@ -36,7 +37,12 @@ const App = () => {
     return h(SplashScreen, {}, [])
   }
 
-  return h(AppFrontend.View, input, [])
+  return h(
+    // @ts-expect-error
+    SafeAreaProvider,
+    {},
+    [h(AppFrontend.View, input, [])],
+  )
 }
 
 const main = async () => {

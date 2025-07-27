@@ -22,7 +22,7 @@ export const CancelSubmitButtons = (input: {
     },
     [
       h(Button, {
-        class: 'flex-1',
+        width: 'flex-1',
         size: input.size,
         onPress: (event) => {
           preventConsoleErrorWhenClosingDrawer(event)
@@ -32,7 +32,7 @@ export const CancelSubmitButtons = (input: {
         disabled: input.cancelDisabled,
       }),
       h(Button, {
-        class: 'flex-1',
+        width: 'flex-1',
         size: input.size,
         onPress: input.onSubmit,
         color: input.variant === 'danger' ? 'danger' : 'primary',

@@ -85,6 +85,7 @@ const ViewBody: typeof View = (input) => {
             renderIconStart: (iconInput) => h(IconUserPen, iconInput),
             text: input.ctx.t('profile.edit-profile'),
             size: 'sm',
+            width: 'full',
           }),
         ])
       : null,

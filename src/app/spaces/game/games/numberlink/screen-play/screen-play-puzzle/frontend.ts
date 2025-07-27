@@ -307,7 +307,7 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
       h(SurfaceActions, {}, [
         h(Button, {
           text: input.ctx.t('game.numberlink.next-puzzle'),
-          class: 'w-full',
+          width: 'full',
           onPress: () =>
             input.dispatch({
               t: 'got-msg-space',

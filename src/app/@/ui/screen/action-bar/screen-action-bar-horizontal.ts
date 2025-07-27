@@ -177,7 +177,7 @@ const ScreenActionButton = (input: ScreenAction & { class?: string }) => {
       'aria-hidden': input.hidden,
       onPress: input.onPress,
       class: cn(
-        'relative flex flex-1 flex-col items-center gap-0.5 p-2 font-normal',
+        'relative flex flex-1 flex-col items-center gap-0.5 font-normal h-16',
         'disabled:cursor-not-allowed disabled:opacity-50',
         toColorClasses(input),
         input.hidden ? 'hidden' : '',
@@ -196,7 +196,7 @@ const ScreenActionButton = (input: ScreenAction & { class?: string }) => {
           ),
         },
         [
-          input.icon({ class: toIconSizeClasses(size) }),
+          input.icon({ class: toIconSizeClasses(size), fill: '#fff', stroke: '#fff' }),
           h(Typography, {
             variant: 'label',
             text: input.label,
@@ -239,10 +239,10 @@ const toSizeClasses = (size: ScreenAction['size']): string => {
 const toIconSizeClasses = (size: ScreenAction['size']): string => {
   switch (size) {
     case 'sm':
-      return 'size-5 text-white'
+      return 'w-5 h-5'
     case 'md':
     default:
-      return 'size-8 text-white'
+      return 'w-8 h-8'
   }
 }
 

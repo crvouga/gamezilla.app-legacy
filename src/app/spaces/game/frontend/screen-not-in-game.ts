@@ -1,7 +1,8 @@
-import { Clickable } from '~/@/ui/clickable'
-import { Box } from '~/@/vdom/primitives/box'
+import { chunk } from '~/@/array/chunk'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Pressable } from '~/@/vdom/primitives/pressable'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SpaceFrontendCtx } from '../../@/frontend/ctx'
 import { SpaceFrontendModule } from '../../frontend/space-frontend'
@@ -10,7 +11,6 @@ import { GameName } from '../games/@/game-name'
 import { ScreenLayoutHostSettingUpGame } from '../games/@/ui/screen-layout-host-setting-up-game/screen-layout-host-setting-up-game'
 import { GameCoverArt } from '../games/cover-art'
 import { GAME_NAME_LIST } from '../games/types'
-import { chunk } from '~/@/array/chunk'
 
 const View: SpaceFrontendModule['View'] = (input) => {
   if (!input.ctx.space) return null
@@ -56,9 +56,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
 const ViewHostGameSelection = (input: { ctx: SpaceFrontendCtx; dispatch: (msg: MsgFrontend) => void }) => {
   return h(
     Box,
-    {
-      class: 'flex flex-1 flex-col gap-4',
-    },
+    { class: 'flex flex-1 flex-col gap-4' },
     chunk(GAME_NAME_LIST, 3).map((gameNames) =>
       h(
         Box,
@@ -81,14 +79,17 @@ const ViewHostGameSelection = (input: { ctx: SpaceFrontendCtx; dispatch: (msg: M
 }
 
 const GameTile = (input: { gameName: GameName; ctx: SpaceFrontendCtx; dispatch: (msg: MsgFrontend) => void }) => {
-  return h(Box, {}, [
+  return h(Box, { class: 'flex flex-col gap-2 flex-1' }, [
     h(
-      Clickable,
+      Pressable,
       {
         type: 'button',
         role: 'button',
         'aria-label': input.gameName,
-        onPress: () => input.dispatch({ t: 'game.clicked-game-tile', gameName: input.gameName }),
+        onPress: () => {
+          console.log('clicked', input.gameName)
+          input.dispatch({ t: 'game.clicked-game-tile', gameName: input.gameName })
+        },
       },
       [h(GameCoverArt, { rounded: true, gameName: input.gameName })],
     ),

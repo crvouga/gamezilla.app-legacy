@@ -4,6 +4,6 @@ import { SAFE_AREA_BOX_TAG } from '../tags'
 
 export type SafeAreaBoxProps = PrimitiveProps
 
-export const SafeAreaBox = (props: SafeAreaBoxProps) => {
-  return h(SAFE_AREA_BOX_TAG, props, [])
+export const SafeAreaBox = ({ children, ...props }: SafeAreaBoxProps) => {
+  return h(SAFE_AREA_BOX_TAG, props, children)
 }

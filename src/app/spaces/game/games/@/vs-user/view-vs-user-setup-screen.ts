@@ -73,7 +73,7 @@ const PlayerButtons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerP
     player.userId &&
       player.userId === ctx.currentUser.userId &&
       h(Button, {
-        class: 'w-full',
+        width: 'full',
         variant: 'text',
         color: 'primary',
         onPress: player.onStopPlaying,
@@ -82,7 +82,7 @@ const PlayerButtons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerP
 
     !player.userId &&
       h(Button, {
-        class: 'w-full',
+        width: 'full',
         variant: 'contained',
         color: 'primary',
         onPress: player.onStartPlaying,
@@ -177,6 +177,7 @@ export const VsUserSetupScreen = ({
     ctx.currentUser.userId === ctx.space.hostId &&
       h(Box, { class: 'flex flex-row w-full items-center gap-4 p-4' }, [
         h(Button, {
+          width: 'full',
           disabled: !canStartGame,
           variant: 'contained',
           color: 'primary',

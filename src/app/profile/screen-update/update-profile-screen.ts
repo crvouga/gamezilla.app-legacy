@@ -41,6 +41,7 @@ export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFronten
             size: 'sm',
             color: 'primary',
             variant: 'text',
+            width: 'full',
             class: 'block',
             // onPress: () => input.dispatch({ t: 'clicked-change-avatar-button' }),
             text: input.ctx.t('profile.update-avatar'),
@@ -57,18 +58,14 @@ export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFronten
 }
 
 const ViewField = (input: { label: TranslatedText; value: TranslatedText; onPress?: () => void }) => {
-  return h(
-    Clickable,
-    { onPress: input.onPress, class: 'flex flex-row w-full items-center justify-start px-4 py-2' },
-    [
-      h(Box, { class: 'flex flex-1 flex-col items-start' }, [
-        h(Typography, { variant: 'label', text: input.label }),
-        input.value && h(Typography, { variant: 'body', text: input.value }),
-      ]),
+  return h(Clickable, { onPress: input.onPress, class: 'flex flex-row w-full items-center justify-start px-4 py-2' }, [
+    h(Box, { class: 'flex flex-1 flex-col items-start' }, [
+      h(Typography, { variant: 'label', text: input.label }),
+      input.value && h(Typography, { variant: 'body', text: input.value }),
+    ]),
 
-      h(IconChevronRight, { class: 'size-6' }),
-    ],
-  )
+    h(IconChevronRight, { class: 'size-6' }),
+  ])
 }
 
 export const UpdateProfileScreen = {

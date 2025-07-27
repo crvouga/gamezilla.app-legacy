@@ -27,7 +27,7 @@ export type ButtonInput = {
   color?: ButtonColor
   size?: ButtonSize
   loading?: boolean
-  width: 'fit' | 'full'
+  width: 'fit' | 'full' | 'flex-1'
   style?: Record<string, string | number>
 }
 
@@ -88,6 +88,8 @@ const toWidthClass = (input: ButtonInput): string => {
       return 'w-fit'
     case 'full':
       return 'w-full'
+    case 'flex-1':
+      return 'flex-1'
   }
 }
 

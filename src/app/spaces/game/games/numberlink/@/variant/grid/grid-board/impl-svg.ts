@@ -189,7 +189,7 @@ const HintCheckmark = (input: { x: number; y: number }) => {
     width: 1,
     height: 1,
     padding: 0.25,
-    render: (input) => IconCheckmark(input),
+    render: (input) => h(IconCheckmark, { ...input, fill: 'white', stroke: 'white' }),
   })
 }
 
