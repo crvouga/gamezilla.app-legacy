@@ -30,6 +30,11 @@ export type ButtonInput = {
 }
 
 export const Button = (input: ButtonInput) => {
+  const colorTextClass = toClassColorText(input)
+  const sizeClassPadding = toSizeClassPadding(input)
+  const sizeClassText = toSizeClassText(input)
+  const iconSizeClass = toIconSizeClass(input)
+  const colorPressableClass = toClassColorPressable(input)
   return h(
     Clickable,
     {
@@ -38,8 +43,8 @@ export const Button = (input: ButtonInput) => {
       class: cn(
         input.class,
         'relative flex flex-row shrink-0 appearance-none flex-nowrap items-center justify-center truncate overflow-hidden rounded font-semibold select-none',
-        toColorClass(input),
-        toSizeClass(input),
+        colorPressableClass,
+        sizeClassPadding,
         input.fab && 'rounded-3xl shadow-2xl',
         input.disabled && 'cursor-not-allowed opacity-60',
         input.loading && 'cursor-wait opacity-70',
@@ -54,8 +59,10 @@ export const Button = (input: ButtonInput) => {
         Box,
         { class: cn('flex flex-row h-full w-full items-center justify-center', input.loading && 'text-transparent') },
         [
-          h(Box, { class: 'flex-none' }, [input.renderIconStart?.({ class: cn(toIconSizeClass(input), 'mr-2') })]),
-          h(Box, { class: 'truncate' }, [Text({ text: input.text ?? '' })]),
+          h(Box, { class: 'flex-none' }, [
+            input.renderIconStart?.({ class: cn(colorTextClass, iconSizeClass, 'mr-2') }),
+          ]),
+          Text({ text: input.text ?? '', class: cn('truncate', colorTextClass, sizeClassText) }),
         ],
       ),
       input.loading &&
@@ -79,44 +86,87 @@ const toIconSizeClass = (input: ButtonInput): string => {
   }
 }
 
-const toSizeClass = (input: ButtonInput): string => {
+const toSizeClassPadding = (input: ButtonInput): string => {
   switch (input.size ?? 'lg') {
     case 'lg':
-      return 'px-4 py-3 text-xl'
+      return 'px-4 py-3'
     case 'md':
-      return 'px-4 py-2 text-lg'
+      return 'px-4 py-2'
     case 'sm':
-      return 'text-md  px-4 py-1.5'
+      return 'px-4 py-1.5'
     case 'xs':
-      return 'px-3 py-1 text-sm'
+      return 'px-3 py-1'
   }
 }
 
-const toColorClass = (input: ButtonInput): string => {
+const toSizeClassText = (input: ButtonInput): string => {
+  switch (input.size ?? 'lg') {
+    case 'lg':
+      return 'text-xl'
+    case 'md':
+      return 'text-lg'
+    case 'sm':
+      return 'text-md'
+    case 'xs':
+      return 'text-sm'
+  }
+}
+
+const toClassColorPressable = (input: ButtonInput): string => {
   const combo: Combo = `${input.variant ?? 'outlined'}-${input.color ?? 'primary'}`
   switch (combo) {
     case 'contained-primary':
-      return 'bg-blue-600 text-white ring-blue-500'
+      return 'bg-blue-600 ring-blue-500'
     case 'contained-danger':
-      return 'bg-red-600 text-white ring-red-500'
+      return 'bg-red-600 ring-red-500'
     case 'contained-default':
-      return 'border-2 border-blue-500/50  text-blue-500 ring-blue-500'
+      return 'border-2 border-blue-500/50 ring-blue-500'
+    case 'text-danger':
+      return ''
+    case 'outlined-default':
+      return 'border-2'
+    case 'soft-primary':
+      return 'bg-blue-500/20'
+    case 'soft-danger':
+      return 'bg-red-500/20'
+    case 'soft-default':
+      return 'bg-neutral-300/20'
+    case 'text-primary':
+      return ''
+    case 'outlined-danger':
+      return 'border-2 border-red-500/50'
+    case 'outlined-primary':
+      return 'border-2 border-blue-500/50'
+    case 'text-default':
+      return ''
+  }
+}
+
+const toClassColorText = (input: ButtonInput): string => {
+  const combo: Combo = `${input.variant ?? 'outlined'}-${input.color ?? 'primary'}`
+  switch (combo) {
+    case 'contained-primary':
+      return 'text-white'
+    case 'contained-danger':
+      return 'text-white'
+    case 'contained-default':
+      return 'text-blue-500'
     case 'text-danger':
       return 'font-bold text-red-500'
     case 'outlined-default':
-      return 'text-neutral-300 border-2 text-inherit'
+      return 'text-neutral-300 text-inherit'
     case 'soft-primary':
-      return 'bg-blue-500/20 text-blue-200'
+      return 'text-blue-200'
     case 'soft-danger':
-      return 'bg-red-500/20 text-red-200'
+      return 'text-red-200'
     case 'soft-default':
-      return 'bg-neutral-300/20 text-neutral-300'
+      return 'text-neutral-300'
     case 'text-primary':
       return 'text-blue-500'
     case 'outlined-danger':
-      return 'border-2 border-red-500/50 text-red-500'
+      return 'text-red-500'
     case 'outlined-primary':
-      return 'border-2 border-blue-500/50 text-blue-500'
+      return 'text-blue-500'
     case 'text-default':
       return 'text-neutral-300'
   }

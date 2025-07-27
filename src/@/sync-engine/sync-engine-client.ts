@@ -35,7 +35,7 @@ export type Config = {
   crudTransactionDb: ICrudTransactionDb
 }
 
-export const SyncEngineClient = (config: Config): ISyncEngineClient => {
+const init = (config: Config): ISyncEngineClient => {
   const logger = config.logger.child(['impl-client'])
 
   const pushDataRegistry = new Set<ISync>()
@@ -59,4 +59,8 @@ export const SyncEngineClient = (config: Config): ISyncEngineClient => {
       throw new Error('Not implemented')
     },
   }
+}
+
+export const SyncEngineClient = {
+  init,
 }

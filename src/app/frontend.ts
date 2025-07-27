@@ -110,14 +110,16 @@ const initCtx = async (config: {
     logger: logger.setMaxLogLevel('debug'),
   })
 
-  const syncEngine = SyncEngineClient({
+  const crudTransactionDb = CrudTransactionDb.init({
+    t: 'sql-db',
+    logger,
+    sqlDb: config.sqlDb,
+    migrationPolicy,
+  })
+
+  const syncEngine = SyncEngineClient.init({
     logger: logger.setMaxLogLevel('debug'),
-    crudTransactionDb: CrudTransactionDb.init({
-      t: 'sql-db',
-      logger,
-      sqlDb: config.sqlDb,
-      migrationPolicy,
-    }),
+    crudTransactionDb,
   })
 
   const ctx: AppFrontendCtxBase = {
