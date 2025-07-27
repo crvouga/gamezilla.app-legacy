@@ -1,7 +1,7 @@
 import { Fragment, render } from 'inferno'
 import { createElement } from 'inferno-create-element'
 import { PrimitiveProps } from '../primitive-props'
-import { BOX_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG } from '../tags'
+import { BOX_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 
 export type ImplInferno = {
@@ -18,6 +18,8 @@ const init = (_config: ImplInferno): IVirtualDomEngine => {
       switch (tag) {
         case FRAGMENT_TAG:
           return createElement(Fragment, props, children) as any
+        case SCROLL_BOX_TAG:
+          return createElement(BOX_TAG, props, children) as any
         case SAFE_AREA_BOX_TAG:
           return createElement(BOX_TAG, props, children) as any
         default:

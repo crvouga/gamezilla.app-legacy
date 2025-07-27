@@ -1,8 +1,8 @@
+import { cssInterop } from 'nativewind'
 import { createElement, Fragment } from 'react'
-import { Image, Pressable, Text, TextInput, View } from 'react-native'
+import { Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
 import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { cssInterop } from 'nativewind'
 import Svg, {
   Circle,
   ClipPath,
@@ -37,6 +37,7 @@ import {
   RADIAL_GRADIENT_TAG,
   RECT_TAG,
   SAFE_AREA_BOX_TAG,
+  SCROLL_BOX_TAG,
   STOP_TAG,
   SVG_TAG,
   SVG_TEXT_TAG,
@@ -54,39 +55,44 @@ cssInterop(Svg, {
   },
 })
 
-// cssInterop(Circle, {
-//   className: {
-//     target: 'style',
-//     nativeStyleToProp: {
-//       width: true,
-//       height: true,
-//       stroke: true,
-//       strokeWidth: true,
-//       fill: true,
-//     },
-//   },
-// })
+cssInterop(Circle, {
+  className: {
+    target: true,
+    nativeStyleToProp: {
+      stroke: true,
+      fill: true,
+    },
+  },
+})
 
-// cssInterop(Rect, {
-//   className: {
-//     target: 'style',
-//     nativeStyleToProp: { width: true, height: true, stroke: true, strokeWidth: true, fill: true },
-//   },
-// })
+cssInterop(Rect, {
+  className: {
+    target: true,
+    nativeStyleToProp: {
+      width: true,
+      height: true,
+      stroke: true,
+      fill: true,
+    },
+  },
+})
 
-// cssInterop(Line, {
-//   className: {
-//     target: 'style',
-//     nativeStyleToProp: { width: true, height: true, stroke: true, strokeWidth: true },
-//   },
-// })
+cssInterop(Line, {
+  className: {
+    target: true,
+    nativeStyleToProp: { stroke: true },
+  },
+})
 
-// cssInterop(Path, {
-//   className: {
-//     target: 'style',
-//     nativeStyleToProp: { width: true, height: true, stroke: true, strokeWidth: true, fill: true },
-//   },
-// })
+cssInterop(Path, {
+  className: {
+    target: true,
+    nativeStyleToProp: {
+      stroke: true,
+      fill: true,
+    },
+  },
+})
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -174,6 +180,8 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
       switch (tag) {
         case PRESSABLE_TAG:
           return createElement(Pressable, props, ...children) as any
+        case SCROLL_BOX_TAG:
+          return createElement(ScrollView, props, children) as any
         case SAFE_AREA_BOX_TAG:
           return createElement(SafeAreaView, props, ...children) as any
         case BOX_TAG:

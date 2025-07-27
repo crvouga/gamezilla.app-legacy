@@ -1,7 +1,7 @@
 import { createElement, Fragment, StrictMode } from 'react'
 import { createPortal } from 'react-dom'
 import { createRoot } from 'react-dom/client'
-import { FRAGMENT_TAG, SAFE_AREA_BOX_TAG } from '../tags'
+import { BOX_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { normalizeChildren, normalizePropsInPlace } from './react'
 import { PrimitiveProps } from '../primitive-props'
@@ -30,6 +30,8 @@ const init = (_config: ImplReact): IVirtualDomEngine => {
       switch (tag) {
         case FRAGMENT_TAG:
           return createElement(Fragment, props, ...children) as any
+        case SCROLL_BOX_TAG:
+          return createElement(BOX_TAG, props, children) as any
         case SAFE_AREA_BOX_TAG:
           return createElement('div', props, children) as any
         default:

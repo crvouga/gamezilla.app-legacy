@@ -1,8 +1,8 @@
 import { EmptyState } from '~/@/ui/empty-state'
-import { Box } from '~/@/vdom/primitives/box'
 import { IconGamepad } from '~/@/ui/icon'
 import { SpinnerBlock } from '~/@/ui/spinner-block'
 import { h } from '~/@/vdom/h'
+import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
@@ -69,9 +69,12 @@ const View: SpaceFrontendModule['View'] = (input) => {
       }
 
       return h(
-        Box,
+        ScrollBox,
         {
           class: 'flex flex-1 flex-col gap-4 overflow-y-auto p-6',
+          contentContainerStyle: {
+            rowGap: 16,
+          },
         },
         spaceProjections.flatMap((spaceProjection) => {
           switch (spaceProjection.type) {
