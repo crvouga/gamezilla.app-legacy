@@ -1,5 +1,6 @@
 import { createElement, Fragment } from 'react'
 import { Image, Pressable, Text, TextInput, View } from 'react-native'
+import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Svg, {
   Circle,
@@ -44,6 +45,11 @@ import {
 } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { normalizeChildren, normalizePropsInPlace } from './react'
+
+configureReanimatedLogger({
+  level: ReanimatedLogLevel.warn,
+  strict: false,
+})
 
 const ALLOWED_PROPS = new Set([
   'style',
