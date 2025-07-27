@@ -51,7 +51,12 @@ import { normalizeChildren, normalizePropsInPlace } from './react'
 cssInterop(Svg, {
   className: {
     target: 'style',
-    nativeStyleToProp: { width: true, height: true },
+    nativeStyleToProp: {
+      width: true,
+      height: true,
+      stroke: true,
+      fill: true,
+    },
   },
 })
 

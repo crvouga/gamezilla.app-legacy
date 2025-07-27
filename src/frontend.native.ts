@@ -16,6 +16,7 @@ import { SplashScreen } from './app/@/ui/logo/splash-screen'
 import { AppFrontend } from './app/frontend'
 import './frontend.css'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { AudioPlayerImplExpoAudio } from './@/audio-player/impl-expo-audio'
 
 const logger = Logger.init({
   t: 'console',
@@ -63,7 +64,7 @@ const main = async () => {
   logger.info('Initializing keyValueDbSync')
   const keyValueDbSync = KeyValueDbSyncImplHashMap.init({ t: 'hash-map', logger })
   logger.info('Initializing audioPlayer')
-  const audioPlayer = AudioPlayerImplFake.init({ t: 'fake', logger })
+  const audioPlayer = AudioPlayerImplExpoAudio.init({ t: 'expo-audio', logger })
   logger.info('Initializing keyboard')
   const keyboard = KeyboardImplNoop.init({ t: 'noop' })
   logger.info('Initializing viewport')
@@ -102,9 +103,7 @@ const main = async () => {
         return result
       },
       update: (input) => {
-        logger.debug('Updating program', input)
         const result = AppFrontend.update({ ...input, ctx })
-        logger.debug('Updated program', result)
         return result
       },
       subscriptions: (input) => {

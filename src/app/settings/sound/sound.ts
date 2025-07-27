@@ -133,12 +133,12 @@ const updateFromCmd: Module['update'] = (input) => {
   return { model: input.model }
 }
 
-export const ViewIcon = (input: { model: Model; class: string }) => {
+export const ViewIcon = (input: { model: Model; class: string; fill?: string; stroke?: string }) => {
   if (input.model.muted) {
-    return h(IconVolumeXMark, { class: input.class })
+    return h(IconVolumeXMark, { class: input.class, fill: input.fill, stroke: input.stroke })
   }
 
-  return h(IconVolumeHigh, { class: input.class })
+  return h(IconVolumeHigh, { class: input.class, fill: input.fill, stroke: input.stroke })
 }
 
 export const ViewSoundListItem = (input: {
