@@ -6,7 +6,7 @@ import { AppFrontend } from '~/app/frontend'
 import { HttpProtocol } from './@/http/protocol'
 import { Logger } from './@/logger'
 import { StoreSingleListener, useStore } from './@/react/store'
-import { FrontendSqlDb } from './@/sql-db/frontend-impl'
+import { ImplExpoSqlite } from './@/sql-db/impl-expo-sqlite'
 import { Url } from './@/url/url'
 import { VDomEngine } from './@/vdom/vdom-engine/impl'
 import { ImplReactNative } from './@/vdom/vdom-engine/impl-react-native'
@@ -44,7 +44,7 @@ const main = async () => {
   const backendUrl = Url.derive(BACKEND_URL, httpProtocol)
   const topicUrl = Url.derive(TOPIC_URL, httpProtocol)
 
-  const sqlDb = FrontendSqlDb.init({ t: 'noop' })
+  const sqlDb = ImplExpoSqlite.init({ t: 'expo-sqlite', dbName: 'gamezilla.db', logger })
 
   const ctx = await AppFrontend.initCtx({ backendUrl, topicUrl, sqlDb, logger })
 

@@ -23,13 +23,12 @@ const init = (config: ImplStandardSql): ISqlDb => {
     const sql = Sql.to(input.sql, input.vars)
 
     try {
-      const start = process.hrtime.bigint()
+      const start = Date.now()
 
       const rows = await config.query(sql)
 
-      const end = process.hrtime.bigint()
-
-      const durationMs = Number(end - start) / 1e6
+      const end = Date.now()
+      const durationMs = end - start
       const durationFormatted = `${durationMs.toFixed(2)}ms`
 
       logger.debug({
