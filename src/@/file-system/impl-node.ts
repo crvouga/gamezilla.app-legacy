@@ -41,6 +41,10 @@ const init = (_config: ImplNode): IFileSystem => {
         isDirectory: () => stats.isDirectory(),
       }
     },
+
+    async delete(path) {
+      await fs.rm(path)
+    },
   }
 }
 

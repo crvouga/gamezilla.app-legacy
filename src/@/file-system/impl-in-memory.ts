@@ -39,6 +39,10 @@ const init = (_config: ImplInMemory): IFileSystem => {
         isDirectory: () => false,
       }
     },
+
+    async delete(path) {
+      files.delete(path)
+    },
   }
 }
 
