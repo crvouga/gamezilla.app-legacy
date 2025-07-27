@@ -7,14 +7,14 @@ import { ILogger } from '../logger'
 import { PubSub, Sub } from '../sub'
 import type { ISqlDb } from './interface'
 
-export type ImplSql = {
-  t: 'sql'
-  query: <TRow>(sql: string, vars: Record<string, any>) => Promise<TRow[]>
+export type ImplStandardSql = {
+  t: 'standard-sql'
+  query: (rawSql: string) => Promise<unknown[]>
   logger: ILogger
   pollInterval?: TimeSpan
 }
 
-const init = (config: ImplSql): ISqlDb => {
+const init = (config: ImplStandardSql): ISqlDb => {
   const logger = config.logger.child(['sql'])
 
   const events = Sub.init<{ t: 'queried' }>()
@@ -25,7 +25,7 @@ const init = (config: ImplSql): ISqlDb => {
     try {
       const start = process.hrtime.bigint()
 
-      const rows = await config.query(sql, input.vars)
+      const rows = await config.query(sql)
 
       const end = process.hrtime.bigint()
 
@@ -156,6 +156,6 @@ const init = (config: ImplSql): ISqlDb => {
 
 const cleanSql = (str: string) => str.replace(/\t/g, ' ').replace(/\n/g, ' ').replace(/ +/g, ' ')
 
-export const ImplSql = {
+export const ImplStandardSql = {
   init,
 }

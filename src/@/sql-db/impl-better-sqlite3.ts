@@ -2,7 +2,7 @@ import DatabaseNamespace from 'better-sqlite3'
 import type { IFileSystem } from '../file-system/interface'
 import type { ILogger } from '../logger/interface'
 import { TimeSpan } from '../time/time-span'
-import { ImplSql } from './impl-sql'
+import { ImplStandardSql } from './impl-standard-sql'
 import type { ISqlDb } from './interface'
 const Database = (DatabaseNamespace as any).default || DatabaseNamespace
 
@@ -42,22 +42,22 @@ const init = (config: ImplBetterSqlite3): ISqlDb => {
   db.exec('PRAGMA foreign_keys = true;')
   db.exec('PRAGMA temp_store = memory;')
 
-  const query = async <TRow>(sql: string, vars: Record<string, any>): Promise<TRow[]> => {
-    const trimmedSql = sql.trim().toLowerCase()
+  const query = async <TRow>(rawSql: string): Promise<TRow[]> => {
+    const trimmedSql = rawSql.trim().toLowerCase()
     const isSelect = trimmedSql.startsWith('select') || trimmedSql.startsWith('with')
 
     if (isSelect) {
-      const stmt = db.prepare(sql)
-      return stmt.all(vars)
+      const stmt = db.prepare(rawSql)
+      return stmt.all()
     } else {
-      const stmt = db.prepare(sql)
-      stmt.run(vars)
+      const stmt = db.prepare(rawSql)
+      stmt.run()
       return []
     }
   }
 
-  return ImplSql.init({
-    t: 'sql',
+  return ImplStandardSql.init({
+    t: 'standard-sql',
     query,
     logger: config.logger,
     pollInterval: config.pollInterval,
