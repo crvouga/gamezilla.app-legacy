@@ -17,7 +17,6 @@ const init = (config: ImplExpoSqlite): ISqlDb => {
     const trimmedSql = rawSql.trim().toLowerCase()
     const isSelect = trimmedSql.startsWith('select') || trimmedSql.startsWith('with')
 
-    // Wrap query execution in try/catch to handle errors
     try {
       if (isSelect) {
         const result = await dbInstance.getAllAsync(rawSql)

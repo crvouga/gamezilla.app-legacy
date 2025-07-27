@@ -42,7 +42,7 @@ const init = (config: ImplBetterSqlite3): ISqlDb => {
   db.exec('PRAGMA foreign_keys = true;')
   db.exec('PRAGMA temp_store = memory;')
 
-  const query = async <TRow>(rawSql: string): Promise<TRow[]> => {
+  const query = async (rawSql: string): Promise<unknown[]> => {
     const trimmedSql = rawSql.trim().toLowerCase()
     const isSelect = trimmedSql.startsWith('select') || trimmedSql.startsWith('with')
 
