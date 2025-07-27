@@ -41,7 +41,7 @@ import { ToasterFrontend } from './frontend/toaster'
 import { ProfileFrontend } from './profile/frontend'
 import { SettingsFrontend } from './settings/frontend'
 import { SpacesFrontend } from './spaces/frontend'
-import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract as contract, topicContract } from './types'
+import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract, topicContract } from './types'
 import { toBackendConnectionStatus } from './wire/backend-connection/backend-connection-status'
 import { WireFrontend } from './wire/frontend'
 
@@ -66,7 +66,7 @@ const initCtx = async (config: {
 
   const rpc = RPC.initClient({
     t: 'http',
-    contract,
+    contract: rpcContract,
     serverUrl: config.backendUrl,
     clientSessionId,
     httpClient,
