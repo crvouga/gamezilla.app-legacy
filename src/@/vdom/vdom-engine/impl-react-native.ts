@@ -43,6 +43,61 @@ import {
 import { IVirtualDomEngine } from './interface'
 import { normalizeChildren, normalizePropsInPlace } from './react'
 
+const ALLOWED_PROPS = new Set([
+  'style',
+  'onPress',
+  'onLongPress',
+  'onPressIn',
+  'onPressOut',
+  'disabled',
+  'testID',
+  'accessibilityLabel',
+  'accessibilityRole',
+  'accessibilityState',
+  'accessibilityHint',
+  'children',
+])
+
+const sanitizeProps = (props: Record<string, any>): Record<string, any> => {
+  const sanitized: Record<string, any> = {}
+
+  for (const [key, value] of Object.entries(props)) {
+    // Skip non-allowed props
+    if (!ALLOWED_PROPS.has(key)) continue
+
+    // Convert string booleans to actual booleans
+    if (value === 'true') {
+      sanitized[key] = true
+      continue
+    }
+    if (value === 'false') {
+      sanitized[key] = false
+      continue
+    }
+
+    // Map ARIA attributes
+    if (key.startsWith('aria-')) {
+      const ariaKey = key.replace('aria-', '')
+      if (!sanitized.accessibilityState) {
+        sanitized.accessibilityState = {}
+      }
+      sanitized.accessibilityState[ariaKey] = value
+      continue
+    }
+
+    // Map role to accessibilityRole
+    if (key === 'role') {
+      sanitized.accessibilityRole = value
+      continue
+    }
+
+    // Pass through allowed props
+    sanitized[key] = value
+  }
+
+  return sanitized
+}
+
 export type ImplReactNative = {
   t: 'react-native'
 }
@@ -50,12 +105,12 @@ export type ImplReactNative = {
 const init = (_config: ImplReactNative): IVirtualDomEngine => {
   return {
     render: (_vDom, _node) => {
-      // throw new Error('Not implemented')
       return createElement(Text, {}, ['Not implemented'])
     },
     createElement: (tag: any, props: any, children: any) => {
       props = PrimitiveProps.intoReactNativeStandard(props)
       normalizePropsInPlace(props, tag)
+      props = sanitizeProps(props)
       children = normalizeChildren(children)
 
       switch (tag) {
