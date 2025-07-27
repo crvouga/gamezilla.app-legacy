@@ -8,39 +8,43 @@ import { ScreenNavBarMobile } from '../nav-bar/screen-nav-bar-mobile'
 import { ParentScreenProps, ScreenLayoutProps } from './screen-layout-props'
 
 export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
-  return h(
-    Box,
-    {
-      class: 'flex w-full h-full flex-col overflow-hidden',
-    },
-    [
-      ...renderActionBars(input.ctx, input, 'top'),
-      h(Box, { class: 'flex flex-1 flex-col overflow-hidden' }, [
-        ...renderNavBars(input.ctx, input),
-        h(Box, { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
-          input.renderBody(),
-
-          input.postAction &&
-            h(Box, { class: 'absolute right-4 bottom-6' }, [
-              h(Button, {
-                color: 'primary',
-                width: 'fit',
-                size: 'lg',
-                variant: 'contained',
-                fab: true,
-                onPress: input.postAction.onSubmit,
-                disabled: input.postAction.submitDisabled,
-                loading: input.postAction.submitLoading,
-                text: input.postAction.submitText,
-                renderIconStart: input.postAction.submitIcon,
-              }),
-            ]),
-        ]),
-        input.patchAction && h(CancelSubmitButtons, input.patchAction),
+  return h(Box, { class: 'flex w-full h-full flex-col overflow-hidden' }, [
+    ...renderActionBars(input.ctx, input, 'top'),
+    h(Box, { class: 'flex flex-1 flex-col overflow-hidden' }, [
+      ...renderNavBars(input.ctx, input),
+      h(Box, { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
+        input.renderBody(),
+        h(PostAction, input, []),
       ]),
-      ...renderActionBars(input.ctx, input, 'bottom'),
-    ],
-  )
+      h(PatchAction, input, []),
+    ]),
+    ...renderActionBars(input.ctx, input, 'bottom'),
+  ])
+}
+
+const PatchAction = (input: ScreenLayoutProps) => {
+  if (!input.patchAction) return null
+  return h(CancelSubmitButtons, input.patchAction)
+}
+
+const PostAction = (input: ScreenLayoutProps) => {
+  if (!input.postAction) return null
+
+  return h(Box, { class: 'absolute right-4 bottom-6 flex flex-row' }, [
+    h(Button, {
+      color: 'primary',
+      width: 'fit',
+      class: 'self-end',
+      size: 'lg',
+      variant: 'contained',
+      fab: true,
+      onPress: input.postAction.onSubmit,
+      disabled: input.postAction.submitDisabled,
+      loading: input.postAction.submitLoading,
+      text: input.postAction.submitText,
+      renderIconStart: input.postAction.submitIcon,
+    }),
+  ])
 }
 
 const renderActionBars = (
