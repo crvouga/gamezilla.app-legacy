@@ -28,18 +28,29 @@ const SEARCH_PARAM_KEY = 'vdom'
 const FALLBACK: VDomImplWeb = 'inferno'
 
 const getUrl = (): VDomImplWeb => {
-  if (typeof window === 'undefined') return FALLBACK
-  const searchParams = new URLSearchParams(window.location.search)
-  const vdomImplParam = searchParams.get(SEARCH_PARAM_KEY)
-  const vdomImpl = VDomImplWeb.from(vdomImplParam)
-  return vdomImpl ?? FALLBACK
+  try {
+    if (typeof window === 'undefined' || !window.location) return FALLBACK
+    const searchParams = new URLSearchParams(window.location.search)
+    const vdomImplParam = searchParams.get(SEARCH_PARAM_KEY)
+    const vdomImpl = VDomImplWeb.from(vdomImplParam)
+    return vdomImpl ?? FALLBACK
+  } catch {
+    return FALLBACK
+  }
 }
 
 const setUrl = (vdomImpl: VDomImplWeb) => {
-  const searchParams = new URLSearchParams(window.location.search)
-  searchParams.set(SEARCH_PARAM_KEY, vdomImpl)
-  window.history.replaceState(null, '', `${window.location.pathname}?${searchParams.toString()}`)
-  window.dispatchEvent(new Event('popstate'))
+  try {
+    if (typeof window === 'undefined' || !window.location || !window.history) return
+    const searchParams = new URLSearchParams(window.location.search)
+    searchParams.set(SEARCH_PARAM_KEY, vdomImpl)
+    window.history.replaceState(null, '', `${window.location.pathname}?${searchParams.toString()}`)
+    if (typeof window.dispatchEvent === 'function') {
+      window.dispatchEvent(new Event('popstate'))
+    }
+  } catch {
+    // Silently fail in environments where URL manipulation is not supported
+  }
 }
 
 const toName = (impl: VDomImplWeb): TranslatedText => {

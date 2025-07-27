@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import { Box } from '~/@/vdom/primitives/box'
 import { IconPlus } from '~/@/ui/icon'
-import { Swiper } from '~/@/ui/swiper'
+import { Swiper } from '~/@/ui/swiper/swiper'
 import { Typography } from '~/@/ui/typography'
 import { Clickable, ClickablePaper } from '~/@/ui/clickable'
 import { PaginationDots } from '~/@/ui/pagination-dots'

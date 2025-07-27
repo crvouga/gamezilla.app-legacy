@@ -8,7 +8,6 @@ import { Logger } from './@/logger'
 import { Navigation } from './@/navigation/impl'
 import { Pglite } from './@/pglite/impl'
 import { DebuggerReduxDevTools } from './@/program/debugger'
-import { Psql } from './@/psql'
 import { FrontendSqlDb } from './@/sql-db/frontend-impl'
 import { Url } from './@/url/url'
 import { h, render } from './@/vdom'
@@ -38,9 +37,6 @@ const main = async () => {
     logger,
   })
 
-  // @ts-expect-error
-  window.q = Psql({ sqlDb }).psql
-
   const keyValueDbSync = KeyValueDbSync.init({ t: 'web-standard-storage', storage: localStorage, logger })
   const audioPlayer = AudioPlayer.init({ t: 'web-standard', logger })
   const keyboard = KeyBoard.init({ t: 'web-standard' })
@@ -58,9 +54,7 @@ const main = async () => {
     navigation,
     keyValueDbSync,
   })
-
   const { swapped, getRoot } = await SwapVDomEngine.init()
-
   const program = await Program.run({
     crash: (input) => console.error(input),
     init: () => AppFrontend.init({ ctx }),
@@ -69,10 +63,7 @@ const main = async () => {
     render: (input) => render(h(AppFrontend.View, { ...input, ctx }), getRoot()),
     debugger: DebuggerReduxDevTools,
   })
-
-  swapped.sub(() => {
-    program.render()
-  })
+  swapped.sub(program.render)
 }
 
 main()

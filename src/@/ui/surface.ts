@@ -7,7 +7,7 @@ import { AriaRole } from '../html/aria-role'
 export const SURFACE_CLASS_NAME = 'bg-black border border-neutral-700'
 
 export const Surface = (input: {
-  children?: VDom
+  children?: VDom[]
   class?: string
   role?: AriaRole
   'aria-hidden'?: boolean
@@ -21,6 +21,6 @@ export const Surface = (input: {
       'aria-hidden': input['aria-hidden'] ? 'true' : 'false',
       'aria-label': input['aria-label'],
     },
-    [input.children],
+    input.children,
   )
 }
