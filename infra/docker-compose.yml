@@ -11,6 +11,8 @@ services:
         TOPIC_URL: ${TOPIC_URL:?TOPIC_URL is required}
     ports:
       - '${FRONTEND_PORT:?FRONTEND_PORT is required}:80'
+    profiles:
+      - e2e
 
   backend:
     build:
@@ -24,6 +26,8 @@ services:
       - 'host.docker.internal:host-gateway'
     ports:
       - '${BACKEND_PORT:?BACKEND_PORT is required}:${BACKEND_PORT:?BACKEND_PORT is required}'
+    profiles:
+      - e2e
 
   topic:
     build:
@@ -34,6 +38,8 @@ services:
         condition: service_started
     ports:
       - '${TOPIC_PORT:?TOPIC_PORT is required}:${TOPIC_PORT:?TOPIC_PORT is required}'
+    profiles:
+      - e2e
 
   nats:
     build:
@@ -41,6 +47,10 @@ services:
       dockerfile: infra/nats.Dockerfile
     ports:
       - '${NATS_PORT:?NATS_PORT is required}:${NATS_PORT:?NATS_PORT is required}'
+    profiles:
+      - e2e
+      - int
+      - local
 
   postgres:
     build:
@@ -61,3 +71,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    profiles:
+      - e2e
+      - int
+      - local

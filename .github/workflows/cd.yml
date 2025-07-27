@@ -68,7 +68,7 @@ jobs:
           version: latest
       - run: pnpm install --frozen-lockfile
       - run: pnpm run env:ci
-      - run: pnpm infra:up
+      - run: pnpm infra:int:up
       - run: sleep 3
       - name: Database Migration
         run: pnpm db:up
@@ -87,7 +87,7 @@ jobs:
           version: latest
       - run: pnpm install --frozen-lockfile
       - run: pnpm run env:ci
-      - run: pnpm infra:up
+      - run: pnpm infra:e2e:up
       - run: sleep 3
       - run: pnpm db:up
       - run: pnpm e2e:setup
