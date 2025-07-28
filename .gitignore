@@ -39,3 +39,4 @@ tsconfig.tsbuildinfo
 coverage
 
 ci_logs.txt
+.expo
