@@ -2,6 +2,7 @@ import { Program } from '~/@/program/program'
 import { AppFrontend } from '~/app/frontend'
 import { AudioPlayer } from './@/audio-player/impl'
 import { HttpProtocol } from './@/http/protocol'
+import { KeyValueDb } from './@/key-value-db'
 import { KeyValueDbSync } from './@/key-value-db-sync'
 import { KeyBoard } from './@/keyboard/impl'
 import { Logger } from './@/logger'
@@ -14,6 +15,7 @@ import { h, render } from './@/vdom'
 import { SwapVDomEngine } from './@/vdom/swap-vdom-engine'
 import { Viewport } from './@/viewport/impl'
 import './frontend.css'
+import { SqlDbMigrationPolicy } from './@/sql-db-migration-policy/impl'
 
 const main = async () => {
   const logger = Logger.init({ t: 'console', namespace: ['frontend'], newLinePerMsg: false, maxLogLevel: 'debug' })
@@ -42,6 +44,12 @@ const main = async () => {
   const keyboard = KeyBoard.init({ t: 'web-standard' })
   const viewport = Viewport.init({ t: 'web-standard' })
   const navigation = Navigation.init({ t: 'web-standard', logger })
+  const keyValueDb = KeyValueDb.init({
+    t: 'sql-db',
+    sqlDb,
+    logger,
+    migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger }),
+  })
 
   const ctx = await AppFrontend.initCtx({
     backendUrl,
@@ -54,6 +62,7 @@ const main = async () => {
     navigation,
     keyValueDbSync,
     platform: 'web',
+    keyValueDb,
   })
   const { swapped, getRoot } = await SwapVDomEngine.init()
   const program = await Program.run({

@@ -10,6 +10,7 @@ import { Puzzle } from '../puzzle'
 import type { IPuzzleDb } from './interface'
 import { OrderClause, PuzzleQuery, WhereClause } from './interface-query'
 import { Row } from './sql/row'
+import { Sub } from '~/@/sub'
 
 export type ImplSqlDb = {
   t: 'sql-db'
@@ -42,15 +43,20 @@ const DOWN: string[] = [
 ]
 
 const init = (config: ImplSqlDb): IPuzzleDb => {
-  config.migrationPolicy.execute({
+  const migrated = config.migrationPolicy.execute({
     sqlDb: config.sqlDb,
     up: UP,
     down: DOWN,
     logger: config.logger,
   })
+  let didMigrate = false
+  migrated.then(() => {
+    didMigrate = true
+  })
 
   return {
     async get(puzzleId) {
+      await migrated
       const queried = await config.sqlDb.query({
         schema: Row,
         sql: `
@@ -94,6 +100,7 @@ const init = (config: ImplSqlDb): IPuzzleDb => {
     },
 
     async put(puzzle) {
+      await migrated
       const got = await this.get(puzzle.id)
       if (isErr(got)) {
         return got
@@ -174,6 +181,7 @@ const init = (config: ImplSqlDb): IPuzzleDb => {
     },
 
     async zap(input) {
+      await migrated
       const queried = await config.sqlDb.query({
         schema: s.num(),
         sql: `
@@ -195,6 +203,7 @@ const init = (config: ImplSqlDb): IPuzzleDb => {
     },
 
     async count(input) {
+      await migrated
       const where = toSqlWhere(input)
 
       const queried = await config.sqlDb.query({
@@ -215,6 +224,7 @@ const init = (config: ImplSqlDb): IPuzzleDb => {
     },
 
     async query(input) {
+      await migrated
       const sql = toQuerySql(input)
       const queried = await config.sqlDb.query({
         schema: Row,
@@ -267,6 +277,8 @@ const init = (config: ImplSqlDb): IPuzzleDb => {
     },
 
     sub<T>(input: PuzzleQuery, mapper: (puzzles: Puzzle[]) => T) {
+      if (!didMigrate) return Sub.none()
+
       const sql = toQuerySql(input)
       const sub = config.sqlDb.sub({ schema: Row, sql: sql.str, vars: sql.variables }, (rows) => {
         const puzzles: Puzzle[] = []

@@ -23,7 +23,7 @@ const logger = Logger.init({
   t: 'console',
   namespace: ['frontend'],
   newLinePerMsg: false,
-  maxLogLevel: 'info',
+  maxLogLevel: 'debug',
 })
 
 logger.info('Initializing VDOM engine')
@@ -61,7 +61,13 @@ const main = async () => {
   const topicUrl = Url.derive(TOPIC_URL, httpProtocol)
   logger.info('Derived URLs', { backendUrl, topicUrl })
   logger.info('Initializing sqlDb')
-  const sqlDb = SqlDbImplExpoSqlite.init({ t: 'expo-sqlite', dbName: ':memory:', logger })
+  const sqlDb = SqlDbImplExpoSqlite.init({
+    t: 'expo-sqlite',
+    dbName: 'gamezilla.db',
+    logger,
+    // r,
+  })
+  await new Promise((resolve) => setTimeout(resolve, 1000))
   logger.info('Initializing keyValueDbSync')
   const keyValueDbSync = KeyValueDbSyncImplHashMap.init({ t: 'hash-map', logger })
   logger.info('Initializing audioPlayer')
@@ -96,6 +102,7 @@ const main = async () => {
     navigation,
     keyValueDbSync,
     platform: 'native',
+    keyValueDb,
   })
   logger.info('Starting program')
 
@@ -116,12 +123,9 @@ const main = async () => {
         return result
       },
       subscriptions: (input) => {
-        logger.debug('Running subscriptions', input)
         return AppFrontend.subscriptions({ ...input, ctx })
       },
       render: (input) => {
-        logger.debug('Rendering', input)
-
         store.update({ ...input, ctx })
       },
     })

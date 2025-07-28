@@ -1,7 +1,7 @@
 import { IAudioPlayer } from '~/@/audio-player'
 import { Eff } from '~/@/eff'
 import { HttpClient } from '~/@/http-client'
-import { KeyValueDb } from '~/@/key-value-db'
+import { IKeyValueDb } from '~/@/key-value-db'
 import { IKeyValueDbSync } from '~/@/key-value-db-sync'
 import { IKeyBoard } from '~/@/keyboard'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
@@ -19,6 +19,7 @@ import { SyncEngineClient } from '~/@/sync-engine/sync-engine-client'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { TopicClient } from '~/@/topic/topic-client/topic-client'
+import { Button } from '~/@/ui/button'
 import { IconGamepad, IconUser } from '~/@/ui/icon'
 import { Url } from '~/@/url/url'
 import { h } from '~/@/vdom/h'
@@ -57,10 +58,11 @@ const initCtx = async (config: {
   viewport: IViewport
   navigation: INavigation
   platform: IPlatform
+  keyValueDb: IKeyValueDb
 }): Promise<FrontendCtxModule> => {
   const logger = config.logger.child(['app'])
 
-  const clientSessionId = ClientSessionIdStorage.init({ keyValueDbSync: config.keyValueDbSync }).get()
+  const clientSessionId = await ClientSessionIdStorage.init({ keyValueDb: config.keyValueDb }).get()
 
   const httpClient = HttpClient.init({
     t: 'fetch',
@@ -88,15 +90,9 @@ const initCtx = async (config: {
 
   const navigatorLanguage = LanguageCodeISO_639_1.getLangFromNavigator() ?? 'en'
 
-  const keyValueDb = KeyValueDb.init({
-    t: 'key-value-db-sync',
-    keyValueDbSync: config.keyValueDbSync,
-    logger,
-  })
-
   const migrationPolicy = SqlDbMigrationPolicy.init({
     t: 'dangerously-wipe-on-new-schema',
-    kvDb: keyValueDb,
+    kvDb: config.keyValueDb,
     logger: logger.setMaxLogLevel('debug'),
   })
 
@@ -137,7 +133,7 @@ const initCtx = async (config: {
     },
     httpClient,
     backendConnectionStatus: { t: 'connecting' },
-    keyValueDb,
+    keyValueDb: config.keyValueDb,
     queryCache: QueryCache.init,
   }
 
@@ -406,7 +402,23 @@ const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
         dispatch: (c) => input.dispatch({ t: 'auth', c }),
       })
     default:
-      return h(Box, {}, [Text({ text: 'Logged out', class: 'text-white' })])
+      return h(Box, { class: 'flex w-full flex-1 items-center justify-center' }, [
+        Text({ text: 'Logged out', class: 'text-white' }),
+        h(
+          Button,
+          {
+            variant: 'contained',
+            color: 'primary',
+            onPress: () =>
+              input.dispatch({
+                t: 'frontend',
+                c: { t: 'current-screen', c: { t: 'clicked-link', screen: { t: 'login', n: 'auth' } } },
+              }),
+            text: input.ctx.t('login'),
+          },
+          [Text({ text: 'Login' })],
+        ),
+      ])
   }
 }
 
@@ -431,7 +443,23 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
 
     case 'settings':
     case 'auth':
-      return h(Box, {}, [Text({ text: 'Logged out', class: 'text-white' })])
+      return h(Box, { class: 'flex w-full flex-1 items-center justify-center' }, [
+        Text({ text: 'Logged in', class: 'text-white' }),
+        h(
+          Button,
+          {
+            variant: 'contained',
+            color: 'primary',
+            onPress: () =>
+              input.dispatch({
+                t: 'frontend',
+                c: { t: 'current-screen', c: { t: 'clicked-link', screen: { t: 'space-list', n: 'spaces' } } },
+              }),
+            text: input.ctx.t('spaces.spaces'),
+          },
+          [],
+        ),
+      ])
   }
 }
 

@@ -5,7 +5,10 @@ import { Sub } from '../sub'
 
 export type ISqlDb = {
   query: <TRow>(input: SqlDbQueryInput<TRow>) => Promise<Result<string, TRow[]>>
-  sub: <TRow, TMsg>(input: SqlDbQueryInput<TRow>, onUpdate: (rows: TRow[]) => TMsg) => Sub<TMsg>
+  sub: <TRow, TMsg>(
+    input: SqlDbQueryInput<TRow> & { waitFor?: Promise<unknown> },
+    onUpdate: (rows: TRow[]) => TMsg,
+  ) => Sub<TMsg>
   listen: (channel: string, callback: (notification: SqlDbNotification) => void) => Promise<() => Promise<void>>
   notify: (channel: string, payload: string) => Promise<Result<string, null>>
   aggregate: {

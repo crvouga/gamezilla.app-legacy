@@ -15,7 +15,10 @@ const init = (config: ImplAlwaysRun): ISqlDbMigrationPolicy => {
       for (const up of input.up) {
         await input.sqlDb.query({ sql: up, schema: s.unknown, vars: {} })
       }
-      logger.info('migration policy complete', { input })
+      logger.info('migration policy complete', {
+        up: input.up,
+        down: input.down,
+      })
     },
   }
 }

@@ -17,7 +17,7 @@ export type ImplStandardSql = {
 const init = (config: ImplStandardSql): ISqlDb => {
   const logger = config.logger.child(['sql'])
 
-  const events = Sub.init<{ t: 'queried' }>()
+  const eventQueryChanged = Sub.init<true>()
 
   const query = async <TRow>(input: { sql: string; vars: Record<string, any>; schema: s.Schema<TRow> }) => {
     const sql = Sql.to(input.sql, input.vars)
@@ -70,7 +70,11 @@ const init = (config: ImplStandardSql): ISqlDb => {
   return {
     async query(input) {
       const queried = await query(input)
-      events.pub({ t: 'queried' })
+
+      if (input.sql.includes('insert') || input.sql.includes('update') || input.sql.includes('delete')) {
+        eventQueryChanged.pub(true)
+      }
+
       return queried
     },
 
@@ -92,20 +96,15 @@ const init = (config: ImplStandardSql): ISqlDb => {
         subNew.pub(queried.value)
       }
 
-      let interval: ReturnType<typeof setInterval> | undefined
-      if (config.pollInterval) {
-        interval = setInterval(pub, TimeSpan.toMilliseconds(config.pollInterval))
-      }
-
       subsByQuery.set(queryKey, {
         sub: subNew,
-        cleanUp: () => {
-          if (interval) clearInterval(interval)
-        },
+        cleanUp: () => {},
       })
 
-      events.sub(pub)
-      pub()
+      eventQueryChanged.sub(pub)
+
+      eventQueryChanged.pub(true)
+
       return Sub.map(subNew as Sub<Row[]>, mapper)
     },
 

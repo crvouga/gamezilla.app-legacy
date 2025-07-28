@@ -75,8 +75,9 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
 
       const { locationX, locationY } = touch
 
-      // TODO: getBoundingClientRect is web-only
-      const { width, height } = svg.getBoundingClientRect()
+      // Get dimensions from the svg element directly
+      const width = svg.width ?? input.model.width
+      const height = svg.height ?? input.model.height
 
       // Convert touch coordinates to SVG coordinates
       const svgX = (locationX / width) * input.model.width

@@ -1,24 +1,26 @@
-import { IKeyValueDbSync } from '../key-value-db-sync'
+import { IKeyValueDb } from '../key-value-db'
 import { isErr } from '../result'
 import { s } from '../schema'
 import { ClientSessionId } from './client-session-id'
 
 export type IClientSessionIdStorage = {
-  get: () => ClientSessionId
+  get: () => Promise<ClientSessionId>
 }
 
-const init = (input: { keyValueDbSync: IKeyValueDbSync }): IClientSessionIdStorage => {
+const init = (input: { keyValueDb: IKeyValueDb }): IClientSessionIdStorage => {
   const KEY = 'clientSessionId'
-  const gen = () => {
+  const gen = async () => {
     const clientSessionIdNew = ClientSessionId.generate()
-    input.keyValueDbSync.set(KEY, clientSessionIdNew)
+    await input.keyValueDb.set(KEY, clientSessionIdNew)
     return clientSessionIdNew
   }
   return {
-    get() {
-      const gotClientSessionId = input.keyValueDbSync.get(KEY, s.str())
+    async get() {
+      const gotClientSessionId = await input.keyValueDb.get(KEY, s.str())
 
-      if (isErr(gotClientSessionId)) return gen()
+      if (isErr(gotClientSessionId)) {
+        return gen()
+      }
 
       const maybeClientSessionId = gotClientSessionId.value
 

@@ -1,9 +1,7 @@
 import { Eff } from '~/@/eff'
 import { EventSourced } from '~/@/event-sourced'
-import { Logger } from '~/@/logger'
 import { Msg } from '~/@/msg/msg'
 import { RPC } from '~/@/rpc'
-import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { Sub } from '~/@/sub'
 import { throttleByKey } from '~/@/throttle/throttle'
 import { TimeSpan } from '~/@/time/time-span'
@@ -35,17 +33,18 @@ const initCtx = async (input: {
   rpc: RPC.Client<typeof rpcContract>
   topic: ITopicClient<typeof topicContract>
 }): Promise<FrontendCtxModule> => {
+  const spaceDb = await SpaceDb({
+    t: 'sql-db',
+    sqlDb: input.ctx.sqlDb,
+    logger: input.ctx.logger,
+    migrationPolicy: input.ctx.migrationPolicy,
+  })
   return {
     ...input.ctx,
     rpc: input.rpc,
     topic: input.topic,
     space: null,
-    spaceDb: await SpaceDb({
-      t: 'sql-db',
-      sqlDb: input.ctx.sqlDb,
-      logger: input.ctx.logger,
-      migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
-    }),
+    spaceDb,
   }
 }
 
@@ -150,7 +149,7 @@ const upsertSpace = async (spaceDb: ISpaceDb, _spaceId: SpaceId, space: Space) =
 const upsertSpaceThrottled = throttleByKey({
   fn: upsertSpace,
   keyFn: (_spaceDb, spaceId, _space) => spaceId,
-  throttle: TimeSpan.seconds(1),
+  throttle: TimeSpan.seconds(5),
   behavior: 'use-latest',
 })
 
