@@ -17,7 +17,7 @@ export type BoardInput<TModel> = {
       })
     | null
   showCoordinates?: boolean
-  onPress?: (nodeId: NodeId) => void
+  onPressIn?: (nodeId: NodeId) => void
   onPressOut?: (nodeId: NodeId) => void
   onLeave?: () => void
   onDraggedOver?: (nodeId: NodeId) => void

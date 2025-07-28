@@ -2,7 +2,6 @@ import { Sub } from '~/@/sub'
 import { IconPen, IconPlay } from '~/@/ui/icon'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { Text } from '~/@/vdom/primitives/text'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -26,14 +25,6 @@ import { ScreenPuzzleBuilderSpace } from './space'
 import { DeleteForeverFrontend } from './surface-delete-forever/frontend'
 import { EditPuzzleNameFrontend } from './surface-edit-puzzle-name/frontend'
 import { SaveChangesFrontend } from './surface-save-changes/frontend'
-
-//
-//
-//
-//
-//
-//
-//
 
 const update: BuilderTypes.FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
@@ -146,14 +137,6 @@ const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
     }
   }
 }
-
-//
-//
-//
-//
-//
-//
-//
 
 const View: BuilderTypes.FrontendModule['View'] = (input) => {
   if (!input.modelSpace.screenPuzzleBuilder) return h(ViewSpectating, input)
@@ -319,7 +302,7 @@ const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
     },
     renderBody: () =>
       h(LayoutGame, { ctx: input.ctx, isSpectating: true }, [
-        h(ScrollBox, { class: 'flex w-full flex-1 flex-col items-center justify-center' }, [
+        h(Box, { class: 'flex w-full flex-1 flex-col' }, [
           h(ProfileListItem, {
             ctx: input.ctx,
             profile: input.ctx.profilesByUserId[input.ctx.space.hostId],
@@ -335,14 +318,6 @@ export const capitalize = (s: string) => {
   return `${s.charAt(0).toUpperCase()}${s.slice(1).toLowerCase()}`
 }
 
-//
-//
-//
-//
-//
-//
-//
-
 const updateMoreDrawer: BuilderTypes.FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'screen-puzzle-builder.user-closed-more-drawer': {
@@ -354,13 +329,6 @@ const updateMoreDrawer: BuilderTypes.FrontendModule['update'] = (input) => {
   }
   return { model: input.model }
 }
-
-//
-//
-//
-//
-//
-//
 
 const subscriptions: BuilderTypes.FrontendModule['subscriptions'] = (input) => {
   if (!input.modelSpace.screenPuzzleBuilder) return Sub.none()
@@ -376,13 +344,6 @@ const subscriptions: BuilderTypes.FrontendModule['subscriptions'] = (input) => {
     (c): BuilderTypes.MsgFrontend => ({ t: 'got-msg-out', c }),
   )
 }
-
-//
-//
-//
-//
-//
-//
 
 export const ScreenPuzzleBuilderFrontend = {
   update,

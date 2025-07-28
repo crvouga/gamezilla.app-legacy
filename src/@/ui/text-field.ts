@@ -23,7 +23,7 @@ export const TextField = (input: {
   max?: number
   step?: number
   onClear?: () => void
-  onChange: (value: string) => void
+  onChangeText: (value: string) => void
 }) => {
   return h(Box, { class: 'flex w-full flex-col gap-1' }, [
     Text({ class: cn('text-base', input.error && 'text-red-500'), text: input.label }),
@@ -45,18 +45,7 @@ export const TextField = (input: {
           id: input.id,
           type: input.type,
           defaultValue: input.value,
-          onChangeText: (e: unknown) => {
-            if (
-              typeof e === 'object' &&
-              e !== null &&
-              'preventDefault' in e &&
-              typeof e.preventDefault === 'function'
-            ) {
-              e.preventDefault()
-            }
-            const valueNew = eventToInputValue(e)
-            input.onChange(valueNew)
-          },
+          onChangeText: input.onChangeText,
           class: cn(
             'flex flex-row flex-1 appearance-none items-center gap-2 bg-transparent p-3 py-4 text-xl outline-none',
             '[&:-webkit-autofill]:!bg-transparent [&:-webkit-autofill]:!text-white [&:-webkit-autofill]:!shadow-[0_0_0_1000px_#000000_inset] [&:-webkit-autofill]:![-webkit-text-fill-color:white]',
@@ -97,36 +86,4 @@ export const TextField = (input: {
         [Text({ text: input.helperText ?? '' })],
       ),
   ])
-}
-
-const eventToInputValue = (e: unknown): string => {
-  let valueNew: string =
-    typeof e === 'object' &&
-    e !== null &&
-    'currentTarget' in e &&
-    e.currentTarget !== null &&
-    typeof e.currentTarget === 'object' &&
-    'value' in e.currentTarget &&
-    typeof e.currentTarget.value === 'string'
-      ? e.currentTarget.value
-      : ''
-
-  if (valueNew.length === 0) {
-    valueNew =
-      typeof e === 'object' &&
-      e !== null &&
-      'nativeEvent' in e &&
-      typeof e.nativeEvent === 'object' &&
-      e.nativeEvent !== null &&
-      'data' in e.nativeEvent &&
-      typeof e.nativeEvent.data === 'string'
-        ? e.nativeEvent.data
-        : ''
-  }
-
-  if (valueNew.length === 0) {
-    valueNew = typeof e === 'object' && e !== null && 'data' in e && typeof e.data === 'string' ? e.data : ''
-  }
-
-  return valueNew
 }

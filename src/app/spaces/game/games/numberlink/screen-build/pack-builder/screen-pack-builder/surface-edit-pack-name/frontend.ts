@@ -53,7 +53,7 @@ const ViewSurface: FrontendModule['View'] = (input) => {
           id: 'pack-name',
           label: input.ctx.t('app.edit-name'),
           value: input.modelSpace.editPackName_draft,
-          onChange: (packNameDraft) =>
+          onChangeText: (packNameDraft) =>
             input.dispatch({
               t: 'got-msg-space',
               c: {

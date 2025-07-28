@@ -234,7 +234,7 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
     onSubmit: () => input.dispatch({ t: 'user-clicked-send-code-button' }),
     renderInputs: () =>
       h(Frag, {}, [
-        Text({ class: 'hidden', text: JSON.stringify(input.model.sent) }),
+        h(Text, { class: 'text-white', text: input.model.phone }),
         h(TextField, {
           id: 'phoneNumberInput',
           testId: 'phone-number-input',
@@ -244,7 +244,7 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
           error: typeof input.model.phoneError === 'string',
           value: input.model.phone,
           helperText: input.model.phoneError,
-          onChange: (value: string) => input.dispatch({ t: 'inputted-phone-number', phone: value }),
+          onChangeText: (value: string) => input.dispatch({ t: 'inputted-phone-number', phone: value }),
           onClear: () => input.dispatch({ t: 'clicked-phone-number-clear' }),
         }),
       ]),
@@ -291,7 +291,7 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
           autoFocus: true,
           type: 'tel',
           value: input.model.code,
-          onChange: (value) => input.dispatch({ t: 'inputted-code', code: value }),
+          onChangeText: (value) => input.dispatch({ t: 'inputted-code', code: value }),
           onClear: () => input.dispatch({ t: 'clicked-code-clear' }),
         }),
       ]),

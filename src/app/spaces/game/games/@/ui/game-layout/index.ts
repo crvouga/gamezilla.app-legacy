@@ -1,10 +1,9 @@
 import { Translator } from '~/@/l18n/generated'
-import { Box } from '~/@/vdom/primitives/box'
 import { cn } from '~/@/ui/cn'
 import { h } from '~/@/vdom/h'
-import type { VDom } from '~/@/vdom/vdom'
+import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
-import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
+import type { VDom } from '~/@/vdom/vdom'
 
 export const LayoutGame = ({
   children,
@@ -21,7 +20,7 @@ export const LayoutGame = ({
   children?: VDom
 }) => {
   return h(
-    ScrollBox,
+    Box,
     {
       class: cn('flex w-full flex-1 flex-col', isSpectating && 'border-8 border-t-0 border-blue-500', class_),
       ...props,

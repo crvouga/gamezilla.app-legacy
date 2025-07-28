@@ -20,6 +20,8 @@ export type PrimitiveProps = {
   tabIndex?: number | null | undefined
   style?: unknown
   onPress?: (event: unknown) => void
+  onLayout?: (event: unknown) => void
+  onPressIn?: (event: unknown) => void
   onPressOut?: (event: unknown) => void
   onStartShouldSetResponder?: (event: unknown) => boolean
   onResponderMove?: (event: unknown) => void

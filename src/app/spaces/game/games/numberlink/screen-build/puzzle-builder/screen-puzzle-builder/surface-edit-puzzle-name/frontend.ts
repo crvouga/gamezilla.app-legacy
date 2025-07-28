@@ -277,7 +277,7 @@ const ViewSurface = (
             id: 'game-numberlink-edit-puzzle-name-input',
             label: input.ctx.t('game.numberlink.edit-puzzle-name.name'),
             value: input.model.puzzleEditNameDraft,
-            onChange: (draftName) => input.dispatch({ t: 'puzzle.edit-name.user-inputted-draft-name', draftName }),
+            onChangeText: (draftName) => input.dispatch({ t: 'puzzle.edit-name.user-inputted-draft-name', draftName }),
             error: Boolean(input.model.puzzleEditNameValidationError),
             helperText: editNameValidationErrorToString(input.ctx.t, input.model.puzzleEditNameValidationError),
           }),

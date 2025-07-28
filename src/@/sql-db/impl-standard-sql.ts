@@ -65,6 +65,21 @@ const init = (config: ImplStandardSql): ISqlDb => {
   }
 
   const subsByQuery = new Map<string, { sub: PubSub<unknown>; cleanUp: () => void }>()
+
+  setInterval(() => {
+    for (const [queryKey, { sub, cleanUp }] of subsByQuery) {
+      if (sub.subscriberCount() === 0) {
+        logger.debug({
+          msg: 'Cleaning up unused query subscription',
+          queryKey,
+          subscriberCount: sub.subscriberCount(),
+        })
+        subsByQuery.delete(queryKey)
+        cleanUp()
+      }
+    }
+  }, 5_000)
+
   const listeners = new Map<string, Set<(notification: any) => void>>()
 
   return {

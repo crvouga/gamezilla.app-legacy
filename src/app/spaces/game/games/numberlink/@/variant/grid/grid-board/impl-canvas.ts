@@ -100,7 +100,7 @@ export const paint = (model: VariantGrid.Model, ctx: CanvasRenderingContext2D) =
   }
 }
 
-const View = ({ model, isDragging, onPress, onPressOut }: BoardInput<VariantGrid.Model>) => {
+const View = ({ model, isDragging, onPressIn: onPress, onPressOut }: BoardInput<VariantGrid.Model>) => {
   return h(Canvas, {
     class: cn('aspect-square w-full', isDragging ? 'cursor-grabbing' : 'cursor-grab'),
     // paint: (value, ctx) => paint(value, ctx),

@@ -40,13 +40,7 @@ export const ViewColumnsCanvas = (input: ViewColumnsInput) => {
       const elementRelativeX = e.clientX - rect.left
       const elementWidth = target.width
       const canvasRelativeX = (elementRelativeX * elementWidth) / rect.width
-      const columnIndex = Math.floor(
-        rescale({
-          value: canvasRelativeX,
-          from: [0, elementWidth],
-          to: [0, COLUMN_COUNT],
-        }),
-      )
+      const columnIndex = Math.floor(rescale(canvasRelativeX, 0, elementWidth, 0, COLUMN_COUNT))
 
       if (input.onPress && isColumnIndex(columnIndex)) {
         input.onPress(columnIndex)

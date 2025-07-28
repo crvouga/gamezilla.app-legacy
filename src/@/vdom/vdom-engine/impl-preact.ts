@@ -1,6 +1,6 @@
 import { Fragment, render } from 'preact'
 import { createElement } from 'preact/compat'
-import { BOX_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
+import { BOX_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG, TEXT_INPUT_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { PrimitiveProps } from '../primitive-props'
 import { updateSafeAreaProps, updateScrollBoxProps } from './web'
@@ -24,6 +24,25 @@ const init = (_config: ImplPreact): IVirtualDomEngine => {
         case SCROLL_BOX_TAG:
           updateScrollBoxProps(props)
           return createElement(BOX_TAG, props, children) as any
+        case TEXT_INPUT_TAG:
+          return createElement(
+            'input',
+            {
+              ...props,
+              onChange: (e: unknown) => {
+                if (
+                  typeof props.onChangeText === 'function' &&
+                  e instanceof Event &&
+                  e.target instanceof HTMLInputElement &&
+                  'currentTarget' in e &&
+                  e.currentTarget instanceof HTMLInputElement
+                ) {
+                  props.onChangeText(e.target.value)
+                }
+              },
+            },
+            ...children,
+          ) as any
         case SAFE_AREA_BOX_TAG:
           updateSafeAreaProps(props)
           return createElement(BOX_TAG, props, children) as any

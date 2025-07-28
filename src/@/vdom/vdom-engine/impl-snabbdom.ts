@@ -10,7 +10,7 @@ import {
   styleModule,
 } from 'snabbdom'
 import { PrimitiveProps } from '../primitive-props'
-import { BOX_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
+import { BOX_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG, TEXT_INPUT_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { updateSafeAreaProps, updateScrollBoxProps } from './web'
 
@@ -48,54 +48,74 @@ const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
 
         children = processChildren(children ?? props?.children)
 
-        if (typeof tag === 'function') {
-          return tag({ ...props, key: props?.key, children })
-        }
+        switch (tag) {
+          case FRAGMENT_TAG:
+            return fragment(children)
 
-        if (tag === FRAGMENT_TAG) {
-          return fragment(children)
-        }
+          case SAFE_AREA_BOX_TAG:
+            updateSafeAreaProps(props)
+            return h(BOX_TAG, props, children)
 
-        if (tag === SAFE_AREA_BOX_TAG) {
-          updateSafeAreaProps(props)
-          return h(BOX_TAG, props, children)
-        }
+          case SCROLL_BOX_TAG:
+            updateScrollBoxProps(props)
+            return h(BOX_TAG, props, children)
 
-        if (tag === SCROLL_BOX_TAG) {
-          updateScrollBoxProps(props)
-          return h(BOX_TAG, props, children)
-        }
+          case TEXT_INPUT_TAG:
+            return h(
+              'input',
+              {
+                ...props,
+                onChange: (e: unknown) => {
+                  if (
+                    typeof props.onChangeText === 'function' &&
+                    e instanceof Event &&
+                    e.target instanceof HTMLInputElement &&
+                    'currentTarget' in e &&
+                    e.currentTarget instanceof HTMLInputElement
+                  ) {
+                    props.onChangeText(e.target.value)
+                  }
+                },
+              },
+              children,
+            )
 
-        let hasAttrs = false
-        let hasEvents = false
-
-        // Single pass through props with early optimizations
-        if (props) {
-          const propKeys = Object.keys(props)
-          for (let i = 0; i < propKeys.length; i++) {
-            const propKey = propKeys[i]!
-            const propValue = props[propKey]
-
-            // Skip undefined/null values
-            if (propValue == null || propValue === undefined) continue
-
-            if (propKey.startsWith('on')) {
-              reusableOn[getEventName(propKey)] = propValue
-              hasEvents = true
-            } else if (propKey !== 'children' && propKey !== 'key' && propKey !== 'style') {
-              reusableAttrs[propKey] = propValue
-              hasAttrs = true
+          default:
+            if (typeof tag === 'function') {
+              return tag({ ...props, key: props?.key, children })
             }
-          }
+
+            let hasAttrs = false
+            let hasEvents = false
+
+            // Single pass through props with early optimizations
+            if (props) {
+              const propKeys = Object.keys(props)
+              for (let i = 0; i < propKeys.length; i++) {
+                const propKey = propKeys[i]!
+                const propValue = props[propKey]
+
+                // Skip undefined/null values
+                if (propValue == null || propValue === undefined) continue
+
+                if (propKey.startsWith('on')) {
+                  reusableOn[getEventName(propKey)] = propValue
+                  hasEvents = true
+                } else if (propKey !== 'children' && propKey !== 'key' && propKey !== 'style') {
+                  reusableAttrs[propKey] = propValue
+                  hasAttrs = true
+                }
+              }
+            }
+
+            const vDomProps: any = {}
+            if (hasAttrs) vDomProps.attrs = reusableAttrs
+            if (hasEvents) vDomProps.on = reusableOn
+            if (props?.key !== undefined) vDomProps.key = props.key
+            if (props?.style !== undefined) vDomProps.style = props.style
+
+            return h(tag, vDomProps, children)
         }
-
-        const vDomProps: any = {}
-        if (hasAttrs) vDomProps.attrs = reusableAttrs
-        if (hasEvents) vDomProps.on = reusableOn
-        if (props?.key !== undefined) vDomProps.key = props.key
-        if (props?.style !== undefined) vDomProps.style = props.style
-
-        return h(tag, vDomProps, children)
       } catch (e) {
         // console.error(e)
         return null

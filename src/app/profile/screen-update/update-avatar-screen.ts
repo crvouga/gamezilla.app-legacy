@@ -29,7 +29,7 @@ const View = (input: {
             label: input.ctx.t('profile-avatar.seed'),
             // value: input.model.draft?.avatarSeed ?? '',
             value: '',
-            onChange: () => {},
+            onChangeText: () => {},
             id: 'seed',
           }),
         ]),

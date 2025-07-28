@@ -73,7 +73,7 @@ const View: FrontendModule['View'] = (input) => {
           id: 'username',
           label: input.ctx.t('username.username-label'),
           value: input.model['profile.update-username.username'] ?? '',
-          onChange: (username) => input.dispatch({ t: 'profile.update-username.inputted-username', username }),
+          onChangeText: (username) => input.dispatch({ t: 'profile.update-username.inputted-username', username }),
         }),
       ]),
   })

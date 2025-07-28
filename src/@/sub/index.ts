@@ -104,7 +104,7 @@ const map = <A, B>(sub: Sub<A>, f: (a: A) => B): Sub<B> => {
 
 const batch = <Msg extends {}>(arr: Sub<Msg>[]): Sub<Msg> => {
   return {
-    sub: (subscriber) => {
+    sub(subscriber) {
       const unsubscribeList: (() => void)[] = []
       for (const subItem of arr) {
         unsubscribeList.push(subItem.sub(subscriber))
@@ -119,7 +119,9 @@ const batch = <Msg extends {}>(arr: Sub<Msg>[]): Sub<Msg> => {
 }
 
 const subNone: Sub<any> = {
-  sub: () => () => {},
+  sub() {
+    return () => {}
+  },
 }
 const none = <T>(): Sub<T> => {
   return subNone
@@ -129,7 +131,7 @@ const lastKeyById = new Map<string, string>()
 const deduplicate = <Msg>(id: string, keyFn: (msg: Msg) => string, sub: Sub<Msg>): Sub<Msg> => {
   return {
     ...sub,
-    sub: (subscriber) => {
+    sub(subscriber) {
       return sub.sub((msg) => {
         const newKey = keyFn(msg)
         const lastKey = lastKeyById.get(id)
