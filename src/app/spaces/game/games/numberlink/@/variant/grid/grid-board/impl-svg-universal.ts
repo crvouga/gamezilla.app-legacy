@@ -57,7 +57,7 @@ const View = (props: BoardProps<VariantGrid.Model>) => {
     Svg,
     {
       class: cn(
-        'aspect-square w-full touch-none overflow-hidden select-none',
+        'w-full touch-none overflow-hidden select-none',
         props.isDragging && 'cursor-grabbing',
         props.disabled && 'pointer-events-none',
         props.class,
@@ -255,27 +255,25 @@ const ViewAutocompleteEdge = (input: BoardProps<VariantGrid.Model>) => {
 }
 
 const ViewCoordinates = (input: BoardProps<VariantGrid.Model>) => {
-  return (
-    (input.showCoordinates || true) &&
-    h(
-      G,
-      { transform: 'translate(0, 1)' },
-      map(VariantGrid.yieldNodes(input.model), (node) => {
-        return h(
-          SvgText,
-          {
-            class: 'pointer-events-none',
-            key: node.nodeId,
-            x: node.x,
-            y: node.y,
-            'font-size': '0.2',
-            fill: '#fff',
-            text: `${node.x},${node.y}`,
-          },
-          [],
-        )
-      }),
-    )
+  if (!input.showCoordinates) return null
+  return h(
+    G,
+    { transform: 'translate(0, 1)' },
+    map(VariantGrid.yieldNodes(input.model), (node) => {
+      return h(
+        SvgText,
+        {
+          class: 'pointer-events-none',
+          key: node.nodeId,
+          x: node.x,
+          y: node.y,
+          'font-size': '0.2',
+          fill: '#fff',
+          text: `${node.x},${node.y}`,
+        },
+        [],
+      )
+    }),
   )
 }
 
