@@ -1,7 +1,7 @@
 import { ListItem } from '~/@/ui/list-item'
 import { RadioInputIcon } from '~/@/ui/radio-input'
 import { h } from '~/@/vdom/h'
-import { Box } from '~/@/vdom/primitives/box'
+import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { VDomImplWeb } from '~/@/vdom/vdom-impl-web'
 import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -9,7 +9,6 @@ import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { APP_SOUND } from '../../@/frontend/app-sound'
 import type { FrontendModule } from '../types'
 import { ModelFrontend } from './types'
-import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 
 const init = (): { model: ModelFrontend } => {
   const initialVDomImpl = VDomImplWeb.getUrl()

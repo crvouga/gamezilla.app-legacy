@@ -1,6 +1,7 @@
 import { registerRootComponent } from 'expo'
 import { ComponentType } from 'react'
-import { AudioPlayerImplFake } from './@/audio-player/impl-fake'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { AudioPlayerImplExpoAudio } from './@/audio-player/impl-expo-audio'
 import { KeyValueDbSyncImplHashMap } from './@/key-value-db-sync/impl-hash-map'
 import { KeyboardImplNoop } from './@/keyboard/impl-noop'
 import { Logger } from './@/logger'
@@ -15,8 +16,6 @@ import { ViewportImplReactNative } from './@/viewport/impl-react-native'
 import { SplashScreen } from './app/@/ui/logo/splash-screen'
 import { AppFrontend } from './app/frontend'
 import './frontend.css'
-import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { AudioPlayerImplExpoAudio } from './@/audio-player/impl-expo-audio'
 
 const logger = Logger.init({
   t: 'console',

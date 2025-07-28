@@ -3,6 +3,7 @@ import { createElement } from 'inferno-create-element'
 import { PrimitiveProps } from '../primitive-props'
 import { BOX_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
+import { addSafeAreaPadding } from './web'
 
 export type ImplInferno = {
   t: 'inferno'
@@ -21,6 +22,7 @@ const init = (_config: ImplInferno): IVirtualDomEngine => {
         case SCROLL_BOX_TAG:
           return createElement(BOX_TAG, props, children) as any
         case SAFE_AREA_BOX_TAG:
+          addSafeAreaPadding(props)
           return createElement(BOX_TAG, props, children) as any
         default:
           return createElement(tag, props, children) as any

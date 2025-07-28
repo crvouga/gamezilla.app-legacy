@@ -228,6 +228,8 @@ export const IconCrown = (input: Props) => {
       xmlns: 'http://www.w3.org/2000/svg',
       height: '1em',
       viewBox: '0 0 576 512',
+      fill: 'currentColor',
+      stroke: 'none',
       ...input,
     },
     [
