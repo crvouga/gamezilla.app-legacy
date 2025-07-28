@@ -7,16 +7,13 @@ import { renderActionBars } from './render-action-bars'
 import { renderNavBars } from './render-nav-bars'
 
 export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
-  return h(Box, { class: 'flex w-full h-full flex-col overflow-hidden' }, [
+  return h(Box, { class: 'flex w-full h-full flex-col' }, [
     ...renderActionBars(input.ctx, input, 'top'),
 
-    h(Box, { class: 'flex flex-1 flex-col overflow-hidden' }, [
+    h(Box, { class: 'flex flex-1 flex-col' }, [
       ...renderNavBars(input.ctx, input),
 
-      h(Box, { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
-        input.renderBody(),
-        h(PostAction, input, []),
-      ]),
+      h(Box, { class: 'relative flex w-full flex-1 flex-col' }, [input.renderBody(), h(PostAction, input, [])]),
 
       h(PatchAction, input, []),
     ]),

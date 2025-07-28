@@ -30,7 +30,7 @@ const View = (input: {
     ctx: input.ctx,
     renderBody: () =>
       h(BoardLayout, {}, [
-        ViewStatus(input),
+        h(ViewStatus, input),
 
         h(NumberlinkVariantBoard.View, {
           platform: input.ctx.platform,
