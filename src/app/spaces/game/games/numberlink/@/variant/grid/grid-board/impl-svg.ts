@@ -1,20 +1,12 @@
 import { h } from '~/@/vdom/h'
 import { BoardProps } from '../../../ui/board'
 import * as VariantGrid from '../grid'
-import { ImplSvgNative } from './impl-svg-native'
-import { ImplSvgWeb } from './impl-svg-web'
+import { ImplSvgUniversal } from './impl-svg-universal'
 
 const View = (input: BoardProps<VariantGrid.Model>) => {
-  switch (input.platform) {
-    case 'web': {
-      return h(ImplSvgWeb.View, input)
-    }
-    case 'native': {
-      return h(ImplSvgNative.View, input)
-    }
-  }
+  return h(ImplSvgUniversal.View, input)
 }
 
-export const VariantGridBoardSvg = {
+export const ImplSvg = {
   View,
 }

@@ -26,10 +26,7 @@ export type PrimitiveProps = {
   onStartShouldSetResponder?: (event: unknown) => boolean
   onResponderMove?: (event: unknown) => void
   onKeyDown?: (event: unknown) => void
-  onPointerDown?: (event: unknown) => void
-  onPointerUp?: (event: unknown) => void
   onPointerMove?: (event: unknown) => void
-  onPointerCancel?: (event: unknown) => void
   'data-fab'?: boolean
   'data-info'?: boolean
   'data-error'?: boolean
@@ -43,6 +40,9 @@ const intoWebStandard = (props: PrimitiveProps) => {
   return {
     ...props,
     onClick: props.onPress,
+    onPointerDown: props.onPressIn,
+    onPointerUp: props.onPressOut,
+    onPointerCancel: props.onPressOut,
   }
 }
 

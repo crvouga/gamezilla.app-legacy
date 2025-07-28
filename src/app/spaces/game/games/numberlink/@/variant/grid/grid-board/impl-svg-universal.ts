@@ -1,6 +1,8 @@
+import { rescale } from '~/@/math/rescale'
 import { cn } from '~/@/ui/cn'
 import { IconCheckmark } from '~/@/ui/icon'
 import { h } from '~/@/vdom/h'
+import { Frag } from '~/@/vdom/primitives/frag'
 import { Circle } from '~/@/vdom/primitives/svg/circle'
 import { Defs } from '~/@/vdom/primitives/svg/defs'
 import { G } from '~/@/vdom/primitives/svg/g'
@@ -12,56 +14,78 @@ import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { SvgText } from '~/@/vdom/primitives/svg/text'
 import type { VDom } from '~/@/vdom/vdom'
 import { Numberlink } from '../../../numberlink'
+import { NodeId } from '../../../numberlink/node-id'
 import { BoardProps } from '../../../ui/board'
 import { Color } from '../../../ui/color'
 import * as VariantGrid from '../grid'
-import { NodeId } from '../../../numberlink/node-id'
-import { Frag } from '~/@/vdom/primitives/frag'
 
 const TERMINAL_NODE_RADIUS = 0.33
 const EDGE_STROKE_WIDTH = 0.3
 
+let layoutWidth = 0
+let layoutHeight = 0
 let lastDraggedOverNodeId: NodeId | null = null
 
-const View = (input: BoardProps<VariantGrid.Model>) => {
+const eventToNodeId = (e: any, props: BoardProps<VariantGrid.Model>) => {
+  switch (props.platform) {
+    case 'native': {
+      const x = e.nativeEvent?.locationX
+      const y = e.nativeEvent?.locationY
+      const x_ = Math.floor(rescale(x, 0, layoutWidth, 0, props.model.width))
+      const y_ = Math.floor(rescale(y, 0, layoutHeight, 0, props.model.height))
+      const nodeId = VariantGrid.toNodeId({ x: x_, y: y_ })
+      return nodeId
+    }
+    case 'web': {
+      const rect = e.currentTarget.getBoundingClientRect()
+      const x = Math.floor(((e.clientX - rect.left) / rect.width) * props.model.width)
+      const y = Math.floor(((e.clientY - rect.top) / rect.height) * props.model.height)
+      const nodeId = VariantGrid.toNodeId({ x, y })
+      return nodeId
+    }
+  }
+}
+
+const View = (props: BoardProps<VariantGrid.Model>) => {
   return h(
     Svg,
     {
       class: cn(
         'aspect-square w-full touch-none overflow-hidden select-none',
-        input.isDragging && 'cursor-grabbing',
-        input.disabled && 'pointer-events-none',
-        input.class,
+        props.isDragging && 'cursor-grabbing',
+        props.disabled && 'pointer-events-none',
+        props.class,
       ),
-      viewBox: `${0} ${0} ${input.model.width} ${input.model.height}`,
-      onPointerDown: (e: any) => {
-        const rect = e.currentTarget.getBoundingClientRect()
-        const x = Math.floor(((e.clientX - rect.left) / rect.width) * input.model.width)
-        const y = Math.floor(((e.clientY - rect.top) / rect.height) * input.model.height)
-        const nodeId = VariantGrid.toNodeId({ x, y })
-        input.onPressDown?.(nodeId)
-        console.log('onPressDown', nodeId)
+      viewBox: `${0} ${0} ${props.model.width} ${props.model.height}`,
+      onLayout(e: any) {
+        layoutWidth = e.nativeEvent.layout.width
+        layoutHeight = e.nativeEvent.layout.height
       },
-      onPointerUp: (e: any) => {
-        const rect = e.currentTarget.getBoundingClientRect()
-        const x = Math.floor(((e.clientX - rect.left) / rect.width) * input.model.width)
-        const y = Math.floor(((e.clientY - rect.top) / rect.height) * input.model.height)
-        const nodeId = VariantGrid.toNodeId({ x, y })
-        input.onPressUp?.(nodeId)
-        console.log('onPressUp', nodeId)
+      onPressIn(e: any) {
+        const nodeId = eventToNodeId(e, props)
+        props.onPressDown?.(nodeId)
       },
-      onPointerMove: (e: any) => {
-        const rect = e.currentTarget.getBoundingClientRect()
-        const x = Math.floor(((e.clientX - rect.left) / rect.width) * input.model.width)
-        const y = Math.floor(((e.clientY - rect.top) / rect.height) * input.model.height)
-        const nodeId = VariantGrid.toNodeId({ x, y })
+      onPressOut(e: any) {
+        const nodeId = eventToNodeId(e, props)
+        props.onPressUp?.(nodeId)
+      },
+      onPointerMove(e: any) {
+        if (!props.isDragging) return
+        const nodeId = eventToNodeId(e, props)
         if (nodeId === lastDraggedOverNodeId) return
         lastDraggedOverNodeId = nodeId
-        input.onDraggedOver?.(nodeId)
-        console.log('onDraggedOver', nodeId)
+        props.onDraggedOver?.(nodeId)
+      },
+      onStartShouldSetResponder: () => true,
+      onResponderMove(e: any) {
+        if (!props.isDragging) return
+        const nodeId = eventToNodeId(e, props)
+        if (lastDraggedOverNodeId === nodeId) return
+        lastDraggedOverNodeId = nodeId
+        props.onDraggedOver?.(nodeId)
       },
     },
-    [h(ViewGrid, input), h(ViewPipelines, input), h(ViewAutocompleteEdge, input), h(ViewCoordinates, input)],
+    [h(ViewGrid, props), h(ViewPipelines, props), h(ViewAutocompleteEdge, props), h(ViewCoordinates, props)],
   )
 }
 
@@ -263,6 +287,6 @@ const map = <T, TY>(iterable: Iterable<T>, fn: (x: T) => TY): TY[] => {
   return result
 }
 
-export const ImplSvgWeb = {
+export const ImplSvgUniversal = {
   View,
 }

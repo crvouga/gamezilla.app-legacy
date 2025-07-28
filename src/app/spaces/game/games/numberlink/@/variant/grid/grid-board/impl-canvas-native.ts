@@ -15,22 +15,6 @@ let layoutHeight = 0
 let lastDraggedOverNodeId: NodeId | null = null
 
 const View = (input: BoardProps<VariantGrid.Model>) => {
-  if (!layoutWidth || !layoutHeight) {
-    return h(
-      // @ts-ignore
-      RNView,
-      {
-        style: { flex: 1, width: '100%' },
-        onLayout: (e: any) => {
-          const { width, height } = e.nativeEvent.layout
-          layoutWidth = width
-          layoutHeight = height
-        },
-      },
-      [],
-    )
-  }
-
   const locateNode = (x: number, y: number) => {
     const x_ = Math.floor(rescale(x, 0, layoutWidth, 0, input.model.width))
     const y_ = Math.floor(rescale(y, 0, layoutHeight, 0, input.model.height))
@@ -44,7 +28,6 @@ const View = (input: BoardProps<VariantGrid.Model>) => {
   const verticalLines = []
   for (let x = 0; x <= input.model.width; x++) {
     verticalLines.push(
-      // @ts-ignore
       h(Line, {
         key: `v-${x}`,
         p1: { x, y: 0 },
@@ -58,7 +41,6 @@ const View = (input: BoardProps<VariantGrid.Model>) => {
   const horizontalLines = []
   for (let y = 0; y <= input.model.height; y++) {
     horizontalLines.push(
-      // @ts-ignore
       h(Line, {
         key: `h-${y}`,
         p1: { x: 0, y },
@@ -85,7 +67,6 @@ const View = (input: BoardProps<VariantGrid.Model>) => {
     // Add pipeline path as individual line segments
     for (const segment of pipeline) {
       pipelineElements.push(
-        // @ts-ignore
         h(Line, {
           key: `pipeline-${terminal.startId}-${segment.source.x}-${segment.source.y}-${segment.target.x}-${segment.target.y}`,
           p1: segment.source,
@@ -172,14 +153,12 @@ const View = (input: BoardProps<VariantGrid.Model>) => {
     },
     [
       h(
-        // @ts-ignore
         Canvas,
         {
           style: { flex: 1, pointerEvents: 'none' },
         },
         [
           h(
-            // @ts-ignore
             Group,
             {
               transform: [{ scale: layoutWidth / input.model.width }],
