@@ -9,16 +9,16 @@ export const PostAction = (input: ScreenLayoutProps) => {
   return h(
     Box,
     {
-      class: 'absolute right-6 bottom-6',
+      class: 'absolute right-6 bottom-6 rounded-[30px]',
       style: {
         shadowColor: '#000',
         shadowOffset: {
           width: 0,
           height: 8,
         },
-        shadowOpacity: 0.5,
-        shadowRadius: 12,
-        elevation: 24,
+        shadowOpacity: 0.7,
+        shadowRadius: 16,
+        elevation: 32,
       },
     },
     [

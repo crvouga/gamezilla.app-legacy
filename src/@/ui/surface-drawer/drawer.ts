@@ -9,6 +9,7 @@ import { Surface } from '../surface'
 import type { DrawerProps, DrawerPropsPrivate } from './drawer-shared'
 import { preventConsoleErrorWhenClosingDrawer } from './drawer-shared'
 import { Pressable } from '~/@/vdom/primitives/pressable'
+import { SafeAreaBox } from '~/@/vdom/primitives/safe-area-box'
 
 export type DrawerInput = DrawerPropsPrivate & {
   children: VDom[]
@@ -22,18 +23,25 @@ export type DrawerInput = DrawerPropsPrivate & {
 const DrawerContent = (props: { position: 'top' | 'bottom'; open: boolean; children: VDom | VDom[] }) => {
   const isTop = props.position === 'top'
   return h(
-    Surface,
+    SafeAreaBox,
     {
       class: cn(
         'w-full transition-transform duration-200',
-        isTop ? 'rounded-b-2xl' : 'rounded-t-2xl',
         props.open ? 'translate-y-0' : isTop ? '-translate-y-full' : 'translate-y-full',
       ),
     },
     [
-      ...(isTop ? [h(Gutter, { variant: 'drawer' })] : []),
-      ...(Array.isArray(props.children) ? props.children : [props.children]),
-      ...(!isTop ? [h(Gutter, { variant: 'drawer' })] : []),
+      h(
+        Surface,
+        {
+          class: cn(isTop ? 'rounded-b-2xl' : 'rounded-t-2xl'),
+        },
+        [
+          ...(isTop ? [h(Gutter, { variant: 'drawer' })] : []),
+          ...(Array.isArray(props.children) ? props.children : [props.children]),
+          ...(!isTop ? [h(Gutter, { variant: 'drawer' })] : []),
+        ],
+      ),
     ],
   )
 }

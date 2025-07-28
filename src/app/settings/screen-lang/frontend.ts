@@ -108,14 +108,8 @@ const ViewChooseLangListItem = (input: {
 }
 
 const toStatus = (input: { langCode: LanguageCodeISO_639_1; model: ModelFrontend; ctx: AppFrontendCtxBase }) => {
-  if (input.model.langLoading[input.langCode]?.endedAt === null) {
-    return 'loading'
-  }
-
-  if (input.model.lang === input.langCode) {
-    return 'selected'
-  }
-
+  if (input.model.langLoading[input.langCode]?.endedAt === null) return 'loading'
+  if (input.model.lang === input.langCode) return 'selected'
   return 'unselected'
 }
 
