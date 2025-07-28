@@ -16,6 +16,7 @@ import {
   toSlot,
   toWins,
 } from './tic-tac-toe'
+import { VDom } from '~/@/vdom/vdom'
 
 export const gameTheme = {
   background: '#14BDAC',
@@ -46,7 +47,7 @@ export const ViewBoard = ({ board, onPress }: { board: Model; onPress: (position
       ),
     ),
     ...board.flatMap((slots, x) =>
-      slots.flatMap((slot, y) => {
+      slots.map((slot, y): VDom => {
         const key = [x, y, slot].join(' ')
         const cx = x * scale + scale / 2
         const cy = y * scale + scale / 2

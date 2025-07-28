@@ -1,8 +1,8 @@
 import { h } from '~/@/vdom/h'
 import { BoardInput } from '../../../ui/board'
 import type * as VariantGrid from '../grid'
-import { VariantGridBoardCanvas } from './impl-canvas'
-import { VariantGridBoardSvg } from './impl-svg'
+import { ImplCanvasWeb } from './impl-canvas-web'
+import { ImplSvgWeb } from './impl-svg-web'
 
 type VariantGridUIImpl = 'svg' | 'canvas'
 
@@ -11,11 +11,11 @@ const IMPL = 'canvas' as VariantGridUIImpl
 const View = (input: BoardInput<VariantGrid.Model>) => {
   switch (IMPL) {
     case 'svg': {
-      return h(VariantGridBoardSvg.View, input)
+      return h(ImplSvgWeb.View, input)
     }
 
     case 'canvas': {
-      return h(VariantGridBoardCanvas.View, input)
+      return h(ImplCanvasWeb.View, input)
     }
   }
 }

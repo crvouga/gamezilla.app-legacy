@@ -1,42 +1,35 @@
-import { Err, isErr, Ok } from '~/@/result'
+import { Err, isErr, Ok, Result } from '~/@/result'
 import type { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
 import { TimeSpan } from '~/@/time/time-span'
 import { deterministicJsonStringify } from '../json/deterministic-stringify'
 import { ILogger } from '../logger'
 import { PubSub, Sub } from '../sub'
-import type { ISqlDb } from './interface'
+import type { ISqlDb, SqlDbNotification } from './interface'
 
 export type ImplStandardSql = {
   t: 'standard-sql'
   query: (rawSql: string) => Promise<unknown[]>
   logger: ILogger
   pollInterval?: TimeSpan
+  garbageCollectionInterval?: TimeSpan
 }
 
 const init = (config: ImplStandardSql): ISqlDb => {
   const logger = config.logger.child(['sql'])
 
-  const eventQueryChanged = Sub.throttle(Sub.init<true>(), TimeSpan.seconds(1))
+  const eventQueryChanged = Sub.init<string[]>()
 
   const query = async <TRow>(input: { sql: string; vars: Record<string, any>; schema: s.Schema<TRow> }) => {
     const sql = Sql.to(input.sql, input.vars)
 
     try {
       const start = Date.now()
-
       const rows = await config.query(sql)
-
       const end = Date.now()
       const durationMs = end - start
       const durationFormatted = `${durationMs.toFixed(2)}ms`
-
-      logger.debug({
-        duration: durationFormatted,
-        sql: cleanSql(input.sql),
-        variables: Object.entries(input.vars).map(([key, value]) => `${key}=${String(value).slice(0, 100)}`),
-      })
-
+      logger.debug(durationFormatted, sql)
       const output: s.Infer<typeof input.schema>[] = []
 
       for (const row of rows) {
@@ -66,59 +59,66 @@ const init = (config: ImplStandardSql): ISqlDb => {
 
   const subsByQuery = new Map<string, { sub: PubSub<unknown>; cleanUp: () => void }>()
 
+  const garbageCollectionInterval = config.garbageCollectionInterval ?? TimeSpan.seconds(10)
   setInterval(() => {
     for (const [queryKey, { sub, cleanUp }] of subsByQuery) {
       if (sub.subscriberCount() === 0) {
-        logger.debug({
-          msg: 'Cleaning up unused query subscription',
-          queryKey,
-          subscriberCount: sub.subscriberCount(),
-        })
         subsByQuery.delete(queryKey)
         cleanUp()
       }
     }
-  }, 5_000)
+  }, TimeSpan.toMilliseconds(garbageCollectionInterval))
 
-  const listeners = new Map<string, Set<(notification: any) => void>>()
+  const listeners = new Map<string, Set<(notification: SqlDbNotification) => void>>()
 
   return {
     async query(input) {
       const queried = await query(input)
 
       if (Sql.isMutation(input.sql)) {
-        eventQueryChanged.pub(true)
+        const views = Sql.toViewsMemoized(input.sql)
+        eventQueryChanged.pub(views)
       }
 
       return queried
     },
 
     sub(input, mapper) {
-      const queryKey = deterministicJsonStringify({ sql: input.sql, vars: input.vars })
+      const queryKey = deterministicJsonStringify([input.sql, input.vars])
 
       const sub = subsByQuery.get(queryKey)
 
       type Row = s.Infer<typeof input.schema>
 
-      if (sub) {
-        return Sub.map(sub.sub as Sub<Row[]>, mapper)
-      }
+      if (sub) return Sub.map(sub.sub as Sub<Row[]>, mapper)
+
+      const dependencies = Sql.toViewsMemoized(input.sql)
+      const dependenciesSet = new Set(dependencies)
 
       const subNew = Sub.init<unknown>()
-      const pub = async () => {
-        const queried = await query(input)
-        if (isErr(queried)) return
-        subNew.pub(queried.value)
+      const inflightQueries = new Map<string, Promise<Result<string, Row[]>>>()
+      const pub = async (views: string[]) => {
+        if (!views.some((view) => dependenciesSet.has(view))) return
+
+        if (inflightQueries.has(queryKey)) {
+          const result = await inflightQueries.get(queryKey)
+          if (!result) return
+          if (!isErr(result)) subNew.pub(result.value)
+          return
+        }
+        const promise = query(input)
+        inflightQueries.set(queryKey, promise)
+
+        const result = await promise
+        inflightQueries.delete(queryKey)
+
+        if (!isErr(result)) subNew.pub(result.value)
       }
 
-      subsByQuery.set(queryKey, {
-        sub: subNew,
-        cleanUp: () => {},
-      })
+      const unsub = eventQueryChanged.sub(pub)
+      eventQueryChanged.pub(dependencies)
 
-      eventQueryChanged.sub(pub)
-
-      eventQueryChanged.pub(true)
+      subsByQuery.set(queryKey, { sub: subNew, cleanUp: unsub })
 
       return Sub.map(subNew as Sub<Row[]>, mapper)
     },
@@ -132,10 +132,7 @@ const init = (config: ImplStandardSql): ISqlDb => {
         const channelListeners = listeners.get(channel)
         if (channelListeners) {
           for (const callback of channelListeners) {
-            callback({
-              channel,
-              payload,
-            })
+            callback({ channel, payload })
           }
         }
         return Ok(null)
@@ -166,8 +163,6 @@ const init = (config: ImplStandardSql): ISqlDb => {
     },
   }
 }
-
-const cleanSql = (str: string) => str.replace(/\t/g, ' ').replace(/\n/g, ' ').replace(/ +/g, ' ')
 
 export const ImplStandardSql = {
   init,

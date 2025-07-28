@@ -10,7 +10,7 @@ export type ScreenLayoutActionBarProps = Partial<ScreenActionBarProps> & {
   position?: 'top' | 'bottom'
 }
 
-export type PatchActionProps = {
+export type ActionEditProps = {
   onSubmit: () => void
   cancelText: TranslatedText
   submitText: TranslatedText
@@ -20,7 +20,7 @@ export type PatchActionProps = {
   submitDisabled: boolean
 }
 
-export type PostActionProps = {
+export type ActionCreateProps = {
   submitIcon: (input: { class?: string }) => VDom
   onSubmit: () => void
   submitText: TranslatedText
@@ -41,20 +41,22 @@ export type NavBarProps = {
 
 export type ParentScreenProps = Omit<ScreenLayoutProps, 'ctx' | 'renderBody'>
 
+export type ScreenLayoutCtx = {
+  t: Translator
+  screenSize: ScreenSize
+}
+
 export type ScreenLayoutProps = {
   id: string
   dataTestId?: string
-  ctx: {
-    t: Translator
-    screenSize: ScreenSize
-  }
+  ctx: ScreenLayoutCtx
   parentScreen: ParentScreenProps | null
   navBar?: NavBarProps | null
   actionBar?: ScreenLayoutActionBarProps | null
   renderMiniPlayer?: (input: { key: string }) => VDom
   renderBody: () => VDom
-  postAction?: PostActionProps | null
-  patchAction?: PatchActionProps
+  actionCreate?: ActionCreateProps | null
+  actionEdit?: ActionEditProps
 }
 
 export const toDataTestIds = (input: Pick<ScreenLayoutProps, 'dataTestId' | 'parentScreen'>): string[] => {

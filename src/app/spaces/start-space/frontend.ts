@@ -6,7 +6,7 @@ import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
-import { PostActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'
+import { ActionCreateProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { SpaceFrontendModule } from '../frontend/space-frontend'
 import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
 import { MsgSpace } from '../space/msg-space'
@@ -74,7 +74,7 @@ const updateStartSpaceButton: SpaceFrontendModule['update'] = (input) => {
   }
 }
 
-export const viewStartSpaceButton = (input: Parameters<SpaceFrontendModule['View']>[0]): PostActionProps | null => {
+export const viewStartSpaceButton = (input: Parameters<SpaceFrontendModule['View']>[0]): ActionCreateProps | null => {
   if (!input.ctx.currentUser?.userId) return null
   const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
   const currentUserSpaceProjection = currentUserSpace ? Space.toSpaceProjection(currentUserSpace) : null

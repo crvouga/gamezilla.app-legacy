@@ -1,6 +1,6 @@
 import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
-import { ScreenNavBarMobile } from '../../nav-bar/screen-nav-bar-mobile'
+import { ScreenNavBarMobile } from './screen-nav-bar-mobile'
 import { ParentScreenProps, ScreenLayoutProps } from '../screen-layout-props'
 
 export const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps | null): VDom[] => {

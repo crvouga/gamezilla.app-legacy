@@ -15,22 +15,68 @@ import { Numberlink } from '../../../numberlink'
 import { BoardInput } from '../../../ui/board'
 import { Color } from '../../../ui/color'
 import * as VariantGrid from '../grid'
+import { rescale } from '~/@/math/rescale'
+import { NodeId } from '../../../numberlink/node-id'
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const TERMINAL_NODE_RADIUS = 0.33
 const EDGE_STROKE_WIDTH = 0.3
+
+let layoutWidth = 0
+let layoutHeight = 0
+let lastDraggedOverNodeId: NodeId | null = null
 
 const View = (input: BoardInput<VariantGrid.Model>) => {
   return h(
     Svg,
     {
       class: cn(
-        'aspect-square h-full max-h-full w-full touch-none overflow-hidden select-none',
+        'aspect-square w-full touch-none overflow-hidden select-none',
         input.isDragging && 'cursor-grabbing',
         input.disabled && 'pointer-events-none',
         input.class,
       ),
       viewBox: `${0} ${0} ${input.model.width} ${input.model.height}`,
+      onLayout: (e) => {
+        // @ts-ignore
+        layoutWidth = e.nativeEvent.layout.width
+        // @ts-ignore
+        layoutHeight = e.nativeEvent.layout.height
+        console.log('\n\n\nonLayout\n\n\n')
+        console.log({ layoutWidth, layoutHeight })
+        console.log('\n\n\n')
+      },
+      onPressIn: (e: any) => {
+        const x = e.nativeEvent?.locationX
+        const y = e.nativeEvent?.locationY
+        const x_ = Math.floor(rescale(x, 0, layoutWidth, 0, input.model.width))
+        const y_ = Math.floor(rescale(y, 0, layoutHeight, 0, input.model.height))
+        const nodeId = VariantGrid.toNodeId({ x: x_, y: y_ })
+        input.onPressIn?.(nodeId)
+        console.log('onPressIn', nodeId)
+      },
+      onPressOut: (e: any) => {
+        const x = e.nativeEvent?.locationX
+        const y = e.nativeEvent?.locationY
+        const x_ = Math.floor(rescale(x, 0, layoutWidth, 0, input.model.width))
+        const y_ = Math.floor(rescale(y, 0, layoutHeight, 0, input.model.height))
+        const nodeId = VariantGrid.toNodeId({ x: x_, y: y_ })
+        input.onPressOut?.(nodeId)
+        console.log('onPressOut', nodeId)
+      },
+      onStartShouldSetResponder: () => true,
+      onResponderMove: (e: any) => {
+        const x = e.nativeEvent?.locationX
+        const y = e.nativeEvent?.locationY
+        const x_ = Math.floor(rescale(x, 0, layoutWidth, 0, input.model.width))
+        const y_ = Math.floor(rescale(y, 0, layoutHeight, 0, input.model.height))
+        const nodeId = VariantGrid.toNodeId({ x: x_, y: y_ })
+        if (lastDraggedOverNodeId !== nodeId) {
+          input.onDraggedOver?.(nodeId)
+          lastDraggedOverNodeId = nodeId
+          console.log('onResponderMove', nodeId)
+        }
+      },
     },
     [h(ViewGrid, input), h(ViewPipelines, input), h(ViewAutocompleteEdge, input), h(ViewCoordinates, input)],
   )
@@ -39,23 +85,14 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
 const ViewGrid = (input: BoardInput<VariantGrid.Model>) => {
   return h(G, {}, [
     h(Defs, {}, [
-      h(
-        Pattern,
-        {
-          id: 'grid',
-          width: '1',
-          height: '1',
-          patternUnits: 'userSpaceOnUse',
-        },
-        [
-          h(Path, {
-            d: 'M 1 0 L 0 0 0 1',
-            fill: 'none',
-            stroke: Color.GRID_LINE_COLOR,
-            'stroke-width': '0.02',
-          }),
-        ],
-      ),
+      h(Pattern, { id: 'grid', width: '1', height: '1', patternUnits: 'userSpaceOnUse' }, [
+        h(Path, {
+          d: 'M 1 0 L 0 0 0 1',
+          fill: 'none',
+          stroke: Color.GRID_LINE_COLOR,
+          'stroke-width': '0.02',
+        }),
+      ]),
     ]),
     h(Rect, {
       x: 0,
@@ -72,12 +109,8 @@ const ViewGrid = (input: BoardInput<VariantGrid.Model>) => {
 const ViewPipelines = (input: BoardInput<VariantGrid.Model>) => {
   return h(
     G,
-    {
-      transform: 'translate(0.5, 0.5)',
-    },
-    map(VariantGrid.yieldTerminals(input.model), (terminal) => {
-      return h(ViewPipeline, { ...input, terminal })
-    }),
+    { transform: 'translate(0.5, 0.5)' },
+    map(VariantGrid.yieldTerminals(input.model), (terminal) => h(ViewPipeline, { ...input, terminal })),
   )
 }
 
@@ -234,6 +267,6 @@ const map = <T, TY>(iterable: Iterable<T>, fn: (x: T) => TY): TY[] => {
   return result
 }
 
-export const VariantGridBoardSvg = {
+export const ImplSvgNative = {
   View,
 }

@@ -70,7 +70,7 @@ const View: FrontendModule['View'] = (input) => {
           }),
       },
     },
-    postAction: CreateNewPuzzleFrontend.viewCreateAction(input),
+    actionCreate: CreateNewPuzzleFrontend.viewCreateAction(input),
     renderBody: () =>
       h(PuzzleList.View, {
         ctx: input.ctx,

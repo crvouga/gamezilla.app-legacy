@@ -58,7 +58,7 @@ const View: FrontendModule['View'] = (input) => {
         onPress: () => input.dispatch({ t: 'profile.update-username.clicked-back' }),
       },
     },
-    patchAction: {
+    actionEdit: {
       onSubmit: () => input.dispatch({ t: 'profile.update-username.clicked-save' }),
       submitText: input.ctx.t('app.save'),
       cancelText: input.ctx.t('app.cancel'),

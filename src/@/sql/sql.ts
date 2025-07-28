@@ -1,3 +1,5 @@
+import { memoize } from '../function/memoize'
+
 export type VarTypePrimitive = number | string | boolean | null | undefined
 
 export type VarTypeJson = {
@@ -141,7 +143,43 @@ const replaceParamLog = (query: string, key: string, value: VarType): string => 
   }
 }
 
+const MUTATION_PATTERN = /(?:insert\s|update\s|delete\s)/i
+
 export const isMutation = (sql: string) => {
-  const cleaned = sql.toLowerCase()
-  return cleaned.includes('insert ') || cleaned.includes('update ') || cleaned.includes('delete ')
+  return MUTATION_PATTERN.test(sql)
 }
+
+const VIEW_PATTERN =
+  /\b(?:from|join|update|insert\s+into|delete\s+from|replace\s+into|merge\s+into)\s+((?:(?:"[^"]*"|'[^']*'|`[^`]*`|[a-zA-Z0-9_]+)(?:\.[a-zA-Z0-9_]+)?))/gi
+
+export const toViews = (sql: string): string[] => {
+  const cleaned = sql.replace(/--.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '')
+
+  const seen = new Set<string>()
+  const views: string[] = []
+
+  let match
+  while ((match = VIEW_PATTERN.exec(cleaned))) {
+    let name = match[1]
+    if (!name) continue
+
+    name = name.replace(/^["'`]|["'`]$/g, '')
+    if (name.includes('.')) {
+      name = name.split('.').pop()!
+      name = name.replace(/^["'`]|["'`]$/g, '')
+    }
+
+    name = name.toLowerCase()
+    if (name && !seen.has(name)) {
+      seen.add(name)
+      views.push(name)
+    }
+  }
+  return views
+}
+
+export const toViewsMemoized = memoize({
+  toKey: (sql: string) => sql,
+  func: toViews,
+  cacheCapacity: 1000,
+})

@@ -6,7 +6,7 @@ import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
 import { ShowOkSmall } from '~/app/@/frontend/show-ok-small'
-import { PostActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'
+import { ActionCreateProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { AddPuzzlesCmd } from '../../../../@/frontend/add-puzzles-cmd.$msg'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { IPuzzleDb } from '../../../../@/puzzle/puzzle-db'
@@ -98,7 +98,7 @@ const createNewPuzzle = async (input: { now: UnixMs; createdByUserId: UserId; pu
   return Result.mapOk(result, () => puzzleNew)
 }
 
-const viewCreateAction = (input: Parameters<FrontendModule['View']>[0]): PostActionProps => {
+const viewCreateAction = (input: Parameters<FrontendModule['View']>[0]): ActionCreateProps => {
   return {
     onSubmit: () => input.dispatch({ t: 'create-new-puzzle.user-clicked-create-button' }),
     submitText: input.ctx.t('game.numberlink.create-puzzle'),

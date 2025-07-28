@@ -76,7 +76,7 @@ const View: FrontendModule['View'] = (input) => {
           }),
       },
     },
-    postAction: PackCreateNewFrontend.viewCreateAction(input),
+    actionCreate: PackCreateNewFrontend.viewCreateAction(input),
     renderBody: () =>
       h(PackList.View, {
         ...input,

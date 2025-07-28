@@ -123,12 +123,7 @@ const Main = () => {
 
   if (!input) return h(SplashScreen, {}, [])
 
-  return h(
-    // @ts-expect-error
-    SafeAreaProvider,
-    {},
-    [h(AppFrontend.View, input, [])],
-  )
+  return h(SafeAreaProvider, {}, [h(AppFrontend.View, input, [])])
 }
 
 registerRootComponent(Main as ComponentType<unknown>)

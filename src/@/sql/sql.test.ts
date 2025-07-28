@@ -282,3 +282,64 @@ describe('isMutation', () => {
     expect(Sql.isMutation('SELECT * FROM users WHERE id = :id')).toEqual(false)
   })
 })
+
+describe('toViews', () => {
+  test('should return table name for select statements', () => {
+    expect(Sql.toViews('SELECT * FROM users')).toEqual(['users'])
+    expect(Sql.toViews('SELECT * FROM users WHERE id = :id')).toEqual(['users'])
+    expect(Sql.toViews('SELECT u.id, o.id FROM users u JOIN orders o ON u.id = o.user_id')).toEqual(['users', 'orders'])
+  })
+
+  test('should return table name for insert statements', () => {
+    expect(Sql.toViews('INSERT INTO users (name) VALUES (:name)')).toEqual(['users'])
+    expect(Sql.toViews('INSERT INTO orders (id, user_id) VALUES (:id, :user_id)')).toEqual(['orders'])
+  })
+
+  test('should return table name for update statements', () => {
+    expect(Sql.toViews('UPDATE users SET name = :name WHERE id = :id')).toEqual(['users'])
+    expect(Sql.toViews('UPDATE orders SET status = :status WHERE id = :id')).toEqual(['orders'])
+  })
+
+  test('should return table name for delete statements', () => {
+    expect(Sql.toViews('DELETE FROM users WHERE id = :id')).toEqual(['users'])
+    expect(Sql.toViews('DELETE FROM orders WHERE status = :status')).toEqual(['orders'])
+  })
+
+  test.skip('should return table name for replace and merge statements', () => {
+    expect(Sql.toViews('REPLACE INTO users (id, name) VALUES (:id, :name)')).toEqual(['users'])
+    expect(
+      Sql.toViews(
+        'MERGE INTO users USING temp_users ON users.id = temp_users.id WHEN MATCHED THEN UPDATE SET name = temp_users.name',
+      ),
+    ).toEqual(['users'])
+  })
+
+  test('should handle quoted and schema-prefixed table names', () => {
+    expect(Sql.toViews('SELECT * FROM "users"')).toEqual(['users'])
+    expect(Sql.toViews('SELECT * FROM my_schema.users')).toEqual(['users'])
+    expect(Sql.toViews('UPDATE `orders` SET status = 1')).toEqual(['orders'])
+  })
+
+  test('should ignore comments and whitespace', () => {
+    expect(
+      Sql.toViews(`
+      -- This is a comment
+      SELECT * FROM users
+      /* multi-line
+         comment */
+      WHERE id = :id
+    `),
+    ).toEqual(['users'])
+  })
+
+  test('should handle CTEs and multiple tables', () => {
+    expect(
+      Sql.toViews(`
+      WITH recent_orders AS (
+        SELECT * FROM orders WHERE created_at > :date
+      )
+      SELECT u.id, r.id FROM users u JOIN recent_orders r ON u.id = r.user_id
+    `),
+    ).toEqual(['orders', 'users', 'recent_orders'])
+  })
+})

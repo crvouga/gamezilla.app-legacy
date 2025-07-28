@@ -4,7 +4,7 @@ import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
-import { PostActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'
+import { ActionCreateProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { Pack } from '../../../../@/pack/pack'
 import { PackId } from '../../../../@/pack/pack-id'
 import { PackName } from '../../../../@/pack/pack-name'
@@ -56,7 +56,7 @@ const update: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const viewCreateAction = (input: Parameters<FrontendModule['View']>[0]): PostActionProps => {
+const viewCreateAction = (input: Parameters<FrontendModule['View']>[0]): ActionCreateProps => {
   return {
     onSubmit: () =>
       input.dispatch({

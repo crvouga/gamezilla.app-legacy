@@ -1,5 +1,4 @@
 import { Brand } from '../brand/brand'
+import { type ReactNode } from 'react'
 
-type Primitive = null | false | true | undefined
-
-export type VDom = Primitive | Brand<unknown, 'VDom'>
+export type VDom = null | false | true | undefined | ReactNode | React.JSX.Element | Brand<unknown, 'VDom'>

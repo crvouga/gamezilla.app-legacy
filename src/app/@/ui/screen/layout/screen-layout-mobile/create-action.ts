@@ -3,8 +3,8 @@ import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { ScreenLayoutProps } from '../screen-layout-props'
 
-export const PostAction = (input: ScreenLayoutProps) => {
-  if (!input.postAction) return null
+export const CreateAction = (input: ScreenLayoutProps) => {
+  if (!input.actionCreate) return null
 
   return h(
     Box,
@@ -27,11 +27,11 @@ export const PostAction = (input: ScreenLayoutProps) => {
         size: 'lg',
         variant: 'contained',
         fab: true,
-        onPress: input.postAction.onSubmit,
-        disabled: input.postAction.submitDisabled,
-        loading: input.postAction.submitLoading,
-        text: input.postAction.submitText,
-        renderIconStart: input.postAction.submitIcon,
+        onPress: input.actionCreate.onSubmit,
+        disabled: input.actionCreate.submitDisabled,
+        loading: input.actionCreate.submitLoading,
+        text: input.actionCreate.submitText,
+        renderIconStart: input.actionCreate.submitIcon,
       }),
     ],
   )

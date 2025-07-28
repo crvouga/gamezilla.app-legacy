@@ -56,7 +56,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
     navBar: {
       title: input.ctx.t('spaces.spaces'),
     },
-    postAction: StartSpaceFrontend.viewStartSpaceButton(input),
+    actionCreate: StartSpaceFrontend.viewStartSpaceButton(input),
     renderBody: () => {
       if (isLoading) {
         return h(SpinnerBlock, {})

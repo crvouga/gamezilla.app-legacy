@@ -6,7 +6,7 @@ import { Spinner } from '~/@/ui/spinner'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
-import { ScreenNavBarTabletRoot } from '../nav-bar/screen-nav-bar-tablet'
+import { ScreenNavBarTabletRoot } from '../layout/screen-layout-tablet/screen-nav-bar-tablet'
 import { ScreenAction, ScreenActionBarProps } from './screen-action-bar-props'
 
 const SIZE = 'md' as 'md' | 'sm'

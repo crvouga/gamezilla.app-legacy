@@ -130,7 +130,7 @@ const view: SpaceFrontendModule['View'] = (input) => {
     id: 'join-space',
     parentScreen: input.ctx.parentScreen,
     ctx: input.ctx,
-    postAction: {
+    actionCreate: {
       onSubmit: () => input.dispatch({ t: 'join-space.submitted-join-space-form', spaceId: space.spaceId }),
       submitText: input.ctx.t('spaces.join-space'),
       submitLoading: false,

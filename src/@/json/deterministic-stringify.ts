@@ -27,25 +27,40 @@
  * ```
  */
 export const deterministicJsonStringify = (input: unknown): string => {
+  // Fast path for primitives (except BigInt)
+  if (input === null || typeof input === 'number' || typeof input === 'boolean' || typeof input === 'string') {
+    return JSON.stringify(input)
+  }
+  // Fast path for BigInt
+  if (typeof input === 'bigint') {
+    return JSON.stringify(input.toString())
+  }
+
+  // Efficient recursive function to sort object keys and convert BigInt
+  const normalize = (value: unknown): unknown => {
+    if (typeof value === 'bigint') {
+      return value.toString()
+    }
+    if (Array.isArray(value)) {
+      // Arrays: preserve order, normalize elements
+      return value.map(normalize)
+    }
+    if (value && typeof value === 'object') {
+      // Objects: sort keys, normalize values
+      const keys = Object.keys(value as Record<string, unknown>)
+      if (keys.length === 0) return value
+      const sorted: Record<string, unknown> = {}
+      for (const key of keys.sort()) {
+        sorted[key] = normalize((value as Record<string, unknown>)[key])
+      }
+      return sorted
+    }
+    return value
+  }
+
   try {
-    const result = JSON.stringify(input, (_key, value) => {
-      if (typeof value === 'bigint') {
-        return value.toString()
-      }
-      if (value && typeof value === 'object' && !Array.isArray(value)) {
-        // Create a new object with sorted keys
-        return Object.keys(value)
-          .sort()
-          .reduce(
-            (acc, key) => {
-              acc[key] = value[key]
-              return acc
-            },
-            {} as Record<string, unknown>,
-          )
-      }
-      return value
-    })
+    const normalized = normalize(input)
+    const result = JSON.stringify(normalized)
     return result ?? 'null'
   } catch {
     return 'null'

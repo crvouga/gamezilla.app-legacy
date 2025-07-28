@@ -158,6 +158,6 @@ const View = ({ model, isDragging, onPressIn: onPress, onPressOut }: BoardInput<
   })
 }
 
-export const VariantGridBoardCanvas = {
+export const ImplCanvasWeb = {
   View,
 }
