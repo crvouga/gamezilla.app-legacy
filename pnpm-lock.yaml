@@ -14,6 +14,9 @@ importers:
       '@expo/metro-runtime':
         specifier: ~5.0.4
         version: 5.0.4(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@19.1.1(typescript@5.8.3))(@types/react@19.0.14)(react@19.0.0))
+      '@shopify/react-native-skia':
+        specifier: v2.0.0-next.4
+        version: 2.0.0-next.4(react-native-reanimated@3.17.5(@babel/core@7.28.0)(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@19.1.1(typescript@5.8.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@19.1.1(typescript@5.8.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       better-sqlite3:
         specifier: ^12.2.0
         version: 12.2.0
@@ -1546,6 +1549,19 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@shopify/react-native-skia@2.0.0-next.4':
+    resolution: {integrity: sha512-NzvdgryRz6tkKMHgCChCKa3wXfN9TZhlV0/LrfIU/wKLC1uKgGXkoZgNz7Is0wwdhtao1JJJJ81fqHCGHgzk9g==}
+    hasBin: true
+    peerDependencies:
+      react: '>=19.0'
+      react-native: '>=0.78'
+      react-native-reanimated: ^3.0
+    peerDependenciesMeta:
+      react-native:
+        optional: true
+      react-native-reanimated:
+        optional: true
+
   '@sideway/address@4.1.5':
     resolution: {integrity: sha512-IqO/DUQHUkPeixNQ8n0JA6102hT9CmaljNTPmQ1u8MEhBo/R4Q8eKLN/vGZxuebwOroDB4cbpjheD4+/sKFK4Q==}
 
@@ -1733,6 +1749,9 @@ packages:
 
   '@vscode/sudo-prompt@9.3.1':
     resolution: {integrity: sha512-9ORTwwS74VaTn38tNbQhsA5U44zkJfcb0BdTSyyG6frP4e8KMtHuTXYmwefe5dpL8XB1aGSIVTaLjD3BbWb5iA==}
+
+  '@webgpu/types@0.1.21':
+    resolution: {integrity: sha512-pUrWq3V5PiSGFLeLxoGqReTZmiiXwY3jRkIG5sLLKjyqNxrwm/04b4nw7LSmGWJcKk59XOM/YRTUwOzo4MMlow==}
 
   '@xmldom/xmldom@0.8.10':
     resolution: {integrity: sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==}
@@ -2069,6 +2088,9 @@ packages:
 
   caniuse-lite@1.0.30001727:
     resolution: {integrity: sha512-pB68nIHmbN6L/4C6MH1DokyR3bYqFwjaSs/sWDHGj4CTcFtQUQMuJftVwWkXq7mNWOybD3KhUv3oWHoGxgP14Q==}
+
+  canvaskit-wasm@0.40.0:
+    resolution: {integrity: sha512-Od2o+ZmoEw9PBdN/yCGvzfu0WVqlufBPEWNG452wY7E9aT8RBE+ChpZF526doOlg7zumO4iCS+RAeht4P0Gbpw==}
 
   chai@5.2.1:
     resolution: {integrity: sha512-5nFxhUrX0PqtyogoYOA8IPswy5sZFTOsBFl/9bNsmDLgsxYTzSZQJDPppDnZPTQbzSEm0hqGjWPzRemQCYbD6A==}
@@ -4291,6 +4313,12 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+
+  react-reconciler@0.31.0:
+    resolution: {integrity: sha512-7Ob7Z+URmesIsIVRjnLoDGwBEG/tVitidU0nMsqX/eeJaLY89RISO/10ERe0MqmzuKUUB1rmY+h1itMbUHg9BQ==}
+    engines: {node: '>=0.10.0'}
+    peerDependencies:
+      react: ^19.0.0
 
   react-refresh@0.14.2:
     resolution: {integrity: sha512-jCvmsr+1IUSMUyzOkRcvnVbX3ZYC6g9TDrDbFuFmRDq7PD4yaGbLKNQL6k2jnArV8hjYxh7hVhAZB6s9HDGpZA==}
@@ -7174,6 +7202,15 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.45.1':
     optional: true
 
+  '@shopify/react-native-skia@2.0.0-next.4(react-native-reanimated@3.17.5(@babel/core@7.28.0)(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@19.1.1(typescript@5.8.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@19.1.1(typescript@5.8.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)':
+    dependencies:
+      canvaskit-wasm: 0.40.0
+      react: 19.0.0
+      react-reconciler: 0.31.0(react@19.0.0)
+    optionalDependencies:
+      react-native: 0.79.5(@babel/core@7.28.0)(@react-native-community/cli@19.1.1(typescript@5.8.3))(@types/react@19.0.14)(react@19.0.0)
+      react-native-reanimated: 3.17.5(@babel/core@7.28.0)(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@19.1.1(typescript@5.8.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+
   '@sideway/address@4.1.5':
     dependencies:
       '@hapi/hoek': 9.3.0
@@ -7425,6 +7462,8 @@ snapshots:
 
   '@vscode/sudo-prompt@9.3.1':
     optional: true
+
+  '@webgpu/types@0.1.21': {}
 
   '@xmldom/xmldom@0.8.10': {}
 
@@ -7830,6 +7869,10 @@ snapshots:
   camelcase@7.0.1: {}
 
   caniuse-lite@1.0.30001727: {}
+
+  canvaskit-wasm@0.40.0:
+    dependencies:
+      '@webgpu/types': 0.1.21
 
   chai@5.2.1:
     dependencies:
@@ -10254,6 +10297,11 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
+
+  react-reconciler@0.31.0(react@19.0.0):
+    dependencies:
+      react: 19.0.0
+      scheduler: 0.25.0
 
   react-refresh@0.14.2: {}
 

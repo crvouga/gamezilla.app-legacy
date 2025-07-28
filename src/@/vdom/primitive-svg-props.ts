@@ -16,6 +16,7 @@ export type PrimitiveSvgProps = PrimitiveProps & {
   cy?: number | string
   x1?: number | string
   y1?: number | string
+  color?: string
   'clip-path'?: string
   x2?: number | string
   y2?: number | string

@@ -12,7 +12,6 @@ import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { SvgText } from '~/@/vdom/primitives/svg/text'
 import type { VDom } from '~/@/vdom/vdom'
 import { Numberlink } from '../../../numberlink'
-import { NodeId } from '../../../numberlink/node-id'
 import { BoardInput } from '../../../ui/board'
 import { Color } from '../../../ui/color'
 import * as VariantGrid from '../grid'
@@ -21,50 +20,7 @@ import * as VariantGrid from '../grid'
 const TERMINAL_NODE_RADIUS = 0.33
 const EDGE_STROKE_WIDTH = 0.3
 
-let lastDraggedOver: NodeId | null = null
-
 const View = (input: BoardInput<VariantGrid.Model>) => {
-  const draggedOver = (nodeId: NodeId) => {
-    if (!input.isDragging || lastDraggedOver === nodeId) {
-      return
-    }
-    lastDraggedOver = nodeId
-    input.onDraggedOver?.(nodeId)
-  }
-
-  // const left = () => {
-  //   if (!input.isDragging) {
-  //     return
-  //   }
-  //   lastDraggedOver = null
-  //   input.onLeave?.()
-  // }
-
-  // const onMouseMove = (e: MouseEvent) => {
-  //   const svg = e.currentTarget as SVGSVGElement
-  //   if (!svg) {
-  //     return
-  //   }
-
-  //   const point = svg.createSVGPoint()
-  //   point.x = e.clientX
-  //   point.y = e.clientY
-
-  //   const ctm = svg.getScreenCTM()
-  //   if (!ctm) {
-  //     return
-  //   }
-
-  //   const svgP = point.matrixTransform(ctm.inverse())
-  //   const nodeId = VariantGrid.toNodeId({ x: Math.floor(svgP.x), y: Math.floor(svgP.y) })
-
-  //   if (!nodeId) {
-  //     return
-  //   }
-
-  //   draggedOver(nodeId)
-  // }
-
   return h(
     Svg,
     {
@@ -75,16 +31,8 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
         input.class,
       ),
       viewBox: `${0} ${0} ${input.model.width} ${input.model.height}`,
-      // onMouseOut: left,
-      // onMouseMove,
     },
-    [
-      h(ViewGrid, input),
-      h(ViewPipelines, input),
-      h(ViewAutocompleteEdge, input),
-      h(ViewCoordinates, input),
-      !input.disabled && h(ViewClickable, { ...input, draggedOver }),
-    ],
+    [h(ViewGrid, input), h(ViewPipelines, input), h(ViewAutocompleteEdge, input), h(ViewCoordinates, input)],
   )
 }
 
@@ -266,50 +214,6 @@ const ViewCoordinates = (input: BoardInput<VariantGrid.Model>) => {
       }),
     )
   )
-}
-
-const ViewClickable = (
-  input: BoardInput<VariantGrid.Model> & {
-    draggedOver?: (nodeId: NodeId) => void
-  },
-) => {
-  return h(
-    G,
-    { key: input.model.nodeHash ?? '' },
-    map(VariantGrid.yieldNodes(input.model), (node) => {
-      return h(ViewClickableNode, {
-        node,
-        onPressIn: input.onPressIn,
-        onPressOut: input.onPressOut,
-        draggedOver: input.draggedOver,
-      })
-    }),
-  )
-}
-
-const ViewClickableNode = (
-  input: Pick<BoardInput<VariantGrid.Model>, 'onPress' | 'onPressOut'> & {
-    node: VariantGrid.Node
-    draggedOver?: (nodeId: NodeId) => void
-  },
-) => {
-  return h(Rect, {
-    key: input.node.nodeId,
-    x: input.node.x,
-    y: input.node.y,
-    width: '1',
-    height: '1',
-    fill: 'transparent',
-    onPress: () => {
-      input.onPressIn?.(input.node.nodeId)
-    },
-    onPressOut: () => {
-      input.onPressOut?.(input.node.nodeId)
-    },
-    // onPressIn: () => {
-    //   input.draggedOver?.(input.node.nodeId)
-    // },
-  })
 }
 
 const pipelineToSvgPathData = (pipeline: Iterable<VariantGrid.PipeJoined>): string => {

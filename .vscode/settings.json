@@ -67,6 +67,7 @@
     "RUNASROOT",
     "SAMEORIGIN",
     "sendfile",
+    "skia",
     "snabbdom",
     "sslmode",
     "Supabase",

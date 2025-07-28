@@ -6,7 +6,7 @@ import { VariantGridBoardSvg } from './impl-svg'
 
 type VariantGridUIImpl = 'svg' | 'canvas'
 
-const IMPL = 'svg' as VariantGridUIImpl
+const IMPL = 'canvas' as VariantGridUIImpl
 
 const View = (input: BoardInput<VariantGrid.Model>) => {
   switch (IMPL) {
