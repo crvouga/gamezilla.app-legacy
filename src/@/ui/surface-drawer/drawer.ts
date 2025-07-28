@@ -3,13 +3,12 @@ import { Translator } from '~/@/l18n/generated'
 import { cn } from '~/@/ui/cn'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import type { VDom } from '~/@/vdom/vdom'
-import { Gutter } from '../gutter'
-import { Surface } from '../surface'
-import type { DrawerProps, DrawerPropsPrivate } from './drawer-shared'
-import { preventConsoleErrorWhenClosingDrawer } from './drawer-shared'
 import { Pressable } from '~/@/vdom/primitives/pressable'
 import { SafeAreaBox } from '~/@/vdom/primitives/safe-area-box'
+import type { VDom } from '~/@/vdom/vdom'
+import { Gutter } from '../gutter'
+import type { DrawerProps, DrawerPropsPrivate } from './drawer-shared'
+import { preventConsoleErrorWhenClosingDrawer } from './drawer-shared'
 
 export type DrawerInput = DrawerPropsPrivate & {
   children: VDom[]
@@ -25,23 +24,17 @@ const DrawerContent = (props: { position: 'top' | 'bottom'; open: boolean; child
   return h(
     SafeAreaBox,
     {
+      edges: isTop ? ['top'] : ['bottom'],
       class: cn(
-        'w-full transition-transform duration-200',
+        'w-full transition-transform duration-200 bg-black border border-neutral-700',
         props.open ? 'translate-y-0' : isTop ? '-translate-y-full' : 'translate-y-full',
+        isTop ? 'rounded-b-2xl' : 'rounded-t-2xl',
       ),
     },
     [
-      h(
-        Surface,
-        {
-          class: cn(isTop ? 'rounded-b-2xl' : 'rounded-t-2xl'),
-        },
-        [
-          ...(isTop ? [h(Gutter, { variant: 'drawer' })] : []),
-          ...(Array.isArray(props.children) ? props.children : [props.children]),
-          ...(!isTop ? [h(Gutter, { variant: 'drawer' })] : []),
-        ],
-      ),
+      ...(isTop ? [h(Gutter, { variant: 'drawer' })] : []),
+      ...(Array.isArray(props.children) ? props.children : [props.children]),
+      ...(!isTop ? [h(Gutter, { variant: 'drawer' })] : []),
     ],
   )
 }

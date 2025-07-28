@@ -2,11 +2,12 @@ import { h } from '~/@/vdom/vdom-engine/impl'
 import { PrimitiveProps } from '../primitive-props'
 import { SAFE_AREA_BOX_TAG } from '../tags'
 
+export type SafeAreaBoxEdge = 'top' | 'bottom' | 'left' | 'right'
+
+export const ALL_SAFE_AREA_BOX_EDGES: SafeAreaBoxEdge[] = ['top', 'bottom', 'left', 'right']
+
 export type SafeAreaBoxProps = PrimitiveProps & {
-  top?: boolean
-  bottom?: boolean
-  left?: boolean
-  right?: boolean
+  edges: SafeAreaBoxEdge[]
 }
 
 export const SafeAreaBox = ({ children, ...props }: SafeAreaBoxProps) => {
