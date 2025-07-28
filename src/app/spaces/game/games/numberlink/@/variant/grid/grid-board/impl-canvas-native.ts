@@ -1,12 +1,12 @@
-import { Canvas, Group, Line, Circle } from '@shopify/react-native-skia'
-import { View as RNView } from 'react-native'
+import { Canvas, Circle, Group, Line } from '@shopify/react-native-skia'
 import { useMemo, useState } from 'react'
-import { BoardProps } from '../../../ui/board'
-import { NodeId } from '../../../numberlink/node-id'
+import { View as RNView } from 'react-native'
 import { rescale } from '~/@/math/rescale'
+import { h } from '~/@/vdom/h'
+import { NodeId } from '../../../numberlink/node-id'
+import { BoardProps } from '../../../ui/board'
 import { Color } from '../../../ui/color'
 import * as VariantGrid from '../grid'
-import { h } from '~/@/vdom/h'
 
 const TERMINAL_NODE_RADIUS = 0.33
 const EDGE_STROKE_WIDTH = 0.3

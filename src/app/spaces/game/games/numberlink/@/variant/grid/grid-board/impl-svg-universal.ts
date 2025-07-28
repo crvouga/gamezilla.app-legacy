@@ -38,8 +38,14 @@ const eventToNodeId = (e: any, props: BoardProps<VariantGrid.Model>) => {
     }
     case 'web': {
       const rect = e.currentTarget.getBoundingClientRect()
-      const x = Math.floor(((e.clientX - rect.left) / rect.width) * props.model.width)
-      const y = Math.floor(((e.clientY - rect.top) / rect.height) * props.model.height)
+      layoutWidth = rect.width
+      layoutHeight = rect.height
+      const absClientX = e.clientX ?? e.nativeEvent?.locationX ?? 0
+      const absClientY = e.clientY ?? e.nativeEvent?.locationY ?? 0
+      const clientX = absClientX - rect.left
+      const clientY = absClientY - rect.top
+      const x = Math.floor(rescale(clientX, 0, layoutWidth, 0, props.model.width))
+      const y = Math.floor(rescale(clientY, 0, layoutHeight, 0, props.model.height))
       const nodeId = VariantGrid.toNodeId({ x, y })
       return nodeId
     }
@@ -57,24 +63,13 @@ const View = (props: BoardProps<VariantGrid.Model>) => {
         props.class,
       ),
       viewBox: `${0} ${0} ${props.model.width} ${props.model.height}`,
-      onLayout(e: any) {
-        layoutWidth = e.nativeEvent.layout.width
-        layoutHeight = e.nativeEvent.layout.height
-      },
-      onPressIn(e: any) {
-        const nodeId = eventToNodeId(e, props)
-        props.onPressDown?.(nodeId)
-      },
-      onPressOut(e: any) {
-        const nodeId = eventToNodeId(e, props)
-        props.onPressUp?.(nodeId)
-      },
       onPointerMove(e: any) {
         if (!props.isDragging) return
         const nodeId = eventToNodeId(e, props)
         if (nodeId === lastDraggedOverNodeId) return
         lastDraggedOverNodeId = nodeId
         props.onDraggedOver?.(nodeId)
+        console.log('onPointerMove', nodeId)
       },
       onStartShouldSetResponder: () => true,
       onResponderMove(e: any) {
@@ -83,6 +78,21 @@ const View = (props: BoardProps<VariantGrid.Model>) => {
         if (lastDraggedOverNodeId === nodeId) return
         lastDraggedOverNodeId = nodeId
         props.onDraggedOver?.(nodeId)
+        console.log('onResponderMove', nodeId)
+      },
+      onLayout(e: any) {
+        layoutWidth = e.nativeEvent.layout.width
+        layoutHeight = e.nativeEvent.layout.height
+      },
+      onPressIn(e: any) {
+        const nodeId = eventToNodeId(e, props)
+        props.onPressDown?.(nodeId)
+        console.log('onPressIn', nodeId)
+      },
+      onPressOut(e: any) {
+        const nodeId = eventToNodeId(e, props)
+        props.onPressUp?.(nodeId)
+        console.log('onPressOut', nodeId)
       },
     },
     [h(ViewGrid, props), h(ViewPipelines, props), h(ViewAutocompleteEdge, props), h(ViewCoordinates, props)],
@@ -246,7 +256,7 @@ const ViewAutocompleteEdge = (input: BoardProps<VariantGrid.Model>) => {
 
 const ViewCoordinates = (input: BoardProps<VariantGrid.Model>) => {
   return (
-    input.showCoordinates &&
+    (input.showCoordinates || true) &&
     h(
       G,
       { transform: 'translate(0, 1)' },

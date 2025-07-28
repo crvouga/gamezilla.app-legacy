@@ -1,5 +1,7 @@
+import '@expo/metro-runtime'
 import { registerRootComponent } from 'expo'
 import { ComponentType, useEffect, useState } from 'react'
+import { Platform } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { AudioPlayerImplExpoAudio } from './@/audio-player/impl-expo-audio'
 import { KeyValueDb } from './@/key-value-db'
@@ -7,6 +9,7 @@ import { KeyValueDbSyncImplHashMap } from './@/key-value-db-sync/impl-hash-map'
 import { KeyboardImplNoop } from './@/keyboard/impl-noop'
 import { Logger } from './@/logger'
 import { NavigationImplKeyValueDb } from './@/navigation/impl-key-value-db'
+import { IPlatform } from './@/platform/platform'
 import { Program } from './@/program/program'
 import { SqlDbMigrationPolicy } from './@/sql-db-migration-policy/impl'
 import { SqlDbImplExpoSqlite } from './@/sql-db/impl-expo-sqlite'
@@ -87,6 +90,8 @@ const Main = () => {
         maxHistoryLength: 10,
       })
 
+      const platform: IPlatform = Platform.OS === 'web' ? 'web' : 'native'
+
       logger.info('Initializing app context')
       const ctx = await AppFrontend.initCtx({
         backendUrl,
@@ -98,7 +103,7 @@ const Main = () => {
         viewport,
         navigation,
         keyValueDbSync,
-        platform: 'native',
+        platform,
         keyValueDb,
       })
 

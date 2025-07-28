@@ -1,20 +1,20 @@
-import { h } from '~/@/vdom/h'
+// import { h } from '~/@/vdom/h'
 import { BoardProps } from '../../../ui/board'
 import * as VariantGrid from '../grid'
-import { ImplCanvasNative } from './impl-canvas-native'
-import { ImplCanvasWeb } from './impl-canvas-web'
+// import { ImplCanvasNative } from './impl-canvas-native'
 
 const View = (input: BoardProps<VariantGrid.Model>) => {
   switch (input.platform) {
     case 'web': {
-      return h(ImplCanvasWeb.View, input)
+      return null
     }
     case 'native': {
-      return h(ImplCanvasNative.View, input)
+      return null
+      // return h(ImplCanvasNative.View, input)
     }
   }
 }
 
-export const VariantGridBoardCanvas = {
+export const ImplCanvas = {
   View,
 }

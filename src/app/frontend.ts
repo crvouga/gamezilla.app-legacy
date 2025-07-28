@@ -60,6 +60,11 @@ const initCtx = async (config: {
   platform: IPlatform
   keyValueDb: IKeyValueDb
 }): Promise<FrontendCtxModule> => {
+  if (config.platform === 'web') {
+    document.addEventListener('contextmenu', (e) => e.preventDefault())
+    document.addEventListener('selectstart', (e) => e.preventDefault())
+  }
+
   const logger = config.logger.child(['app'])
 
   const clientSessionId = await ClientSessionIdStorage.init({ keyValueDb: config.keyValueDb }).get()

@@ -65,7 +65,8 @@
     "vitest:e2e": "IS_VITEST_TEST=true NODE_ENV=test vitest run .e2e.ts",
     "vitest:int": "IS_INTEGRATION_TEST=true IS_VITEST_TEST=true NODE_ENV=test vitest run",
     "vitest:int:coverage": "IS_INTEGRATION_TEST=true IS_VITEST_TEST=true NODE_ENV=test vitest run --coverage",
-    "viz-bundle": "pnpm exec vite-bundle-visualizer"
+    "viz-bundle": "pnpm exec vite-bundle-visualizer",
+    "postinstall": "yarn setup-skia-web"
   },
   "prettier": {
     "jsxSingleQuote": true,

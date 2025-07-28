@@ -1,11 +1,8 @@
 import { Translator } from '~/@/l18n/generated'
-import { sleep } from '~/@/promise/sleep'
+import { IPlatform } from '~/@/platform/platform'
 import { Sub } from '~/@/sub'
-import { TimeSpan } from '~/@/time/time-span'
-import { IconCheckmark } from '~/@/ui/icon'
-import { Transition } from '~/@/vdom/primitives/transition/transition'
-import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { PrebuiltActions } from '../../../@/ui/prebuilt-actions'
@@ -15,11 +12,11 @@ import { GotHintCalculatorMsg } from '../solutions/hint-calculator/got-hint-calc
 import { SolutionHash } from '../solutions/solution-hash/solution-hash'
 import { SolutionsDbQueryCache } from '../solutions/solutions-db-query-cache'
 import { NumberlinkVariant, NumberlinkVariantBoard } from '../variant'
+import { CheckmarkAnimation } from './checkmark-animation'
 import { ModePlayFrontendCtx } from './frontend/ctx'
 import { Model, Msg, toNumberlink } from './mode-play'
 import { UseHint } from './use-hint'
 import { UseHintFrontend } from './use-hint/frontend'
-import { IPlatform } from '~/@/platform/platform'
 
 const View = (input: {
   numberlink: NumberlinkVariant.Model
@@ -99,42 +96,6 @@ const viewActions = (input: {
       model: input.model,
     }),
   ]
-}
-
-const defaultCheckmarkAnimationDuration = TimeSpan.seconds(1 / 2)
-
-const CheckmarkAnimation = (input: { open: boolean; duration?: TimeSpan | null | undefined }) => {
-  const duration = input.duration ?? defaultCheckmarkAnimationDuration
-  return h(
-    Transition,
-    {
-      id: 'checkmark',
-      onEnter: animateCheckmark({
-        duration,
-      }),
-      onExit: async () => {},
-      mode: 'out-in',
-      class: 'pointer-events-none',
-    },
-    [
-      input.open &&
-        h(Box, { class: 'pointer-events-none absolute inset-0 flex flex-row items-center justify-center opacity-0' }, [
-          h(IconCheckmark, { class: 'pointer-events-none aspect-square w-full opacity-50' }),
-        ]),
-    ],
-  )
-}
-
-const animateCheckmark = (input: { duration: TimeSpan }) => async (node: HTMLElement) => {
-  node.style.transition = 'all 0.3s ease-in-out'
-  node.style.opacity = '0'
-  node.style.transform = 'scale(0.8)'
-  await sleep(TimeSpan.milliseconds(50))
-  node.style.opacity = '1'
-  node.style.transform = 'scale(1)'
-  await sleep(input.duration)
-  node.style.opacity = '0'
-  node.style.transform = 'scale(0.8)'
 }
 
 const subscriptions = <TMsg>(
