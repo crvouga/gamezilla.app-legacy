@@ -21,6 +21,7 @@ const Fixtures = () => {
       keyValueDbSync: KeyValueDbSync.init({ t: 'hash-map', logger: Logger.init({ t: 'noop' }) }),
       key: `navigation-history-${ShortId.generate(10)}`,
       logger: Logger.init({ t: 'noop' }),
+      maxHistoryLength: 100,
     },
     {
       t: 'web-standard',

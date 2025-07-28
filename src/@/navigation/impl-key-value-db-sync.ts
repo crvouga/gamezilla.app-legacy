@@ -10,6 +10,7 @@ export type NavigationImplKeyValueDbSync = {
   keyValueDbSync: IKeyValueDbSync
   logger: ILogger
   key: string
+  maxHistoryLength: number
 }
 
 const HistoryItem = s.obj({
@@ -23,11 +24,13 @@ const init = (config: NavigationImplKeyValueDbSync): INavigation => {
 
   const getHistory = (): HistoryItem[] => {
     const result = config.keyValueDbSync.get(config.key, s.arr(HistoryItem))
-    return unwrapOr(result, []) ?? []
+    const history = unwrapOr(result, []) ?? []
+    return history.slice(-config.maxHistoryLength)
   }
 
   const setHistory = (history: HistoryItem[]) => {
-    config.keyValueDbSync.set(config.key, history)
+    const trimmedHistory = history.slice(-config.maxHistoryLength)
+    config.keyValueDbSync.set(config.key, trimmedHistory)
   }
 
   const subsByName: Record<string, PubSub<string | null>> = {}

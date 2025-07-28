@@ -74,6 +74,7 @@ const main = async () => {
     keyValueDbSync,
     key: 'navigation-history',
     logger,
+    maxHistoryLength: 10,
   })
   logger.info('Initializing app context')
   const ctx = await AppFrontend.initCtx({
