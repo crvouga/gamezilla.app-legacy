@@ -1,7 +1,9 @@
 import { Sub } from '~/@/sub'
-import { Box } from '~/@/vdom/primitives/box'
 import { IconPen, IconPlay } from '~/@/ui/icon'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
+import { Text } from '~/@/vdom/primitives/text'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
@@ -24,7 +26,6 @@ import { ScreenPuzzleBuilderSpace } from './space'
 import { DeleteForeverFrontend } from './surface-delete-forever/frontend'
 import { EditPuzzleNameFrontend } from './surface-edit-puzzle-name/frontend'
 import { SaveChangesFrontend } from './surface-save-changes/frontend'
-import { Text } from '~/@/vdom/primitives/text'
 
 //
 //
@@ -317,7 +318,7 @@ const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
     },
     renderBody: () =>
       h(LayoutGame, { ctx: input.ctx, isSpectating: true }, [
-        h(Box, { class: 'flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll' }, [
+        h(ScrollBox, { class: 'flex w-full flex-1 flex-col items-center justify-center' }, [
           h(ProfileListItem, {
             ctx: input.ctx,
             profile: input.ctx.profilesByUserId[input.ctx.space.hostId],

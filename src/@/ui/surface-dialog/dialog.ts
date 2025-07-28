@@ -15,7 +15,7 @@ export const Dialog = (input: {
     {
       role: 'dialog',
       class: cn(
-        'fixed top-0 left-0 z-50 grid h-full w-full place-items-center bg-black/50 transition-opacity duration-300 ease-in-out',
+        'absolute top-0 left-0 z-50 grid h-full w-full place-items-center bg-black/50 transition-opacity duration-300 ease-in-out',
         input.open ? 'opacity-100' : 'pointer-events-none opacity-0',
         input.open ? (input.delay === '300ms' ? 'delay-300' : '') : '',
       ),

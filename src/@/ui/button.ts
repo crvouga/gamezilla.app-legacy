@@ -117,13 +117,13 @@ const toIconSizeClass = (input: ButtonInput): string => {
 const toSizeClassPadding = (input: ButtonInput): string => {
   switch (input.size ?? 'lg') {
     case 'lg':
-      return 'h-14 px-4'
+      return 'h-16 px-4'
     case 'md':
-      return 'h-12 px-4'
+      return 'h-14 px-4'
     case 'sm':
-      return 'h-10 px-4'
+      return 'h-12 px-4'
     case 'xs':
-      return 'h-8 px-3'
+      return 'h-10 px-3'
   }
 }
 

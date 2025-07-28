@@ -14,6 +14,7 @@ import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import type { Pack } from '../pack'
 import { PackDbQueryCache } from '../pack-db-query-cache'
 import { PackQuery } from '../pack-db/interface-query'
+import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 
 const View = (input: {
   ctx: FlowFrontendCtxBase
@@ -27,10 +28,9 @@ const View = (input: {
 
   return h(Box, { class: 'relative flex w-full flex-1 flex-col gap-2 overflow-hidden' }, [
     h(
-      Box,
+      ScrollBox,
       {
-        class:
-          'relative flex max-h-full w-full flex-1 flex-col items-center overflow-x-hidden overflow-y-scroll border-t-neutral-800',
+        class: 'relative flex max-h-full w-full flex-1 flex-col items-center overflow-x-hidden border-t-neutral-800',
       },
       [
         isEmpty &&

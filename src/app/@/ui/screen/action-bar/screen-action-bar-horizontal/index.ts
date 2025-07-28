@@ -121,7 +121,7 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
     [
       h(
         Box,
-        { class: 'flex flex-row items-center' },
+        { class: 'flex flex-row items-center w-full' },
         input.start.map((action) => {
           if (!action) return null
 

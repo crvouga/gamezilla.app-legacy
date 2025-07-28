@@ -50,7 +50,7 @@ export const DropDown = (props: {
 const Backdrop = (props: { open: boolean; onPress: () => void; onKeyDown: (e: unknown) => void }) => {
   if (!props.open) return null
   return h(Pressable, {
-    class: 'fixed inset-0 z-40 bg-black/50',
+    class: 'absolute inset-0 z-40 bg-black/50',
     onPress: props.onPress,
     onKeyDown: props.onKeyDown,
   })

@@ -4,6 +4,7 @@ import { cn } from '~/@/ui/cn'
 import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { Text } from '~/@/vdom/primitives/text'
+import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 
 export const LayoutGame = ({
   children,
@@ -20,10 +21,10 @@ export const LayoutGame = ({
   children?: VDom
 }) => {
   return h(
-    Box,
+    ScrollBox,
     {
       class: cn(
-        'flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll',
+        'flex w-full flex-1 flex-col items-center justify-center',
         isSpectating && 'border-8 border-t-0 border-blue-500',
         class_,
       ),

@@ -18,6 +18,7 @@ import { PuzzleQuery } from '../puzzle-db/interface-query'
 import { PuzzleId } from '../puzzle-id'
 import { QueryForm } from './puzzle-list-query-form'
 import { PuzzleDbQueryCache } from '../puzzle-db-query-cache'
+import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 
 const View = (input: {
   selectable?: boolean
@@ -58,7 +59,7 @@ const View = (input: {
         ],
       ),
 
-    h(Box, { class: 'relative flex w-full flex-1 flex-col items-center overflow-y-scroll' }, [
+    h(ScrollBox, { class: 'relative flex w-full flex-1 flex-col items-center' }, [
       ...puzzles.map((puzzle) =>
         h(ViewListItem, {
           selectable: input.selectable,

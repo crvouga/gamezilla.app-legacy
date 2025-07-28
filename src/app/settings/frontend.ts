@@ -9,6 +9,7 @@ import { ListItem } from '~/@/ui/list-item'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
+import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { Text } from '~/@/vdom/primitives/text'
 import { VDomImplWeb } from '~/@/vdom/vdom-impl-web'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -112,7 +113,7 @@ const updateBase: FrontendModule['update'] = ({ model, ctx, msg }) => {
     }
 
     case 'settings.closed-top-bar-surface': {
-      return { model: { ...model, isTopBarSurfaceOpen: false } }
+      return { model: { ...model, isTopBarSurfaceOpen: false }, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
     }
 
     default: {
@@ -171,7 +172,7 @@ const ViewMain: FrontendModule['View'] = (props) => {
       back: { onPress: () => props.dispatch({ t: 'settings.clicked-back-button' }) },
     },
     renderBody: () =>
-      h(Box, { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
+      h(ScrollBox, { class: 'flex flex-1 flex-col' }, [
         h(ListItem, {
           primary: props.ctx.t('l18n.language'),
           end: () => h(Box, {}, [Text({ text: props.ctx.t(props.model.lang) })]),
@@ -215,82 +216,79 @@ const ViewLogoutListItem: FrontendModule['View'] = (input) => {
 }
 
 const ViewTopBar: FrontendModule['View'] = (props) => {
-  const iconSize = props.ctx.screenSize === 'mobile' ? 'size-3' : 'size-4'
-
-  return h(Box, { class: cn(props.ctx.screenSize === 'mobile' ? 'w-full' : 'fixed top-0 right-0 z-10 w-fit') }, [
-    h(SurfaceLayout, {
-      ctx: props.ctx,
-      ariaLabel: props.ctx.t('status-bar.status-bar'),
-      drawer: {
-        position: 'top',
+  const iconSize = props.ctx.screenSize === 'mobile' ? 'size-4' : 'size-5'
+  return h(SurfaceLayout, {
+    ctx: props.ctx,
+    ariaLabel: props.ctx.t('status-bar.status-bar'),
+    drawer: {
+      position: 'top',
+    },
+    id: 'status-bar-drawer',
+    open: props.model.isTopBarSurfaceOpen,
+    onClose: () => props.dispatch({ t: 'settings.closed-top-bar-surface' }),
+    dropDown: {
+      reference: {
+        render: () =>
+          h(
+            Clickable,
+            {
+              'data-testid': TEST_ID_TOP_BAR_SURFACE_OPEN_BUTTON,
+              class: cn(
+                props.ctx.screenSize === 'mobile'
+                  ? 'flex flex-row w-full items-center justify-end gap-3 px-3 py-1 w-full'
+                  : 'flex flex-row justify-center gap-4 px-6 py-3 pl-8 absolute top-0 right-0 z-10 w-fit',
+              ),
+              'aria-label': props.ctx.t('app.open-settings'),
+              onPress: () => props.dispatch({ t: 'settings.clicked-top-bar' }),
+            },
+            [
+              h(BackendConnectionStatus.ViewDot, {
+                model: props.ctx.backendConnectionStatus,
+                class: iconSize,
+                ctx: props.ctx,
+              }),
+              h(SoundFrontend.ViewIcon, {
+                model: props.model.sound,
+                class: cn(iconSize, 'text-white'),
+                fill: '#fff',
+                stroke: '#fff',
+              }),
+              h(IconGear, {
+                class: cn(iconSize, 'text-white'),
+                fill: '#fff',
+                stroke: '#fff',
+              }),
+            ],
+          ),
       },
-      id: 'status-bar-drawer',
-      open: props.model.isTopBarSurfaceOpen,
-      onClose: () => props.dispatch({ t: 'settings.closed-top-bar-surface' }),
-      dropDown: {
-        reference: {
-          render: () =>
-            h(
-              Clickable,
-              {
-                'data-testid': TEST_ID_TOP_BAR_SURFACE_OPEN_BUTTON,
-                class: cn(
-                  props.ctx.screenSize === 'mobile'
-                    ? 'flex flex-row w-full items-center justify-end gap-3 px-3 py-1'
-                    : 'flex flex-row w-fit justify-center gap-4 px-6 py-3 pl-8',
-                ),
-                'aria-label': props.ctx.t('app.open-settings'),
-                onPress: () => props.dispatch({ t: 'settings.clicked-top-bar' }),
-              },
-              [
-                h(BackendConnectionStatus.ViewDot, {
-                  model: props.ctx.backendConnectionStatus,
-                  class: iconSize,
-                  ctx: props.ctx,
-                }),
-                h(SoundFrontend.ViewIcon, {
-                  model: props.model.sound,
-                  class: cn(iconSize, 'text-white'),
-                  fill: '#fff',
-                  stroke: '#fff',
-                }),
-                h(IconGear, {
-                  class: cn(iconSize, 'text-white'),
-                  fill: '#fff',
-                  stroke: '#fff',
-                }),
-              ],
-            ),
-        },
+    },
+    body: {
+      render: () => {
+        return h(Box, { 'data-testid': TEST_ID_TOP_BAR_SURFACE }, [
+          h(BackendConnectionStatus.ViewListItem, {
+            ctx: props.ctx,
+            model: props.ctx.backendConnectionStatus,
+            onPress: () => {},
+          }),
+
+          h(SoundFrontend.ViewSoundListItem, {
+            ctx: props.ctx,
+            model: props.model.sound,
+            dispatch: (c) => props.dispatch({ t: 'sound', c }),
+          }),
+
+          h(ViewLangListItem, props),
+
+          h(ListItem, {
+            icon: (inputIcon) => h(IconGear, inputIcon),
+            primary: props.ctx.t('l18n.settings'),
+            link: true,
+            onPress: () => props.dispatch({ t: 'settings.clicked-open-settings' }),
+          }),
+        ])
       },
-      body: {
-        render: () => {
-          return h(Box, { 'data-testid': TEST_ID_TOP_BAR_SURFACE }, [
-            h(BackendConnectionStatus.ViewListItem, {
-              ctx: props.ctx,
-              model: props.ctx.backendConnectionStatus,
-              onPress: () => {},
-            }),
-
-            h(SoundFrontend.ViewSoundListItem, {
-              ctx: props.ctx,
-              model: props.model.sound,
-              dispatch: (c) => props.dispatch({ t: 'sound', c }),
-            }),
-
-            h(ViewLangListItem, props),
-
-            h(ListItem, {
-              icon: (inputIcon) => h(IconGear, inputIcon),
-              primary: props.ctx.t('l18n.settings'),
-              link: true,
-              onPress: () => props.dispatch({ t: 'settings.clicked-open-settings' }),
-            }),
-          ])
-        },
-      },
-    }),
-  ])
+    },
+  })
 }
 
 export const SettingsFrontend = {

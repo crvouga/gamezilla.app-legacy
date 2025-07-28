@@ -9,6 +9,7 @@ import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { APP_SOUND } from '../../@/frontend/app-sound'
 import type { FrontendModule } from '../types'
 import { ModelFrontend } from './types'
+import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 
 const init = (): { model: ModelFrontend } => {
   const initialVDomImpl = VDomImplWeb.getUrl()
@@ -67,8 +68,8 @@ const View: FrontendModule['View'] = (input) => {
     },
     renderBody: () =>
       h(
-        Box,
-        { class: 'flex flex-1 flex-col overflow-y-scroll' },
+        ScrollBox,
+        { class: 'flex flex-1 flex-col' },
         VDomImplWeb.VISIBLE.map((vDomImpl) => {
           const isSelected = vDomImpl === input.model.renderVDomImpl
           const isDefault = vDomImpl === input.model.renderVDomImplInitial

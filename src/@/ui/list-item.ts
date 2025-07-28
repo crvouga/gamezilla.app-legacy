@@ -82,7 +82,7 @@ const ListItemContent = (input: {
     h(Box, { class: 'flex flex-col gap-1 text-left' }, [
       h(Typography, {
         variant: 'body',
-        class: 'font-bold text-xl',
+        class: 'text-white text-lg',
         text: input.primary,
       }),
       input.secondary && h(Typography, { class: 'text-left text-xs', color: 'text-secondary', text: input.secondary }),

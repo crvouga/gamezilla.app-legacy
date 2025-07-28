@@ -14,6 +14,7 @@ import { AppFrontendCtxBase } from '../../@/frontend/ctx'
 import { FrontendModule } from '../types'
 import { ModelFrontend, MsgFrontend } from './types'
 import { Text } from '~/@/vdom/primitives/text'
+import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 
 const LANG_STORAGE_KEY = 'lang'
 
@@ -65,7 +66,7 @@ const subscriptions: FrontendModule['subscriptions'] = (_input) => {
 export const TEST_ID_LANG_SCREEN = 'settings/lang-screen'
 
 const View: FrontendModule['View'] = (input) => {
-  return ScreenLayout({
+  return h(ScreenLayout, {
     id: 'setting-choose-lang',
     dataTestId: TEST_ID_LANG_SCREEN,
     ctx: input.ctx,
@@ -75,7 +76,7 @@ const View: FrontendModule['View'] = (input) => {
       back: { onPress: () => input.dispatch({ t: 'lang.clicked-back-button' }) },
     },
     renderBody: () =>
-      h(Box, { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
+      h(ScrollBox, { class: 'flex flex-1 flex-col' }, [
         ...LanguageCodeISO_639_1.ALL.map((langCode) =>
           h(ViewChooseLangListItem, {
             key: langCode,
@@ -97,12 +98,12 @@ const ViewChooseLangListItem = (input: {
   dispatch: (msg: MsgFrontend) => void
 }) => {
   const primary = translations[input.langCode][input.langCode]
-  return ListItem({
+  return h(ListItem, {
     link: true,
     primary: TranslatedText.of(primary),
-    end: () => h(Box, {}, [Text({ text: input.ctx.t(input.langCode) })]),
+    end: () => h(Box, {}, [Text({ class: 'text-white text-lg', text: input.ctx.t(input.langCode) })]),
     onPress: () => input.dispatch({ t: 'lang.clicked-lang', lang: input.langCode }),
-    icon: (inputIcon) => h(RadioInputIcon, { class: inputIcon.class, status: toStatus(input) }),
+    icon: (inputIcon) => h(RadioInputIcon, { ...inputIcon, status: toStatus(input) }),
   })
 }
 
