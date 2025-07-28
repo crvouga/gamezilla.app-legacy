@@ -35,7 +35,7 @@ const main = async () => {
 
   const sqlDb = FrontendSqlDb.init({
     t: 'pglite',
-    pglite: Pglite.init({ t: 'main-thread', config: { t: 'indexed-db', databaseName: 'db' } }),
+    pglite: Pglite.init({ t: 'worker-thread', config: { t: 'indexed-db', databaseName: 'db' } }),
     logger,
   })
 
