@@ -20,55 +20,27 @@ type Input = {
 }
 
 export const ListItem = (input: Input) => {
-  const element = input.onPress ? 'button' : 'div'
-  switch (element) {
-    case 'button': {
-      return h(
-        ClickableTransparent,
-        {
-          role: 'menuitem',
-          onPress: (event) => {
-            preventConsoleErrorWhenClosingDrawer(event)
-            input.onPress?.()
-          },
-          'aria-label': input.primary,
-          class: cn(input.class, BASE_CLASS, toColorClass(input)),
-          'aria-selected': input.selected,
+  return h(
+    Box,
+    {
+      role: 'menuitem',
+      'aria-label': input.primary,
+      class: cn(input.class, BASE_CLASS, toColorClass(input)),
+      'aria-selected': input.selected,
+    },
+    [
+      h(ListItemContent, {
+        primary: input.primary,
+        icon: input.icon,
+        secondary: input.secondary,
+        onPress: (event) => {
+          preventConsoleErrorWhenClosingDrawer(event)
+          input.onPress?.()
         },
-        [
-          h(ListItemContent, {
-            primary: input.primary,
-            icon: input.icon,
-            secondary: input.secondary,
-          }),
-          input.end && h(Box, { class: 'shrink-0 flex flex-row items-center gap-2' }, [input.end()]),
-        ],
-      )
-    }
-    default: {
-      return h(
-        Box,
-        {
-          onPress: (event: unknown) => {
-            preventConsoleErrorWhenClosingDrawer(event)
-            input.onPress?.()
-          },
-          role: 'menuitem',
-          'aria-label': input.primary,
-          class: cn(input.class, BASE_CLASS, toColorClass(input)),
-          'aria-selected': input.selected,
-        },
-        [
-          h(ListItemContent, {
-            primary: input.primary,
-            icon: input.icon,
-            secondary: input.secondary,
-          }),
-          input.end && h(Box, { class: 'shrink-0' }, [input.end()]),
-        ],
-      )
-    }
-  }
+      }),
+      input.end && h(Box, { class: 'shrink-0 flex flex-row items-center gap-2' }, [input.end()]),
+    ],
+  )
 }
 
 const ListItemContent = (input: {
@@ -76,25 +48,30 @@ const ListItemContent = (input: {
   icon?: (input: { class: string; width: number; height: number; fill: string; stroke: string }) => VDom
   end?: () => VDom
   secondary?: TranslatedText
+  onPress?: (event: unknown) => void
 }) => {
-  return h(Box, { class: 'flex flex-row flex-1 items-center gap-3 truncate' }, [
-    input.icon?.({ class: 'size-8', width: 24, height: 24, fill: '#fff', stroke: '#fff' }),
-    h(Box, { class: 'flex flex-col gap-1 text-left' }, [
-      h(Typography, {
-        variant: 'body',
-        class: 'text-white',
-        sizeClassName: 'text-lg',
-        text: input.primary,
-      }),
-      input.secondary &&
+  return h(
+    ClickableTransparent,
+    { class: 'flex flex-row flex-1 items-center gap-3 truncate', onPress: input.onPress },
+    [
+      input.icon?.({ class: 'size-8', width: 24, height: 24, fill: '#fff', stroke: '#fff' }),
+      h(Box, { class: 'flex flex-col gap-1 text-left' }, [
         h(Typography, {
-          class: 'text-left',
-          sizeClassName: 'text-xs',
-          color: 'text-secondary',
-          text: input.secondary,
+          variant: 'body',
+          class: 'text-white',
+          sizeClassName: 'text-lg',
+          text: input.primary,
         }),
-    ]),
-  ])
+        input.secondary &&
+          h(Typography, {
+            class: 'text-left',
+            sizeClassName: 'text-xs',
+            color: 'text-secondary',
+            text: input.secondary,
+          }),
+      ]),
+    ],
+  )
 }
 
 const BASE_CLASS = 'flex flex-row w-full shrink-0 items-center truncate h-16 px-4 text-xl font-bold'
