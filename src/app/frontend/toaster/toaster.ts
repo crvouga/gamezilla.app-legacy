@@ -178,7 +178,6 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
       onPressOut: () => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast }),
       onTouchStart: () => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast }),
       onTouchEnd: () => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast }),
-      onContextMenu: (e: any) => e.preventDefault(),
     },
     [
       h(Box, { class: cn('w-full bg-black', toWidthClass(input)) }, [

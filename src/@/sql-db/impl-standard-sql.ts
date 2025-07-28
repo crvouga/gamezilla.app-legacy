@@ -71,7 +71,11 @@ const init = (config: ImplStandardSql): ISqlDb => {
     async query(input) {
       const queried = await query(input)
 
-      if (input.sql.includes('insert') || input.sql.includes('update') || input.sql.includes('delete')) {
+      if (
+        input.sql.toLowerCase().includes('insert') ||
+        input.sql.toLowerCase().includes('update') ||
+        input.sql.toLowerCase().includes('delete')
+      ) {
         eventQueryChanged.pub(true)
       }
 
