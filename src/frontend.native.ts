@@ -1,7 +1,6 @@
 import '@expo/metro-runtime'
 import { registerRootComponent } from 'expo'
 import { ComponentType, useEffect, useState } from 'react'
-import { Platform } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { AudioPlayerImplExpoAudio } from './@/audio-player/impl-expo-audio'
 import { KeyValueDb } from './@/key-value-db'
@@ -90,7 +89,7 @@ const Main = () => {
         maxHistoryLength: 10,
       })
 
-      const platform: IPlatform = Platform.OS === 'web' ? 'web' : 'native'
+      const platform: IPlatform = 'native'
 
       logger.info('Initializing app context')
       const ctx = await AppFrontend.initCtx({

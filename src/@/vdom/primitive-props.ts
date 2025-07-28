@@ -37,13 +37,17 @@ export type PrimitiveProps = {
 }
 
 const intoWebStandard = (props: PrimitiveProps) => {
-  return {
-    ...props,
-    onClick: props.onPress,
-    onPointerDown: props.onPressIn,
-    onPointerUp: props.onPressOut,
-    onPointerCancel: props.onPressOut,
+  if (props.onPress) {
+    ;(props as any).onClick = props.onPress
   }
+  if (props.onPressIn) {
+    ;(props as any).onPointerDown = props.onPressIn
+  }
+  if (props.onPressOut) {
+    ;(props as any).onPointerUp = props.onPressOut
+    ;(props as any).onPointerCancel = props.onPressOut
+  }
+  return props
 }
 
 const intoReactNativeStandard = (props: PrimitiveProps) => {

@@ -16,6 +16,7 @@ import { SwapVDomEngine } from './@/vdom/swap-vdom-engine'
 import { Viewport } from './@/viewport/impl'
 import './frontend.css'
 import { SqlDbMigrationPolicy } from './@/sql-db-migration-policy/impl'
+import { VdomImplWebStorage } from './@/vdom/vdom-impl-web-storage'
 
 const main = async () => {
   const logger = Logger.init({ t: 'console', namespace: ['frontend'], newLinePerMsg: false, maxLogLevel: 'debug' })
@@ -51,6 +52,8 @@ const main = async () => {
     migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger }),
   })
 
+  const vdomImplStorage = VdomImplWebStorage.init({ keyValueDb, fallback: 'inferno' })
+
   const ctx = await AppFrontend.initCtx({
     backendUrl,
     topicUrl,
@@ -64,7 +67,8 @@ const main = async () => {
     platform: 'web',
     keyValueDb,
   })
-  const { swapped, getRoot } = await SwapVDomEngine.init()
+
+  const { swapped, getRoot } = await SwapVDomEngine.init({ vdomImplStorage })
   const program = await Program.run({
     crash: (input) => console.error(input),
     init: () => AppFrontend.init({ ctx }),

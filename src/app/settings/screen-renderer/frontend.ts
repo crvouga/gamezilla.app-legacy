@@ -4,19 +4,18 @@ import { h } from '~/@/vdom/h'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { VDomImplWeb } from '~/@/vdom/vdom-impl-web'
 import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd.$msg'
+import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { APP_SOUND } from '../../@/frontend/app-sound'
 import type { FrontendModule } from '../types'
 import { ModelFrontend } from './types'
 
-const init = (): { model: ModelFrontend } => {
-  const initialVDomImpl = VDomImplWeb.getUrl()
-
+const init = (input: { ctx: AppFrontendCtxBase }): { model: ModelFrontend } => {
   return {
     model: {
-      renderVDomImpl: initialVDomImpl,
-      renderVDomImplInitial: initialVDomImpl,
+      renderVDomImpl: input.ctx.vdomImpl,
+      renderVDomImplInitial: input.ctx.vdomImpl,
     },
   }
 }

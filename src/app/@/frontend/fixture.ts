@@ -22,6 +22,7 @@ import { UserAccount } from '../data/user-account'
 import { UserId } from '../data/user-id'
 import { UserProfile } from '../data/user-profile'
 import type { AppFrontendCtx } from './ctx'
+import { VdomImplWebStorage } from '~/@/vdom/vdom-impl-web-storage'
 
 export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => {
   const currentUserId = UserId.generate()
@@ -47,6 +48,8 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     }),
   })
   const keyValueDbSync = KeyValueDbSync.init({ t: 'hash-map', logger: Logger.init({ t: 'noop' }) })
+  const vdomImplStorage = VdomImplWebStorage.init({ keyValueDb, fallback: 'inferno' })
+  const vdomImpl = await vdomImplStorage.get()
   const ctx: AppFrontendCtx = {
     syncEngine,
     keyValueDb,
@@ -92,6 +95,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
       t: 'fetch',
     }),
     queryCache: QueryCache.init,
+    vdomImpl,
   }
 
   return {

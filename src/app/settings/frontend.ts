@@ -28,7 +28,7 @@ import type { FrontendModule, MsgFrontend } from './types'
 
 const init: FrontendModule['init'] = (input) => {
   const lang = ScreenLangFrontend.init(input)
-  const renderer = ScreenRendererFrontend.init()
+  const renderer = ScreenRendererFrontend.init(input)
   const sound = SoundFrontend.init(input)
 
   return {

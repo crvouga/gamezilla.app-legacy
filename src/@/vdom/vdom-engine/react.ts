@@ -11,17 +11,21 @@ REACT_JS_PROP_MAP.set('fill-rule', 'fillRule')
 export const REACT_JS_PROP_MAP_KEYS = Array.from(REACT_JS_PROP_MAP.keys())
 
 export const normalizePropsInPlace = (props: Record<string, unknown>, tag: unknown) => {
-  if (props?.style) {
-    props.style = kebabObjectToCamelObject(props?.style as StylesObjectKebab)
-  }
+  try {
+    if (props?.style) {
+      props.style = kebabObjectToCamelObject(props?.style as StylesObjectKebab)
+    }
 
-  if (typeof tag === 'string') {
-    for (const propKey of REACT_JS_PROP_MAP_KEYS) {
-      if (propKey in props) {
-        props[REACT_JS_PROP_MAP.get(propKey)!] = props[propKey]
-        delete props[propKey]
+    if (typeof tag === 'string') {
+      for (const propKey of REACT_JS_PROP_MAP_KEYS) {
+        if (propKey in props) {
+          props[REACT_JS_PROP_MAP.get(propKey)!] = props[propKey]
+          delete props[propKey]
+        }
       }
     }
+  } catch (e) {
+    // pass
   }
 }
 

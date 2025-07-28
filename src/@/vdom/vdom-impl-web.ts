@@ -23,36 +23,6 @@ const from = (s: unknown): VDomImplWeb | null => {
   return found
 }
 
-const SEARCH_PARAM_KEY = 'vdom'
-
-const FALLBACK: VDomImplWeb = 'inferno'
-
-const getUrl = (): VDomImplWeb => {
-  try {
-    if (typeof window === 'undefined' || !window.location) return FALLBACK
-    const searchParams = new URLSearchParams(window.location.search)
-    const vdomImplParam = searchParams.get(SEARCH_PARAM_KEY)
-    const vdomImpl = VDomImplWeb.from(vdomImplParam)
-    return vdomImpl ?? FALLBACK
-  } catch {
-    return FALLBACK
-  }
-}
-
-const setUrl = (vdomImpl: VDomImplWeb) => {
-  try {
-    if (typeof window === 'undefined' || !window.location || !window.history) return
-    const searchParams = new URLSearchParams(window.location.search)
-    searchParams.set(SEARCH_PARAM_KEY, vdomImpl)
-    window.history.replaceState(null, '', `${window.location.pathname}?${searchParams.toString()}`)
-    if (typeof window.dispatchEvent === 'function') {
-      window.dispatchEvent(new Event('popstate'))
-    }
-  } catch {
-    // Silently fail in environments where URL manipulation is not supported
-  }
-}
-
 const toName = (impl: VDomImplWeb): TranslatedText => {
   switch (impl) {
     case 'inferno':
@@ -75,8 +45,6 @@ export const VDomImplWeb = {
   ALL,
   from,
   of,
-  getUrl,
-  setUrl,
   toName,
   HIDDEN,
   VISIBLE,

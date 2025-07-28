@@ -10,7 +10,7 @@ import {
   styleModule,
 } from 'snabbdom'
 import { PrimitiveProps } from '../primitive-props'
-import { BOX_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG, TEXT_INPUT_TAG } from '../tags'
+import { FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG, TEXT_INPUT_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { updateSafeAreaProps, updateScrollBoxProps } from './web'
 
@@ -41,9 +41,6 @@ const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
     },
     createElement: (tag: any, props: any, children: any) => {
       try {
-        // Reusable objects to reduce allocations
-        let reusableAttrs: Attrs = {}
-        let reusableOn: On = {}
         props = PrimitiveProps.intoWebStandard(props)
 
         children = processChildren(children ?? props?.children)
@@ -52,13 +49,15 @@ const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
           case FRAGMENT_TAG:
             return fragment(children)
 
-          case SAFE_AREA_BOX_TAG:
+          case SAFE_AREA_BOX_TAG: {
             updateSafeAreaProps(props)
-            return h(BOX_TAG, props, children)
+            return createPrimitiveElement('div', props, children)
+          }
 
-          case SCROLL_BOX_TAG:
+          case SCROLL_BOX_TAG: {
             updateScrollBoxProps(props)
-            return h(BOX_TAG, props, children)
+            return createPrimitiveElement('div', props, children)
+          }
 
           case TEXT_INPUT_TAG:
             return h(
@@ -80,41 +79,12 @@ const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
               children,
             )
 
-          default:
+          default: {
             if (typeof tag === 'function') {
               return tag({ ...props, key: props?.key, children })
             }
-
-            let hasAttrs = false
-            let hasEvents = false
-
-            // Single pass through props with early optimizations
-            if (props) {
-              const propKeys = Object.keys(props)
-              for (let i = 0; i < propKeys.length; i++) {
-                const propKey = propKeys[i]!
-                const propValue = props[propKey]
-
-                // Skip undefined/null values
-                if (propValue == null || propValue === undefined) continue
-
-                if (propKey.startsWith('on')) {
-                  reusableOn[getEventName(propKey)] = propValue
-                  hasEvents = true
-                } else if (propKey !== 'children' && propKey !== 'key' && propKey !== 'style') {
-                  reusableAttrs[propKey] = propValue
-                  hasAttrs = true
-                }
-              }
-            }
-
-            const vDomProps: any = {}
-            if (hasAttrs) vDomProps.attrs = reusableAttrs
-            if (hasEvents) vDomProps.on = reusableOn
-            if (props?.key !== undefined) vDomProps.key = props.key
-            if (props?.style !== undefined) vDomProps.style = props.style
-
-            return h(tag, vDomProps, children)
+            return createPrimitiveElement(tag, props, children)
+          }
         }
       } catch (e) {
         // console.error(e)
@@ -122,6 +92,42 @@ const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
       }
     },
   }
+}
+
+const createPrimitiveElement = (tag: string, props: any, children: any) => {
+  // Reusable objects to reduce allocations
+  let reusableAttrs: Attrs = {}
+  let reusableOn: On = {}
+  let hasAttrs = false
+  let hasEvents = false
+
+  // Single pass through props with early optimizations
+  if (props) {
+    const propKeys = Object.keys(props)
+    for (let i = 0; i < propKeys.length; i++) {
+      const propKey = propKeys[i]!
+      const propValue = props[propKey]
+
+      // Skip undefined/null values
+      if (propValue == null || propValue === undefined) continue
+
+      if (propKey.startsWith('on')) {
+        reusableOn[getEventName(propKey)] = propValue
+        hasEvents = true
+      } else if (propKey !== 'children' && propKey !== 'key' && propKey !== 'style') {
+        reusableAttrs[propKey] = propValue
+        hasAttrs = true
+      }
+    }
+  }
+
+  const vDomProps: any = {}
+  if (hasAttrs) vDomProps.attrs = reusableAttrs
+  if (hasEvents) vDomProps.on = reusableOn
+  if (props?.key !== undefined) vDomProps.key = props.key
+  if (props?.style !== undefined) vDomProps.style = props.style
+
+  return h(tag, vDomProps, children)
 }
 
 export const ImplSnabbdom = {

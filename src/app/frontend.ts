@@ -46,6 +46,7 @@ import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract, topicContract } from './types'
 import { toBackendConnectionStatus } from './wire/backend-connection/backend-connection-status'
 import { WireFrontend } from './wire/frontend'
+import { VdomImplWebStorage } from '~/@/vdom/vdom-impl-web-storage'
 
 const initCtx = async (config: {
   backendUrl: Url
@@ -113,7 +114,10 @@ const initCtx = async (config: {
     crudTransactionDb,
   })
 
+  const vdomImplStorage = VdomImplWebStorage.init({ keyValueDb: config.keyValueDb, fallback: 'inferno' })
+
   const ctx: AppFrontendCtxBase = {
+    vdomImpl: await vdomImplStorage.get(),
     platform: config.platform,
     syncEngine,
     migrationPolicy,

@@ -29,6 +29,7 @@ import { FrontendCtxModule, rpcContract, topicContract } from '~/app/types'
 import { WireFrontend } from '~/app/wire/frontend'
 import { AppFrontendCtxBase } from '../../../frontend/ctx'
 import { MAX_WAIT, POLL } from '../test-max-wait'
+import { VdomImplWebStorage } from '~/@/vdom/vdom-impl-web-storage'
 
 export const TestFrontend = async (config: {
   rpcServer: RPC.Server<typeof rpcContract>
@@ -73,8 +74,11 @@ export const TestFrontend = async (config: {
     logger: Logger.init({ t: 'noop' }),
   })
 
+  const vdomImplStorage = VdomImplWebStorage.init({ keyValueDb, fallback: 'inferno' })
+
   const ctxBase: AppFrontendCtxBase = {
     platform: 'web',
+    vdomImpl: await vdomImplStorage.get(),
     syncEngine,
     keyValueDb,
     migrationPolicy,
@@ -130,7 +134,7 @@ export const TestFrontend = async (config: {
 
   await navigation.clear()
 
-  const { swapped, getRoot } = await SwapVDomEngine.init()
+  const { swapped, getRoot } = await SwapVDomEngine.init({ vdomImplStorage })
 
   const program = await Program.run({
     init: () => AppFrontend.init({ ctx }),

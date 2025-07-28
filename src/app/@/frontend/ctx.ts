@@ -22,6 +22,7 @@ import { UserId } from '../data/user-id'
 import { UserProfile } from '../data/user-profile'
 import { ParentScreenProps } from '../ui/screen/layout/screen-layout-props'
 import { ScreenSize } from '../ui/screen/screen-size'
+import { VDomImplWeb } from '~/@/vdom/vdom-impl-web'
 
 export type CurrentUser =
   | { t: 'loading' }
@@ -55,6 +56,7 @@ export type AppFrontendCtxBase = {
   backendConnectionStatus: BackendConnectionStatus
   syncEngine: ISyncEngine
   queryCache: QueryCache
+  vdomImpl: VDomImplWeb
 }
 
 export type AppFrontendCtx = AppFrontendCtxBase & {
