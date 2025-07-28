@@ -126,18 +126,17 @@ export const View = ({
             id: searchInputId,
             class: 'flex-1 bg-transparent text-lg outline-none',
             placeholder: 'Search',
-            value: model.searchText,
-            onChange: (msgEvt: unknown) =>
+            defaultValue: model.searchText,
+            onChangeText: (e: unknown) =>
               dispatch({
                 t: 'inputted-search-text',
                 // @ts-ignore
-                searchText: msgEvt.currentTarget.value,
+                searchText: e.currentTarget.value,
               }),
           }),
           h(
             Pressable,
             {
-              type: 'button',
               onPress: () =>
                 dispatch({
                   t: 'clicked-clear',

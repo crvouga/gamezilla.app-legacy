@@ -1,7 +1,6 @@
 import { cn } from '~/@/ui/cn'
 import { h } from '~/@/vdom/h'
 import { Canvas } from '~/@/vdom/primitives/canvas'
-import { NodeId } from '../../../numberlink/node-id'
 import { BoardInput } from '../../../ui/board'
 import { Color } from '../../../ui/color'
 import * as VariantGrid from '../grid'
@@ -101,19 +100,9 @@ export const paint = (model: VariantGrid.Model, ctx: CanvasRenderingContext2D) =
   }
 }
 
-let previousMouseMove: NodeId | null = null
-
-const View = ({
-  model,
-  isDragging,
-
-  onPress,
-  onDraggedOver,
-  onPressOut,
-}: BoardInput<VariantGrid.Model>) => {
+const View = ({ model, isDragging, onPress, onPressOut }: BoardInput<VariantGrid.Model>) => {
   return h(Canvas, {
     class: cn('aspect-square w-full', isDragging ? 'cursor-grabbing' : 'cursor-grab'),
-    watch: model,
     // paint: (value, ctx) => paint(value, ctx),
     onPress: (event_: unknown) => {
       const event = event_ as MouseEvent
@@ -164,117 +153,6 @@ const View = ({
         })
 
         onPressOut?.(nodeId)
-      }
-    },
-    onMouseMove: (event_: unknown) => {
-      const event = event_ as MouseEvent
-      const canvas = event.currentTarget as HTMLCanvasElement
-      const rect = canvas.getBoundingClientRect()
-      const x = (event.clientX - rect.left) / rect.width
-      const y = (event.clientY - rect.top) / rect.height
-
-      const cellWidth = rect.width / model.width
-      const cellHeight = rect.height / model.height
-
-      const xIndex = Math.floor(x * model.width)
-      const yIndex = Math.floor(y * model.height)
-
-      const cellX = xIndex * cellWidth
-      const cellY = yIndex * cellHeight
-
-      if (x * model.width - cellX < cellWidth / 2 && y * model.height - cellY < cellHeight / 2) {
-        const nodeId = VariantGrid.toNodeId({
-          x: xIndex,
-          y: yIndex,
-        })
-        if (previousMouseMove === nodeId) {
-          return
-        }
-        previousMouseMove = nodeId
-        onDraggedOver?.(nodeId)
-      }
-    },
-    onTouchStart: (event_: unknown) => {
-      // event.preventDefault()
-      // event.stopImmediatePropagation()
-      // event.stopPropagation()
-      const event = event_ as TouchEvent
-      const canvas = event.currentTarget as HTMLCanvasElement
-      const rect = canvas.getBoundingClientRect()
-      const x = ((event.touches[0]?.clientX ?? 0) - rect.left) / rect.width
-      const y = ((event.touches[0]?.clientY ?? 0) - rect.top) / rect.height
-
-      const cellWidth = rect.width / model.width
-      const cellHeight = rect.height / model.height
-
-      const xIndex = Math.floor(x * model.width)
-      const yIndex = Math.floor(y * model.height)
-
-      const cellX = xIndex * cellWidth
-      const cellY = yIndex * cellHeight
-
-      if (x * model.width - cellX < cellWidth / 2 && y * model.height - cellY < cellHeight / 2) {
-        const nodeId = VariantGrid.toNodeId({
-          x: xIndex,
-          y: yIndex,
-        })
-        onPress?.(nodeId)
-      }
-    },
-    onTouchEnd: (event_: unknown) => {
-      const event = event_ as TouchEvent
-      // event.preventDefault()
-      // event.stopImmediatePropagation()
-      // event.stopPropagation()
-      const canvas = event.currentTarget as HTMLCanvasElement
-      const rect = canvas.getBoundingClientRect()
-      const x = ((event.touches[0]?.clientX ?? 0) - rect.left) / rect.width
-      const y = ((event.touches[0]?.clientY ?? 0) - rect.top) / rect.height
-
-      const cellWidth = rect.width / model.width
-      const cellHeight = rect.height / model.height
-
-      const xIndex = Math.floor(x * model.width)
-      const yIndex = Math.floor(y * model.height)
-
-      const cellX = xIndex * cellWidth
-      const cellY = yIndex * cellHeight
-
-      if (x * model.width - cellX < cellWidth / 2 && y * model.height - cellY < cellHeight / 2) {
-        const nodeId = VariantGrid.toNodeId({
-          x: xIndex,
-          y: yIndex,
-        })
-        onPressOut?.(nodeId)
-      }
-    },
-    onTouchMove: (event_: unknown) => {
-      // event.preventDefault()
-      // event.stopImmediatePropagation()
-      // event.stopPropagation()
-      const event = event_ as TouchEvent
-      const canvas = event.currentTarget as HTMLCanvasElement
-      const rect = canvas.getBoundingClientRect()
-      const x = ((event.touches[0]?.clientX ?? 0) - rect.left) / rect.width
-      const y = ((event.touches[0]?.clientY ?? 0) - rect.top) / rect.height
-
-      const cellWidth = rect.width / model.width
-      const cellHeight = rect.height / model.height
-
-      const xIndex = Math.floor(x * model.width)
-      const yIndex = Math.floor(y * model.height)
-
-      const cellX = xIndex * cellWidth
-      const cellY = yIndex * cellHeight
-
-      if (x * model.width - cellX < cellWidth / 2 && y * model.height - cellY < cellHeight / 2) {
-        const nodeId = VariantGrid.toNodeId({
-          x: xIndex,
-          y: yIndex,
-        })
-
-        previousMouseMove = nodeId
-        onDraggedOver?.(nodeId)
       }
     },
   })

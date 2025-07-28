@@ -72,7 +72,7 @@ const View = (input: {
       h(
         Pressable,
         {
-          type: 'button',
+          role: 'button',
           class: 'flex flex-row flex-1 items-center gap-3 overflow-hidden',
           onPress: () => input.dispatch({ t: 'current-space-bar.clicked-current-space-bottom-bar' }),
         },

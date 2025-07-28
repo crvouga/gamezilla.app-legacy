@@ -18,8 +18,8 @@ export const SwitchButton = ({
       Pressable,
       {
         onPress: onToggle,
-        accessibilityRole: 'switch',
-        accessibilityState: { checked },
+        'aria-role': 'switch',
+        'aria-checked': checked,
         'aria-label': label,
         class: cn('relative h-6 w-11 rounded-full', checked ? 'bg-blue-500' : 'bg-neutral-200'),
       },

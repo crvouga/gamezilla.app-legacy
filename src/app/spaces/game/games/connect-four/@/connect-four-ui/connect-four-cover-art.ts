@@ -36,19 +36,19 @@ export const CoverArt = (input: { class?: string }) => {
         h(Rect, { x: 0, y: 0, width: COLUMN_COUNT, height: MAX_COLUMN_HEIGHT, fill: `url(#${ids.holePattern})` }),
       ]),
 
-      h(LinearGradient, { id: ids.columnGradient, gradientTransform: 'rotate(90)' }, [
-        h(Stop, { offset: '0%', stopColor: gameTheme.primary.light }),
-        h(Stop, { offset: '100%', stopColor: gameTheme.primary.dark }),
+      h(LinearGradient, { id: ids.columnGradient, 'gradient-transform': 'rotate(90)' }, [
+        h(Stop, { offset: '0%', 'stop-color': gameTheme.primary.light }),
+        h(Stop, { offset: '100%', 'stop-color': gameTheme.primary.dark }),
       ]),
 
-      h(LinearGradient, { id: ids.playerOneGradient, gradientTransform: 'rotate(90)' }, [
-        h(Stop, { offset: '0%', stopColor: gameTheme['player-one'].light }),
-        h(Stop, { offset: '100%', stopColor: gameTheme['player-one'].dark }),
+      h(LinearGradient, { id: ids.playerOneGradient, 'gradient-transform': 'rotate(90)' }, [
+        h(Stop, { offset: '0%', 'stop-color': gameTheme['player-one'].light }),
+        h(Stop, { offset: '100%', 'stop-color': gameTheme['player-one'].dark }),
       ]),
 
-      h(LinearGradient, { id: ids.playerTwoGradient, gradientTransform: 'rotate(90)' }, [
-        h(Stop, { offset: '0%', stopColor: gameTheme['player-two'].light }),
-        h(Stop, { offset: '100%', stopColor: gameTheme['player-two'].dark }),
+      h(LinearGradient, { id: ids.playerTwoGradient, 'gradient-transform': 'rotate(90)' }, [
+        h(Stop, { offset: '0%', 'stop-color': gameTheme['player-two'].light }),
+        h(Stop, { offset: '100%', 'stop-color': gameTheme['player-two'].dark }),
       ]),
     ]),
 

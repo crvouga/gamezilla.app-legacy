@@ -4,7 +4,7 @@ import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
 import { SurfaceLayoutProps } from './surface-layout-props'
 
 export const SurfaceContent = (props: SurfaceLayoutProps) => {
-  return h(Box, { name: props.ariaLabel }, [
+  return h(Box, { 'aria-label': props.ariaLabel }, [
     props.header?.render?.(),
     props.body?.render?.(),
     props.form &&

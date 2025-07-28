@@ -74,7 +74,6 @@ const ScreenActionButton = (input: ScreenAction) => {
       'data-testid': input.testId,
       role: 'button',
       disabled: isDisabled,
-      name: input.label,
       'aria-disabled': isDisabled,
       'aria-label': input.label,
       'aria-hidden': input.hidden,

@@ -74,7 +74,6 @@ const GameTile = (input: { gameName: GameName; ctx: SpaceFrontendCtx; dispatch: 
     Clickable,
     {
       class: 'flex flex-col gap-2',
-      type: 'button',
       role: 'button',
       'aria-label': input.gameName,
       onPress: () => input.dispatch({ t: 'game.clicked-game-tile', gameName: input.gameName }),

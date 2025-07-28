@@ -64,9 +64,27 @@ const UP: string[] = [
     ended_at_unix_ms BIGINT
   );
   `,
+  `
+  CREATE INDEX IF NOT EXISTS user_session_user_id_idx ON user_session (user_id);
+  `,
+  `
+  CREATE INDEX IF NOT EXISTS user_session_session_id_idx ON user_session (session_id);
+  `,
+  `
+  CREATE INDEX IF NOT EXISTS user_session_client_session_id_idx ON user_session (client_session_id);
+  `,
 ]
 
 const DOWN: string[] = [
+  `
+  DROP INDEX IF EXISTS user_session_user_id_idx;
+  `,
+  `
+  DROP INDEX IF EXISTS user_session_session_id_idx;
+  `,
+  `
+  DROP INDEX IF EXISTS user_session_client_session_id_idx;
+  `,
   `
   DROP TABLE IF EXISTS user_session;
   `,

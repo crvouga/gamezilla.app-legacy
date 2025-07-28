@@ -1,3 +1,5 @@
+import { TimeSpan } from '../time/time-span'
+
 export type Sub<Msg> = {
   sub: (subscriber: (msg: Msg) => Promise<unknown> | unknown) => () => void
 }
@@ -140,7 +142,24 @@ const deduplicate = <Msg>(id: string, keyFn: (msg: Msg) => string, sub: Sub<Msg>
   }
 }
 
+const throttle = <Msg>(sub: PubSub<Msg>, throttle: TimeSpan): PubSub<Msg> => {
+  return {
+    ...sub,
+    sub: (subscriber) => {
+      let lastCallTime = 0
+      return sub.sub((msg) => {
+        const now = Date.now()
+        if (now - lastCallTime >= TimeSpan.toMilliseconds(throttle)) {
+          lastCallTime = now
+          subscriber(msg)
+        }
+      })
+    },
+  }
+}
+
 export const Sub = {
+  throttle,
   map,
   batch,
   take,

@@ -18,7 +18,7 @@ export const Surface = (input: {
     {
       class: cn(SURFACE_CLASS_NAME, input.class),
       role: input.role,
-      'aria-hidden': input['aria-hidden'] ? 'true' : 'false',
+      'aria-hidden': input['aria-hidden'],
       'aria-label': input['aria-label'],
     },
     input.children,

@@ -5,6 +5,10 @@ import { VDom } from '../vdom'
 
 export type ScrollBoxProps = PrimitiveProps & {
   children?: VDom[]
+  contentContainerStyle?: {
+    rowGap?: number
+    columnGap?: number
+  }
 }
 
 export const ScrollBox = ({ children, ...props }: ScrollBoxProps) => {

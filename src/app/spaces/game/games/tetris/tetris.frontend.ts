@@ -1,11 +1,13 @@
 import { Eff } from '~/@/eff'
-import { Box } from '~/@/vdom/primitives/box'
 import { exhaustive } from '~/@/function/exhaustive'
 import { KeyboardKey } from '~/@/keyboard'
 import { Option } from '~/@/option/option'
 import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Rect } from '~/@/vdom/primitives/svg/rect'
+import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import * as Board from './@/board'
 import type * as Direction from './@/direction'
@@ -16,15 +18,10 @@ import {
   type ModelFrontend,
   type MsgFrontend,
   type MsgToFrontend,
-  columnCount,
   initShared,
-  rowCount,
   toGhostPiece,
   toPiece,
 } from './tetris.types'
-import { Svg } from '~/@/vdom/primitives/svg/svg'
-import { Rect } from '~/@/vdom/primitives/svg/rect'
-import { Canvas } from '~/@/vdom/primitives/canvas'
 
 //
 //
@@ -300,66 +297,9 @@ export const subscriptions = (input: { ctx: AppFrontendCtxBase }): Sub<Msg> => {
 // const gridStroke = "rgba(255, 255, 255, 0.2)"
 // const gridStrokeWidth = 0.025
 
-export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void }) => {
+export const View = (_input: { model: Model; dispatch: (msg: Msg) => void }) => {
   return h(Box, {}, [
-    h(Box, {}, [
-      h(Canvas, {
-        onTouchMove: (e: unknown) => {
-          // @ts-ignore
-          const touch = e.touches[0]
-
-          if (!touch) {
-            return
-          }
-        },
-        onPress: (e: unknown) => {
-          // @ts-ignore
-          dispatch(['ClickedBoard', mouseEventToPosition(e)])
-        },
-        onMouseMove: (e: unknown) => {
-          // @ts-ignore
-          const x = Math.floor(
-            rescale({
-              // @ts-ignore
-              value: e.pageX - e.currentTarget.offsetLeft,
-              // @ts-ignore
-              from: [0, e.currentTarget.width],
-              to: [0, columnCount],
-            }),
-          )
-
-          const y = Math.floor(
-            rescale({
-              // @ts-ignore
-              value: e.pageY - e.currentTarget.offsetTop,
-              // @ts-ignore
-              from: [0, e.currentTarget.height],
-              to: [0, rowCount],
-            }),
-          )
-
-          dispatch([
-            'MouseMove',
-            {
-              x,
-              y,
-            },
-          ])
-        },
-        onTouchStart: (e: unknown) => {
-          // @ts-ignore
-          const touch = e.touches[0]
-
-          if (!touch) {
-            return
-          }
-
-          // const x = touch.clientX;
-          // const y = touch.clientY;
-          // console.log("Start", { x, y });
-        },
-      }),
-    ]),
+    h(Box, {}, []),
 
     /* v(Svg, {
       width: '100%',
@@ -437,32 +377,6 @@ export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void 
       )
     ]) */
   ])
-}
-
-const mouseEventToPosition = (msgSpace: MouseEvent): Position.Position => {
-  if (!(msgSpace.currentTarget instanceof HTMLCanvasElement)) {
-    return {
-      x: 0,
-      y: 0,
-    }
-  }
-  const x = Math.floor(
-    rescale({
-      value: msgSpace.pageX - msgSpace.currentTarget.offsetLeft,
-      from: [0, msgSpace.currentTarget.width],
-      to: [0, columnCount],
-    }),
-  )
-
-  const y = Math.floor(
-    rescale({
-      value: msgSpace.pageY - msgSpace.currentTarget.offsetTop,
-      from: [0, msgSpace.currentTarget.height],
-      to: [0, rowCount],
-    }),
-  )
-
-  return { x, y }
 }
 
 export const paint = (context: CanvasRenderingContext2D, model: Model) => {
@@ -558,10 +472,4 @@ export const CoverArt = () => {
         ),
     ],
   )
-}
-
-type Range = [number, number]
-
-const rescale = ({ value, from, to }: { value: number; from: Range; to: Range }) => {
-  return ((value - from[0]) * (to[1] - to[0])) / (from[1] - from[0]) + to[0]
 }

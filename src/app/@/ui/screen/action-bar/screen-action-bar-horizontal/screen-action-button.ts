@@ -16,7 +16,6 @@ export const ScreenActionButton = (input: ScreenAction & { class?: string }) => 
     {
       role: 'button',
       disabled: isDisabled,
-      name: input.label,
       'aria-disabled': isDisabled,
       'aria-label': input.label,
       'aria-hidden': input.hidden,

@@ -43,19 +43,9 @@ export const TextField = (input: {
           'data-testid': input.testId,
           'aria-label': input.label,
           id: input.id,
-          autoFocus: input.autoFocus,
           type: input.type,
-          min: input.min,
-          max: input.max,
-          'auto-complete': 'off',
-          'auto-capitalize': 'off',
-          'auto-correct': 'off',
-          'auto-save': 'off',
-          step: input.step,
-          key: input.id,
-          // value: input.value,
-          // defaultValue: input.value,
-          onInput: (e: unknown) => {
+          defaultValue: input.value,
+          onChangeText: (e: unknown) => {
             if (
               typeof e === 'object' &&
               e !== null &&
@@ -80,7 +70,6 @@ export const TextField = (input: {
             {
               class: 'rounded-md px-3 ring-blue-500 outline-none focus:ring-2',
               'aria-label': 'Clear input',
-              type: 'button',
               onPress: (e: any) => {
                 e.preventDefault()
                 const self = document.getElementById(input.id)
@@ -101,8 +90,8 @@ export const TextField = (input: {
         Box,
         {
           role: 'alert',
-          'data-error': input.error ? 'true' : 'false',
-          'data-info': input.error ? 'false' : 'true',
+          'data-error': input.error,
+          'data-info': !input.error,
           class: cn('text-sm', input.error && 'text-red-500'),
         },
         [Text({ text: input.helperText ?? '' })],

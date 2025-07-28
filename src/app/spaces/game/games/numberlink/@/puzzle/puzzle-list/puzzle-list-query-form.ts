@@ -78,7 +78,7 @@ const View = (input: { query: Model; ctx: FlowFrontendCtxBase; onChange: (query:
   )
 }
 
-export const QueryForm = {
+export const PuzzleListQueryForm = {
   update,
   View,
 }

@@ -24,7 +24,7 @@ export const Chip = (input: ChipProps) => {
       onPress: input.onPress,
     },
     [
-      input.renderStartIcon?.({ class: cn(toIconSizeClass(input), 'shrink-0') }),
+      input.renderStartIcon?.({ class: cn(toIconSizeClass(input), 'shrink-0 text-white') }),
       Text({ text: input.label, class: 'truncate text-white' }),
     ],
   )

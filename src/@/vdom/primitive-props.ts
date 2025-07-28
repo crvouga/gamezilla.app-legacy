@@ -9,16 +9,20 @@ export type PrimitiveProps = {
   role?: AriaRole
   'aria-role'?: AriaRole
   'aria-label'?: string
+  'aria-level'?: number | null | undefined
+  'aria-busy'?: boolean
   'aria-selected'?: boolean
   'aria-hidden'?: boolean
   'aria-disabled'?: boolean
   'aria-checked'?: boolean
-  'data-testid'?: string
+  'data-testid'?: string | null | undefined
   disabled?: boolean
   tabIndex?: number | null | undefined
   style?: unknown
   onPress?: (event: unknown) => void
   onPressOut?: (event: unknown) => void
+  onStartShouldSetResponder?: (event: unknown) => boolean
+  onResponderMove?: (event: unknown) => void
   onKeyDown?: (event: unknown) => void
   'data-fab'?: boolean
   'data-info'?: boolean
@@ -26,7 +30,7 @@ export type PrimitiveProps = {
   'data-warning'?: boolean
   'data-success'?: boolean
   //
-  [key: string]: unknown
+  // [key: string]: unknown
 }
 
 const intoWebStandard = (props: PrimitiveProps) => {

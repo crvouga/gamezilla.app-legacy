@@ -1,6 +1,5 @@
-import { AriaRole } from '~/@/html/aria-role'
-import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 import { Clickable } from '../clickable'
 import { cn } from '../cn'
 
@@ -8,11 +7,7 @@ export const PAGINATION_DOTS_TEST_ID = 'pagination-dots'
 
 export const toPaginationDotSelector = (index: number) => `[data-pagination-dot-index="${index}"]`
 
-export const PaginationDots = (input: {
-  count: number
-  activeIndex: number
-  onPress?: (index: number) => void
-}) => {
+export const PaginationDots = (input: { count: number; activeIndex: number; onPress?: (index: number) => void }) => {
   if (input.count <= 1) return null
 
   return h(
@@ -24,19 +19,19 @@ export const PaginationDots = (input: {
       'data-testid': PAGINATION_DOTS_TEST_ID,
     },
     Array.from({ length: input.count }, (_, i) => {
-      const baseProps = {
-        class: cn('size-2 rounded-full', i === input.activeIndex ? 'bg-white' : 'bg-neutral-500'),
-        role: AriaRole.of('tab'),
-        'data-pagination-dot-index': i,
-        'aria-selected': i === input.activeIndex,
-        'aria-label': `Page ${i + 1}`,
-      }
       if (input.onPress) {
-        return h(Clickable, { ...baseProps, onPress: () => input.onPress?.(i) })
+        return h(Clickable, {
+          role: 'tab',
+          class: cn('size-2 rounded-full', i === input.activeIndex ? 'bg-white' : 'bg-neutral-500'),
+          'aria-label': `Page ${i + 1}`,
+          onPress: () => input.onPress?.(i),
+        })
       }
       return h(Box, {
-        ...baseProps,
-        'aria-selected': baseProps['aria-selected'] ? 'true' : 'false',
+        role: 'tab',
+        class: cn('size-2 rounded-full', i === input.activeIndex ? 'bg-white' : 'bg-neutral-500'),
+        'aria-label': `Page ${i + 1}`,
+        'aria-selected': i === input.activeIndex,
         onPress: () => input.onPress?.(i),
       })
     }),

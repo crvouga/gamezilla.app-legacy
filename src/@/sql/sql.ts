@@ -140,3 +140,8 @@ const replaceParamLog = (query: string, key: string, value: VarType): string => 
     }
   }
 }
+
+export const isMutation = (sql: string) => {
+  const cleaned = sql.toLowerCase()
+  return cleaned.includes('insert ') || cleaned.includes('update ') || cleaned.includes('delete ')
+}

@@ -3,8 +3,22 @@ import { PrimitiveProps } from '../primitive-props'
 import { TEXT_INPUT_TAG } from '../tags'
 
 export type TextInputProps = PrimitiveProps & {
-  defaultValue?: string
-  onChangeText: (text: string) => void
+  defaultValue?: string | number | null | undefined
+  onChangeText?: (text: string) => void
+  placeholder?: string | null | undefined
+  type?:
+    | 'text'
+    | 'number'
+    | 'email'
+    | 'password'
+    | 'search'
+    | 'tel'
+    | 'url'
+    | 'date'
+    | 'time'
+    | 'datetime-local'
+    | 'month'
+    | 'week'
 }
 
 export const TextInput = (props: TextInputProps) => {

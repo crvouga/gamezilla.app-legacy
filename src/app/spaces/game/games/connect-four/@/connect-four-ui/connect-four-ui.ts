@@ -30,16 +30,16 @@ export const ViewPlayerOneGradientDef = ({
   cy: number
   r: number
 }) => {
-  return h(RadialGradient, { id: gradientId, gradientTransform: 'rotate(90)', cx, cy, r }, [
-    h(Stop, { offset: '50%', stopColor: gameTheme['player-one'].light }),
-    h(Stop, { offset: '100%', stopColor: gameTheme['player-one'].dark }),
+  return h(RadialGradient, { id: gradientId, 'gradient-transform': 'rotate(90)', cx, cy, r }, [
+    h(Stop, { offset: '50%', 'stop-color': gameTheme['player-one'].light }),
+    h(Stop, { offset: '100%', 'stop-color': gameTheme['player-one'].dark }),
   ])
 }
 
 export const ViewPlayerTwoGradientDef = ({ gradientId }: { gradientId: string }) => {
-  return h(RadialGradient, { id: gradientId, gradientTransform: 'rotate(90)' }, [
-    h(Stop, { offset: '50%', stopColor: gameTheme['player-two'].light }),
-    h(Stop, { offset: '100%', stopColor: gameTheme['player-two'].dark }),
+  return h(RadialGradient, { id: gradientId, 'gradient-transform': 'rotate(90)' }, [
+    h(Stop, { offset: '50%', 'stop-color': gameTheme['player-two'].light }),
+    h(Stop, { offset: '100%', 'stop-color': gameTheme['player-two'].dark }),
   ])
 }
 

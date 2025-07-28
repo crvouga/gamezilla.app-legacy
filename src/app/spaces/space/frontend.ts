@@ -12,11 +12,9 @@ import { GameFrontend } from '../game/frontend'
 import { JoinSpaceFrontend } from '../join-space/frontend'
 import { LeaveSpaceFrontend } from '../leave-space/frontend'
 import type { FrontendCtxModule, ModelFrontend, MsgFrontend } from '../types'
-import { CurrentUserSpaceLoader } from './current-user-space-loader'
 import { Space } from './space'
 import { SpaceDbQueryCache } from './space-db-query-cache'
 import { SpaceDbQuery } from './space-db/interface-query'
-import { SpaceProjection } from './space-projection'
 
 export const TEST_ID_SPACE_SCREEN = 'spaces/space-screen'
 
@@ -30,18 +28,16 @@ const View = (input: {
   dispatch: (m: MsgFrontend) => void
   spaceId: SpaceId
 }) => {
-  const query = toQuery(input.spaceId)
-
-  const isLoading = SpaceDbQueryCache.isLoading(input.ctx, query)
-
-  if (isLoading) return h(ViewSpaceLoading, input)
-
   const space = SpaceDbQueryCache.entity(input.ctx, input.spaceId)
-
-  const spaceProjection = space ? Space.toSpaceProjection(space) : SpaceProjection.init
-
+  const spaceProjection = Space.toSpaceProjection(space)
   switch (spaceProjection.type) {
     case 'initial': {
+      const query = toQuery(input.spaceId)
+
+      const isLoading = SpaceDbQueryCache.isLoading(input.ctx, query)
+
+      if (isLoading) return h(ViewSpaceLoading, input)
+
       return h(ViewSpaceNotFound, input)
     }
 
@@ -52,17 +48,13 @@ const View = (input: {
     case 'started': {
       const currentUser = input.ctx.currentUser
 
-      if (!currentUser) {
-        return null
-      }
+      if (!currentUser) return null
 
       const spaceCtx: SpaceFrontendCtx & FrontendCtxModule = { ...input.ctx, currentUser, space: spaceProjection }
 
-      const currentUserSpaceId = CurrentUserSpaceLoader.toCurrentUserSpaceId(input.ctx)
+      const isJoined = currentUser.userId in spaceProjection.users
 
-      const isNotJoined = spaceProjection.spaceId !== currentUserSpaceId
-
-      if (isNotJoined) {
+      if (!isJoined) {
         return h(JoinSpaceFrontend.view, { ...input, ctx: spaceCtx })
       }
 

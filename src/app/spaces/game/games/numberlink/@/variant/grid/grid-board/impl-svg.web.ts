@@ -32,38 +32,38 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
     input.onDraggedOver?.(nodeId)
   }
 
-  const left = () => {
-    if (!input.isDragging) {
-      return
-    }
-    lastDraggedOver = null
-    input.onLeave?.()
-  }
+  // const left = () => {
+  //   if (!input.isDragging) {
+  //     return
+  //   }
+  //   lastDraggedOver = null
+  //   input.onLeave?.()
+  // }
 
-  const onMouseMove = (e: MouseEvent) => {
-    const svg = e.currentTarget as SVGSVGElement
-    if (!svg) {
-      return
-    }
+  // const onMouseMove = (e: MouseEvent) => {
+  //   const svg = e.currentTarget as SVGSVGElement
+  //   if (!svg) {
+  //     return
+  //   }
 
-    const point = svg.createSVGPoint()
-    point.x = e.clientX
-    point.y = e.clientY
+  //   const point = svg.createSVGPoint()
+  //   point.x = e.clientX
+  //   point.y = e.clientY
 
-    const ctm = svg.getScreenCTM()
-    if (!ctm) {
-      return
-    }
+  //   const ctm = svg.getScreenCTM()
+  //   if (!ctm) {
+  //     return
+  //   }
 
-    const svgP = point.matrixTransform(ctm.inverse())
-    const nodeId = VariantGrid.toNodeId({ x: Math.floor(svgP.x), y: Math.floor(svgP.y) })
+  //   const svgP = point.matrixTransform(ctm.inverse())
+  //   const nodeId = VariantGrid.toNodeId({ x: Math.floor(svgP.x), y: Math.floor(svgP.y) })
 
-    if (!nodeId) {
-      return
-    }
+  //   if (!nodeId) {
+  //     return
+  //   }
 
-    draggedOver(nodeId)
-  }
+  //   draggedOver(nodeId)
+  // }
 
   return h(
     Svg,
@@ -75,8 +75,8 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
         input.class,
       ),
       viewBox: `${0} ${0} ${input.model.width} ${input.model.height}`,
-      onMouseLeave: left,
-      onMouseMove,
+      // onMouseOut: left,
+      // onMouseMove,
     },
     [
       h(ViewGrid, input),
@@ -275,9 +275,7 @@ const ViewClickable = (
 ) => {
   return h(
     G,
-    {
-      key: input.model.nodeHash,
-    },
+    { key: input.model.nodeHash ?? '' },
     map(VariantGrid.yieldNodes(input.model), (node) => {
       return h(ViewClickableNode, {
         node,
@@ -308,12 +306,9 @@ const ViewClickableNode = (
     onPressOut: () => {
       input.onPressOut?.(input.node.nodeId)
     },
-    onPressIn: () => {
-      input.draggedOver?.(input.node.nodeId)
-    },
-    onMouseEnter: () => {
-      input.draggedOver?.(input.node.nodeId)
-    },
+    // onPressIn: () => {
+    //   input.draggedOver?.(input.node.nodeId)
+    // },
   })
 }
 

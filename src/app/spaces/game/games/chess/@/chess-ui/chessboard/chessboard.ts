@@ -378,7 +378,7 @@ const toLegalMoveDotId = (square: Square) => {
   return `legal-move-dot-${square}`
 }
 
-const onDragCancel = (input: ChessboardInput) => (_e: unknown) => {
+export const onDragCancel = (input: ChessboardInput) => (_e: unknown) => {
   hideSourceCheckerUI(input.orientation ?? 'w')
   setVisibleDropZoneNode(null)
   setLegalMoveDotsFill(input, 'none')
@@ -405,21 +405,9 @@ export const Chessboard = (input: ChessboardInput) => {
     {
       width: '100%',
       viewBox: `0 0 ${WIDTH} ${HEIGHT}`,
-      onContextMenu: (e: unknown) => {
-        if (e instanceof MouseEvent) {
-          e.preventDefault()
-          e.stopPropagation()
-        }
-      },
       class: 'touch-none overflow-visible select-none',
       preserveAspectRatio: 'xMinYMin meet',
-      onMouseLeave: onDragCancel(input),
-      onTouchCancel: onDragCancel(input),
-      onTouchStart: onDragStartOrMove(input),
       onPress: onDragStartOrMove(input),
-      onTouchMove: onDragStartOrMove(input),
-      onMouseMove: onDragStartOrMove(input),
-      onTouchEnd: onDragEnd(input),
       onPressOut: onDragEnd(input),
     },
     [
@@ -497,11 +485,6 @@ export const Chessboard = (input: ChessboardInput) => {
               width: SCALE * 1,
               height: SCALE * 1,
               onPress: onPieceDragStart({
-                input,
-                piece,
-                source: { x, y },
-              }),
-              onTouchStart: onPieceDragStart({
                 input,
                 piece,
                 source: { x, y },

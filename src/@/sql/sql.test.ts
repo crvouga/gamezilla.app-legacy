@@ -269,3 +269,16 @@ describe('SQL', () => {
     expect(actual).toEqual(expected)
   })
 })
+
+describe('isMutation', () => {
+  test('should return true for insert statements', () => {
+    expect(Sql.isMutation('INSERT INTO users (name) VALUES (:name)')).toEqual(true)
+    expect(Sql.isMutation('UPDATE users SET name = :name WHERE id = :id')).toEqual(true)
+    expect(Sql.isMutation('DELETE FROM users WHERE id = :id')).toEqual(true)
+  })
+
+  test('should return false for select statements', () => {
+    expect(Sql.isMutation('SELECT * FROM users')).toEqual(false)
+    expect(Sql.isMutation('SELECT * FROM users WHERE id = :id')).toEqual(false)
+  })
+})

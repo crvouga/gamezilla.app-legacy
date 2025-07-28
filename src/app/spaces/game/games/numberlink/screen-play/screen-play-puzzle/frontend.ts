@@ -149,7 +149,7 @@ const ViewHosting: FrontendModule['View'] = (input) => {
         Box,
         {
           class: 'flex flex-row w-full flex-1 items-center justify-center',
-          'data-puzzle-id': puzzle.t === 'got' ? puzzle.c.id : null,
+          'data-testid': puzzle.t === 'got' ? puzzle.c.id : null,
         },
         [
           puzzle.t === 'got'

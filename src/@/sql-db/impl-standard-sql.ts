@@ -17,7 +17,7 @@ export type ImplStandardSql = {
 const init = (config: ImplStandardSql): ISqlDb => {
   const logger = config.logger.child(['sql'])
 
-  const eventQueryChanged = Sub.init<true>()
+  const eventQueryChanged = Sub.throttle(Sub.init<true>(), TimeSpan.seconds(1))
 
   const query = async <TRow>(input: { sql: string; vars: Record<string, any>; schema: s.Schema<TRow> }) => {
     const sql = Sql.to(input.sql, input.vars)
@@ -71,11 +71,7 @@ const init = (config: ImplStandardSql): ISqlDb => {
     async query(input) {
       const queried = await query(input)
 
-      if (
-        input.sql.toLowerCase().includes('insert') ||
-        input.sql.toLowerCase().includes('update') ||
-        input.sql.toLowerCase().includes('delete')
-      ) {
+      if (Sql.isMutation(input.sql)) {
         eventQueryChanged.pub(true)
       }
 

@@ -62,7 +62,8 @@ const toSpaceId = (model: Space): SpaceId | null => {
   return state.spaceId
 }
 
-const toSpaceProjection = (model: Space): SpaceProjection => {
+const toSpaceProjection = (model: Space | null | undefined): SpaceProjection => {
+  if (!model) return SpaceProjection.init
   return EventSourced.toProjection(config, model)
 }
 

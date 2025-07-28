@@ -98,7 +98,6 @@ export const Typography = (input: Props) => {
       'aria-busy': input.skeleton,
       'aria-level': toAriaLevel(input),
       'aria-label': input.text,
-      'data-title': input.variant === 'title' ? 'true' : 'false',
       'data-testid': input.dataTestId,
     },
     [

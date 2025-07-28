@@ -16,9 +16,12 @@ export const Tabs = <TTab extends string>({
   labels: { [tab in TTab]: TranslatedText }
   onSelect: (tab: TTab) => void
 }) => {
-  return h(Box, {
-    class: 'flex flex-row w-full items-center',
-    children: tabs.map((tab, index) =>
+  return h(
+    Box,
+    {
+      class: 'flex flex-row w-full items-center',
+    },
+    tabs.map((tab, index) =>
       h(
         Box,
         {
@@ -41,5 +44,5 @@ export const Tabs = <TTab extends string>({
         ],
       ),
     ),
-  })
+  )
 }

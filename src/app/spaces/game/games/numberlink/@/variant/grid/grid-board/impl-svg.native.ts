@@ -305,7 +305,7 @@ const ViewClickable = (
   return h(
     G,
     {
-      key: input.model.nodeHash,
+      key: input.model.nodeHash ?? '',
     },
     map(VariantGrid.yieldNodes(input.model), (node) => {
       return h(ViewClickableNode, {
@@ -336,9 +336,6 @@ const ViewClickableNode = (
     },
     onPressOut: () => {
       input.onPressOut?.(input.node.nodeId)
-    },
-    onPressIn: () => {
-      input.draggedOver?.(input.node.nodeId)
     },
   })
 }

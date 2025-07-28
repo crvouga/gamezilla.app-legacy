@@ -9,14 +9,14 @@ import { IconXMark } from '~/@/ui/icon'
 import { PAPER_CLASS_NAME } from '~/@/ui/paper'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import { Text } from '~/@/vdom/primitives/text'
 import { Pressable } from '~/@/vdom/primitives/pressable'
-import { Transition } from '~/@/vdom/primitives/transition'
+import { Text } from '~/@/vdom/primitives/text'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { APP_SOUND } from '../../@/frontend/app-sound'
+import { SafeAreaBox } from '~/@/vdom/primitives/safe-area-box'
 
 type Ctx = {
   now: UnixMs
@@ -134,31 +134,17 @@ export const subscriptions: Module['subscriptions'] = ({ model }) => {
 }
 
 export const View: Module['View'] = (input) => {
-  return h(Transition, { mode: 'out-in', id: 'toast-root', onEnter, onExit }, [
-    input.model.toast &&
-      h(Toast, {
-        key: input.model.toast.toastId,
-        ctx: input.ctx,
-        toast: input.model.toast,
-        dispatch: input.dispatch,
-      }),
-  ])
+  return h(ViewToast, input)
 }
 
-const onEnter = async (node: HTMLElement) => {
-  await node?.animate?.([{ transform: 'translateY(-150%)' }, { transform: 'translateY(0%)' }], {
-    duration: 200,
-    easing: 'ease-in-out',
-    fill: 'both',
-  }).finished
-}
-
-const onExit = async (node: HTMLElement) => {
-  await node?.animate?.([{ transform: 'translateY(0%)' }, { transform: 'translateY(-150%)' }], {
-    duration: 200,
-    easing: 'ease-in-out',
-    fill: 'both',
-  }).finished
+const ViewToast: Module['View'] = (input) => {
+  if (!input.model.toast) return null
+  return h(Toast, {
+    key: input.model.toast.toastId,
+    ctx: input.ctx,
+    toast: input.model.toast,
+    dispatch: input.dispatch,
+  })
 }
 
 const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) => {
@@ -169,54 +155,57 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
       key: input.toast.toastId,
       id: String(input.toast.toastId),
       role: 'alert',
-      'data-error': input.toast.variant === 'error' ? 'true' : 'false',
-      'data-info': input.toast.variant === 'info' ? 'true' : 'false',
-      'data-success': input.toast.variant === 'success' ? 'true' : 'false',
+      'data-error': input.toast.variant === 'error',
+      'data-info': input.toast.variant === 'info',
+      'data-success': input.toast.variant === 'success',
       class:
         'pointer-events-none absolute top-0 left-0 z-40 flex flex-row w-full items-center justify-center overflow-visible p-4',
       onPress: () => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast }),
       onPressOut: () => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast }),
-      onTouchStart: () => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast }),
-      onTouchEnd: () => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast }),
     },
     [
-      h(Box, { class: cn('w-full bg-black', toWidthClass(input)) }, [
-        h(
-          Box,
-          {
-            class: cn(
-              'pointer-events-auto z-40 flex flex-row w-full items-center justify-between overflow-hidden rounded-lg border p-3 text-lg text-white shadow-2xl',
-              input.toast.variant === 'info' && PAPER_CLASS_NAME,
-              input.toast.variant === 'success' && PAPER_CLASS_NAME,
-              input.toast.variant === 'error' && 'border-red-400 bg-red-500',
-            ),
-          },
-          [
-            Text({ text: input.toast.text }),
-            typeof errorMsg === 'string' &&
+      h(
+        SafeAreaBox,
+        {
+          edges: ['top'],
+          class: cn('w-full', toWidthClass(input)),
+        },
+        [
+          h(
+            Box,
+            {
+              class: cn(
+                'pointer-events-auto z-40 flex flex-row w-full items-center justify-between overflow-hidden rounded-lg border p-3 text-lg text-white shadow-2xl',
+                input.toast.variant === 'info' && PAPER_CLASS_NAME,
+                input.toast.variant === 'success' && PAPER_CLASS_NAME,
+                input.toast.variant === 'error' && 'border-red-400 bg-red-500',
+              ),
+            },
+            [
+              h(Text, { text: input.toast.text, class: 'text-white' }),
+              typeof errorMsg === 'string' &&
+                h(
+                  Pressable,
+                  {
+                    class: 'font-bold',
+                    onPress: () =>
+                      input.dispatch({ t: 'clicked-see-error', errorMsg: errorMsg, toastId: input.toast.toastId }),
+                  },
+                  [h(Text, { text: 'See Error', class: 'text-white' })],
+                ),
               h(
                 Pressable,
                 {
-                  type: 'button',
-                  class: 'font-bold',
-                  onPress: () =>
-                    input.dispatch({ t: 'clicked-see-error', errorMsg: errorMsg, toastId: input.toast.toastId }),
+                  role: 'button',
+                  'aria-label': input.ctx.t('app.dismiss'),
+                  onPress: () => input.dispatch({ t: 'clicked-dismiss-button', toastId: input.toast.toastId }),
                 },
-                [Text({ text: 'See Error' })],
+                [h(IconXMark, { class: 'h-5 w-5 text-white' })],
               ),
-            h(
-              Pressable,
-              {
-                type: 'button',
-                role: 'button',
-                'aria-label': input.ctx.t('app.dismiss'),
-                onPress: () => input.dispatch({ t: 'clicked-dismiss-button', toastId: input.toast.toastId }),
-              },
-              [h(IconXMark, { class: 'h-5 w-5' })],
-            ),
-          ],
-        ),
-      ]),
+            ],
+          ),
+        ],
+      ),
     ],
   )
 }

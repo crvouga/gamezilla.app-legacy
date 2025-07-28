@@ -16,7 +16,7 @@ import { NumberlinkVariantBoard } from '../../variant'
 import { Puzzle } from '../puzzle'
 import { PuzzleQuery } from '../puzzle-db/interface-query'
 import { PuzzleId } from '../puzzle-id'
-import { QueryForm } from './puzzle-list-query-form'
+import { PuzzleListQueryForm } from './puzzle-list-query-form'
 import { PuzzleDbQueryCache } from '../puzzle-db-query-cache'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { IPlatform } from '~/@/platform/platform'
@@ -37,7 +37,7 @@ const View = (input: {
   const selectedCount = Math.min(input.selected?.length ?? 0, totalCount)
 
   return h(Box, { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
-    h(QueryForm.View, { ctx: input.ctx, query: input.query, onChange: input.onQueryChanged }),
+    h(PuzzleListQueryForm.View, { ctx: input.ctx, query: input.query, onChange: input.onQueryChanged }),
 
     input.selectable &&
       h(

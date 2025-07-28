@@ -44,7 +44,7 @@ export const Drawer = (props: DrawerProps) => {
     Box,
     {
       id: props.id,
-      'aria-hidden': props.open ? 'false' : 'true',
+      'aria-hidden': !props.open,
       'data-testid': props.testId,
       role: 'dialog',
       'aria-label': props.ariaLabel,

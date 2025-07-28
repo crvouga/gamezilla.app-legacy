@@ -18,7 +18,7 @@ export const SectionPersonDetails = (input: {
     h(
       Pressable,
       {
-        type: 'button',
+        role: 'button',
         class: 'flex w-full flex-col items-center justify-center gap-2 p-4',
         onPress: input.onOpenDetails,
       },
