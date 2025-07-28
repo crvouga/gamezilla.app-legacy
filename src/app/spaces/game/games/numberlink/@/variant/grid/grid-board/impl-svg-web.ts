@@ -12,31 +12,60 @@ import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { SvgText } from '~/@/vdom/primitives/svg/text'
 import type { VDom } from '~/@/vdom/vdom'
 import { Numberlink } from '../../../numberlink'
-import { BoardInput } from '../../../ui/board'
+import { BoardProps } from '../../../ui/board'
 import { Color } from '../../../ui/color'
 import * as VariantGrid from '../grid'
+import { NodeId } from '../../../numberlink/node-id'
+import { Frag } from '~/@/vdom/primitives/frag'
 
-// const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const TERMINAL_NODE_RADIUS = 0.33
 const EDGE_STROKE_WIDTH = 0.3
 
-const View = (input: BoardInput<VariantGrid.Model>) => {
+let lastDraggedOverNodeId: NodeId | null = null
+
+const View = (input: BoardProps<VariantGrid.Model>) => {
   return h(
     Svg,
     {
       class: cn(
-        'aspect-square h-full max-h-full w-full touch-none overflow-hidden select-none',
+        'aspect-square w-full touch-none overflow-hidden select-none',
         input.isDragging && 'cursor-grabbing',
         input.disabled && 'pointer-events-none',
         input.class,
       ),
       viewBox: `${0} ${0} ${input.model.width} ${input.model.height}`,
+      onPointerDown: (e: any) => {
+        const rect = e.currentTarget.getBoundingClientRect()
+        const x = Math.floor(((e.clientX - rect.left) / rect.width) * input.model.width)
+        const y = Math.floor(((e.clientY - rect.top) / rect.height) * input.model.height)
+        const nodeId = VariantGrid.toNodeId({ x, y })
+        input.onPressDown?.(nodeId)
+        console.log('onPressDown', nodeId)
+      },
+      onPointerUp: (e: any) => {
+        const rect = e.currentTarget.getBoundingClientRect()
+        const x = Math.floor(((e.clientX - rect.left) / rect.width) * input.model.width)
+        const y = Math.floor(((e.clientY - rect.top) / rect.height) * input.model.height)
+        const nodeId = VariantGrid.toNodeId({ x, y })
+        input.onPressUp?.(nodeId)
+        console.log('onPressUp', nodeId)
+      },
+      onPointerMove: (e: any) => {
+        const rect = e.currentTarget.getBoundingClientRect()
+        const x = Math.floor(((e.clientX - rect.left) / rect.width) * input.model.width)
+        const y = Math.floor(((e.clientY - rect.top) / rect.height) * input.model.height)
+        const nodeId = VariantGrid.toNodeId({ x, y })
+        if (nodeId === lastDraggedOverNodeId) return
+        lastDraggedOverNodeId = nodeId
+        input.onDraggedOver?.(nodeId)
+        console.log('onDraggedOver', nodeId)
+      },
     },
     [h(ViewGrid, input), h(ViewPipelines, input), h(ViewAutocompleteEdge, input), h(ViewCoordinates, input)],
   )
 }
 
-const ViewGrid = (input: BoardInput<VariantGrid.Model>) => {
+const ViewGrid = (input: BoardProps<VariantGrid.Model>) => {
   return h(G, {}, [
     h(Defs, {}, [
       h(
@@ -69,20 +98,18 @@ const ViewGrid = (input: BoardInput<VariantGrid.Model>) => {
   ])
 }
 
-const ViewPipelines = (input: BoardInput<VariantGrid.Model>) => {
+const ViewPipelines = (input: BoardProps<VariantGrid.Model>) => {
   return h(
     G,
     {
       transform: 'translate(0.5, 0.5)',
     },
-    map(VariantGrid.yieldTerminals(input.model), (terminal) => {
-      return h(ViewPipeline, { ...input, terminal })
-    }),
+    map(VariantGrid.yieldTerminals(input.model), (terminal) => h(ViewPipeline, { ...input, terminal })),
   )
 }
 
 const ViewPipeline = (
-  input: BoardInput<VariantGrid.Model> & {
+  input: BoardProps<VariantGrid.Model> & {
     terminal: VariantGrid.GridTerminal
   },
 ) => {
@@ -119,6 +146,7 @@ const ViewPipeline = (
         'stroke-linecap': 'round',
         'stroke-width': EDGE_STROKE_WIDTH,
       }),
+
       h(Circle, {
         cx: terminal.start.x,
         cy: terminal.start.y,
@@ -126,8 +154,9 @@ const ViewPipeline = (
         fill: groupColor,
       }),
       shouldShowUsedHint && h(HintCheckmark, { x: terminal.start.x, y: terminal.start.y }),
+
       terminal.end &&
-        h(G, {}, [
+        h(Frag, {}, [
           h(Circle, {
             cx: terminal.end.x,
             cy: terminal.end.y,
@@ -174,7 +203,7 @@ const WithPadding = (input: {
   })
 }
 
-const ViewAutocompleteEdge = (input: BoardInput<VariantGrid.Model>) => {
+const ViewAutocompleteEdge = (input: BoardProps<VariantGrid.Model>) => {
   return (
     input.autocompleteEdge &&
     h(G, { transform: 'translate(0.5, 0.5)' }, [
@@ -191,7 +220,7 @@ const ViewAutocompleteEdge = (input: BoardInput<VariantGrid.Model>) => {
   )
 }
 
-const ViewCoordinates = (input: BoardInput<VariantGrid.Model>) => {
+const ViewCoordinates = (input: BoardProps<VariantGrid.Model>) => {
   return (
     input.showCoordinates &&
     h(

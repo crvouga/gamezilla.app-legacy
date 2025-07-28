@@ -3,7 +3,7 @@ import { GroupId } from '../numberlink/group-id'
 import { NodeId } from '../numberlink/node-id'
 import type { Edge } from '../numberlink/numberlink'
 
-export type BoardInput<TModel> = {
+export type BoardProps<TModel> = {
   platform: IPlatform
   disabled?: boolean
   class?: string
@@ -17,8 +17,8 @@ export type BoardInput<TModel> = {
       })
     | null
   showCoordinates?: boolean
-  onPressIn?: (nodeId: NodeId) => void
-  onPressOut?: (nodeId: NodeId) => void
+  onPressDown?: (nodeId: NodeId) => void
+  onPressUp?: (nodeId: NodeId) => void
   onLeave?: () => void
   onDraggedOver?: (nodeId: NodeId) => void
   isGroupActive?: (groupId: GroupId) => boolean

@@ -12,7 +12,7 @@ import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { SvgText } from '~/@/vdom/primitives/svg/text'
 import type { VDom } from '~/@/vdom/vdom'
 import { Numberlink } from '../../../numberlink'
-import { BoardInput } from '../../../ui/board'
+import { BoardProps } from '../../../ui/board'
 import { Color } from '../../../ui/color'
 import * as VariantGrid from '../grid'
 import { rescale } from '~/@/math/rescale'
@@ -26,7 +26,7 @@ let layoutWidth = 0
 let layoutHeight = 0
 let lastDraggedOverNodeId: NodeId | null = null
 
-const View = (input: BoardInput<VariantGrid.Model>) => {
+const View = (input: BoardProps<VariantGrid.Model>) => {
   return h(
     Svg,
     {
@@ -52,7 +52,7 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
         const x_ = Math.floor(rescale(x, 0, layoutWidth, 0, input.model.width))
         const y_ = Math.floor(rescale(y, 0, layoutHeight, 0, input.model.height))
         const nodeId = VariantGrid.toNodeId({ x: x_, y: y_ })
-        input.onPressIn?.(nodeId)
+        input.onPressDown?.(nodeId)
         console.log('onPressIn', nodeId)
       },
       onPressOut: (e: any) => {
@@ -61,7 +61,7 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
         const x_ = Math.floor(rescale(x, 0, layoutWidth, 0, input.model.width))
         const y_ = Math.floor(rescale(y, 0, layoutHeight, 0, input.model.height))
         const nodeId = VariantGrid.toNodeId({ x: x_, y: y_ })
-        input.onPressOut?.(nodeId)
+        input.onPressUp?.(nodeId)
         console.log('onPressOut', nodeId)
       },
       onStartShouldSetResponder: () => true,
@@ -82,7 +82,7 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
   )
 }
 
-const ViewGrid = (input: BoardInput<VariantGrid.Model>) => {
+const ViewGrid = (input: BoardProps<VariantGrid.Model>) => {
   return h(G, {}, [
     h(Defs, {}, [
       h(Pattern, { id: 'grid', width: '1', height: '1', patternUnits: 'userSpaceOnUse' }, [
@@ -106,7 +106,7 @@ const ViewGrid = (input: BoardInput<VariantGrid.Model>) => {
   ])
 }
 
-const ViewPipelines = (input: BoardInput<VariantGrid.Model>) => {
+const ViewPipelines = (input: BoardProps<VariantGrid.Model>) => {
   return h(
     G,
     { transform: 'translate(0.5, 0.5)' },
@@ -115,7 +115,7 @@ const ViewPipelines = (input: BoardInput<VariantGrid.Model>) => {
 }
 
 const ViewPipeline = (
-  input: BoardInput<VariantGrid.Model> & {
+  input: BoardProps<VariantGrid.Model> & {
     terminal: VariantGrid.GridTerminal
   },
 ) => {
@@ -207,7 +207,7 @@ const WithPadding = (input: {
   })
 }
 
-const ViewAutocompleteEdge = (input: BoardInput<VariantGrid.Model>) => {
+const ViewAutocompleteEdge = (input: BoardProps<VariantGrid.Model>) => {
   return (
     input.autocompleteEdge &&
     h(G, { transform: 'translate(0.5, 0.5)' }, [
@@ -224,7 +224,7 @@ const ViewAutocompleteEdge = (input: BoardInput<VariantGrid.Model>) => {
   )
 }
 
-const ViewCoordinates = (input: BoardInput<VariantGrid.Model>) => {
+const ViewCoordinates = (input: BoardProps<VariantGrid.Model>) => {
   return (
     input.showCoordinates &&
     h(

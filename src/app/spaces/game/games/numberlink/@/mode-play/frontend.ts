@@ -39,8 +39,8 @@ const View = (input: {
       showCoordinates: false,
       isDragging: input.model.status.t === 'dragging',
       onDraggedOver: (nodeId) => input.dispatch({ t: 'user-dragged-over-node', nodeId }),
-      onPressIn: (nodeId) => input.dispatch({ t: 'user-pressed-down-node', nodeId }),
-      onPressOut: (nodeId) => input.dispatch({ t: 'user-pressed-up-node', nodeId }),
+      onPressDown: (nodeId) => input.dispatch({ t: 'user-pressed-down-node', nodeId }),
+      onPressUp: (nodeId) => input.dispatch({ t: 'user-pressed-up-node', nodeId }),
       onLeave: () => input.dispatch({ t: 'user-dragging-left' }),
       autocompleteEdge:
         input.model.status.t === 'dragging' && input.model.status.autocompleteEdge

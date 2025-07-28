@@ -3,7 +3,7 @@ import { View as RNView } from 'react-native'
 import { rescale } from '~/@/math/rescale'
 import { h } from '~/@/vdom/h'
 import { NodeId } from '../../../numberlink/node-id'
-import { BoardInput } from '../../../ui/board'
+import { BoardProps } from '../../../ui/board'
 import { Color } from '../../../ui/color'
 import * as VariantGrid from '../grid'
 
@@ -14,7 +14,7 @@ let layoutWidth = 0
 let layoutHeight = 0
 let lastDraggedOverNodeId: NodeId | null = null
 
-const View = (input: BoardInput<VariantGrid.Model>) => {
+const View = (input: BoardProps<VariantGrid.Model>) => {
   if (!layoutWidth || !layoutHeight) {
     return h(
       // @ts-ignore
@@ -139,7 +139,7 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
         const x = e.nativeEvent.locationX
         const y = e.nativeEvent.locationY
         const nodeId = locateNode(x, y)
-        input.onPressIn?.(nodeId)
+        input.onPressDown?.(nodeId)
         lastDraggedOverNodeId = nodeId
         console.log('onPressIn', nodeId)
       },
@@ -157,7 +157,7 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
         const x = e.nativeEvent.locationX
         const y = e.nativeEvent.locationY
         const nodeId = locateNode(x, y)
-        input.onPressOut?.(nodeId)
+        input.onPressUp?.(nodeId)
         lastDraggedOverNodeId = null
         console.log('onPressOut', nodeId)
       },
@@ -165,7 +165,7 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
         const x = e.nativeEvent.locationX
         const y = e.nativeEvent.locationY
         const nodeId = locateNode(x, y)
-        input.onPressOut?.(nodeId)
+        input.onPressUp?.(nodeId)
         lastDraggedOverNodeId = null
         console.log('onPressOut (terminate)', nodeId)
       },

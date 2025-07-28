@@ -1,10 +1,10 @@
 import { h } from '~/@/vdom/h'
-import { BoardInput } from '../../../ui/board'
+import { BoardProps } from '../../../ui/board'
 import * as VariantGrid from '../grid'
 import { ImplSvgNative } from './impl-svg-native'
-import { ImplSvgWeb  } from './impl-svg-web'
+import { ImplSvgWeb } from './impl-svg-web'
 
-const View = (input: BoardInput<VariantGrid.Model>) => {
+const View = (input: BoardProps<VariantGrid.Model>) => {
   switch (input.platform) {
     case 'web': {
       return h(ImplSvgWeb.View, input)

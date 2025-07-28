@@ -36,8 +36,8 @@ const View = (input: {
           platform: input.ctx.platform,
           model: ModeEdit.toNumberlink(input.model),
           onDraggedOver: (nodeId) => input.dispatch({ t: 'dragged-over', nodeId }),
-          onPressIn: (nodeId) => input.dispatch({ t: 'pressed-down-node', nodeId }),
-          onPressOut: (nodeId) => input.dispatch({ t: 'pressed-up-node', nodeId }),
+          onPressDown: (nodeId) => input.dispatch({ t: 'pressed-down-node', nodeId }),
+          onPressUp: (nodeId) => input.dispatch({ t: 'pressed-up-node', nodeId }),
         }),
       ]),
     actionBar: {

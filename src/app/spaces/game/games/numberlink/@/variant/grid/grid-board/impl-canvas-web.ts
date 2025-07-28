@@ -1,7 +1,7 @@
 import { cn } from '~/@/ui/cn'
 import { h } from '~/@/vdom/h'
 import { Canvas } from '~/@/vdom/primitives/canvas'
-import { BoardInput } from '../../../ui/board'
+import { BoardProps } from '../../../ui/board'
 import { Color } from '../../../ui/color'
 import * as VariantGrid from '../grid'
 
@@ -100,7 +100,7 @@ export const paint = (model: VariantGrid.Model, ctx: CanvasRenderingContext2D) =
   }
 }
 
-const View = ({ model, isDragging, onPressIn: onPress, onPressOut }: BoardInput<VariantGrid.Model>) => {
+const View = ({ model, isDragging, onPressDown: onPress, onPressUp: onPressOut }: BoardProps<VariantGrid.Model>) => {
   return h(Canvas, {
     class: cn('aspect-square w-full', isDragging ? 'cursor-grabbing' : 'cursor-grab'),
     // paint: (value, ctx) => paint(value, ctx),

@@ -18,11 +18,15 @@ import { SplashScreen } from './app/@/ui/logo/splash-screen'
 import { AppFrontend } from './app/frontend'
 import './frontend.css'
 
-const logger = Logger.init({ t: 'console', namespace: ['frontend'], newLinePerMsg: false, maxLogLevel: 'debug' })
-logger.info('Initializing VDOM engine')
+const logger = Logger.init({
+  t: 'console',
+  namespace: ['frontend'],
+  newLinePerMsg: false,
+  maxLogLevel: 'debug',
+})
+
 const vdomEngine = ImplReactNative.init({ t: 'react-native' })
 VDomEngine.set(vdomEngine)
-logger.info('VDOM engine initialized')
 
 const Main = () => {
   const [input, setInput] = useState<Parameters<typeof AppFrontend.View>[0] | null>(null)
@@ -30,33 +34,43 @@ const Main = () => {
   useEffect(() => {
     const main = async () => {
       logger.info('Starting main')
+
       const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:3000'
       if (!BACKEND_URL) throw new Error('BACKEND_URL is not set')
       logger.info('BACKEND_URL', BACKEND_URL)
+
       const TOPIC_URL = process.env.TOPIC_URL ?? 'ws://localhost:3001'
       if (!TOPIC_URL) throw new Error('TOPIC_URL is not set')
       logger.info('TOPIC_URL', TOPIC_URL)
+
       const httpProtocol = 'https'
       logger.info('Using protocol', httpProtocol)
+
       const backendUrl = Url.derive(BACKEND_URL, httpProtocol)
       const topicUrl = Url.derive(TOPIC_URL, httpProtocol)
       logger.info('Derived URLs', { backendUrl, topicUrl })
+
       logger.info('Initializing sqlDb')
       const sqlDb = SqlDbImplExpoSqlite.init({
         t: 'expo-sqlite',
         dbName: 'gamezilla.db',
         logger,
-        // r,
       })
+
       await new Promise((resolve) => setTimeout(resolve, 1000))
+
       logger.info('Initializing keyValueDbSync')
       const keyValueDbSync = KeyValueDbSyncImplHashMap.init({ t: 'hash-map', logger })
+
       logger.info('Initializing audioPlayer')
       const audioPlayer = AudioPlayerImplExpoAudio.init({ t: 'expo-audio', logger })
+
       logger.info('Initializing keyboard')
       const keyboard = KeyboardImplNoop.init({ t: 'noop' })
+
       logger.info('Initializing viewport')
       const viewport = ViewportImplReactNative.init({ t: 'react-native' })
+
       logger.info('Initializing navigation')
       const keyValueDb = KeyValueDb.init({
         t: 'sql-db',
@@ -64,6 +78,7 @@ const Main = () => {
         logger,
         migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger }),
       })
+
       const navigation = NavigationImplKeyValueDb.init({
         t: 'key-value-db',
         keyValueDb,
@@ -71,6 +86,7 @@ const Main = () => {
         logger,
         maxHistoryLength: 10,
       })
+
       logger.info('Initializing app context')
       const ctx = await AppFrontend.initCtx({
         backendUrl,
@@ -85,36 +101,21 @@ const Main = () => {
         platform: 'native',
         keyValueDb,
       })
+
       logger.info('Starting program')
 
       try {
         await Program.run({
-          crash: (input) => {
-            logger.error('Program crashed', input)
-            console.error(input)
-          },
-          init: () => {
-            logger.info('Initializing program')
-            const result = AppFrontend.init({ ctx })
-            logger.info('Initialized program', result)
-            return result
-          },
-          update: (input) => {
-            const result = AppFrontend.update({ ...input, ctx })
-            return result
-          },
-          subscriptions: (input) => {
-            return AppFrontend.subscriptions({ ...input, ctx })
-          },
-          render: (input) => {
-            setInput({ ...input, ctx })
-          },
+          crash: (input) => logger.error('Program crashed', input),
+          init: () => AppFrontend.init({ ctx }),
+          update: (input) => AppFrontend.update({ ...input, ctx }),
+          subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
+          render: (input) => setInput({ ...input, ctx }),
         })
       } catch (error) {
-        logger.error('Program crashed', error)
-        console.error(error)
-        console.trace()
+        logger.error('Program crashed', { error })
       }
+
       logger.info('Program started')
     }
 

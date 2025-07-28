@@ -1,10 +1,10 @@
 import { h } from '~/@/vdom/h'
-import { BoardInput } from '../../../ui/board'
+import { BoardProps } from '../../../ui/board'
 import * as VariantGrid from '../grid'
 import { ImplCanvasNative } from './impl-canvas-native'
 import { ImplCanvasWeb } from './impl-canvas-web'
 
-const View = (input: BoardInput<VariantGrid.Model>) => {
+const View = (input: BoardProps<VariantGrid.Model>) => {
   switch (input.platform) {
     case 'web': {
       return h(ImplCanvasWeb.View, input)
