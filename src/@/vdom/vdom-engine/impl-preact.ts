@@ -3,7 +3,7 @@ import { createElement } from 'preact/compat'
 import { BOX_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { PrimitiveProps } from '../primitive-props'
-import { addSafeAreaPadding } from './web'
+import { updateSafeAreaProps, updateScrollBoxProps } from './web'
 
 export type ImplPreact = {
   t: 'preact'
@@ -22,9 +22,10 @@ const init = (_config: ImplPreact): IVirtualDomEngine => {
         case FRAGMENT_TAG:
           return createElement(Fragment, props, ...children) as any
         case SCROLL_BOX_TAG:
+          updateScrollBoxProps(props)
           return createElement(BOX_TAG, props, children) as any
         case SAFE_AREA_BOX_TAG:
-          addSafeAreaPadding(props)
+          updateSafeAreaProps(props)
           return createElement(BOX_TAG, props, children) as any
         default:
           return createElement(tag, props, ...children) as any

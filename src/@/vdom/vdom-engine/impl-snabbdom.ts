@@ -10,9 +10,9 @@ import {
   styleModule,
 } from 'snabbdom'
 import { PrimitiveProps } from '../primitive-props'
-import { FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
+import { BOX_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
-import { addSafeAreaPadding } from './web'
+import { updateSafeAreaProps, updateScrollBoxProps } from './web'
 
 export type ImplSnabbdom = {
   t: 'snabbdom'
@@ -57,12 +57,13 @@ const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
         }
 
         if (tag === SAFE_AREA_BOX_TAG) {
-          addSafeAreaPadding(props)
-          return h('div', props, children)
+          updateSafeAreaProps(props)
+          return h(BOX_TAG, props, children)
         }
 
         if (tag === SCROLL_BOX_TAG) {
-          return h('div', props, children)
+          updateScrollBoxProps(props)
+          return h(BOX_TAG, props, children)
         }
 
         let hasAttrs = false
