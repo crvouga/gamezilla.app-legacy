@@ -19,6 +19,7 @@ import { ModePlayFrontendCtx } from './frontend/ctx'
 import { Model, Msg, toNumberlink } from './mode-play'
 import { UseHint } from './use-hint'
 import { UseHintFrontend } from './use-hint/frontend'
+import { IPlatform } from '~/@/platform/platform'
 
 const View = (input: {
   numberlink: NumberlinkVariant.Model
@@ -26,11 +27,13 @@ const View = (input: {
   dispatch: (m: Msg) => void
   disabled?: boolean
   showSolvedAnimation?: boolean
+  platform: IPlatform
 }) => {
   const numberlink = toNumberlink(input.model, input.numberlink)
 
-  return h(Box, { class: 'relative aspect-square h-full max-h-full w-full touch-none overflow-hidden select-none' }, [
+  return h(Box, { class: 'relative aspect-square w-full touch-none overflow-hidden select-none' }, [
     h(NumberlinkVariantBoard.View, {
+      platform: input.platform,
       disabled: input.disabled,
       model: numberlink,
       showCoordinates: false,

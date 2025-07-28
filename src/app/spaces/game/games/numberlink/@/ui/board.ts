@@ -1,8 +1,10 @@
-import type { Edge } from '../numberlink/numberlink'
+import { IPlatform } from '~/@/platform/platform'
 import { GroupId } from '../numberlink/group-id'
 import { NodeId } from '../numberlink/node-id'
+import type { Edge } from '../numberlink/numberlink'
 
 export type BoardInput<TModel> = {
+  platform: IPlatform
   disabled?: boolean
   class?: string
   model: TModel

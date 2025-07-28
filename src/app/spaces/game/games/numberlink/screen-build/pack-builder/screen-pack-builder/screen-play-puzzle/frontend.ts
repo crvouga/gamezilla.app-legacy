@@ -94,6 +94,7 @@ const View: FrontendModule['View'] = (input) => {
       ctx: input.ctx,
       renderBody: () =>
         h(ModePlayFrontend.View, {
+          platform: input.ctx.platform,
           dispatch: (c) =>
             input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.got-numberlink-play-msg', c } }),
           numberlink: puzzleResult.c.model,

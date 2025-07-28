@@ -52,7 +52,9 @@ const View = (input: {
     case 'started': {
       const currentUser = input.ctx.currentUser
 
-      if (!currentUser) return null
+      if (!currentUser) {
+        return null
+      }
 
       const spaceCtx: SpaceFrontendCtx & FrontendCtxModule = { ...input.ctx, currentUser, space: spaceProjection }
 

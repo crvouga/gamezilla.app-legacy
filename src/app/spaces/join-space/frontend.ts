@@ -21,6 +21,7 @@ import { GameCoverArt } from '../game/games/cover-art'
 import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
 import { MsgSpace } from '../space/msg-space'
 import { Space } from '../space/space'
+import { IPlatform } from '~/@/platform/platform'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -188,6 +189,7 @@ const view: SpaceFrontendModule['View'] = (input) => {
 const SectionGame = (props: {
   ctx: {
     t: Translator
+    platform: IPlatform
   }
   gameName: GameName
 }) => {
@@ -195,7 +197,7 @@ const SectionGame = (props: {
     h(SectionTitle, { text: props.ctx.t('spaces.game') }),
 
     h(Box, { class: 'flex flex-row w-fit items-center gap-4 px-6' }, [
-      h(GameCoverArt, { rounded: true, class: 'size-20', gameName: props.gameName }),
+      h(GameCoverArt, { rounded: true, class: 'size-20', gameName: props.gameName, platform: props.ctx.platform }),
 
       h(Typography, { variant: 'label', sizeClassName: 'text-lg', text: props.ctx.t(props.gameName) }),
     ]),

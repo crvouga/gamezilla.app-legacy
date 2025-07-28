@@ -78,6 +78,7 @@ export const TestFrontend = async (config: {
   })
 
   const ctxBase: AppFrontendCtxBase = {
+    platform: 'web',
     syncEngine,
     keyValueDb,
     migrationPolicy,

@@ -33,6 +33,7 @@ const View = (input: {
         ViewStatus(input),
 
         h(NumberlinkVariantBoard.View, {
+          platform: input.ctx.platform,
           model: ModeEdit.toNumberlink(input.model),
           onDraggedOver: (nodeId) => input.dispatch({ t: 'dragged-over', nodeId }),
           onPress: (nodeId) => input.dispatch({ t: 'pressed-down-node', nodeId }),

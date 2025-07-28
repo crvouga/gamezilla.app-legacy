@@ -8,6 +8,7 @@ import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Msg } from '~/@/msg/msg'
 import { INavigation } from '~/@/navigation'
+import { IPlatform } from '~/@/platform/platform'
 import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screens/generated/screens'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
@@ -19,10 +20,10 @@ import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { TopicClient } from '~/@/topic/topic-client/topic-client'
 import { IconGamepad, IconUser } from '~/@/ui/icon'
-import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
 import { Url } from '~/@/url/url'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
+import { Text } from '~/@/vdom/primitives/text'
 import { IViewport } from '~/@/viewport'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { ILogger } from '../@/logger'
@@ -55,6 +56,7 @@ const initCtx = async (config: {
   keyboard: IKeyBoard
   viewport: IViewport
   navigation: INavigation
+  platform: IPlatform
 }): Promise<FrontendCtxModule> => {
   const logger = config.logger.child(['app'])
 
@@ -111,6 +113,7 @@ const initCtx = async (config: {
   })
 
   const ctx: AppFrontendCtxBase = {
+    platform: config.platform,
     syncEngine,
     migrationPolicy,
     audioPlayer: config.audioPlayer,
@@ -403,14 +406,7 @@ const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
         dispatch: (c) => input.dispatch({ t: 'auth', c }),
       })
     default:
-      return h(IntersectionObserverEmitter, {
-        id: 'app-intersection-observer',
-        onVisible: () =>
-          input.dispatch({
-            t: 'frontend',
-            c: { t: 'current-screen', c: { t: 'clicked-link', screen: { t: 'login', n: 'auth' } } },
-          }),
-      })
+      return h(Box, {}, [Text({ text: 'Logged out', class: 'text-white' })])
   }
 }
 
@@ -435,14 +431,7 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
 
     case 'settings':
     case 'auth':
-      return h(IntersectionObserverEmitter, {
-        id: 'app-intersection-observer',
-        onVisible: () =>
-          input.dispatch({
-            t: 'frontend',
-            c: { t: 'current-screen', c: { t: 'clicked-link', screen: { n: 'spaces', t: 'space-list' } } },
-          }),
-      })
+      return h(Box, {}, [Text({ text: 'Logged out', class: 'text-white' })])
   }
 }
 

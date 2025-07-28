@@ -236,7 +236,7 @@ const ViewMainMenu: FrontendModule['View'] = (input) => {
 
   return h(GameMainMenu.View, {
     dataTestId: TEST_ID_NUMBERLINK_MAIN_MENU_SCREEN,
-    renderCoverArt: (input) => h(CoverArt, input),
+    renderCoverArt: (input) => h(CoverArt, { ...input, platform: ctx.platform }),
     ctx,
     title: ctx.t('numberlink'),
     dispatch: input.dispatch,

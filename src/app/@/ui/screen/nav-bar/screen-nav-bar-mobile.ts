@@ -46,6 +46,7 @@ export const ScreenNavBarMobile = (input: {
                   label: input.ctx.t('app.exit'),
                   ariaLabel: input.ctx.t('app.back'),
                   renderIcon: (inputIcon) => h(IconArrowLeft, inputIcon),
+                  size: 'lg',
                 }),
             },
           },

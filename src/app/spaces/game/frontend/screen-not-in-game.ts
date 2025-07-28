@@ -1,8 +1,7 @@
-import { chunk } from '~/@/array/chunk'
+import { Clickable } from '~/@/ui/clickable'
+import { Grid } from '~/@/ui/grid/grid'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
-import { Box } from '~/@/vdom/primitives/box'
-import { Pressable } from '~/@/vdom/primitives/pressable'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SpaceFrontendCtx } from '../../@/frontend/ctx'
 import { SpaceFrontendModule } from '../../frontend/space-frontend'
@@ -54,52 +53,47 @@ const View: SpaceFrontendModule['View'] = (input) => {
 }
 
 const ViewHostGameSelection = (input: { ctx: SpaceFrontendCtx; dispatch: (msg: MsgFrontend) => void }) => {
-  return h(
-    Box,
-    { class: 'flex flex-1 flex-col gap-4' },
-    chunk(GAME_NAME_LIST, 3).map((gameNames) =>
-      h(
-        Box,
-        { class: 'flex flex-row gap-4' },
-        [...gameNames, null, null, null].slice(0, 3).map((gameName, index) =>
-          h(Box, { class: 'flex-1', key: gameName ?? index }, [
-            gameName
-              ? h(GameTile, {
-                  key: gameName,
-                  gameName,
-                  ctx: input.ctx,
-                  dispatch: input.dispatch,
-                })
-              : null,
-          ]),
-        ),
-      ),
+  return h(Grid, {
+    columnCount: 3,
+    rootClass: 'gap-4 p-4',
+    rowClass: 'gap-4',
+    itemClass: 'flex-1',
+    items: GAME_NAME_LIST.map((gameName) =>
+      h(GameTile, {
+        key: gameName,
+        gameName,
+        ctx: input.ctx,
+        dispatch: input.dispatch,
+      }),
     ),
-  )
+  })
 }
 
 const GameTile = (input: { gameName: GameName; ctx: SpaceFrontendCtx; dispatch: (msg: MsgFrontend) => void }) => {
-  return h(Box, { class: 'flex flex-col gap-2 flex-1' }, [
-    h(
-      Pressable,
-      {
-        type: 'button',
-        role: 'button',
-        'aria-label': input.gameName,
-        onPress: () => {
-          console.log('clicked', input.gameName)
-          input.dispatch({ t: 'game.clicked-game-tile', gameName: input.gameName })
-        },
-      },
-      [h(GameCoverArt, { rounded: true, gameName: input.gameName })],
-    ),
-    h(Typography, {
-      class: 'mt-2 w-full overflow-hidden text-center text-sm font-semibold text-ellipsis whitespace-nowrap',
-      variant: 'label',
-      sizeClassName: 'text-base',
-      text: input.ctx.t(input.gameName),
-    }),
-  ])
+  return h(
+    Clickable,
+    {
+      class: 'flex flex-col gap-2',
+      type: 'button',
+      role: 'button',
+      'aria-label': input.gameName,
+      onPress: () => input.dispatch({ t: 'game.clicked-game-tile', gameName: input.gameName }),
+    },
+    [
+      h(GameCoverArt, {
+        rounded: true,
+        gameName: input.gameName,
+        class: 'pointer-events-none',
+        platform: input.ctx.platform,
+      }),
+      h(Typography, {
+        class: 'w-full text-center text-sm',
+        variant: 'label',
+        sizeClassName: 'text-base text-center',
+        text: input.ctx.t(input.gameName),
+      }),
+    ],
+  )
 }
 
 export const ScreenNotInGameFrontend = {

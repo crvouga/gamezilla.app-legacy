@@ -34,13 +34,11 @@ const init = (config: SqlDbImplExpoSqlite): ISqlDb => {
   const initDb = async () => {
     const dbInstance = await db
     try {
-      await dbInstance.execAsync(`
-        PRAGMA journal_mode = WAL;
-        PRAGMA synchronous = NORMAL;
-        PRAGMA cache_size = 1000;
-        PRAGMA foreign_keys = true;
-        PRAGMA temp_store = memory;
-      `)
+      await dbInstance.execAsync('PRAGMA journal_mode = WAL')
+      await dbInstance.execAsync('PRAGMA synchronous = NORMAL')
+      await dbInstance.execAsync('PRAGMA cache_size = 1000')
+      await dbInstance.execAsync('PRAGMA foreign_keys = true')
+      await dbInstance.execAsync('PRAGMA temp_store = memory')
     } catch (err) {
       config.logger.error('Failed to initialize SQLite database:', err)
       throw err

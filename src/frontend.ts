@@ -53,6 +53,7 @@ const main = async () => {
     viewport,
     navigation,
     keyValueDbSync,
+    platform: 'web',
   })
   const { swapped, getRoot } = await SwapVDomEngine.init()
   const program = await Program.run({

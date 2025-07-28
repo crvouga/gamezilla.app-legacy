@@ -2,6 +2,7 @@ import { pipe } from '~/@/function/pipe'
 import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
 import { VariantGridBoard, VariantGridShorthand } from '../variant/grid'
+import { IPlatform } from '~/@/platform/platform'
 
 const init = (x: VariantGridShorthand.Model) => pipe(VariantGridShorthand.init(x), VariantGridShorthand.toGrid)
 
@@ -36,7 +37,7 @@ const GRIDS = [
 
 const GRID = GRIDS[3]
 
-export const CoverArt = (input: { class?: string }) => {
+export const CoverArt = (input: { class?: string; platform: IPlatform }) => {
   return h(Box, { class: input.class }, [
     h(VariantGridBoard.View, {
       model: GRID,
@@ -44,6 +45,7 @@ export const CoverArt = (input: { class?: string }) => {
       borderless: true,
       disableHighlight: true,
       class: 'aspect-square bg-black',
+      platform: 'web',
     }),
   ])
 }

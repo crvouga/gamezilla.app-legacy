@@ -281,6 +281,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
           Text({ text: input.ctx.t('game.numberlink.playing') }),
         ]),
         h(ModePlayFrontend.View, {
+          platform: input.ctx.platform,
           model: puzzleBuilder.modePlay,
           numberlink: numberlink,
           dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
@@ -324,7 +325,7 @@ const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
             profile: input.ctx.profilesByUserId[input.ctx.space.hostId],
             subtitle: input.ctx.t('app.editor'),
           }),
-          h(NumberlinkVariantBoard.View, { disabled: true, model: numberlink }),
+          h(NumberlinkVariantBoard.View, { disabled: true, model: numberlink, platform: input.ctx.platform }),
         ]),
       ]),
   })

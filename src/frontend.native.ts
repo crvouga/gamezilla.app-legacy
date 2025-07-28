@@ -2,12 +2,14 @@ import { registerRootComponent } from 'expo'
 import { ComponentType } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { AudioPlayerImplExpoAudio } from './@/audio-player/impl-expo-audio'
+import { KeyValueDb } from './@/key-value-db'
 import { KeyValueDbSyncImplHashMap } from './@/key-value-db-sync/impl-hash-map'
 import { KeyboardImplNoop } from './@/keyboard/impl-noop'
 import { Logger } from './@/logger'
-import { NavigationImplKeyValueDbSync } from './@/navigation/impl-key-value-db-sync'
+import { NavigationImplKeyValueDb } from './@/navigation/impl-key-value-db'
 import { Program } from './@/program/program'
 import { StoreSingleListener, useStore } from './@/react/store'
+import { SqlDbMigrationPolicy } from './@/sql-db-migration-policy/impl'
 import { SqlDbImplExpoSqlite } from './@/sql-db/impl-expo-sqlite'
 import { Url } from './@/url/url'
 import { h, VDomEngine } from './@/vdom'
@@ -59,7 +61,7 @@ const main = async () => {
   const topicUrl = Url.derive(TOPIC_URL, httpProtocol)
   logger.info('Derived URLs', { backendUrl, topicUrl })
   logger.info('Initializing sqlDb')
-  const sqlDb = SqlDbImplExpoSqlite.init({ t: 'expo-sqlite', dbName: 'gamezilla.db', logger })
+  const sqlDb = SqlDbImplExpoSqlite.init({ t: 'expo-sqlite', dbName: ':memory:', logger })
   logger.info('Initializing keyValueDbSync')
   const keyValueDbSync = KeyValueDbSyncImplHashMap.init({ t: 'hash-map', logger })
   logger.info('Initializing audioPlayer')
@@ -69,9 +71,15 @@ const main = async () => {
   logger.info('Initializing viewport')
   const viewport = ViewportImplReactNative.init({ t: 'react-native' })
   logger.info('Initializing navigation')
-  const navigation = NavigationImplKeyValueDbSync.init({
-    t: 'key-value-db-sync',
-    keyValueDbSync,
+  const keyValueDb = KeyValueDb.init({
+    t: 'sql-db',
+    sqlDb,
+    logger,
+    migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger }),
+  })
+  const navigation = NavigationImplKeyValueDb.init({
+    t: 'key-value-db',
+    keyValueDb,
     key: 'navigation-history',
     logger,
     maxHistoryLength: 10,
@@ -87,6 +95,7 @@ const main = async () => {
     viewport,
     navigation,
     keyValueDbSync,
+    platform: 'native',
   })
   logger.info('Starting program')
 

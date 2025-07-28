@@ -154,6 +154,7 @@ const ViewHosting: FrontendModule['View'] = (input) => {
         [
           puzzle.t === 'got'
             ? h(ModePlayFrontend.View, {
+                platform: input.ctx.platform,
                 key: puzzle.c.id,
                 numberlink: puzzle.c.model,
                 model:
@@ -247,6 +248,7 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
           puzzle.t === 'got'
             ? h(ModePlayFrontend.View, {
                 disabled: true,
+                platform: input.ctx.platform,
                 key: puzzle.c.id,
                 numberlink: puzzle.c.model,
                 model:

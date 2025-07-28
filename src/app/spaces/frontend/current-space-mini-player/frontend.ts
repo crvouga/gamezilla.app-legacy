@@ -79,7 +79,12 @@ const View = (input: {
         [
           h(Box, { class: 'p-2' }, [
             space.game
-              ? h(GameCoverArt, { rounded: true, class: 'size-14', gameName: space.game.t })
+              ? h(GameCoverArt, {
+                  rounded: true,
+                  class: 'size-14',
+                  gameName: space.game.t,
+                  platform: input.ctx.platform,
+                })
               : h(Avatar, {
                   src: hostProfile ? UserProfile.toAvatarUrl(hostProfile) : '',
                   alt: 'Host Avatar',
@@ -121,8 +126,7 @@ const View = (input: {
             h(IconButton, {
               renderIcon: (iconInput) => h(IconXMark, iconInput),
               label: input.ctx.t('spaces.leave'),
-              onPress: () =>
-                input.dispatch({ t: 'leave-space.clicked-leave-space-button', spaceId: space.spaceId }),
+              onPress: () => input.dispatch({ t: 'leave-space.clicked-leave-space-button', spaceId: space.spaceId }),
             }),
         ].filter(Boolean),
       ),

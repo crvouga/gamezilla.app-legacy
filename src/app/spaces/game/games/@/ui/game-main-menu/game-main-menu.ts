@@ -50,15 +50,8 @@ export const update = <TModel, TMsg>({
   }
 }
 
-//
-//
-//
-//
-//
-//
-
 type MainMenuButton = {
-  renderIcon: (input: { class: string }) => VDom
+  renderIcon: (input: { class: string; fill: string; stroke: string }) => VDom
   title: TranslatedText
   description: TranslatedText
   onPress: () => void
@@ -113,7 +106,7 @@ const ViewMainMenuButton = (props: MainMenuButton) => {
       'aria-label': props.title,
     },
     [
-      props.renderIcon({ class: 'aspect-square size-12' }),
+      props.renderIcon({ class: 'aspect-square w-12 h-12', fill: '#fff', stroke: 'none' }),
       h(Box, { class: 'flex flex-1 flex-col gap-1 text-left' }, [
         h(Typography, {
           variant: 'title',

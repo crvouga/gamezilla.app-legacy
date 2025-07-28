@@ -360,11 +360,21 @@ export const IconFloppyDisk = (input: Props) => {
 }
 
 export const IconGamepad = (input: Props) => {
-  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 640 512', ...input }, [
-    h(Path, {
-      d: 'M192 64C86 64 0 150 0 256S86 448 192 448H448c106 0 192-86 192-192s-86-192-192-192H192zM496 168a40 40 0 1 1 0 80 40 40 0 1 1 0-80zM392 304a40 40 0 1 1 80 0 40 40 0 1 1 -80 0zM168 200c0-13.3 10.7-24 24-24s24 10.7 24 24v32h32c13.3 0 24 10.7 24 24s-10.7 24-24 24H216v32c0 13.3-10.7 24-24 24s-24-10.7-24-24V280H136c-13.3 0-24-10.7-24-24s10.7-24 24-24h32V200z',
-    }),
-  ])
+  return h(
+    Svg,
+    {
+      xmlns: 'http://www.w3.org/2000/svg',
+      viewBox: '0 0 640 512',
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...input,
+    },
+    [
+      h(Path, {
+        d: 'M192 64C86 64 0 150 0 256S86 448 192 448H448c106 0 192-86 192-192s-86-192-192-192H192zM496 168a40 40 0 1 1 0 80 40 40 0 1 1 0-80zM392 304a40 40 0 1 1 80 0 40 40 0 1 1 -80 0zM168 200c0-13.3 10.7-24 24-24s24 10.7 24 24v32h32c13.3 0 24 10.7 24 24s-10.7 24-24 24H216v32c0 13.3-10.7 24-24 24s-24-10.7-24-24V280H136c-13.3 0-24-10.7-24-24s10.7-24 24-24h32V200z',
+      }),
+    ],
+  )
 }
 
 export const IconGear = (input: Props) => {
@@ -628,7 +638,8 @@ export const IconPuzzlePiece = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-
+      fill: 'currentColor',
+      stroke: 'currentColor',
       ...input,
     },
     [
@@ -698,7 +709,8 @@ export const IconScrewdriverWrench = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
-
+      fill: 'currentColor',
+      stroke: 'currentColor',
       ...input,
     },
     [

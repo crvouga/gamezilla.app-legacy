@@ -22,7 +22,7 @@ export const ScreenActionButton = (input: ScreenAction & { class?: string }) => 
       'aria-hidden': input.hidden,
       onPress: input.onPress,
       class: cn(
-        'relative flex flex-1 flex-col items-center gap-0.5 font-normal h-16',
+        'relative flex flex-col items-center gap-0.5 font-normal h-16',
         'disabled:cursor-not-allowed disabled:opacity-50',
         colorClasses,
         input.hidden ? 'hidden' : '',

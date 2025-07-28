@@ -23,11 +23,7 @@ export const LayoutGame = ({
   return h(
     ScrollBox,
     {
-      class: cn(
-        'flex w-full flex-1 flex-col items-center justify-center',
-        isSpectating && 'border-8 border-t-0 border-blue-500',
-        class_,
-      ),
+      class: cn('flex w-full flex-1 flex-col', isSpectating && 'border-8 border-t-0 border-blue-500', class_),
       ...props,
     },
     [

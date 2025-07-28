@@ -51,6 +51,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     syncEngine,
     keyValueDb,
     migrationPolicy,
+    platform: 'web',
     keyboard: KeyBoard.init({ t: 'noop' }),
     audioPlayer: AudioPlayer.init({ t: 'fake', logger: Logger.init({ t: 'noop' }) }),
     navigation: Navigation.init({
@@ -58,6 +59,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
       keyValueDbSync,
       key: 'navigation-history',
       logger: Logger.init({ t: 'noop' }),
+      maxHistoryLength: 10,
     }),
     viewport: Viewport.init({ t: 'noop' }),
     clientSessionId: ClientSessionId.generate(),

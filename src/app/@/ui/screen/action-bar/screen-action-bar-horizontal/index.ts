@@ -49,7 +49,7 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
       ...firstActions.map((action) => {
         if (!action) return null
 
-        const button = h(ScreenActionButton, { ...action, size: input.size })
+        const button = h(ScreenActionButton, { ...action, size: input.size, class: 'flex-1' })
 
         if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
 
@@ -125,7 +125,7 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
         input.start.map((action) => {
           if (!action) return null
 
-          const button = h(ScreenActionButton, { ...action, size: input.size, class: 'min-w-20' })
+          const button = h(ScreenActionButton, { ...action, size: input.size, class: 'w-20' })
 
           if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
 
@@ -144,7 +144,7 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
         input.end.map((action) => {
           if (!action) return null
 
-          const button = h(ScreenActionButton, { ...action, size: input.size, class: 'min-w-20' })
+          const button = h(ScreenActionButton, { ...action, size: input.size, class: 'w-20' })
 
           if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
 

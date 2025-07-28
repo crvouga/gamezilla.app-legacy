@@ -6,6 +6,7 @@ import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { ILogger } from '~/@/logger'
 import { INavigation } from '~/@/navigation'
+import { IPlatform } from '~/@/platform/platform'
 import type { Screen } from '~/@/screens/generated/screens'
 import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
 import { ISqlDb } from '~/@/sql-db/interface'
@@ -30,6 +31,7 @@ export type CurrentUser =
 export type AppFrontendCtxBase = {
   parentScreen: ParentScreenProps | null
   screenSize: ScreenSize
+  platform: IPlatform
   sqlDb: ISqlDb
   logger: ILogger
   migrationPolicy: ISqlDbMigrationPolicy

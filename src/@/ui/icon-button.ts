@@ -46,12 +46,12 @@ export const IconButtonEmpty = (input: { size?: IconButtonSize }) => {
 const toSizeClassName = (size: IconButtonSize): string => {
   switch (size) {
     case 'xs':
-      return 'size-7 p-1'
+      return 'w-7 h-7 p-1'
     case 'sm':
-      return 'size-8 p-1.5'
+      return 'w-8 h-8 p-1.5'
     case 'md':
-      return 'size-10 p-2'
+      return 'w-10 h-10 p-2'
     case 'lg':
-      return 'size-12 p-2.5'
+      return 'w-12 h-12 p-2.5'
   }
 }

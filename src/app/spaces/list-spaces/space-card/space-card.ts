@@ -43,9 +43,7 @@ const ViewRoot = (input: { onPress?: () => void; children?: VDom }) => {
     'flex w-full shrink-0 flex-col gap-3 overflow-hidden rounded-md bg-gradient-to-tr p-4',
   )
   if (typeof input.onPress === 'function') {
-    return h(Clickable, { onPress: input.onPress, disabled: !input.onPress, class: class_ }, [
-      input.children,
-    ])
+    return h(Clickable, { onPress: input.onPress, disabled: !input.onPress, class: class_ }, [input.children])
   }
   return h(Box, { class: class_ }, [input.children])
 }
@@ -64,7 +62,7 @@ const ViewSpaceCardGame = (input: { gameName: GameName | null; ctx: AppFrontendC
   if (!input.gameName) return null
 
   return h(Box, { class: 'flex flex-row items-center justify-start gap-2' }, [
-    h(GameCoverArt, { rounded: true, class: 'size-12', gameName: input.gameName }),
+    h(GameCoverArt, { rounded: true, class: 'size-12', gameName: input.gameName, platform: input.ctx.platform }),
     h(Typography, { variant: 'body', class: 'truncate text-lg font-normal', text: input.ctx.t(input.gameName) }),
   ])
 }

@@ -19,6 +19,7 @@ import { PuzzleId } from '../puzzle-id'
 import { QueryForm } from './puzzle-list-query-form'
 import { PuzzleDbQueryCache } from '../puzzle-db-query-cache'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
+import { IPlatform } from '~/@/platform/platform'
 
 const View = (input: {
   selectable?: boolean
@@ -59,29 +60,38 @@ const View = (input: {
         ],
       ),
 
-    h(ScrollBox, { class: 'relative flex w-full flex-1 flex-col items-center' }, [
-      ...puzzles.map((puzzle) =>
-        h(ViewListItem, {
-          selectable: input.selectable,
-          query: input.query,
-          key: puzzle.id,
-          ctx: input.ctx,
-          selected: input.selected?.some((id) => id === puzzle.id) ?? false,
-          puzzle: puzzle,
-          onPress: () => input.onItemClick(puzzle),
-        }),
-      ),
+    h(
+      ScrollBox,
+      {
+        class: 'relative flex w-full flex-1 flex-col',
+        contentContainerStyle: {
+          rowGap: 0,
+        },
+      },
+      [
+        ...puzzles.map((puzzle) =>
+          h(ViewListItem, {
+            selectable: input.selectable,
+            query: input.query,
+            key: puzzle.id,
+            ctx: input.ctx,
+            selected: input.selected?.some((id) => id === puzzle.id) ?? false,
+            puzzle: puzzle,
+            onPress: () => input.onItemClick(puzzle),
+          }),
+        ),
 
-      isEmpty &&
-        h(EmptyState, {
-          renderIcon: (input) => h(IconPuzzlePiece, input),
-          label: input.ctx.t('game.numberlink.no-puzzles'),
-        }),
+        isEmpty &&
+          h(EmptyState, {
+            renderIcon: (input) => h(IconPuzzlePiece, input),
+            label: input.ctx.t('game.numberlink.no-puzzles'),
+          }),
 
-      isLoading && h(Spinner, {}),
+        isLoading && h(Spinner, {}),
 
-      h(Gutter, { variant: 'screen' }),
-    ]),
+        h(Gutter, { variant: 'screen' }),
+      ],
+    ),
   ])
 }
 
@@ -98,7 +108,7 @@ const toTopLevelCheckboxState = (input: { totalCount: number; selectedCount: num
 const ViewListItem = (input: {
   selectable?: boolean
   query: PuzzleQuery
-  ctx: { t: Translator; now: UnixMs }
+  ctx: { t: Translator; now: UnixMs; platform: IPlatform }
   puzzle: Puzzle
   onPress?: () => void
   selected: boolean
@@ -114,7 +124,7 @@ const ViewListItem = (input: {
       input.selectable && h(Box, { class: 'px-4' }, [h(Checkbox, { state: input.selected ? 'checked' : 'unchecked' })]),
 
       h(Box, { class: 'flex flex-row aspect-square h-24 w-24 shrink-0 items-center justify-center overflow-hidden' }, [
-        h(NumberlinkVariantBoard.View, { disabled: true, model: input.puzzle.model }),
+        h(NumberlinkVariantBoard.View, { disabled: true, model: input.puzzle.model, platform: input.ctx.platform }),
       ]),
 
       h(Box, { class: 'flex flex-col gap-1 truncate overflow-hidden px-4' }, [

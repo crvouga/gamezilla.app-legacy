@@ -30,7 +30,10 @@ const View = (input: {
     h(
       ScrollBox,
       {
-        class: 'relative flex max-h-full w-full flex-1 flex-col items-center overflow-x-hidden border-t-neutral-800',
+        class: 'relative flex max-h-full w-full flex-1 flex-col border-t-neutral-800',
+        contentContainerStyle: {
+          rowGap: 0,
+        },
       },
       [
         isEmpty &&
