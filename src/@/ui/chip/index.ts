@@ -4,12 +4,12 @@ import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
 import { VDom } from '~/@/vdom/vdom'
 import { Clickable } from '../clickable'
-import { cn } from '../cn'
+import { Theme, theme } from '../theme/theme'
 
 export type ChipSize = 'sm' | 'lg'
 
 export type ChipProps = {
-  renderStartIcon?: (input: { class: string }) => VDom
+  renderStartIcon?: (input: { styles: Record<string, unknown> }) => VDom
   label: TranslatedText
   size: ChipSize
   onPress?: () => void
@@ -20,12 +20,30 @@ export const Chip = (input: ChipProps) => {
     Tag,
     {
       tagName: typeof input.onPress === 'function' ? 'button' : 'div',
-      class: cn('flex flex-row items-center gap-1 truncate border border-white/30 font-semibold', toSizeClass(input)),
+      style: theme({
+        flexDirection: 'row',
+        items: 'center',
+        gap: 1,
+        borderWidth: 1,
+        borderColor: 'white/30',
+        fontWeight: 'bold',
+        ...toSizeStyles(input),
+      }),
       onPress: input.onPress,
     },
     [
-      input.renderStartIcon?.({ class: cn(toIconSizeClass(input), 'shrink-0 text-white') }),
-      h(Text, { text: input.label, class: 'truncate text-white' }),
+      input.renderStartIcon?.({
+        styles: theme({
+          ...toIconSizeStyles(input),
+          textColor: 'white',
+        }),
+      }),
+      h(Text, {
+        text: input.label,
+        style: theme({
+          textColor: 'white',
+        }),
+      }),
     ],
   )
 }
@@ -38,7 +56,7 @@ const Tag = ({
   children: VDom
   tagName: 'div' | 'button'
   onPress?: () => void
-  class?: string
+  style?: Record<string, unknown>
 }) => {
   switch (tagName) {
     case 'button':
@@ -48,20 +66,36 @@ const Tag = ({
   }
 }
 
-const toSizeClass = (input: ChipProps): string => {
+const toSizeStyles = (input: ChipProps): Theme => {
   switch (input.size) {
     case 'sm':
-      return 'text-xs px-2 py-1 rounded-xl'
+      return {
+        textSize: 'xs' as const,
+        px: 2,
+        py: 1,
+        rounded: 'xl' as const,
+      }
     case 'lg':
-      return 'text-base px-2.5 py-1.5 rounded-2xl'
+      return {
+        textSize: 'md' as const,
+        px: 2.5,
+        py: 1.5,
+        rounded: '2xl' as const,
+      }
   }
 }
 
-const toIconSizeClass = (input: ChipProps): string => {
+const toIconSizeStyles = (input: ChipProps): Theme => {
   switch (input.size) {
     case 'sm':
-      return 'size-4'
+      return {
+        width: 4,
+        height: 4,
+      }
     case 'lg':
-      return 'size-5'
+      return {
+        width: 5,
+        height: 5,
+      }
   }
 }
