@@ -3,6 +3,7 @@ import { Box } from '~/@/vdom/primitives/box'
 import { Button, ButtonInput } from '~/@/ui/button'
 import { preventConsoleErrorWhenClosingDrawer } from '~/@/ui/surface-drawer/drawer-shared'
 import { h } from '~/@/vdom/h'
+import { theme } from '~/@/ui/theme/theme'
 
 export const CancelSubmitButtons = (input: {
   onCancel: () => void
@@ -18,11 +19,23 @@ export const CancelSubmitButtons = (input: {
   return h(
     Box,
     {
-      class: 'flex flex-row w-full items-center gap-4 px-6 pt-4 pb-6',
+      // class: 'flex flex-row w-full items-center gap-4 px-6 pt-4 pb-6',
+      style: theme({
+        flexDirection: 'row',
+        items: 'center',
+        justify: 'center',
+        width: 'full',
+        gap: 4,
+        pt: 4,
+        pb: 6,
+        px: 6,
+      }),
     },
     [
       h(Button, {
-        width: 'flex-1',
+        style: theme({
+          flex: 1,
+        }),
         size: input.size,
         onPress: (event) => {
           preventConsoleErrorWhenClosingDrawer(event)
@@ -32,7 +45,9 @@ export const CancelSubmitButtons = (input: {
         disabled: input.cancelDisabled,
       }),
       h(Button, {
-        width: 'flex-1',
+        style: theme({
+          flex: 1,
+        }),
         size: input.size,
         onPress: input.onSubmit,
         color: input.variant === 'danger' ? 'danger' : 'primary',

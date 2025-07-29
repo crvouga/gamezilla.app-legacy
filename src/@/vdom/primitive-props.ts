@@ -19,7 +19,7 @@ export type PrimitiveProps = {
   'data-testid'?: string | null | undefined
   disabled?: boolean
   tabIndex?: number | null | undefined
-  style?: unknown
+  style?: Record<string, unknown>
   onPress?: (event: unknown) => void
   onLayout?: (event: unknown) => void
   onPressIn?: (event: unknown) => void

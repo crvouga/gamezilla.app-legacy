@@ -4,8 +4,8 @@ import { Box } from '~/@/vdom/primitives/box'
 import type { VDom } from '~/@/vdom/vdom'
 import { Text } from '../vdom/primitives/text'
 import { Clickable } from './clickable'
-import { cn } from './cn'
 import { Spinner } from './spinner'
+import { theme, Theme } from './theme/theme'
 
 export type ButtonVariant = 'contained' | 'outlined' | 'text' | 'soft'
 
@@ -22,7 +22,7 @@ export type ButtonInput = {
   type?: 'button'
   class?: string
   onPress?: (event: unknown) => void
-  renderIconStart?: (input: { class?: string; fill?: string; stroke?: string }) => VDom
+  renderIconStart?: (input: { class?: string; fill?: string; stroke?: string; style?: Record<string, unknown> }) => VDom
   variant?: ButtonVariant
   color?: ButtonColor
   size?: ButtonSize
@@ -32,167 +32,182 @@ export type ButtonInput = {
 }
 
 export const Button = (input: ButtonInput) => {
-  const colorTextClass = toClassColorText(input)
-  const sizeClassPadding = toSizeClassPadding(input)
-  const sizeClassText = toSizeClassText(input)
-  const iconSizeClass = toIconSizeClass(input)
-  const colorPressableClass = toClassColorPressable(input)
-  const widthClass = toWidthClass(input)
+  const size = input.size ?? 'lg'
+  const variant = input.variant ?? 'outlined'
+  const color = input.color ?? 'primary'
+  const combo: Combo = `${variant}-${color}`
 
+  const buttonStyle = theme({
+    flexDirection: 'row',
+    items: 'center',
+    justify: 'center',
+    rounded: 'md',
+    ...toButtonStyle(combo),
+    ...toSizeStyle(size),
+  })
+
+  const contentStyle = theme({
+    flexDirection: 'row',
+    items: 'center',
+    justify: 'center',
+    height: 'full',
+  })
+
+  const textStyle = theme({
+    ...toTextStyle(combo),
+    ...toTextSizeStyle(size),
+    fontWeight: 'bold',
+  })
   return h(
     Clickable,
     {
       disabled: input.disabled || input.loading,
       'data-fab': input.fab,
-      class: cn(
-        input.class,
-        'relative flex flex-row items-center justify-center overflow-hidden rounded font-semibold',
-        colorPressableClass,
-        sizeClassPadding,
-        widthClass,
-        input.fab && 'rounded-[30px]',
-        input.disabled && 'opacity-60',
-      ),
+      style: {
+        ...buttonStyle,
+        position: 'relative',
+        overflow: 'hidden',
+        opacity: input.disabled ? 0.6 : 1,
+        borderRadius: input.fab ? 30 : buttonStyle.borderRadius,
+        ...input.style,
+      },
       role: 'button',
       'aria-label': input.text ?? '',
       onPress: input.onPress,
-      style: input.style,
     },
-
     [
       h(
         Box,
         {
-          class: cn('flex flex-row h-full items-center justify-center gap-2', input.loading && 'opacity-0'),
+          style: {
+            ...contentStyle,
+            gap: 8,
+            opacity: input.loading ? 0 : 1,
+          },
         },
         [
           input.renderIconStart?.({
-            class: cn(colorTextClass, iconSizeClass),
+            style: { ...toIconSizeStyle(size), ...textStyle },
             fill: 'currentColor',
             stroke: 'currentColor',
           }),
           h(Text, {
             text: input.text ?? '',
-            class: cn('overflow-hidden font-semibold', colorTextClass, sizeClassText),
+            style: {
+              ...textStyle,
+              overflow: 'hidden',
+            },
           }),
         ],
       ),
       input.loading &&
         h(Spinner, {
-          class: 'absolute inset-0 flex flex-row items-center justify-center',
+          style: theme({
+            position: 'absolute',
+            inset: 0,
+            flexDirection: 'row',
+            items: 'center',
+            justify: 'center',
+          }),
           iconClass: 'h-12 w-12 text-white',
         }),
     ],
   )
 }
 
-const toWidthClass = (input: ButtonInput): string => {
-  if (!input.width) return ''
-  switch (input.width) {
-    case 'fit':
-      return ''
-    case 'full':
-      return 'w-full'
-    case 'flex-1':
-      return 'flex-1'
-  }
-}
-
-const toIconSizeClass = (input: ButtonInput): string => {
-  switch (input.size ?? 'lg') {
+const toIconSizeStyle = (size: ButtonSize): Theme => {
+  switch (size) {
     case 'lg':
-      return 'h-8 w-8'
+      return { width: 32, height: 32 }
     case 'md':
-      return 'h-6 w-6'
+      return { width: 24, height: 24 }
     case 'sm':
-      return 'h-4 w-4'
+      return { width: 16, height: 16 }
     case 'xs':
-      return 'h-3 w-3'
+      return { width: 12, height: 12 }
   }
 }
 
-const toSizeClassPadding = (input: ButtonInput): string => {
-  switch (input.size ?? 'lg') {
+const toSizeStyle = (size: ButtonSize): Theme => {
+  switch (size) {
     case 'lg':
-      return 'h-16 px-4'
+      return { height: 12, px: 4 }
     case 'md':
-      return 'h-14 px-4'
+      return { height: 10, px: 2 }
     case 'sm':
-      return 'h-12 px-4'
+      return { height: 8, px: 2 }
     case 'xs':
-      return 'h-10 px-3'
+      return { height: 4, px: 2 }
   }
 }
 
-const toSizeClassText = (input: ButtonInput): string => {
-  switch (input.size ?? 'lg') {
+const toTextSizeStyle = (size: ButtonSize): Theme => {
+  switch (size) {
     case 'lg':
-      return 'text-xl'
+      return { textSize: 'xl' }
     case 'md':
-      return 'text-lg'
+      return { textSize: 'lg' }
     case 'sm':
-      return 'text-base'
+      return { textSize: 'md' }
     case 'xs':
-      return 'text-sm'
+      return { textSize: 'sm' }
   }
 }
 
-const toClassColorPressable = (input: ButtonInput): string => {
-  const combo: Combo = `${input.variant ?? 'outlined'}-${input.color ?? 'primary'}`
+const toButtonStyle = (combo: Combo): Theme => {
   switch (combo) {
     case 'contained-primary':
-      return 'bg-blue-600'
+      return { backgroundColor: 'blue-600' }
     case 'contained-danger':
-      return 'bg-red-600'
+      return { backgroundColor: 'red-600' }
     case 'contained-default':
-      return 'border-2 border-blue-500/50'
+      return { borderWidth: 2, borderColor: 'blue-500/50' }
     case 'text-danger':
-      return ''
+      return {}
     case 'outlined-default':
-      return 'border-2'
+      return { borderWidth: 2 }
     case 'soft-primary':
-      return 'bg-blue-500/20'
+      return { backgroundColor: 'blue-500/20' }
     case 'soft-danger':
-      return 'bg-red-500/20'
+      return { backgroundColor: 'red-500/20' }
     case 'soft-default':
-      return 'bg-neutral-300/20'
+      return { backgroundColor: 'neutral-300/20' }
     case 'text-primary':
-      return ''
+      return {}
     case 'outlined-danger':
-      return 'border-2 border-red-500/50'
+      return { borderWidth: 2, borderColor: 'red-500/50' }
     case 'outlined-primary':
-      return 'border-2 border-blue-500/50'
+      return { borderWidth: 2, borderColor: 'blue-500/50' }
     case 'text-default':
-      return ''
+      return {}
   }
 }
 
-const toClassColorText = (input: ButtonInput): string => {
-  const combo: Combo = `${input.variant ?? 'outlined'}-${input.color ?? 'primary'}`
+const toTextStyle = (combo: Combo): Theme => {
   switch (combo) {
     case 'contained-primary':
-      return 'text-white fill-white stroke-white'
+      return { textColor: 'white' }
     case 'contained-danger':
-      return 'text-white fill-white stroke-white'
+      return { textColor: 'white' }
     case 'contained-default':
-      return 'text-blue-500 fill-blue-500 stroke-blue-500'
+      return { textColor: 'blue-500' }
     case 'text-danger':
-      return 'font-bold text-red-500 fill-red-500 stroke-red-500'
+      return { textColor: 'red-500', fontWeight: 'bold' }
     case 'outlined-default':
-      return 'text-neutral-300 fill-neutral-300 stroke-neutral-300'
+      return { textColor: 'neutral-300' }
     case 'soft-primary':
-      return 'text-blue-200 fill-blue-200 stroke-blue-200'
+      return { textColor: 'blue-200' }
     case 'soft-danger':
-      return 'text-red-200 fill-red-200 stroke-red-200'
+      return { textColor: 'red-200' }
     case 'soft-default':
-      return 'text-neutral-300 fill-neutral-300 stroke-neutral-300'
+      return { textColor: 'neutral-300' }
     case 'text-primary':
-      return 'text-blue-500 fill-blue-500 stroke-blue-500'
+      return { textColor: 'blue-500' }
     case 'outlined-danger':
-      return 'text-red-500 fill-red-500 stroke-red-500'
+      return { textColor: 'red-500' }
     case 'outlined-primary':
-      return 'text-blue-500 fill-blue-500 stroke-blue-500'
+      return { textColor: 'blue-500' }
     case 'text-default':
-      return 'text-neutral-300 fill-neutral-300 stroke-neutral-300'
+      return { textColor: 'neutral-300' }
   }
 }

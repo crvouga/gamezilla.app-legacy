@@ -16,7 +16,7 @@ export const Checkbox = (input: { state: CheckboxState; onChange?: (checkedNew: 
       //   input.state !== 'unchecked' && 'border-neutral-100 bg-neutral-100',
       // ),
       style: theme({
-        flex: 'row',
+        flexDirection: 'row',
         items: 'center',
         justify: 'center',
         width: 6,
