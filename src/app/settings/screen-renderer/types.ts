@@ -5,4 +5,6 @@ export type ModelFrontend = {
   renderVDomImplInitial: VDomImplWeb
 }
 
-export type MsgFrontend = { t: 'renderer.clicked-back-button' } | { t: 'renderer.clicked-renderer'; vDomImpl: VDomImplWeb }
+export type MsgFrontend =
+  | { t: 'renderer.clicked-back-button' }
+  | { t: 'renderer.clicked-renderer'; vDomImpl: VDomImplWeb }

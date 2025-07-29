@@ -16,7 +16,7 @@ export const BaseFixture = async () => {
 
   document.body.innerHTML = '<div id="root"></div>'
   const root = document.getElementById('root')!
-  const vdomEngine = await ImplWeb.init({t: 'inferno'})
+  const vdomEngine = await ImplWeb.init({ t: 'inferno' })
   VDomEngine.set(vdomEngine)
 
   return {
