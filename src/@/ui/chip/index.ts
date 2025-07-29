@@ -9,7 +9,7 @@ import { Theme, theme } from '../theme/theme'
 export type ChipSize = 'sm' | 'lg'
 
 export type ChipProps = {
-  renderStartIcon?: (input: { styles: Record<string, unknown> }) => VDom
+  renderStartIcon?: (input: { style: Record<string, unknown> }) => VDom
   label: TranslatedText
   size: ChipSize
   onPress?: () => void
@@ -33,7 +33,7 @@ export const Chip = (input: ChipProps) => {
     },
     [
       input.renderStartIcon?.({
-        styles: theme({
+        style: theme({
           ...toIconSizeStyles(input),
           textColor: 'white',
         }),

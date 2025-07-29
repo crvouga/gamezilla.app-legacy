@@ -11,7 +11,7 @@ export const ViewHostChip = (input: { ctx: AppFrontendCtxBase }) => {
       h(IconCrown, {
         ...startIconInput,
         style: {
-          ...startIconInput.styles,
+          ...startIconInput.style,
           ...theme({ textColor: 'yellow-300' }),
         },
       }),
