@@ -131,13 +131,13 @@ const toIconSizeStyle = (size: ButtonSize): Theme => {
 const toSizeStyle = (size: ButtonSize): Theme => {
   switch (size) {
     case 'lg':
-      return { height: 12, px: 4 }
+      return { height: 14, px: 4 }
     case 'md':
-      return { height: 10, px: 2 }
+      return { height: 12, px: 2 }
     case 'sm':
-      return { height: 8, px: 2 }
+      return { height: 10, px: 2 }
     case 'xs':
-      return { height: 4, px: 2 }
+      return { height: 8, px: 2 }
   }
 }
 
