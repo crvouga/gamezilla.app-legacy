@@ -45,7 +45,8 @@ export const CoverArt = (input: { style?: Record<string, unknown>; class?: strin
       borderless: true,
       disableHighlight: true,
       class: 'aspect-square bg-black',
-      platform: 'web',
+      impl: { t: 'svg' },
+      platform: input.platform,
     }),
   ])
 }

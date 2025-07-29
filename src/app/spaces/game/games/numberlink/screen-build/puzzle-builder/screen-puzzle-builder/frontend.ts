@@ -19,6 +19,7 @@ import { ModePlayFrontend } from '../../../@/mode-play/frontend'
 import { SolutionHash } from '../../../@/solutions/solution-hash/solution-hash'
 import { SolutionsDbQueryCache } from '../../../@/solutions/solutions-db-query-cache'
 import { BoardLayout } from '../../../@/ui/board-layout'
+import { BorderImpl } from '../../../@/ui/border-impl'
 import { NumberlinkVariantBoard } from '../../../@/variant'
 import * as BuilderTypes from '../../types'
 import { ScreenPuzzleBuilderSpace } from './space'
@@ -308,7 +309,12 @@ const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
             profile: input.ctx.profilesByUserId[input.ctx.space.hostId],
             subtitle: input.ctx.t('app.editor'),
           }),
-          h(NumberlinkVariantBoard.View, { disabled: true, model: numberlink, platform: input.ctx.platform }),
+          h(NumberlinkVariantBoard.View, {
+            disabled: true,
+            model: numberlink,
+            platform: input.ctx.platform,
+            impl: BorderImpl.fromPlatform(input.ctx.platform),
+          }),
         ]),
       ]),
   })

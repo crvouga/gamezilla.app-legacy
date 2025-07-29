@@ -9,8 +9,10 @@ export type Theme = {
   p?: number | null
   px?: number | null
   py?: number | null
+  overflow?: 'hidden' | null
   pt?: number | null
   pb?: number | null
+  pointerEvents?: 'none' | 'auto' | null
   pl?: number | null
   pr?: number | null
   rounded?: 'full' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | null
@@ -44,6 +46,8 @@ export const theme = (config: Theme): Record<string, string | number | null> => 
   applyBorderWidth(styles, config.borderWidth)
   applyGap(styles, config.gap)
   applyInset(styles, config.inset)
+  applyPointerEvents(styles, config.pointerEvents)
+  applyOverflow(styles, config.overflow)
   return styles
 }
 
@@ -194,6 +198,18 @@ const applyBorderWidth = (styles: Record<string, string | number | null>, border
 const applyInset = (styles: Record<string, string | number | null>, inset: number | null | undefined) => {
   if (inset != null) {
     styles.inset = inset * 4
+  }
+}
+
+const applyPointerEvents = (styles: Record<string, string | number | null>, pointerEvents: Theme['pointerEvents']) => {
+  if (pointerEvents != null) {
+    styles.pointerEvents = pointerEvents
+  }
+}
+
+const applyOverflow = (styles: Record<string, string | number | null>, overflow: Theme['overflow']) => {
+  if (overflow != null) {
+    styles.overflow = overflow
   }
 }
 

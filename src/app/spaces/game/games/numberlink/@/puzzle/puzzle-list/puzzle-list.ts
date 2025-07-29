@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/primitives/box'
 import { Translator } from '~/@/l18n/generated'
+import { IPlatform } from '~/@/platform/platform'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Checkbox, CheckboxState } from '~/@/ui/checkbox/checkbox'
@@ -11,15 +11,15 @@ import { IconPuzzlePiece } from '~/@/ui/icon'
 import { Spinner } from '~/@/ui/spinner'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { NumberlinkVariantBoard } from '../../variant'
 import { Puzzle } from '../puzzle'
+import { PuzzleDbQueryCache } from '../puzzle-db-query-cache'
 import { PuzzleQuery } from '../puzzle-db/interface-query'
 import { PuzzleId } from '../puzzle-id'
 import { PuzzleListQueryForm } from './puzzle-list-query-form'
-import { PuzzleDbQueryCache } from '../puzzle-db-query-cache'
-import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
-import { IPlatform } from '~/@/platform/platform'
 
 const View = (input: {
   selectable?: boolean
@@ -128,7 +128,12 @@ const ViewListItem = (input: {
       input.selectable && h(Box, { class: 'px-4' }, [h(Checkbox, { state: input.selected ? 'checked' : 'unchecked' })]),
 
       h(Box, { class: 'flex flex-row aspect-square h-24 w-24 shrink-0 items-center justify-center overflow-hidden' }, [
-        h(NumberlinkVariantBoard.View, { disabled: true, model: input.puzzle.model, platform: input.ctx.platform }),
+        h(NumberlinkVariantBoard.View, {
+          disabled: true,
+          model: input.puzzle.model,
+          platform: input.ctx.platform,
+          impl: { t: 'svg' },
+        }),
       ]),
 
       h(Box, { class: 'flex flex-col gap-1 truncate overflow-hidden px-4' }, [

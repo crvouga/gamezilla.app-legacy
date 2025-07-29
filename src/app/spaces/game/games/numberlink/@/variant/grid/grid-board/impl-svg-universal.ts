@@ -1,6 +1,6 @@
 import { rescale } from '~/@/math/rescale'
-import { cn } from '~/@/ui/cn'
 import { IconCheckmark } from '~/@/ui/icon'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Frag } from '~/@/vdom/primitives/frag'
 import { Circle } from '~/@/vdom/primitives/svg/circle'
@@ -51,45 +51,46 @@ const eventToNodeId = (e: any, props: BoardProps<VariantGrid.Model>) => {
     }
   }
 }
-
 const View = (props: BoardProps<VariantGrid.Model>) => {
   return h(
     Svg,
     {
-      class: cn(
-        'w-full touch-none overflow-hidden select-none',
-        props.isDragging && 'cursor-grabbing',
-        props.disabled && 'pointer-events-none',
-        props.class,
-      ),
+      class: props.class,
+      style: theme({
+        pointerEvents: props.disabled ? 'none' : undefined,
+        width: 'full',
+        overflow: 'hidden',
+      }),
       viewBox: `${0} ${0} ${props.model.width} ${props.model.height}`,
-      onPointerMove(e: any) {
-        if (!props.isDragging) return
+      onPointerMove: (e: any) => {
+        if (props.disabled || !props.isDragging) return
         const nodeId = eventToNodeId(e, props)
         if (nodeId === lastDraggedOverNodeId) return
         lastDraggedOverNodeId = nodeId
         props.onDraggedOver?.(nodeId)
         console.log('onPointerMove', nodeId)
       },
-      onStartShouldSetResponder: () => true,
-      onResponderMove(e: any) {
-        if (!props.isDragging) return
+      onStartShouldSetResponder: () => !props.disabled,
+      onResponderMove: (e: any) => {
+        if (props.disabled || !props.isDragging) return
         const nodeId = eventToNodeId(e, props)
         if (lastDraggedOverNodeId === nodeId) return
         lastDraggedOverNodeId = nodeId
         props.onDraggedOver?.(nodeId)
         console.log('onResponderMove', nodeId)
       },
-      onLayout(e: any) {
+      onLayout: (e: any) => {
         layoutWidth = e.nativeEvent.layout.width
         layoutHeight = e.nativeEvent.layout.height
       },
-      onPressIn(e: any) {
+      onPressIn: (e: any) => {
+        if (props.disabled) return
         const nodeId = eventToNodeId(e, props)
         props.onPressDown?.(nodeId)
         console.log('onPressIn', nodeId)
       },
-      onPressOut(e: any) {
+      onPressOut: (e: any) => {
+        if (props.disabled) return
         const nodeId = eventToNodeId(e, props)
         props.onPressUp?.(nodeId)
         console.log('onPressOut', nodeId)

@@ -11,6 +11,7 @@ import { HintCalculatorFrontend } from '../solutions/hint-calculator/frontend'
 import { GotHintCalculatorMsg } from '../solutions/hint-calculator/got-hint-calculator-msg.$msg'
 import { SolutionHash } from '../solutions/solution-hash/solution-hash'
 import { SolutionsDbQueryCache } from '../solutions/solutions-db-query-cache'
+import { BorderImpl } from '../ui/border-impl'
 import { NumberlinkVariant, NumberlinkVariantBoard } from '../variant'
 import { CheckmarkAnimation } from './checkmark-animation'
 import { ModePlayFrontendCtx } from './frontend/ctx'
@@ -36,6 +37,7 @@ const View = (input: {
     },
     [
       h(NumberlinkVariantBoard.View, {
+        impl: BorderImpl.fromPlatform(input.platform),
         platform: input.platform,
         disabled: input.disabled,
         model: numberlink,

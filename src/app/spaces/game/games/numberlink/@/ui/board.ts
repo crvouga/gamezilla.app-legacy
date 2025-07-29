@@ -2,6 +2,7 @@ import { IPlatform } from '~/@/platform/platform'
 import { GroupId } from '../numberlink/group-id'
 import { NodeId } from '../numberlink/node-id'
 import type { Edge } from '../numberlink/numberlink'
+import { BorderImpl } from './border-impl'
 
 export type BoardProps<TModel> = {
   platform: IPlatform
@@ -9,6 +10,7 @@ export type BoardProps<TModel> = {
   class?: string
   model: TModel
   isDragging?: boolean
+  impl: BorderImpl
   borderless?: boolean
   disableHighlight?: boolean
   autocompleteEdge?:

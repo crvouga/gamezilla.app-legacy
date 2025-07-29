@@ -14,6 +14,7 @@ import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { ModeEdit } from '.'
 import { GroupId } from '../numberlink/group-id'
 import { BoardLayout } from '../ui/board-layout'
+import { BorderImpl } from '../ui/border-impl'
 import { Color } from '../ui/color'
 import { NumberlinkVariantBoard, NumberlinkVariantDimensions } from '../variant'
 
@@ -33,6 +34,7 @@ const View = (input: {
         h(ViewStatus, input),
 
         h(NumberlinkVariantBoard.View, {
+          impl: BorderImpl.fromPlatform(input.ctx.platform),
           platform: input.ctx.platform,
           model: ModeEdit.toNumberlink(input.model),
           onDraggedOver: (nodeId) => input.dispatch({ t: 'dragged-over', nodeId }),
