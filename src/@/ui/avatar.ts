@@ -10,6 +10,7 @@ type AvatarProps = {
   alt?: string | null | undefined
   class?: string
   onPress?: () => void
+  style?: Record<string, unknown>
 }
 
 const isImage = (src: string | null | undefined): boolean => {
@@ -20,6 +21,7 @@ export const Avatar = (props: AvatarProps) => {
   if (isImage(props.src)) {
     return h(Image, {
       onPress: props.onPress,
+      style: props.style,
       src: props.src ?? '',
       alt: props.alt ?? 'user avatar',
       class: cn(
@@ -34,6 +36,7 @@ export const Avatar = (props: AvatarProps) => {
     {
       onPress: props.onPress,
       class: cn('inline-block aspect-square flex-shrink-0 overflow-hidden rounded-full bg-white/40', props.class),
+      style: props.style,
     },
     [
       h(Svg, { class: 'h-full w-full text-neutral-300', fill: '#ffffffcc', viewBox: '0 0 24 24' }, [

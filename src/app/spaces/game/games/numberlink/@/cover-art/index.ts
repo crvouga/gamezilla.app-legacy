@@ -37,8 +37,8 @@ const GRIDS = [
 
 const GRID = GRIDS[3]
 
-export const CoverArt = (input: { class?: string; platform: IPlatform }) => {
-  return h(Box, { class: input.class }, [
+export const CoverArt = (input: { style?: Record<string, unknown>; class?: string; platform: IPlatform }) => {
+  return h(Box, { style: input.style }, [
     h(VariantGridBoard.View, {
       model: GRID,
       disabled: true,

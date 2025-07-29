@@ -13,7 +13,7 @@ import { Stop } from '~/@/vdom/primitives/svg/stop'
 
 const coverArtId = Uuid.generate()
 
-export const CoverArt = (input: { class?: string }) => {
+export const CoverArt = (input: { style?: Record<string, unknown>; class?: string }) => {
   const ids = {
     playerOneGradient: `playerOneGradient${coverArtId}`,
     playerTwoGradient: `playerTwoGradient${coverArtId}`,
@@ -25,7 +25,7 @@ export const CoverArt = (input: { class?: string }) => {
   const playerOneFill = `url(#${ids.playerOneGradient})`
   const playerTwoFill = `url(#${ids.playerTwoGradient})`
 
-  return h(Svg, { width: '100%', viewBox: '0 0 2 2', ...input }, [
+  return h(Svg, { width: '100%', viewBox: '0 0 2 2', style: input.style }, [
     h(Defs, {}, [
       h(Pattern, { id: ids.holePattern, patternUnits: 'userSpaceOnUse', width: 1, height: 1 }, [
         h(Circle, { cx: 0.5, cy: 0.5, r: 0.425, fill: 'black' }),

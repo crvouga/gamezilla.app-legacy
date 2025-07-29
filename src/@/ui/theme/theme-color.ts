@@ -4,7 +4,10 @@ export type ThemeColorLevel = '50' | '100' | '200' | '300' | '400' | '500' | '60
 
 export type ThemeColorOpacity = '' | '/5' | '/10' | '/20' | '/30' | '/40' | '/50' | '/60' | '/70' | '/80' | '/90'
 
-export type ThemeColor = `${ThemeColorBase}-${ThemeColorLevel}${ThemeColorOpacity}` | 'white' | 'black'
+export type ThemeColor =
+  | `${ThemeColorBase}-${ThemeColorLevel}${ThemeColorOpacity}`
+  | `white${ThemeColorOpacity}`
+  | `black${ThemeColorOpacity}`
 
 const palette: Record<ThemeColorBase, Record<ThemeColorLevel, string>> = {
   neutral: {
@@ -70,17 +73,25 @@ const palette: Record<ThemeColorBase, Record<ThemeColorLevel, string>> = {
 }
 
 const toHex = (color: ThemeColor): string => {
-  if (color === 'white') return '#ffffff'
-  if (color === 'black') return '#000000'
   const [baseLevel, opacity] = color.split('/') as [string, string?]
-  const [base, level] = baseLevel.split('-') as [ThemeColorBase, ThemeColorLevel]
-  const hex = palette[base]?.[level]
-  if (!hex) {
-    throw new Error(`Unknown color: ${color}`)
+
+  let hex: string
+  if (baseLevel === 'white') {
+    hex = '#ffffff'
+  } else if (baseLevel === 'black') {
+    hex = '#000000'
+  } else {
+    const [base, level] = baseLevel.split('-') as [ThemeColorBase, ThemeColorLevel]
+    hex = palette[base]?.[level]
+    if (!hex) {
+      throw new Error(`Unknown color: ${color}`)
+    }
   }
+
   if (!opacity || opacity === '') {
     return hex
   }
+
   // opacity like "50" meaning 50% → alpha = 0.5
   const alpha = (parseInt(opacity, 10) / 1000) * 10 // /100
   const clamped = Number.isFinite(alpha) ? Math.max(0, Math.min(1, alpha)) : 1

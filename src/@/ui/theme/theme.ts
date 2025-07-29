@@ -6,6 +6,7 @@ export type Theme = {
   flex?: number | null
   items?: 'center' | 'start' | 'end' | 'stretch' | 'baseline' | null
   justify?: 'center' | 'start' | 'end' | 'between' | 'around' | 'evenly' | null
+  p?: number | null
   px?: number | null
   py?: number | null
   pt?: number | null
@@ -17,6 +18,7 @@ export type Theme = {
   fontWeight?: 'normal' | 'bold' | 'black' | null
   textSize?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | null
   backgroundColor?: ThemeColor | null
+
   borderColor?: ThemeColor | null
   width?: 'full' | number | null
   height?: 'full' | number | null
@@ -31,7 +33,7 @@ export const theme = (config: Theme): Record<string, string | number | null> => 
   applyFlex(styles, config.flexDirection, config.flex)
   applyItems(styles, config.items)
   applyJustify(styles, config.justify)
-  applyPadding(styles, config.px, config.py, config.pt, config.pb, config.pl, config.pr)
+  applyPadding(styles, config)
   applyBorderRadius(styles, config.rounded)
   applyFontWeight(styles, config.fontWeight)
   applyFontSize(styles, config.textSize)
@@ -75,15 +77,13 @@ const applyJustify = (styles: Record<string, string | number | null>, justify: T
   styles.justifyContent = justify
 }
 
-const applyPadding = (
-  styles: Record<string, string | number | null>,
-  px: number | null | undefined,
-  py: number | null | undefined,
-  pt: number | null | undefined,
-  pb: number | null | undefined,
-  pl: number | null | undefined,
-  pr: number | null | undefined,
-) => {
+const applyPadding = (styles: Record<string, string | number | null>, config: Theme) => {
+  const { p, px, py, pt, pb, pl, pr } = config
+
+  if (p != null) {
+    styles.padding = p * 4
+  }
+
   if (px != null) {
     styles.paddingLeft = px * 4
     styles.paddingRight = px * 4

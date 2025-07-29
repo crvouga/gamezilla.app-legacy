@@ -29,6 +29,7 @@ export type TypographyProps = {
   variant?: TypographyVariant
   skeleton?: boolean
   dataTestId?: string
+  style?: Record<string, unknown>
   class?: string
   sizeClassName?: string
   colorClassName?: string
@@ -91,6 +92,7 @@ export const Typography = (input: TypographyProps) => {
       input.class,
       toTextAlignClass(input),
     ),
+    style: input.style,
     role: input.role,
     'aria-busy': input.skeleton,
     'aria-level': toAriaLevel(input),
