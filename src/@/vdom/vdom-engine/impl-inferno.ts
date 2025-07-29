@@ -1,6 +1,7 @@
 import { Fragment, render } from 'inferno'
 import { createElement } from 'inferno-create-element'
 import { PrimitiveProps } from '../primitive-props'
+import { camelObjectToKebabObject } from '../style'
 import { BOX_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG, TEXT_INPUT_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { updateSafeAreaProps, updateScrollBoxProps } from './web'
@@ -16,6 +17,7 @@ const init = (_config: ImplInferno): IVirtualDomEngine => {
     },
     createElement: (tag: any, props: any, children: any) => {
       props = PrimitiveProps.intoWebStandard(props)
+      props.style = camelObjectToKebabObject(props.style)
       switch (tag) {
         case FRAGMENT_TAG:
           return createElement(Fragment, props, children) as any

@@ -30,3 +30,16 @@ export const kebabObjectToCamelObject = (kebabObject: StylesObjectKebab): Styles
 
   return camelObject
 }
+
+export const camelObjectToKebabObject = (camelObject: StylesObjectCamel): StylesObjectKebab => {
+  const kebabObject: StylesObjectKebab = {}
+
+  for (const camelKey in camelObject) {
+    const camelValue = camelObject[camelKey]
+    const kebabKey = camelStringToKebabString(camelKey)
+    // @ts-ignore
+    kebabObject[kebabKey] = camelValue
+  }
+
+  return kebabObject
+}

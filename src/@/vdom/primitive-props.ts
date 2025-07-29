@@ -1,4 +1,5 @@
 import { AriaRole } from '../html/aria-role'
+import { Theme } from '../ui/theme/theme'
 import { VDom } from './vdom'
 
 export type PrimitiveProps = {
@@ -47,13 +48,17 @@ const intoWebStandard = (props: PrimitiveProps) => {
     ;(props as any).onPointerUp = props.onPressOut
     ;(props as any).onPointerCancel = props.onPressOut
   }
+  if (props.style) {
+    Theme.normalizeToWebStandard(props.style as Record<string, string | number | null>)
+  }
   return props
 }
 
 const intoReactNativeStandard = (props: PrimitiveProps) => {
-  return {
-    ...props,
+  if (props.style) {
+    Theme.normalizeToReactNativeStandard(props.style as Record<string, string | number | null>)
   }
+  return props
 }
 
 export const PrimitiveProps = {
