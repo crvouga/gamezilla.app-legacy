@@ -32,7 +32,7 @@ export const TextField = (input: {
       {
         class: cn(
           PAPER_CLASS_NAME,
-          'flex flex-row h-fit w-full overflow-hidden rounded-md border-2',
+          'flex flex-row h-20 w-full overflow-hidden rounded-md border-2',
           input.error && 'border-2 border-red-500 text-red-500',
           !input.error && 'ring-blue-500 focus-within:ring-2',
         ),
@@ -59,18 +59,11 @@ export const TextField = (input: {
             {
               class: 'rounded-md px-3 ring-blue-500 outline-none focus:ring-2',
               'aria-label': 'Clear input',
-              onPress: (e: any) => {
-                e.preventDefault()
-                const self = document.getElementById(input.id)
-                if (self instanceof HTMLInputElement) {
-                  self.focus()
-                  self.value = ''
-                }
-
+              onPress: (_e: any) => {
                 input.onClear?.()
               },
             },
-            [h(IconXMark, { class: 'size-6' })],
+            [h(IconXMark, { class: 'size-6 text-white' })],
           ),
       ],
     ),
