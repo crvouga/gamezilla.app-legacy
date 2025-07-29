@@ -29,7 +29,7 @@ export const CreateAction = (input: ScreenLayoutProps) => {
         fab: true,
         onPress: input.actionCreate.onSubmit,
         disabled: input.actionCreate.submitDisabled,
-        loading: input.actionCreate.submitLoading || true,
+        loading: input.actionCreate.submitLoading,
         text: input.actionCreate.submitText,
         renderIconStart: input.actionCreate.submitIcon,
       }),
