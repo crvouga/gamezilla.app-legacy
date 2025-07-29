@@ -18,7 +18,7 @@ export type Theme = {
   fontWeight?: 'normal' | 'bold' | 'black' | null
   textSize?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | null
   backgroundColor?: ThemeColor | null
-
+  textAlign?: 'left' | 'center' | 'right' | null
   borderColor?: ThemeColor | null
   width?: 'full' | number | null
   height?: 'full' | number | null
@@ -30,13 +30,14 @@ export type Theme = {
 export const theme = (config: Theme): Record<string, string | number | null> => {
   const styles: Record<string, string | number | null> = {}
   applyPosition(styles, config.position)
-  applyFlex(styles, config.flexDirection, config.flex)
+  applyFlex(styles, config)
   applyItems(styles, config.items)
   applyJustify(styles, config.justify)
   applyPadding(styles, config)
   applyBorderRadius(styles, config.rounded)
   applyFontWeight(styles, config.fontWeight)
   applyFontSize(styles, config.textSize)
+  applyTextAlign(styles, config.textAlign)
   applyColors(styles, config)
   applyWidth(styles, config.width)
   applyHeight(styles, config.height)
@@ -57,14 +58,14 @@ const applyPosition = (styles: Record<string, string | number | null>, position:
   styles.position = position
 }
 
-const applyFlex = (
-  styles: Record<string, string | number | null>,
-  flexDirection: 'row' | 'col' | null | undefined,
-  flex: number | null | undefined,
-) => {
+const applyFlex = (styles: Record<string, string | number | null>, config: Theme) => {
   styles.display = 'flex'
-  styles.flexDirection = flexDirection === 'row' ? 'row' : 'column'
-  styles.flex = flex ?? null
+  if (config.flexDirection) {
+    styles.flexDirection = config.flexDirection === 'row' ? 'row' : 'column'
+  }
+  if (config.flex) {
+    styles.flex = config.flex
+  }
 }
 
 const applyItems = (styles: Record<string, string | number | null>, items: Theme['items']) => {
@@ -145,6 +146,11 @@ const SIZE_MAP = {
 const applyFontSize = (styles: Record<string, string | number | null>, size: Theme['textSize']) => {
   if (!size) return
   styles.fontSize = SIZE_MAP[size] ?? 16
+}
+
+const applyTextAlign = (styles: Record<string, string | number | null>, textAlign: Theme['textAlign']) => {
+  if (!textAlign) return
+  styles.textAlign = textAlign
 }
 
 const applyColors = (styles: Record<string, string | number | null>, config: Theme) => {

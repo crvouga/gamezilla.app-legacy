@@ -1,27 +1,49 @@
 import { chunk } from '~/@/array/chunk'
 import { ensureLength } from '~/@/array/ensure-length'
-import { cn } from '~/@/ui/cn'
 import { Box } from '~/@/vdom/primitives/box'
 import { VDom } from '~/@/vdom/vdom'
 import { h } from '~/@/vdom/vdom-engine/impl'
+import { theme } from '../theme/theme'
 
 export const Grid = (input: {
   columnCount: number
   items: VDom[]
-  rootClass?: string
-  rowClass?: string
-  itemClass?: string
+  rootStyle?: Record<string, unknown>
+  rowStyle?: Record<string, unknown>
+  itemStyle?: Record<string, unknown>
 }) => {
   const rows = chunk(input.items, input.columnCount)
   return h(
     Box,
-    { class: cn('flex flex-1 flex-col', input.rootClass) },
+    {
+      style: {
+        ...theme({
+          flex: 1,
+          flexDirection: 'col',
+        }),
+        ...input.rootStyle,
+      },
+    },
     rows.map((row) =>
       h(
         Box,
-        { class: cn('flex flex-row', input.rowClass) },
+        {
+          style: {
+            ...theme({ flex: 1, flexDirection: 'row' }),
+            ...input.rowStyle,
+          },
+        },
         ensureLength(row, input.columnCount, null).map((item) =>
-          h(Box, { class: cn('flex-1', input.itemClass) }, [item]),
+          h(
+            Box,
+            {
+              style: {
+                ...theme({ flex: 1, flexDirection: 'col' }),
+                ...input.itemStyle,
+              },
+            },
+            [item],
+          ),
         ),
       ),
     ),

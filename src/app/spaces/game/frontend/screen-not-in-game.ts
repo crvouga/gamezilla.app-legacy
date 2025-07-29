@@ -1,5 +1,6 @@
 import { Clickable } from '~/@/ui/clickable'
 import { Grid } from '~/@/ui/grid/grid'
+import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
@@ -55,9 +56,13 @@ const View: SpaceFrontendModule['View'] = (input) => {
 const ViewHostGameSelection = (input: { ctx: SpaceFrontendCtx; dispatch: (msg: MsgFrontend) => void }) => {
   return h(Grid, {
     columnCount: 3,
-    rootClass: 'gap-4 p-4',
-    rowClass: 'gap-4',
-    itemClass: 'flex-1',
+    rootStyle: theme({
+      gap: 4,
+      p: 4,
+    }),
+    rowStyle: theme({
+      gap: 4,
+    }),
     items: GAME_NAME_LIST.map((gameName) =>
       h(GameTile, {
         key: gameName,
@@ -73,7 +78,10 @@ const GameTile = (input: { gameName: GameName; ctx: SpaceFrontendCtx; dispatch: 
   return h(
     Clickable,
     {
-      class: 'flex flex-col gap-2',
+      style: theme({
+        flexDirection: 'col',
+        gap: 4,
+      }),
       role: 'button',
       'aria-label': input.gameName,
       onPress: () => input.dispatch({ t: 'game.clicked-game-tile', gameName: input.gameName }),
@@ -82,13 +90,15 @@ const GameTile = (input: { gameName: GameName; ctx: SpaceFrontendCtx; dispatch: 
       h(GameCoverArt, {
         rounded: true,
         gameName: input.gameName,
-        class: 'pointer-events-none',
         platform: input.ctx.platform,
       }),
       h(Typography, {
-        class: 'w-full text-center text-sm',
+        style: theme({
+          width: 'full',
+          textSize: 'md',
+          textAlign: 'center',
+        }),
         variant: 'label',
-        sizeClassName: 'text-base text-center',
         text: input.ctx.t(input.gameName),
       }),
     ],
