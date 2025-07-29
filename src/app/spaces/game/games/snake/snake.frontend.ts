@@ -187,7 +187,7 @@ export const subscriptions = (input: { ctx: AppFrontendCtxBase }): Sub<Msg> => {
 
 export const View = ({ model, dispatch }: { ctx: AppFrontendCtx; model: Model; dispatch: (msg: Msg) => void }) => {
   if (model.gameStatus.type === 'GameSetup') {
-    return h(Box, {}, [Text({ text: 'View' })])
+    return h(Box, {}, [h(Text, { text: 'View' })])
   }
 
   return h(Box, {}, [h(ViewBoard, { model, dispatch })])

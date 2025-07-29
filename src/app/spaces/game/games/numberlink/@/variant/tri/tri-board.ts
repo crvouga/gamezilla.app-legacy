@@ -5,5 +5,5 @@ import type * as VariantTri from './tri'
 import { Text } from '~/@/vdom/primitives/text'
 
 export const View = (_input: BoardProps<VariantTri.Model>) => {
-  return h(Box, {}, [Text({ text: 'VariantTri' })])
+  return h(Box, {}, [h(Text, { text: 'VariantTri' })])
 }

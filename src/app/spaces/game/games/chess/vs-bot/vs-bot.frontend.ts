@@ -385,8 +385,12 @@ export const View = ({
 
   const botSlot = h(Box, { class: 'flex flex-row w-full items-center gap-3 p-3' }, [
     h(IconRobot, { class: 'h-10 w-10' }),
-    h(Box, { class: 'flex-1 text-lg' }, [Text({ text: ChessBotLevel.toString(model.spaceModel.botLevel) })]),
-    isBotTurn(model.spaceModel) && h(Spinner, { class: 'h-10 w-10' }),
+    h(Box, { class: 'flex-1 text-lg' }, [h(Text, { text: ChessBotLevel.toString(model.spaceModel.botLevel) })]),
+    isBotTurn(model.spaceModel) &&
+      h(Spinner, {
+        class: 'h-10 w-10',
+        iconClass: 'h-10 w-10',
+      }),
   ])
 
   const userSlot = h(Box, { class: 'flex flex-row w-full items-center gap-3 p-3' }, [
@@ -395,7 +399,7 @@ export const View = ({
       src: UserProfile.toAvatarUrl(ctx.profilesByUserId[model.spaceModel.userId]),
     }),
     h(Box, { class: 'flex-1 text-lg' }, [
-      Text({ text: ctx.profilesByUserId[model.spaceModel.userId]?.username ?? '' }),
+      h(Text, { text: ctx.profilesByUserId[model.spaceModel.userId]?.username ?? '' }),
     ]),
   ])
 

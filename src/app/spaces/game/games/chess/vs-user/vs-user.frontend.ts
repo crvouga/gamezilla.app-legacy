@@ -493,7 +493,7 @@ export const View = ({
 
 const ViewGameOverDialog = ({ model }: { model: Model; dispatch: (msg: Msg) => void }) => {
   if (model.spaceModel.type === 'setup') {
-    return h(Box, {}, [Text({ text: toGameText(model.spaceModel) })])
+    return h(Box, {}, [h(Text, { text: toGameText(model.spaceModel) })])
   }
 
   if (model.spaceModel.type === 'game') {

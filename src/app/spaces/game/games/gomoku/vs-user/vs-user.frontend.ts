@@ -143,5 +143,5 @@ export const View = (_input: {
   model: Model
   onCancel: () => void
 }) => {
-  return h(Box, {}, [Text({ text: 'View' })])
+  return h(Box, {}, [h(Text, { text: 'View' })])
 }

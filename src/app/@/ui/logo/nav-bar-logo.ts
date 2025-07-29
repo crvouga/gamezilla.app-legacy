@@ -10,6 +10,6 @@ export const NavBarLogo = (input: { onPress: () => void }) => {
       class: 'flex flex-row h-full w-full items-center justify-center text-4xl',
       onPress: input.onPress,
     },
-    [Text({ text: LOGO_TEXT })],
+    [h(Text, { text: LOGO_TEXT })],
   )
 }

@@ -52,7 +52,6 @@ export const Button = (input: ButtonInput) => {
         widthClass,
         input.fab && 'rounded-[30px]',
         input.disabled && 'opacity-60',
-        input.loading && 'opacity-70',
       ),
       role: 'button',
       'aria-label': input.text ?? '',
@@ -64,10 +63,7 @@ export const Button = (input: ButtonInput) => {
       h(
         Box,
         {
-          class: cn(
-            'flex flex-row h-full items-center justify-center gap-2',
-            input.loading ? 'text-transparent' : null,
-          ),
+          class: cn('flex flex-row h-full items-center justify-center gap-2', input.loading && 'opacity-0'),
         },
         [
           input.renderIconStart?.({
@@ -75,16 +71,17 @@ export const Button = (input: ButtonInput) => {
             fill: 'currentColor',
             stroke: 'currentColor',
           }),
-          Text({
+          h(Text, {
             text: input.text ?? '',
             class: cn('overflow-hidden font-semibold', colorTextClass, sizeClassText),
           }),
         ],
       ),
       input.loading &&
-        h(Box, { class: 'absolute inset-0 flex flex-row items-center justify-center' }, [
-          h(Spinner, { class: 'h-8 w-8' }),
-        ]),
+        h(Spinner, {
+          class: 'absolute inset-0 flex flex-row items-center justify-center',
+          iconClass: 'h-12 w-12 text-white',
+        }),
     ],
   )
 }

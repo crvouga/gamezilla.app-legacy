@@ -26,7 +26,7 @@ export const TextField = (input: {
   onChangeText: (value: string) => void
 }) => {
   return h(Box, { class: 'flex w-full flex-col gap-1' }, [
-    Text({ class: cn('text-base', input.error && 'text-red-500'), text: input.label }),
+    h(Text, { class: cn('text-base', input.error && 'text-red-500'), text: input.label }),
     h(
       Box,
       {
@@ -83,7 +83,7 @@ export const TextField = (input: {
           'data-info': !input.error,
           class: cn('text-sm', input.error && 'text-red-500'),
         },
-        [Text({ text: input.helperText ?? '' })],
+        [h(Text, { text: input.helperText ?? '' })],
       ),
   ])
 }

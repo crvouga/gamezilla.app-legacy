@@ -5,5 +5,5 @@ import type * as VariantHex from './hex'
 import { Text } from '~/@/vdom/primitives/text'
 
 export const View = (_input: BoardProps<VariantHex.Model>) => {
-  return h(Box, {}, [Text({ text: 'VariantHex' })])
+  return h(Box, {}, [h(Text, { text: 'VariantHex' })])
 }

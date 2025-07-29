@@ -39,7 +39,7 @@ export const Tabs = <TTab extends string>({
                 selected === tab ? 'border-b-blue-500 text-blue-500' : 'text-neutral-300',
               ),
             },
-            [Text({ text: labels[tab] })],
+            [h(Text, { text: labels[tab] })],
           ),
         ],
       ),

@@ -132,7 +132,7 @@ const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
   return h(ListItem, {
     icon: (inputIcon) => h(IconLanguage, inputIcon),
     primary: ctx.t('l18n.language'),
-    end: () => Text({ text: ctx.t(model.lang) }),
+    end: () => h(Text, { text: ctx.t(model.lang) }),
     onPress: () => {
       dispatch({ t: 'settings.clicked-open-lang' })
     },
@@ -175,14 +175,14 @@ const ViewMain: FrontendModule['View'] = (props) => {
       h(ScrollBox, { class: 'flex flex-1 flex-col' }, [
         h(ListItem, {
           primary: props.ctx.t('l18n.language'),
-          end: () => h(Box, {}, [Text({ text: props.ctx.t(props.model.lang) })]),
+          end: () => h(Box, {}, [h(Text, { text: props.ctx.t(props.model.lang) })]),
           onPress: () => props.dispatch({ t: 'settings.clicked-open-lang' }),
           link: true,
           icon: (inputIcon) => IconLanguage(inputIcon),
         }),
         h(ListItem, {
           primary: props.ctx.t('l18n.renderer'),
-          end: () => h(Box, {}, [Text({ text: VDomImplWeb.toName(props.model.renderVDomImpl) })]),
+          end: () => h(Box, {}, [h(Text, { text: VDomImplWeb.toName(props.model.renderVDomImpl) })]),
           onPress: () => props.dispatch({ t: 'settings.clicked-open-renderer' }),
           icon: (inputIcon) => IconCode(inputIcon),
           link: true,

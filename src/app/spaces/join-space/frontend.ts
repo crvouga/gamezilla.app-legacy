@@ -116,11 +116,11 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
 const view: SpaceFrontendModule['View'] = (input) => {
   const currentUser = input.ctx.currentUser
 
-  if (!currentUser) return Text({ text: 'No current user' })
+  if (!currentUser) return h(Text, { text: 'No current user' })
 
   const space = input.ctx.space
 
-  if (!space) return Text({ text: 'No space' })
+  if (!space) return h(Text, { text: 'No space' })
 
   const spaceCtx: SpaceFrontendCtx = { ...input.ctx, space, currentUser }
   const hostProfile = input.ctx.profilesByUserId[space.hostId]

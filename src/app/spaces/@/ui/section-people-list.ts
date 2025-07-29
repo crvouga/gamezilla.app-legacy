@@ -59,7 +59,7 @@ const PersonListItem = (input: {
     },
     [
       h(Avatar, { class: 'size-12', src: UserProfile.toAvatarUrl(input.profile) }),
-      h(Box, {}, [Text({ text: input.profile.username })]),
+      h(Box, {}, [h(Text, { text: input.profile.username })]),
       input.profile.userId === input.ctx.space.hostId && h(ViewHostChip, { ctx: input.ctx }),
       input.profile.userId === input.ctx.currentUser.userId && h(ViewYouChip, { ctx: input.ctx }),
     ],

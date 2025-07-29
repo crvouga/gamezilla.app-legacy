@@ -187,7 +187,7 @@ const ViewPuzzleCell = ({ onPress, index }: { onPress: () => void; index: number
       onPress: onPress,
       class: 'flex flex-row h-full w-full items-center justify-center overflow-hidden rounded text-lg font-normal',
     },
-    [Text({ text: String(index + 1) })],
+    [h(Text, { text: String(index + 1) })],
   )
 }
 
@@ -211,7 +211,7 @@ export const _ViewErrorCell = ({ onPress, index }: { onPress: () => void; index:
       class:
         'flex flex-row h-full w-full items-center justify-center overflow-hidden rounded bg-orange-500/50 text-xl font-bold',
     },
-    [Text({ text: String(index + 1) })],
+    [h(Text, { text: String(index + 1) })],
   )
 }
 

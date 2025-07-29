@@ -149,7 +149,7 @@ const upsertSpace = async (spaceDb: ISpaceDb, _spaceId: SpaceId, space: Space) =
 const upsertSpaceThrottled = throttleByKey({
   fn: upsertSpace,
   keyFn: (_spaceDb, spaceId, _space) => spaceId,
-  throttle: TimeSpan.seconds(10),
+  throttle: TimeSpan.seconds(3),
   behavior: 'use-latest',
 })
 

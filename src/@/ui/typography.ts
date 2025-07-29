@@ -1,9 +1,8 @@
-import type { TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/primitives/box'
 import { AriaRole } from '~/@/html/aria-role'
-import { cn } from './cn'
+import type { TranslatedText } from '~/@/l18n'
 import { h } from '~/@/vdom/h'
 import { Text } from '../vdom/primitives/text'
+import { cn } from './cn'
 
 export type TypographyVariant = 'title' | 'body' | 'label' | 'subtitle' | 'caption'
 
@@ -25,7 +24,7 @@ const colorClassNames: { [color in TypographyColor]: string } = {
   inherit: 'text-inherit',
 }
 
-type Props = {
+export type TypographyProps = {
   text: TranslatedText
   variant?: TypographyVariant
   skeleton?: boolean
@@ -38,7 +37,7 @@ type Props = {
   align?: 'left' | 'center' | 'right'
 }
 
-const toAriaLevel = (input: Props): number | undefined => {
+const toAriaLevel = (input: TypographyProps): number | undefined => {
   switch (input.role) {
     case 'heading': {
       switch (input.variant) {
@@ -64,7 +63,7 @@ const toAriaLevel = (input: Props): number | undefined => {
 
 const SKELETON_CLASS = 'animate-pulse text-transparent select-none pointer-events-none bg-neutral-500 rounded'
 
-const toTextAlignClass = (input: Props): string => {
+const toTextAlignClass = (input: TypographyProps): string => {
   switch (input.align) {
     case 'left':
       return 'text-left'
@@ -77,34 +76,26 @@ const toTextAlignClass = (input: Props): string => {
   }
 }
 
-export const Typography = (input: Props) => {
+export const Typography = (input: TypographyProps) => {
   const sizeClassName = input.sizeClassName ?? sizeClassNames[input.variant ?? 'body']
   const colorClassName = input.colorClassName
     ? input.colorClassName
     : input.color && !input.skeleton
       ? colorClassNames[input.color]
       : 'text-white'
-  return h(
-    Box,
-    {
-      class: cn(
-        sizeClassName,
-        colorClassName,
-        input.skeleton ? SKELETON_CLASS : null,
-        input.class,
-        toTextAlignClass(input),
-      ),
-      role: input.role,
-      'aria-busy': input.skeleton,
-      'aria-level': toAriaLevel(input),
-      'aria-label': input.text,
-      'data-testid': input.dataTestId,
-    },
-    [
-      Text({
-        text: input.text,
-        class: cn(sizeClassName, colorClassName, toTextAlignClass(input)),
-      }),
-    ],
-  )
+  return h(Text, {
+    class: cn(
+      sizeClassName,
+      colorClassName,
+      input.skeleton ? SKELETON_CLASS : null,
+      input.class,
+      toTextAlignClass(input),
+    ),
+    role: input.role,
+    'aria-busy': input.skeleton,
+    'aria-level': toAriaLevel(input),
+    'aria-label': input.text,
+    'data-testid': input.dataTestId,
+    text: input.text,
+  })
 }

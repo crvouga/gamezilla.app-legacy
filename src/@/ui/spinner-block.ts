@@ -9,6 +9,6 @@ export const SpinnerBlock = (props: { class?: string }) => {
     {
       class: cn('flex flex-row h-full w-full items-center justify-center', props.class),
     },
-    [h(Spinner, { class: props.class ?? 'size-20' })],
+    [h(Spinner, { class: props.class ?? 'size-20', iconClass: 'size-20' })],
   )
 }

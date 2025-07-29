@@ -21,7 +21,7 @@ export const Select = <T>(props: {
 }) => {
   const labelId = `${props.id}-label`
   return h(Box, { class: 'flex w-full flex-col gap-1', 'data-testid': props.dataTestId }, [
-    Text({
+    h(Text, {
       id: labelId,
       class: cn('text-base', props.error && 'text-red-500'),
       text: props.label,
@@ -65,6 +65,6 @@ export const Select = <T>(props: {
       }),
     ),
     typeof props.helperText === 'string' &&
-      h(Box, { class: cn('text-sm', props.error && 'text-red-500') }, [Text({ text: props.helperText })]),
+      h(Box, { class: cn('text-sm', props.error && 'text-red-500') }, [h(Text, { text: props.helperText })]),
   ])
 }

@@ -209,7 +209,7 @@ export const View = ({
   const currentUserPlayer = model.players[ctx.currentUser.userId]
 
   return h(Box, {}, [
-    !currentUserPlayer && h(Box, {}, [Text({ text: 'Spectating' })]),
+    !currentUserPlayer && h(Box, {}, [h(Text, { text: 'Spectating' })]),
     h(Svg, { width: '100%', viewBox }, [
       h(Rect, { x: model.lower.x, y: model.lower.y, width: '100%', height: '100%', fill: '#000' }),
       ...maze.edges.map(([a, b]) =>

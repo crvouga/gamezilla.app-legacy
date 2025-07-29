@@ -13,7 +13,7 @@ export const AlertError = ({ class: class_, text }: { text?: string; class?: str
       'aria-label': text,
       class: cn('flex flex-row w-full items-center rounded-md bg-red-500 p-4 text-white', class_),
     },
-    [h(Box, { class: 'mr-2' }, [h(IconExclamationCircle, { class: 'size-6' })]), Text({ text: text ?? '' })],
+    [h(Box, { class: 'mr-2' }, [h(IconExclamationCircle, { class: 'size-6' })]), h(Text, { text: text ?? '' })],
   )
 }
 

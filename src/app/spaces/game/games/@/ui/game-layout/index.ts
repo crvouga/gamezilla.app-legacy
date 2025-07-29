@@ -32,7 +32,7 @@ export const LayoutGame = ({
           {
             class: 'flex flex-row w-full items-center justify-center bg-blue-500 py-1 text-sm font-semibold text-white',
           },
-          [Text({ text: ctx.t('game.you-are-spectating') })],
+          [h(Text, { text: ctx.t('game.you-are-spectating') })],
         ),
       children,
     ].filter(Boolean),

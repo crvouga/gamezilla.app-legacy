@@ -6,5 +6,5 @@ import { Text } from '~/@/vdom/primitives/text'
 export const init = initShared
 
 export const View = (_input: { model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
-  return h(Box, {}, [Text({ text: 'battleship' })])
+  return h(Box, {}, [h(Text, { text: 'battleship' })])
 }

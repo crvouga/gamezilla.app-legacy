@@ -3,5 +3,5 @@ import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
 
 export const ListLayout = () => {
-  return h(Box, {}, [Text({ text: 'ListLayout' })])
+  return h(Box, {}, [h(Text, { text: 'ListLayout' })])
 }

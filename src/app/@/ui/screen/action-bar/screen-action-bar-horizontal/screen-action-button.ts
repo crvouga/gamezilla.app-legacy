@@ -63,6 +63,7 @@ export const ScreenActionButton = (input: ScreenAction & { class?: string }) => 
           [
             h(Spinner, {
               class: toIconSizeClasses(size),
+              iconClass: toIconSizeClasses(size),
             }),
           ],
         ),

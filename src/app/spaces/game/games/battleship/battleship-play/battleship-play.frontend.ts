@@ -5,8 +5,8 @@ import { ModelSpace } from './battleship-play.types'
 
 const View = (input: { modelSpace: ModelSpace }) => {
   return h(Box, {}, [
-    h(Box, {}, [Text({ text: 'Play' })]),
-    ...input.modelSpace.players.map((player) => Text({ text: String(player) })),
+    h(Box, {}, [h(Text, { text: 'Play' })]),
+    ...input.modelSpace.players.map((player) => h(Text, { text: String(player) })),
   ])
 }
 

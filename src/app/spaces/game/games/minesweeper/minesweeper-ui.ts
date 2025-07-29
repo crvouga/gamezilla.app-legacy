@@ -5,7 +5,7 @@ import { Text } from '~/@/vdom/primitives/text'
 export type GameMinesweeperInput = null
 
 export function GameMinesweeper(_input: GameMinesweeperInput) {
-  return h(Box, {}, [Text({ text: 'Welcome to GameMinesweeper!' })])
+  return h(Box, {}, [h(Text, { text: 'Welcome to GameMinesweeper!' })])
 }
 
 export default GameMinesweeper

@@ -32,11 +32,11 @@ export const ViewForm = (input: {
 }) => {
   return h(Box, { class: 'flex flex-col gap-4 p-6' }, [
     h(Box, { class: 'flex flex-row items-center justify-center gap-1 text-center text-4xl font-bold' }, [
-      h(Box, {}, [Text({ text: `${input.form.width}w` })]),
+      h(Box, {}, [h(Text, { text: `${input.form.width}w` })]),
 
       h(IconXMark, { class: 'size-6' }),
 
-      h(Box, {}, [Text({ text: `${input.form.height}h` })]),
+      h(Box, {}, [h(Text, { text: `${input.form.height}h` })]),
     ]),
 
     h(Box, { class: 'flex flex-col gap-3' }, [

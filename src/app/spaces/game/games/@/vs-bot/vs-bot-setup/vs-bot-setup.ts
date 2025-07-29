@@ -255,7 +255,7 @@ export const View = ({
                   botLevel.renderIcon({
                     class: 'w-10 h-10',
                   }),
-                  Text({ text: botLevel.label }),
+                  h(Text, { text: botLevel.label }),
                 ],
               )
             }),

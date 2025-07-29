@@ -106,7 +106,7 @@ const ScreenActionButton = (input: ScreenAction) => {
 
       input.loading &&
         h(Box, { class: 'absolute inset-0 flex flex-row h-full w-full items-center justify-center' }, [
-          h(Spinner, { class: toIconSizeClasses(size) }),
+          h(Spinner, { class: toIconSizeClasses(size), iconClass: toIconSizeClasses(size) }),
         ]),
     ],
   )

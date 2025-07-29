@@ -227,7 +227,7 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
             h(Winner, { ...input, winner: gameOver.winner }),
             input.onPlayAgain && !input.isSpectating
               ? h(Box, { class: 'flex flex-row flex-1 items-center justify-center pb-2 text-2xl font-bold' }, [
-                  Text({ text: 'Tap to play again' }),
+                  h(Text, { text: 'Tap to play again' }),
                 ])
               : h(Box, { class: 'flex-1' }),
           ],
@@ -247,7 +247,7 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
               ? h(
                   Box,
                   { class: 'flex flex-row flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0' },
-                  [Text({ text: 'Tap to play again' })],
+                  [h(Text, { text: 'Tap to play again' })],
                 )
               : h(Box, { class: 'flex-1' }),
           ],
@@ -321,7 +321,7 @@ const Draw = (input: Input) => {
 
   return h(Box, { class: 'flex flex-row h-full w-full flex-1 items-center justify-center' }, [
     h(Box, {}, [playerOneSlot, playerTwoSlot]),
-    h(Box, {}, [Text({ text: 'Tie' })]),
+    h(Box, {}, [h(Text, { text: 'Tie' })]),
   ])
 }
 

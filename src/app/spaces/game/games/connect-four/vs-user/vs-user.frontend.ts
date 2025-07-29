@@ -1,12 +1,13 @@
 import { TranslatedText } from '~/@/l18n'
 import { Sub } from '~/@/sub'
 import { Avatar } from '~/@/ui/avatar'
-import { Box } from '~/@/vdom/primitives/box'
 import { Button } from '~/@/ui/button'
-import { IconArrowLeft, IconArrowRotateLeft, IconCheckmarkCircle, IconFlag, IconSpinner, IconXMark } from '~/@/ui/icon'
+import { IconArrowLeft, IconArrowRotateLeft, IconCheckmarkCircle, IconFlag, IconXMark } from '~/@/ui/icon'
 import { Paper } from '~/@/ui/paper'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Text } from '~/@/vdom/primitives/text'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
@@ -29,7 +30,7 @@ import {
   type StateGameOver,
   toPlayerType,
 } from './vs-user.types'
-import { Text } from '~/@/vdom/primitives/text'
+import { Spinner } from '~/@/ui/spinner'
 
 //
 //
@@ -344,8 +345,8 @@ const ViewGameOverMessage = ({
 
   if (modelSpace.rematch.type === 'Asking' && modelSpace.rematch.asker === currentPlayerType) {
     return h(Box, {}, [
-      h(Box, { class: 'mb-4 text-center text-xl' }, [Text({ text: 'Waiting for response' })]),
-      h(IconSpinner, { class: 'mb-4 h-8 w-8 animate-spin' }),
+      h(Box, { class: 'mb-4 text-center text-xl' }, [h(Text, { text: 'Waiting for response' })]),
+      h(Spinner, { class: 'mb-4 h-8 w-8', iconClass: 'h-8 w-8' }),
       h(Button, {
         variant: 'contained',
         width: 'full',
@@ -365,7 +366,7 @@ const ViewGameOverMessage = ({
     currentPlayerType !== null
   ) {
     return h(Box, {}, [
-      h(Box, {}, [Text({ text: 'Rematch?' })]),
+      h(Box, {}, [h(Text, { text: 'Rematch?' })]),
       h(Box, { class: 'flex flex-row w-full items-center justify-center gap-4' }, [
         h(Button, {
           variant: 'contained',
@@ -396,7 +397,7 @@ const ViewGameOverMessage = ({
   }
 
   if (modelSpace.gameOver.type === 'Draw') {
-    return h(Box, { class: 'text-xl' }, [Text({ text: 'Tie' })])
+    return h(Box, { class: 'text-xl' }, [h(Text, { text: 'Tie' })])
   }
 
   if (modelSpace.gameOver.type === 'resignation') {
@@ -414,13 +415,13 @@ const ViewGameOverMessage = ({
             src: UserProfile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[winner]]),
           }),
         ]),
-        h(Box, {}, [Text({ text: 'Winner' })]),
+        h(Box, {}, [h(Text, { text: 'Winner' })]),
       ])
     }
 
     return h(Box, {}, [
-      h(Box, {}, [Text({ text: currentPlayerType === winner ? 'You Won' : 'You Lost' })]),
-      h(Box, {}, [Text({ text: 'by resignation' })]),
+      h(Box, {}, [h(Text, { text: currentPlayerType === winner ? 'You Won' : 'You Lost' })]),
+      h(Box, {}, [h(Text, { text: 'by resignation' })]),
     ])
   }
 
@@ -436,11 +437,11 @@ const ViewGameOverMessage = ({
             src: UserProfile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[winner]]),
           }),
         ]),
-        h(Box, {}, [Text({ text: 'Winner' })]),
+        h(Box, {}, [h(Text, { text: 'Winner' })]),
       ])
     }
 
-    return h(Box, {}, [Text({ text: currentPlayerType === winner ? 'You Won' : 'You Lost' })])
+    return h(Box, {}, [h(Text, { text: currentPlayerType === winner ? 'You Won' : 'You Lost' })])
   }
 
   return null
@@ -468,7 +469,7 @@ const Feedback = ({ ctx, modelSpace }: { ctx: SpaceFrontendCtx; modelSpace: Stat
 
   return h(Box, { class: 'flex flex-row items-center justify-center gap-2 text-center' }, [
     h(PlayerIcon, { class: 'h-4 w-4', playerType: turn }),
-    Text({ text: 'Your Turn' }),
+    h(Text, { text: 'Your Turn' }),
   ])
 }
 

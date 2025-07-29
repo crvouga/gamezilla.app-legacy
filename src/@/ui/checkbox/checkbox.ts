@@ -27,7 +27,7 @@ export const Checkbox = (input: { state: CheckboxState; onChange?: (checkedNew: 
         }
       },
     },
-    [Text({ text: toCheckboxText(input.state) })],
+    [h(Text, { text: toCheckboxText(input.state) })],
   )
 }
 

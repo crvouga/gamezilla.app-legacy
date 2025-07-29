@@ -198,7 +198,7 @@ export const ViewPage = ({
 }
 
 const ViewNotInParty = (_input: { ctx: AppFrontendCtx; model: Model; dispatch: (msg: Msg) => void }) => {
-  return h(Box, {}, [Text({ text: 'ViewNotInParty' })])
+  return h(Box, {}, [h(Text, { text: 'ViewNotInParty' })])
 }
 
 export const ViewBanner = ({
@@ -222,7 +222,7 @@ export const ViewBanner = ({
     return null
   }
 
-  return h(Box, {}, [Text({ text: 'ViewBanner' })])
+  return h(Box, {}, [h(Text, { text: 'ViewBanner' })])
 }
 
 //

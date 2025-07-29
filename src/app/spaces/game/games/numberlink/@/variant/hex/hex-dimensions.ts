@@ -27,5 +27,5 @@ export const init = (input: { width: number; height: number; side: number }): Mo
 }
 
 export const ViewForm = (_input: { form: Model; onInput: (dimensions: Model) => void }) => {
-  return h(Box, {}, [Text({ text: 'hex dimensions form' })])
+  return h(Box, {}, [h(Text, { text: 'hex dimensions form' })])
 }

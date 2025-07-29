@@ -412,7 +412,7 @@ const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
       })
     default:
       return h(Box, { class: 'flex w-full flex-1 items-center justify-center' }, [
-        Text({ text: 'Logged out', class: 'text-white' }),
+        h(Text, { text: 'Logged out', class: 'text-white' }),
         h(
           Button,
           {
@@ -425,7 +425,7 @@ const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
               }),
             text: input.ctx.t('login'),
           },
-          [Text({ text: 'Login' })],
+          [h(Text, { text: 'Login' })],
         ),
       ])
   }
@@ -453,7 +453,7 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
     case 'settings':
     case 'auth':
       return h(Box, { class: 'flex w-full flex-1 items-center justify-center' }, [
-        Text({ text: 'Logged in', class: 'text-white' }),
+        h(Text, { text: 'Logged in', class: 'text-white' }),
         h(
           Button,
           {

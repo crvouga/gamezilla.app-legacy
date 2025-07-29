@@ -162,7 +162,7 @@ export const View = ({
                     userId: result.userId,
                   }),
               },
-              [Text({ text: result.username })],
+              [h(Text, { text: result.username })],
             ),
           ]),
         ),

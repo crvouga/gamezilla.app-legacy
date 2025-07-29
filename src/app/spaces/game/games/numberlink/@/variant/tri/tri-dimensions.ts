@@ -18,5 +18,5 @@ export const init = (input: { side: number }): Model => {
 }
 
 export const ViewForm = (_input: { form: Model; onInput: (dimensions: Model) => void }) => {
-  return h(Box, {}, [Text({ text: 'tri dimensions form' })])
+  return h(Box, {}, [h(Text, { text: 'tri dimensions form' })])
 }

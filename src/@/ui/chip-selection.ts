@@ -52,7 +52,7 @@ export const ChipSelection = <T>({
               }
             },
           },
-          [Text({ text: option.label })],
+          [h(Text, { text: option.label })],
         ),
       ),
     ),

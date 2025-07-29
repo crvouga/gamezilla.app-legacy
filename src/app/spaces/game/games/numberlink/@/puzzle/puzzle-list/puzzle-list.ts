@@ -87,7 +87,11 @@ const View = (input: {
             label: input.ctx.t('game.numberlink.no-puzzles'),
           }),
 
-        isLoading && h(Spinner, {}),
+        isLoading &&
+          h(Spinner, {
+            class: 'w-12 h-12',
+            iconClass: 'w-12 h-12',
+          }),
 
         h(Gutter, { variant: 'screen' }),
       ],
