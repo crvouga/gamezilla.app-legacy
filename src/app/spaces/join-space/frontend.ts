@@ -33,7 +33,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
 
 const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
-    case 'join-space.clicked-person-list-item': {
+    case 'join-space.clicked-person-menu-item': {
       const isOpen = input.model.opened === 'join-space.person-preview-surface'
       if (isOpen) {
         return {
@@ -153,7 +153,7 @@ const view: SpaceFrontendModule['View'] = (input) => {
 
         h(SectionPeopleList, {
           ctx: spaceCtx,
-          onPressItem: (userId) => input.dispatch({ t: 'join-space.clicked-person-list-item', userId }),
+          onPressItem: (userId) => input.dispatch({ t: 'join-space.clicked-person-menu-item', userId }),
           renderItem: (profile, vDom) =>
             h(SurfaceLayout, {
               ctx: spaceCtx,

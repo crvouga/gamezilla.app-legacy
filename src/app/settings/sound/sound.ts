@@ -2,7 +2,7 @@ import { Translator as SoundFrontend } from '~/@/l18n/generated'
 import { sleep } from '~/@/promise/sleep'
 import { type Result } from '~/@/result'
 import { IconVolumeHigh, IconVolumeXMark } from '~/@/ui/icon'
-import { ListItem } from '~/@/ui/list-item'
+import { MenuItem } from '~/@/ui/menu-item'
 import { SwitchButton } from '~/@/ui/switch-button'
 import { h } from '~/@/vdom/h'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
@@ -141,14 +141,14 @@ export const ViewIcon = (input: { model: Model; class: string; fill?: string; st
   return h(IconVolumeHigh, { class: input.class, fill: input.fill, stroke: input.stroke })
 }
 
-export const ViewSoundListItem = (input: {
+export const ViewSoundMenuItem = (input: {
   model: Model
   dispatch: (m: Msg) => void
   ctx: {
     t: SoundFrontend
   }
 }) => {
-  return h(ListItem, {
+  return h(MenuItem, {
     onPress: () =>
       input.dispatch({
         t: 'sound.toggle-mute',

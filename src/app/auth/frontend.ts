@@ -5,7 +5,7 @@ import { Sub } from '~/@/sub'
 import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
 import { IconMobilePhone, IconUserCircle } from '~/@/ui/icon'
-import { ListItem } from '~/@/ui/list-item'
+import { MenuItem } from '~/@/ui/menu-item'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -275,7 +275,7 @@ const ViewModals = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; disp
   })
 }
 
-const ViewCurrentUserListItem = (input: {
+const ViewCurrentUserMenuItem = (input: {
   model: ModelFrontend
   ctx: AppFrontendCtxBase
   dispatch: (msg: MsgFrontend) => void
@@ -283,19 +283,19 @@ const ViewCurrentUserListItem = (input: {
   const currentUser = toCurrentUserState({ model: input.model.currentUser, ctx: input.ctx })
   switch (currentUser.t) {
     case 'loading': {
-      return h(ListItem, {
+      return h(MenuItem, {
         icon: (input) => h(IconUserCircle, input),
         primary: input.ctx.t('app.add'),
       })
     }
     case 'logged-out': {
-      return h(ListItem, {
+      return h(MenuItem, {
         icon: (input) => h(IconUserCircle, input),
         primary: input.ctx.t('app.add'),
       })
     }
     case 'logged-in': {
-      return h(ListItem, {
+      return h(MenuItem, {
         icon: (input) => h(Avatar, { src: UserProfile.toAvatarUrl(currentUser.userProfile), ...input }),
         primary: TranslatedText.of(`${input.ctx.t('auth.logged-in-as')} ${currentUser.userProfile.username}`),
       })
@@ -309,6 +309,6 @@ export const AuthFrontend = {
   subscriptions,
   View,
   ViewModals,
-  ViewCurrentUserListItem,
+  ViewCurrentUserMenuItem,
   initCtx,
 }

@@ -19,7 +19,7 @@ export const Dialog = (input: {
         input.open ? 'opacity-100' : 'pointer-events-none opacity-0',
         input.open ? (input.delay === '300ms' ? 'delay-300' : '') : '',
       ),
-      'aria-hidden': input.open,
+      ...(input.open ? {} : { 'aria-hidden': true }),
       'data-testid': input.testId,
       onPress: (e: unknown) => {
         if (

@@ -27,7 +27,7 @@ describe('ScreenAddPuzzleSpace', () => {
     const puzzle = await Puzzle.random()
     const before = f.update(f.initial, [
       {
-        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-menu-item',
         puzzleId: puzzle.id,
         userId: f.createdBy,
       },
@@ -50,7 +50,7 @@ describe('ScreenAddPuzzleSpace', () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-menu-item',
         puzzleId: puzzle.id,
         userId: f.createdBy,
       },
@@ -65,14 +65,14 @@ describe('ScreenAddPuzzleSpace', () => {
     const f = await Fixture()
     const before = f.update(f.initial, [
       {
-        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-menu-item',
         puzzleId: puzzle.id,
         userId: f.createdBy,
       },
     ])
     const after = f.update(before, [
       {
-        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-menu-item',
         puzzleId: puzzle.id,
         userId: f.createdBy,
       },
@@ -103,7 +103,7 @@ describe('ScreenAddPuzzleSpace', () => {
     })
     const modelSpace = f.update(f.initial, [
       {
-        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-menu-item',
         puzzleId: newPuzzle.id,
         userId: f.createdBy,
       },
@@ -148,7 +148,7 @@ describe('ScreenAddPuzzleSpace', () => {
         userId: f.createdBy,
       },
       {
-        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-menu-item',
         puzzleId: assertNotNullish(f.puzzles[0]).id,
         userId: f.createdBy,
       },
@@ -201,7 +201,7 @@ describe('ScreenAddPuzzleSpace', () => {
         userId: f.createdBy,
       },
       {
-        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-menu-item',
         puzzleId: puzzle.id,
         userId: f.createdBy,
       },
@@ -223,7 +223,7 @@ describe('ScreenAddPuzzleSpace', () => {
         userId: f.createdBy,
       },
       {
-        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-menu-item',
         puzzleId: puzzle.id,
         userId: f.createdBy,
       },

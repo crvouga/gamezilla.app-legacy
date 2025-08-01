@@ -1,4 +1,4 @@
-import { ListItem } from '~/@/ui/list-item'
+import { MenuItem } from '~/@/ui/menu-item'
 import { RadioInputIcon } from '~/@/ui/radio-input'
 import { h } from '~/@/vdom/h'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
@@ -71,7 +71,7 @@ const View: FrontendModule['View'] = (input) => {
         VDomImplWeb.VISIBLE.map((vDomImpl) => {
           const isSelected = vDomImpl === input.model.renderVDomImpl
           const isDefault = vDomImpl === input.model.renderVDomImplInitial
-          return h(ListItem, {
+          return h(MenuItem, {
             key: vDomImpl,
             primary: VDomImplWeb.toName(vDomImpl),
             secondary: isDefault && false ? input.ctx.t('l18n.default') : undefined,

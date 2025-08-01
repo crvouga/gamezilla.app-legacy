@@ -46,7 +46,7 @@ describe('PeopleActionFrontend', () => {
 //     const output = f.update(f.initial, [
 //       {
 //         msg: {
-//           t: 'people-action.clicked-person-list-item',
+//           t: 'people-action.clicked-person-menu-item',
 //           userId: someUserId,
 //         },
 //       },
@@ -62,7 +62,7 @@ describe('PeopleActionFrontend', () => {
 //     const output = f.update(f.initial, [
 //       {
 //         msg: {
-//           t: 'people-action.clicked-person-list-item',
+//           t: 'people-action.clicked-person-menu-item',
 //           userId: someUserId,
 //         },
 //       },
@@ -98,7 +98,7 @@ describe('PeopleActionFrontend', () => {
 //     const output = f.update(f.initial, [
 //       {
 //         msg: {
-//           t: 'people-action.clicked-person-list-item',
+//           t: 'people-action.clicked-person-menu-item',
 //           userId: someUserId,
 //         },
 //       },
@@ -118,7 +118,7 @@ describe('PeopleActionFrontend', () => {
 //     const output = f.update(f.initial, [
 //       {
 //         msg: {
-//           t: 'people-action.clicked-person-list-item',
+//           t: 'people-action.clicked-person-menu-item',
 //           userId: someUserId,
 //         },
 //       },
@@ -174,7 +174,7 @@ describe('PeopleActionFrontend', () => {
 //     const output = f.update(f.initial, [
 //       {
 //         msg: {
-//           t: 'people-action.clicked-person-list-item',
+//           t: 'people-action.clicked-person-menu-item',
 //           userId: someUserId,
 //         },
 //       },

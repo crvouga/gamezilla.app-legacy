@@ -19,7 +19,7 @@ type Input = {
   selected?: boolean
 }
 
-export const ListItem = (input: Input) => {
+export const MenuItem = (input: Input) => {
   return h(
     Box,
     {
@@ -29,7 +29,7 @@ export const ListItem = (input: Input) => {
       'aria-selected': input.selected,
     },
     [
-      h(ListItemContent, {
+      h(MenuItemContent, {
         primary: input.primary,
         icon: input.icon,
         secondary: input.secondary,
@@ -43,7 +43,7 @@ export const ListItem = (input: Input) => {
   )
 }
 
-const ListItemContent = (input: {
+const MenuItemContent = (input: {
   primary: TranslatedText
   icon?: (input: { class: string; width: number; height: number; fill: string; stroke: string }) => VDom
   end?: () => VDom

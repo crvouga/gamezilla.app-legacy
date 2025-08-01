@@ -40,7 +40,7 @@ describe('ScreenAddPuzzleFrontend', () => {
 //     const output = ScreenAddPuzzle.update({
 //       ...f,
 //       msgSpace: withEventMeta({
-//         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
+//         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-menu-item',
 //         userId: f.ctx.currentUser.userId,
 //         puzzleId: f.puzzle.id,
 //       }),
@@ -62,7 +62,7 @@ describe('ScreenAddPuzzleFrontend', () => {
 //     const modelSpace = ScreenAddPuzzleSpace.updateSpace({
 //       ...f,
 //       msgSpace: withEventMeta({
-//         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
+//         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-menu-item',
 //         userId: f.ctx.currentUser.userId,
 //         puzzleId: f.puzzle.id,
 //       }),

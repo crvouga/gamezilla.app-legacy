@@ -20,7 +20,7 @@ import { SpaceFrontendModule } from '../space-frontend'
 export type FrontendMsg =
   | { t: 'people-action.closed-surface' }
   | { t: 'people-action.clicked-people-action' }
-  | { t: 'people-action.clicked-person-list-item'; userId: UserId }
+  | { t: 'people-action.clicked-person-menu-item'; userId: UserId }
 
 const update: SpaceFrontendModule['update'] = (input) => {
   const { model } = input
@@ -64,7 +64,7 @@ const updatePeopleModals: SpaceFrontendModule['update'] = ({ msg, model }) => {
       }
     }
 
-    case 'people-action.clicked-person-list-item': {
+    case 'people-action.clicked-person-menu-item': {
       return {
         model: { ...model, openedPreviewUserId: msg.userId, opened: 'people.person-preview-surface' },
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
@@ -142,7 +142,7 @@ const ViewSurfaces = (
               render: () =>
                 h(SectionPeopleList, {
                   ctx: spaceCtx,
-                  onPressItem: (userId) => input.dispatch({ t: 'people-action.clicked-person-list-item', userId }),
+                  onPressItem: (userId) => input.dispatch({ t: 'people-action.clicked-person-menu-item', userId }),
                 }),
             },
           }),

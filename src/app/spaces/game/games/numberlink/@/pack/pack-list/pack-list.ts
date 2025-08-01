@@ -43,7 +43,7 @@ const View = (input: {
           }),
 
         ...packs.sort(descend((pack) => UnixMs.toNumber(pack.lastUpdatedAt))).map((pack) =>
-          h(ViewPackListItem, {
+          h(ViewPackMenuItem, {
             ctx: input.ctx,
             key: pack.id,
             pack: pack,
@@ -57,7 +57,7 @@ const View = (input: {
   ])
 }
 
-const ViewPackListItem = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pack; onPress: () => void }) => {
+const ViewPackMenuItem = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pack; onPress: () => void }) => {
   return h(
     ClickableTransparent,
     {
@@ -68,7 +68,7 @@ const ViewPackListItem = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pa
       false && h(IconBox, { class: 'h-9 w-9 shrink-0' }),
       h(Box, { class: 'flex flex-1 flex-col overflow-hidden' }, [
         h(Typography, { text: TranslatedText.of(input.pack.name), variant: 'body' }),
-        h(Typography, { text: toListItemSecondaryText(input), variant: 'subtitle', color: 'text-secondary' }),
+        h(Typography, { text: toMenuItemSecondaryText(input), variant: 'subtitle', color: 'text-secondary' }),
       ]),
       h(Typography, {
         text: input.ctx.t('game.numberlink.puzzle-count', input.pack.puzzleIds.length),
@@ -80,7 +80,7 @@ const ViewPackListItem = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pa
   )
 }
 
-const toListItemSecondaryText = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pack }): TranslatedText => {
+const toMenuItemSecondaryText = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pack }): TranslatedText => {
   return input.ctx.t(
     'app.last-updated-at',
     TimeSpan.humanFriendlyString(UnixMs.diff(input.pack.lastUpdatedAt, input.ctx.now), input.ctx.t),

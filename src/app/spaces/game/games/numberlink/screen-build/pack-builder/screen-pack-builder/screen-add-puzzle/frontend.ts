@@ -42,7 +42,7 @@ const update: FrontendModule['update'] = (input) => {
       return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
     }
 
-    case 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item': {
+    case 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-menu-item': {
       return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
     }
   }
@@ -147,7 +147,7 @@ const View: FrontendModule['View'] = (input) => {
           input.dispatch({
             t: 'got-msg-space',
             c: {
-              t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
+              t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-menu-item',
               puzzleId: puzzle.id,
               userId: input.ctx.currentUser.userId,
             },

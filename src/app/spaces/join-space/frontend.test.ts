@@ -151,7 +151,7 @@ describe('JoinSpaceFrontend', () => {
 //   test('opens person details surface when clicking person list item', async () => {
 //     const f = await Fixture()
 //     const someUserId = UserId.generate()
-//     const output = f.update(f.initial, [{ msg: { t: 'join-space.clicked-person-list-item', userId: someUserId } }])
+//     const output = f.update(f.initial, [{ msg: { t: 'join-space.clicked-person-menu-item', userId: someUserId } }])
 //     expect(output.model.opened).toEqual('join-space.person-preview-surface')
 //     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
@@ -159,8 +159,8 @@ describe('JoinSpaceFrontend', () => {
 //   test('toggles person details surface when clicking the same person list item again', async () => {
 //     const f = await Fixture()
 //     const someUserId = UserId.generate()
-//     const before = f.update(f.initial, [{ msg: { t: 'join-space.clicked-person-list-item', userId: someUserId } }])
-//     const after = f.update(before, [{ msg: { t: 'join-space.clicked-person-list-item', userId: someUserId } }])
+//     const before = f.update(f.initial, [{ msg: { t: 'join-space.clicked-person-menu-item', userId: someUserId } }])
+//     const after = f.update(before, [{ msg: { t: 'join-space.clicked-person-menu-item', userId: someUserId } }])
 //     expect(before.model.opened).toEqual('join-space.person-preview-surface')
 //     expect(after.model.opened).toEqual(null)
 //     expect(PlaySoundCmd.did(after)).toEqual(true)
@@ -169,7 +169,7 @@ describe('JoinSpaceFrontend', () => {
 //   test('closes person details surface when closing surface', async () => {
 //     const f = await Fixture()
 //     const someUserId = UserId.generate()
-//     const before = f.update(f.initial, [{ msg: { t: 'join-space.clicked-person-list-item', userId: someUserId } }])
+//     const before = f.update(f.initial, [{ msg: { t: 'join-space.clicked-person-menu-item', userId: someUserId } }])
 //     const after = f.update(before, [{ msg: { t: 'join-space.closed-person-item-surface' } }])
 //     expect(before.model.opened).toEqual('join-space.person-preview-surface')
 //     expect(after.model.opened).toEqual(null)

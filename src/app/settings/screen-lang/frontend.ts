@@ -3,7 +3,7 @@ import { Box } from '~/@/vdom/primitives/box'
 import { translations } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
 import { Gutter } from '~/@/ui/gutter'
-import { ListItem } from '~/@/ui/list-item'
+import { MenuItem } from '~/@/ui/menu-item'
 import { RadioInputIcon } from '~/@/ui/radio-input'
 import { h } from '~/@/vdom/h'
 import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd.$msg'
@@ -78,7 +78,7 @@ const View: FrontendModule['View'] = (input) => {
     renderBody: () =>
       h(ScrollBox, { class: 'flex flex-1 flex-col' }, [
         ...LanguageCodeISO_639_1.ALL.map((langCode) =>
-          h(ViewChooseLangListItem, {
+          h(ViewChooseLangMenuItem, {
             key: langCode,
             ctx: input.ctx,
             langCode,
@@ -91,14 +91,14 @@ const View: FrontendModule['View'] = (input) => {
   })
 }
 
-const ViewChooseLangListItem = (input: {
+const ViewChooseLangMenuItem = (input: {
   ctx: AppFrontendCtxBase
   langCode: LanguageCodeISO_639_1
   model: ModelFrontend
   dispatch: (msg: MsgFrontend) => void
 }) => {
   const primary = translations[input.langCode][input.langCode]
-  return h(ListItem, {
+  return h(MenuItem, {
     link: true,
     primary: TranslatedText.of(primary),
     end: () => h(Box, {}, [h(Text, { class: 'text-white text-lg', text: input.ctx.t(input.langCode) })]),

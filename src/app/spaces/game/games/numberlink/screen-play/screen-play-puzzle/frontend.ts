@@ -11,7 +11,7 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { LayoutGame } from '../../../@/ui/game-layout'
-import { ProfileListItem } from '../../../@/ui/list-item-profile'
+import { ProfileMenuItem } from '../../../@/ui/profile-menu-item'
 import { PrebuiltActions } from '../../../@/ui/prebuilt-actions'
 import { ModePlay } from '../../@/mode-play'
 import { ModePlayFrontend } from '../../@/mode-play/frontend'
@@ -239,7 +239,7 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
     },
     renderBody: () =>
       h(LayoutGame, { isSpectating: true, ctx: input.ctx }, [
-        h(ProfileListItem, {
+        h(ProfileMenuItem, {
           ctx: input.ctx,
           profile: input.ctx.profilesByUserId[input.ctx.space.hostId],
           subtitle: input.ctx.t('game.player'),

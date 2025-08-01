@@ -2,7 +2,7 @@ import { Translator } from '~/@/l18n/generated'
 import { Box } from '~/@/vdom/primitives/box'
 import { TimeSpan } from '~/@/time/time-span'
 import { cn } from '~/@/ui/cn'
-import { ListItem } from '~/@/ui/list-item'
+import { MenuItem } from '~/@/ui/menu-item'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 
@@ -27,11 +27,11 @@ const ViewDot = (input: { model: BackendConnectionStatus; ctx: { t: Translator }
   }
 }
 
-const ViewListItem = (input: { model: BackendConnectionStatus; ctx: { t: Translator }; onPress: () => void }) => {
+const ViewMenuItem = (input: { model: BackendConnectionStatus; ctx: { t: Translator }; onPress: () => void }) => {
   const { model, ctx } = input
   switch (model.t) {
     case 'connected': {
-      return h(ListItem, {
+      return h(MenuItem, {
         icon: (inputIcon) => h(Dot, { class: inputIcon.class, colorClassName: 'bg-green-500' }),
         class: 'text-green-500',
         primary: ctx.t('wire.online'),
@@ -41,7 +41,7 @@ const ViewListItem = (input: { model: BackendConnectionStatus; ctx: { t: Transla
     }
 
     case 'connecting': {
-      return h(ListItem, {
+      return h(MenuItem, {
         icon: (input) => h(Dot, { class: input.class, colorClassName: 'bg-orange-500' }),
         color: 'warning',
         primary: ctx.t('wire.connecting...'),
@@ -50,7 +50,7 @@ const ViewListItem = (input: { model: BackendConnectionStatus; ctx: { t: Transla
     }
 
     case 'disconnected': {
-      return h(ListItem, {
+      return h(MenuItem, {
         icon: (input) => h(Dot, { class: input.class, colorClassName: 'bg-red-500' }),
         color: 'danger',
         primary: ctx.t('wire.offline'),
@@ -68,5 +68,5 @@ const Dot = (input: { class: string; colorClassName: string }) => {
 
 export const BackendConnectionStatus = {
   ViewDot,
-  ViewListItem,
+  ViewMenuItem,
 }

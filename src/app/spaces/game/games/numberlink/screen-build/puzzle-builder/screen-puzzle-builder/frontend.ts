@@ -10,7 +10,7 @@ import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ParentScreenProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { LayoutGame } from '../../../../@/ui/game-layout'
-import { ProfileListItem } from '../../../../@/ui/list-item-profile'
+import { ProfileMenuItem } from '../../../../@/ui/profile-menu-item'
 import { FlowFrontendCtx } from '../../../@/frontend/ctx'
 import { ModeEdit } from '../../../@/mode-edit'
 import { ModeEditFrontend } from '../../../@/mode-edit/frontend'
@@ -304,7 +304,7 @@ const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
     renderBody: () =>
       h(LayoutGame, { ctx: input.ctx, isSpectating: true }, [
         h(Box, { class: 'flex w-full flex-1 flex-col' }, [
-          h(ProfileListItem, {
+          h(ProfileMenuItem, {
             ctx: input.ctx,
             profile: input.ctx.profilesByUserId[input.ctx.space.hostId],
             subtitle: input.ctx.t('app.editor'),

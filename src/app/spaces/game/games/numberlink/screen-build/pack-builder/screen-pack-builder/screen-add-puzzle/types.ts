@@ -25,7 +25,7 @@ export const MsgSpace = s.or(
     userId: UserId,
   }),
   s.obj({
-    t: s.l('screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item'),
+    t: s.l('screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-menu-item'),
     puzzleId: PuzzleId,
     userId: UserId,
   }),

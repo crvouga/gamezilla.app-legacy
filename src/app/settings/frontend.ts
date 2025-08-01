@@ -5,7 +5,7 @@ import { Clickable } from '~/@/ui/clickable'
 import { cn } from '~/@/ui/cn'
 import { Gutter } from '~/@/ui/gutter'
 import { IconCode, IconGear, IconLanguage, IconPowerOff } from '~/@/ui/icon'
-import { ListItem } from '~/@/ui/list-item'
+import { MenuItem } from '~/@/ui/menu-item'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -100,7 +100,7 @@ const updateBase: FrontendModule['update'] = ({ model, ctx, msg }) => {
       return { model, msgOut: [BackScreenCmd.init()] }
     }
 
-    case 'settings.clicked-logout-list-item': {
+    case 'settings.clicked-logout-menu-item': {
       return {
         model: { ...model, isTopBarSurfaceOpen: false },
         msgOut: [LogoutCmd.init()],
@@ -128,8 +128,8 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
   return Sub.batch<MsgFrontend>([ScreenLangFrontend.subscriptions(input)])
 }
 
-const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
-  return h(ListItem, {
+const ViewLangMenuItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
+  return h(MenuItem, {
     icon: (inputIcon) => h(IconLanguage, inputIcon),
     primary: ctx.t('l18n.language'),
     end: () => h(Text, { text: ctx.t(model.lang) }),
@@ -144,11 +144,11 @@ const View: FrontendModule['View'] = (input) => {
     case 'settings':
       switch (input.ctx.currentScreen.t) {
         case 'main':
-          return ViewMain(input)
+          return h(ViewMain, input)
         case 'choose-lang':
-          return ScreenLangFrontend.View(input)
+          return h(ScreenLangFrontend.View, input)
         case 'renderer':
-          return ScreenRendererFrontend.View(input)
+          return h(ScreenRendererFrontend.View, input)
         default:
           return null
       }
@@ -173,27 +173,27 @@ const ViewMain: FrontendModule['View'] = (props) => {
     },
     renderBody: () =>
       h(ScrollBox, { class: 'flex flex-1 flex-col' }, [
-        h(ListItem, {
+        h(MenuItem, {
           primary: props.ctx.t('l18n.language'),
           end: () => h(Box, {}, [h(Text, { text: props.ctx.t(props.model.lang) })]),
           onPress: () => props.dispatch({ t: 'settings.clicked-open-lang' }),
           link: true,
           icon: (inputIcon) => IconLanguage(inputIcon),
         }),
-        h(ListItem, {
+        h(MenuItem, {
           primary: props.ctx.t('l18n.renderer'),
           end: () => h(Box, {}, [h(Text, { text: VDomImplWeb.toName(props.model.renderVDomImpl) })]),
           onPress: () => props.dispatch({ t: 'settings.clicked-open-renderer' }),
           icon: (inputIcon) => IconCode(inputIcon),
           link: true,
         }),
-        h(ViewLogoutListItem, props),
+        h(ViewLogoutMenuItem, props),
         h(Gutter, { variant: 'screen' }),
       ]),
   })
 }
 
-const ViewLogoutListItem: FrontendModule['View'] = (input) => {
+const ViewLogoutMenuItem: FrontendModule['View'] = (input) => {
   const { currentUserState } = input.ctx
   switch (currentUserState.t) {
     case 'loading':
@@ -201,8 +201,8 @@ const ViewLogoutListItem: FrontendModule['View'] = (input) => {
       return null
     }
     case 'logged-in': {
-      return h(ListItem, {
-        onPress: () => input.dispatch({ t: 'settings.clicked-logout-list-item' }),
+      return h(MenuItem, {
+        onPress: () => input.dispatch({ t: 'settings.clicked-logout-menu-item' }),
         icon: (input) => h(IconPowerOff, input),
         primary: input.ctx.t('auth.logout'),
         end: () =>
@@ -239,7 +239,9 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
                   : 'flex flex-row justify-center gap-4 px-6 py-3 pl-8 absolute top-0 right-0 z-10 w-fit',
               ),
               'aria-label': props.ctx.t('app.open-settings'),
-              onPress: () => props.dispatch({ t: 'settings.clicked-top-bar' }),
+              onPress: () => {
+                props.dispatch({ t: 'settings.clicked-top-bar' })
+              },
             },
             [
               h(BackendConnectionStatus.ViewDot, {
@@ -265,25 +267,27 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
     body: {
       render: () => {
         return h(Box, { 'data-testid': TEST_ID_TOP_BAR_SURFACE }, [
-          h(BackendConnectionStatus.ViewListItem, {
+          h(BackendConnectionStatus.ViewMenuItem, {
             ctx: props.ctx,
             model: props.ctx.backendConnectionStatus,
             onPress: () => {},
           }),
 
-          h(SoundFrontend.ViewSoundListItem, {
+          h(SoundFrontend.ViewSoundMenuItem, {
             ctx: props.ctx,
             model: props.model.sound,
             dispatch: (c) => props.dispatch({ t: 'sound', c }),
           }),
 
-          h(ViewLangListItem, props),
+          h(ViewLangMenuItem, props),
 
-          h(ListItem, {
+          h(MenuItem, {
             icon: (inputIcon) => h(IconGear, inputIcon),
             primary: props.ctx.t('l18n.settings'),
             link: true,
-            onPress: () => props.dispatch({ t: 'settings.clicked-open-settings' }),
+            onPress: () => {
+              props.dispatch({ t: 'settings.clicked-open-settings' })
+            },
           }),
         ])
       },
@@ -292,7 +296,7 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
 }
 
 export const SettingsFrontend = {
-  ViewLogoutListItem,
+  ViewLogoutMenuItem: ViewLogoutMenuItem,
   init,
   update,
   subscriptions,

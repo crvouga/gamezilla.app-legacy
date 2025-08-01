@@ -1,7 +1,7 @@
 import { cn } from '~/@/ui/cn'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconEllipsisVertical } from '~/@/ui/icon'
-import { ListItem } from '~/@/ui/list-item'
+import { MenuItem } from '~/@/ui/menu-item'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Frag } from '~/@/vdom/primitives/frag'
@@ -95,7 +95,7 @@ const SurfaceMoreContent = (input: { actions: (ScreenAction | null)[] }) => {
     input.actions.map((action) => {
       if (!action) return null
       if (action.hidden) return null
-      const listItemButton = h(ListItem, {
+      const listItemButton = h(MenuItem, {
         key: action.id,
         icon: action.icon,
         primary: action.label,

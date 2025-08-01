@@ -32,7 +32,7 @@ updates.push((input) => {
 
 updates.push((input) => {
   switch (input.msgSpace?.t) {
-    case 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item': {
+    case 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-menu-item': {
       return {
         ...input.modelSpace,
         screenAddPuzzle_selected: togglePuzzleId(input.modelSpace.screenAddPuzzle_selected, input.msgSpace.puzzleId),

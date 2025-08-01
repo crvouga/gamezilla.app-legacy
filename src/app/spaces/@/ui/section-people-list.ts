@@ -31,7 +31,7 @@ export const SectionPeopleList = (input: {
         h(Frag, { key: profile.id }, [
           renderItem(
             profile,
-            h(PersonListItem, {
+            h(PersonMenuItem, {
               key: profile.id,
               profile: profile,
               ctx: input.ctx,
@@ -44,7 +44,7 @@ export const SectionPeopleList = (input: {
   ])
 }
 
-const PersonListItem = (input: {
+const PersonMenuItem = (input: {
   key?: string
   profile: ReturnType<typeof SpaceFrontendCtx.toProfiles>[number]
   ctx: SpaceFrontendCtx

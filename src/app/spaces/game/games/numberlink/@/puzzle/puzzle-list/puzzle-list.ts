@@ -70,7 +70,7 @@ const View = (input: {
       },
       [
         ...puzzles.map((puzzle) =>
-          h(ViewListItem, {
+          h(ViewMenuItem, {
             selectable: input.selectable,
             query: input.query,
             key: puzzle.id,
@@ -109,7 +109,7 @@ const toTopLevelCheckboxState = (input: { totalCount: number; selectedCount: num
   return 'indeterminate'
 }
 
-const ViewListItem = (input: {
+const ViewMenuItem = (input: {
   selectable?: boolean
   query: PuzzleQuery
   ctx: { t: Translator; now: UnixMs; platform: IPlatform }
@@ -147,7 +147,7 @@ const ViewListItem = (input: {
         h(Typography, {
           variant: 'subtitle',
           color: 'text-secondary',
-          text: toListItemSecondaryText(input),
+          text: toMenuItemSecondaryText(input),
           class: 'truncate text-xs',
         }),
       ]),
@@ -155,7 +155,7 @@ const ViewListItem = (input: {
   )
 }
 
-const toListItemSecondaryText = (input: {
+const toMenuItemSecondaryText = (input: {
   ctx: { t: Translator; now: UnixMs }
   puzzle: Puzzle
   query: PuzzleQuery

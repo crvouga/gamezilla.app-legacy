@@ -6,7 +6,7 @@ import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { UserProfile } from '~/app/@/data/user-profile'
 
-export const ProfileListItem = ({
+export const ProfileMenuItem = ({
   profile,
   subtitle,
   ctx,
