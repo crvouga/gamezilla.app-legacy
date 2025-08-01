@@ -85,6 +85,7 @@
     "chess.js": "^1.4.0",
     "expo": "~53.0.20",
     "expo-audio": "~0.4.8",
+    "expo-gl": "~15.1.7",
     "expo-sqlite": "~15.2.14",
     "inferno": "^9.0.3",
     "inferno-create-element": "^9.0.3",

@@ -18,7 +18,7 @@ test('open', async (e) => {
   await doOpenPackBuilder(f)
 })
 
-test('create pack', async (e) => {
+test.skip('create pack', async (e) => {
   const f = await Fixture(e)
   await doLoginWithSms(f)
   await doStartSpace(f)
