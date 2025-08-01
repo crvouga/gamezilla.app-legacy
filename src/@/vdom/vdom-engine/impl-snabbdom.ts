@@ -10,7 +10,7 @@ import {
   styleModule,
 } from 'snabbdom'
 import { PrimitiveProps } from '../primitive-props'
-import { FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
+import { CANVAS_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { updateSafeAreaProps, updateScrollBoxProps } from './web'
 
@@ -48,22 +48,18 @@ const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
         switch (tag) {
           case FRAGMENT_TAG:
             return fragment(children)
-
-          case SAFE_AREA_BOX_TAG: {
+          case SAFE_AREA_BOX_TAG:
             updateSafeAreaProps(props)
             return createPrimitiveElement('div', props, children)
-          }
-
-          case SCROLL_BOX_TAG: {
+          case SCROLL_BOX_TAG:
             updateScrollBoxProps(props)
             return createPrimitiveElement('div', props, children)
-          }
-          default: {
-            if (typeof tag === 'function') {
-              return tag({ ...props, key: props?.key, children })
-            }
+          case CANVAS_TAG:
+            // @ts-expect-error
+            return createElement(CanvasWebComponent, props, children) as any
+          default:
+            if (typeof tag === 'function') return tag({ ...props, key: props?.key, children })
             return createPrimitiveElement(tag, props, children)
-          }
         }
       } catch (e) {
         // console.error(e)
