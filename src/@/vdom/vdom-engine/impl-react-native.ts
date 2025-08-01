@@ -1,3 +1,4 @@
+import { GLView } from 'expo-gl'
 import { cssInterop } from 'nativewind'
 import { createElement, Fragment } from 'react'
 import { Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
@@ -201,10 +202,9 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
       return createElement(Text, {}, ['Not implemented'])
     },
     createElement: (tag: any, props: any, children: any) => {
+      // Only sanitize props for primitive components
       props = PrimitiveProps.intoReactNativeStandard(props)
       normalizePropsInPlace(props, tag)
-
-      // Only sanitize props for primitive components
       if (tag === PRESSABLE_TAG || tag === BOX_TAG || tag === TEXT_TAG || tag === TEXT_INPUT_TAG) {
         props = sanitizeProps(props)
       }
@@ -215,7 +215,7 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
         case PRESSABLE_TAG:
           return createElement(Pressable, props, ...children) as any
         case SCROLL_BOX_TAG:
-          return createElement(ScrollView, props, children) as any
+          return createElement(ScrollView, props, ...children) as any
         case SAFE_AREA_BOX_TAG:
           return createElement(SafeAreaView, props, ...children) as any
         case BOX_TAG:
@@ -227,7 +227,16 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
         case IMAGE_TAG:
           return createElement(Image, props, ...children) as any
         case CANVAS_TAG:
-          return createElement(Text, {}, ['Not implemented'])
+          return createElement(
+            GLView,
+            {
+              ...props,
+              onContextCreate: (g) => {
+                props.onCreateContext(g)
+              },
+            },
+            ...children,
+          ) as any
         case SVG_TAG:
           return createElement(Svg, props, ...children) as any
         case SVG_TEXT_TAG:
