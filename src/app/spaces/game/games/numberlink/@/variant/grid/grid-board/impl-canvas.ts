@@ -1,18 +1,15 @@
 import { h } from '~/@/vdom'
+import { Canvas } from '~/@/vdom/primitives/canvas'
 import { BoardProps } from '../../../ui/board'
 import * as VariantGrid from '../grid'
-import { ImplCanvasNative } from './impl-canvas-native'
+import { onCreateContext } from './canvas/on-create-context'
+import { Sub } from '~/@/sub'
 
-const View = (input: BoardProps<VariantGrid.Model>) => {
-  switch (input.platform) {
-    case 'web': {
-      return null
-    }
-    case 'native': {
-      // return null
-      return h(ImplCanvasNative.View, input)
-    }
-  }
+const boardProps = Sub.init<BoardProps<VariantGrid.Model>>()
+
+const View = (props: BoardProps<VariantGrid.Model>) => {
+  boardProps.pub(props)
+  return h(Canvas, { style: { width: '100%', flex: 1 }, onCreateContext: (gl) => onCreateContext(gl, boardProps) }, [])
 }
 
 export const ImplCanvas = {

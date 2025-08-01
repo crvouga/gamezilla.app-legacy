@@ -196,6 +196,9 @@ export const View = ({ model, dispatch }: { ctx: AppFrontendCtx; model: Model; d
 export const ViewBoard = (_input: { model: Model; dispatch: (msg: Msg) => void }) => {
   return h(Canvas, {
     class: 'pointer-events-none h-full max-h-full min-h-full w-full touch-none select-none',
+    onCreateContext: (_gl) => {
+      // paint(gl)
+    },
   })
 }
 

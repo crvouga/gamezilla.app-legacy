@@ -47,6 +47,9 @@ export const ViewColumnsCanvas = (input: ViewColumnsInput) => {
         return
       }
     },
+    onCreateContext: (_gl) => {
+      // paint(gl)
+    },
   })
 }
 
