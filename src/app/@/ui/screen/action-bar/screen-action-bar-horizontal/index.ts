@@ -97,7 +97,7 @@ const SurfaceMoreContent = (input: { actions: (ScreenAction | null)[] }) => {
       if (action.hidden) return null
       const listItemButton = h(MenuItem, {
         key: action.id,
-        icon: action.icon,
+        renderIcon: action.icon,
         primary: action.label,
         onPress: action.onPress,
         color: action.color,

@@ -284,19 +284,19 @@ const ViewCurrentUserMenuItem = (input: {
   switch (currentUser.t) {
     case 'loading': {
       return h(MenuItem, {
-        icon: (input) => h(IconUserCircle, input),
+        renderIcon: (input) => h(IconUserCircle, input),
         primary: input.ctx.t('app.add'),
       })
     }
     case 'logged-out': {
       return h(MenuItem, {
-        icon: (input) => h(IconUserCircle, input),
+        renderIcon: (input) => h(IconUserCircle, input),
         primary: input.ctx.t('app.add'),
       })
     }
     case 'logged-in': {
       return h(MenuItem, {
-        icon: (input) => h(Avatar, { src: UserProfile.toAvatarUrl(currentUser.userProfile), ...input }),
+        renderIcon: (input) => h(Avatar, { src: UserProfile.toAvatarUrl(currentUser.userProfile), ...input }),
         primary: TranslatedText.of(`${input.ctx.t('auth.logged-in-as')} ${currentUser.userProfile.username}`),
       })
     }

@@ -76,7 +76,7 @@ const View: FrontendModule['View'] = (input) => {
             primary: VDomImplWeb.toName(vDomImpl),
             secondary: isDefault && false ? input.ctx.t('l18n.default') : undefined,
             onPress: () => input.dispatch({ t: 'renderer.clicked-renderer', vDomImpl }),
-            end: () =>
+            renderEnd: () =>
               h(RadioInputIcon, { class: 'size-7 text-white', status: isSelected ? 'selected' : 'unselected' }),
             selected: isSelected,
           })

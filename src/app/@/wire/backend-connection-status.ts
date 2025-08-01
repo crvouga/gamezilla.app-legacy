@@ -32,17 +32,17 @@ const ViewMenuItem = (input: { model: BackendConnectionStatus; ctx: { t: Transla
   switch (model.t) {
     case 'connected': {
       return h(MenuItem, {
-        icon: (inputIcon) => h(Dot, { class: inputIcon.class, colorClassName: 'bg-green-500' }),
-        class: 'text-green-500',
+        renderIcon: (inputIcon) => h(Dot, { class: inputIcon.class, colorClassName: 'bg-green-500' }),
+        color: 'green',
         primary: ctx.t('wire.online'),
-        end: () => h(Typography, { text: TimeSpan.format(model.latestPing) }),
+        renderEnd: () => h(Typography, { text: TimeSpan.format(model.latestPing) }),
         onPress: input.onPress,
       })
     }
 
     case 'connecting': {
       return h(MenuItem, {
-        icon: (input) => h(Dot, { class: input.class, colorClassName: 'bg-orange-500' }),
+        renderIcon: (input) => h(Dot, { class: input.class, colorClassName: 'bg-orange-500' }),
         color: 'warning',
         primary: ctx.t('wire.connecting...'),
         onPress: input.onPress,
@@ -51,7 +51,7 @@ const ViewMenuItem = (input: { model: BackendConnectionStatus; ctx: { t: Transla
 
     case 'disconnected': {
       return h(MenuItem, {
-        icon: (input) => h(Dot, { class: input.class, colorClassName: 'bg-red-500' }),
+        renderIcon: (input) => h(Dot, { class: input.class, colorClassName: 'bg-red-500' }),
         color: 'danger',
         primary: ctx.t('wire.offline'),
         onPress: input.onPress,

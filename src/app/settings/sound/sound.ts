@@ -153,9 +153,9 @@ export const ViewSoundMenuItem = (input: {
       input.dispatch({
         t: 'sound.toggle-mute',
       }),
-    icon: (inputIcon) => (input.model.muted ? h(IconVolumeXMark, inputIcon) : h(IconVolumeHigh, inputIcon)),
+    renderIcon: (inputIcon) => (input.model.muted ? h(IconVolumeXMark, inputIcon) : h(IconVolumeHigh, inputIcon)),
     primary: input.model.muted ? input.ctx.t('sound.sound-off') : input.ctx.t('sound.sound-on'),
-    end: () =>
+    renderEnd: () =>
       h(SwitchButton, {
         label: 'toggle sound',
         checked: !input.model.muted,

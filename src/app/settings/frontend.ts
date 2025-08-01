@@ -130,9 +130,9 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 
 const ViewLangMenuItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
   return h(MenuItem, {
-    icon: (inputIcon) => h(IconLanguage, inputIcon),
+    renderIcon: (inputIcon) => h(IconLanguage, inputIcon),
     primary: ctx.t('l18n.language'),
-    end: () => h(Text, { text: ctx.t(model.lang) }),
+    renderEnd: () => h(Text, { text: ctx.t(model.lang) }),
     onPress: () => {
       dispatch({ t: 'settings.clicked-open-lang' })
     },
@@ -177,16 +177,17 @@ const ViewMain: FrontendModule['View'] = (props) => {
       h(ScrollBox, { class: 'flex flex-1 flex-col' }, [
         h(MenuItem, {
           primary: props.ctx.t('l18n.language'),
-          end: () => h(Box, {}, [h(Text, { text: props.ctx.t(props.model.lang) })]),
+          renderEnd: (endProps) => h(Text, { ...endProps, text: props.ctx.t(props.model.lang) }),
           onPress: () => props.dispatch({ t: 'settings.clicked-open-lang' }),
           link: true,
-          icon: (inputIcon) => IconLanguage(inputIcon),
+          renderIcon: (inputIcon) => IconLanguage(inputIcon),
         }),
         h(MenuItem, {
           primary: props.ctx.t('l18n.renderer'),
-          end: () => h(Box, {}, [h(Text, { text: VDomImplWeb.toName(props.model.renderVDomImpl) })]),
+          renderEnd: (endProps) =>
+            h(Box, {}, [h(Text, { ...endProps, text: VDomImplWeb.toName(props.model.renderVDomImpl) })]),
           onPress: () => props.dispatch({ t: 'settings.clicked-open-renderer' }),
-          icon: (inputIcon) => IconCode(inputIcon),
+          renderIcon: (inputIcon) => IconCode(inputIcon),
           link: true,
         }),
         h(ViewLogoutMenuItem, props),
@@ -205,10 +206,11 @@ const ViewLogoutMenuItem: FrontendModule['View'] = (input) => {
     case 'logged-in': {
       return h(MenuItem, {
         onPress: () => input.dispatch({ t: 'settings.clicked-logout-menu-item' }),
-        icon: (input) => h(IconPowerOff, input),
+        renderIcon: (input) => h(IconPowerOff, input),
         primary: input.ctx.t('auth.logout'),
-        end: () =>
+        renderEnd: (endProps) =>
           h(Typography, {
+            ...endProps,
             variant: 'caption',
             text: TranslatedText.of(currentUserState.userProfile.username),
           }),
@@ -284,7 +286,7 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
           h(ViewLangMenuItem, props),
 
           h(MenuItem, {
-            icon: (inputIcon) => h(IconGear, inputIcon),
+            renderIcon: (inputIcon) => h(IconGear, inputIcon),
             primary: props.ctx.t('l18n.settings'),
             link: true,
             onPress: () => {

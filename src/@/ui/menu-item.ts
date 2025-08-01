@@ -3,14 +3,12 @@ import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { Box } from '../vdom/primitives/box'
 import { ClickableTransparent } from './clickable'
-import { cn } from './cn'
-import { preventConsoleErrorWhenClosingDrawer } from './surface-drawer/drawer-shared'
+import { theme } from './theme/theme'
 import { Typography } from './typography'
 
-type Input = {
-  class?: string
-  icon?: (input: { class: string; width: number; height: number; fill: string; stroke: string }) => VDom
-  end?: () => VDom
+export type MenuItemProps = {
+  renderIcon?: (input: { class: string; width: number; height: number; fill: string; stroke: string }) => VDom
+  renderEnd?: (input: { style: Record<string, unknown> }) => VDom
   primary: TranslatedText
   secondary?: TranslatedText
   onPress?: () => void
@@ -19,72 +17,137 @@ type Input = {
   selected?: boolean
 }
 
-export const MenuItem = (input: Input) => {
+export const MenuItem = (props: MenuItemProps) => {
+  const baseStyle = theme({
+    flexDirection: 'row',
+    width: 'full',
+    items: 'center',
+    overflow: 'hidden',
+    height: 16,
+    px: 4,
+    textSize: 'xl',
+    fontWeight: 'bold',
+  })
+
+  const colorStyle = toColorStyle(props)
+
   return h(
     ClickableTransparent,
     {
       role: 'menuitem',
-      'aria-label': input.primary,
-      class: cn(input.class, BASE_CLASS, toColorClass(input)),
-      'aria-selected': input.selected,
-      onPress: input.onPress,
+      'aria-label': props.primary,
+      style: {
+        ...baseStyle,
+        ...colorStyle,
+      },
+      'aria-selected': props.selected,
+      onPress: props.onPress,
     },
     [
       h(MenuItemContent, {
-        primary: input.primary,
-        icon: input.icon,
-        secondary: input.secondary,
-        onPress: (event) => {
-          preventConsoleErrorWhenClosingDrawer(event)
-          input.onPress?.()
-        },
+        primary: props.primary,
+        renderIcon: props.renderIcon,
+        secondary: props.secondary,
       }),
-      input.end && h(Box, { class: 'shrink-0 flex flex-row items-center gap-2' }, [input.end()]),
+      props.renderEnd &&
+        h(
+          Box,
+          {
+            style: theme({
+              flexDirection: 'row',
+              items: 'center',
+              gap: 2,
+            }),
+          },
+          [
+            props.renderEnd({
+              style: theme({
+                textColor: 'white',
+                textSize: 'lg',
+              }),
+            }),
+          ],
+        ),
     ],
   )
 }
 
 const MenuItemContent = (input: {
   primary: TranslatedText
-  icon?: (input: { class: string; width: number; height: number; fill: string; stroke: string }) => VDom
+  renderIcon?: (input: { class: string; width: number; height: number; fill: string; stroke: string }) => VDom
   end?: () => VDom
   secondary?: TranslatedText
-  onPress?: (event: unknown) => void
 }) => {
-  return h(Box, { class: 'h-full flex flex-row flex-1 items-center gap-3 truncate' }, [
-    input.icon?.({ class: 'size-8', width: 24, height: 24, fill: '#fff', stroke: '#fff' }),
-    h(Box, { class: 'flex flex-col gap-1 text-left' }, [
-      h(Typography, {
-        variant: 'body',
-        class: 'text-white',
-        sizeClassName: 'text-lg',
-        text: input.primary,
+  return h(
+    Box,
+    {
+      style: theme({
+        height: 'full',
+        flexDirection: 'row',
+        flex: 1,
+        items: 'center',
+        gap: 3,
+        overflow: 'hidden',
       }),
-      input.secondary &&
-        h(Typography, {
-          class: 'text-left',
-          sizeClassName: 'text-xs',
-          color: 'text-secondary',
-          text: input.secondary,
-        }),
-    ]),
-  ])
+    },
+    [
+      input.renderIcon?.({
+        class: 'size-8',
+        width: 24,
+        height: 24,
+        fill: '#fff',
+        stroke: '#fff',
+      }),
+      h(
+        Box,
+        {
+          style: theme({
+            flexDirection: 'col',
+            gap: 1,
+          }),
+        },
+        [
+          h(Typography, {
+            variant: 'body',
+            style: theme({
+              textColor: 'white',
+              textSize: 'lg',
+            }),
+            text: input.primary,
+          }),
+          input.secondary &&
+            h(Typography, {
+              style: theme({
+                textAlign: 'left',
+                textSize: 'xs',
+                textColor: 'neutral-300',
+              }),
+              text: input.secondary,
+            }),
+        ],
+      ),
+    ],
+  )
 }
 
-const BASE_CLASS = 'flex flex-row w-full shrink-0 items-center truncate h-16 px-4 text-xl font-bold'
+type Color = 'default' | 'danger' | 'warning' | 'success' | 'inherit' | 'selected' | 'green' | 'orange'
 
-type Color = 'default' | 'danger' | 'warning' | 'success' | 'inherit' | 'selected'
-
-const toColorClass = (input: Input) => {
+const toColorStyle = (input: MenuItemProps) => {
   switch (input.color ?? 'default') {
     case 'warning': {
-      return 'text-orange-500'
+      return theme({ textColor: 'orange-500' })
     }
     case 'danger': {
-      return 'text-red-500'
+      return theme({ textColor: 'red-500' })
+    }
+    case 'green': {
+      return theme({ textColor: 'green-500' })
+    }
+    case 'orange': {
+      return theme({ textColor: 'orange-500' })
     }
     default: {
-      return ''
+      return {}
     }
   }
 }
