@@ -1,9 +1,10 @@
-import { describe, expect, test } from '~/@/test-runner'
 import { pipe } from '~/@/function/pipe'
+import { describe, expect, test } from '~/@/test-runner'
 import { Numberlink } from '.'
-import { VariantGrid, VariantGridShorthand } from '../variant/grid'
-import { Model } from './numberlink'
+import { VariantGrid } from '../variant/grid/grid'
+import { VariantGridShorthand } from '../variant/grid/grid-shorthand'
 import { NodeId } from './node-id'
+import { Model } from './numberlink'
 
 describe('Numberlink', () => {
   test('isConnectedWithPipes with connected terminals', () => {
@@ -82,7 +83,7 @@ describe('Numberlink', () => {
       [' ', ' ', 'A'],
     ])
 
-    const grid: VariantGrid.Model = {
+    const grid: VariantGrid = {
       ...gridA,
       pipesBySourceId: {
         ...gridA.pipesBySourceId,
@@ -116,7 +117,7 @@ describe('Numberlink', () => {
       ['a', ' ', ' ', ' '],
       ['a', 'a', 'a', 'A'],
     ])
-    const multipleDeadEnds: VariantGrid.Model = {
+    const multipleDeadEnds: VariantGrid = {
       ...grid,
       pipesBySourceId: {
         ...grid.pipesBySourceId,

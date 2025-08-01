@@ -12,7 +12,7 @@ describe('UseHint', () => {
 // import { Numberlink } from '../../numberlink'
 // import { AlgoIsSolved } from '../../solutions/algo-is-solved/algo-is-solved'
 // import { Solutions } from '../../solutions/solutions'
-// import { VariantGridShorthand } from '../../variant/grid'
+// import { VariantGridShorthand } from '../../variant/grid/grid-shorthand'
 // import { FixtureModePlayUseHint } from './fixture'
 
 // const Fixture = FixtureModePlayUseHint

@@ -6,7 +6,7 @@ import { ImplSvgUniversal } from './impl-svg-universal'
 
 export type VariantGridUIImpl = 'svg' | 'canvas'
 
-const View = (input: BoardProps<VariantGrid.Model>) => {
+const View = (input: BoardProps<VariantGrid.VariantGrid>) => {
   switch (input.impl.t) {
     case 'svg':
       return h(ImplSvgUniversal.View, input)

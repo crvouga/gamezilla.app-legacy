@@ -8,7 +8,7 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { NumberlinkVariant } from '../variant'
-import { VariantGridShorthand } from '../variant/grid'
+import { VariantGridShorthand } from '../variant/grid/grid-shorthand'
 
 export const MsgFrontend = s.or(
   s.obj({

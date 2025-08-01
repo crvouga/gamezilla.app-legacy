@@ -1,6 +1,6 @@
 import { h } from '~/@/vdom/h'
 import type { BoardProps } from '../ui/board'
-import { VariantGridBoard } from './grid'
+import { VariantGridBoard } from './grid/grid-board'
 import { VariantHexBoard } from './hex'
 import { VariantTriBoard } from './tri'
 import type { Model } from './variant'

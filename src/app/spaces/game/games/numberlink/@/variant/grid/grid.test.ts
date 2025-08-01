@@ -1,7 +1,9 @@
-import { describe, expect, test } from '~/@/test-runner'
 import { eq } from '~/@/equals/equals'
-import { VariantGrid, VariantGridDimensions, VariantGridShorthand } from '.'
+import { describe, expect, test } from '~/@/test-runner'
 import { Numberlink } from '../../numberlink'
+import { VariantGrid } from './grid'
+import { VariantGridDimensions } from './grid-dimensions'
+import { VariantGridShorthand } from './grid-shorthand'
 
 describe('Grid', () => {
   test('should initialize the model', () => {
@@ -11,7 +13,7 @@ describe('Grid', () => {
         width: 3,
       }),
     })
-    expect(VariantGrid.Model.parse(initial).t).toEqual('ok')
+    expect(VariantGrid.schema.parse(initial).t).toEqual('ok')
   })
 
   test.skip('should initialize the model quickly', () => {
@@ -71,7 +73,7 @@ describe('Grid', () => {
         },
       },
     })
-    const expected: VariantGrid.Model['pipesBySourceId'] = {
+    const expected: VariantGrid['pipesBySourceId'] = {
       [VariantGrid.toNodeId({
         x: 0,
         y: 1,

@@ -2,15 +2,15 @@ import { s } from '~/@/schema'
 import { Numberlink } from '../numberlink'
 import { NodeId } from '../numberlink/node-id'
 import { Terminal } from '../numberlink/terminal'
-import { VariantGrid } from './grid'
+import { VariantGrid } from './grid/grid'
 import { VariantHex } from './hex'
 import { VariantTri } from './tri'
-import type * as VariantDimensions from './variant-dimensions'
+import { VariantDimensions } from './variant-dimensions'
 
-export const Model = s.or(VariantGrid.Model, VariantHex.Model, VariantTri.Model)
+export const Model = s.or(VariantGrid.schema, VariantHex.Model, VariantTri.Model)
 export type Model = s.Infer<typeof Model>
 
-export const isGrid = (numberlink: Model): numberlink is VariantGrid.Model => {
+export const isGrid = (numberlink: Model): numberlink is VariantGrid => {
   return numberlink.t === 'grid'
 }
 
@@ -44,7 +44,7 @@ export const toTerminalDistance = (model: Model, terminal: Terminal): number => 
 }
 
 export const init = (input: {
-  dimensions: VariantDimensions.Model
+  dimensions: VariantDimensions
   terminalsByGroupId: Numberlink.Model['terminalsByGroupId']
 }): Model => {
   switch (input.dimensions.t) {
@@ -62,7 +62,7 @@ export const init = (input: {
   }
 }
 
-export const toDimensions = (numberlink: Model): VariantDimensions.Model => {
+export const toDimensions = (numberlink: Model): VariantDimensions => {
   switch (numberlink.t) {
     case 'grid': {
       return VariantGrid.toDimensions(numberlink)

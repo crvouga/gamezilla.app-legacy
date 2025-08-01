@@ -13,7 +13,7 @@ describe('HintCalculatorFrontend', () => {
 // import { ShowOkSmall } from '~/app/@/frontend/show-ok-small'
 // import { ShowWarningSmall } from '~/app/@/frontend/show-warning-small'
 // import { FixtureNumberlinkFrontend } from '../../frontend/fixture'
-// import { VariantGridShorthand } from '../../variant/grid'
+// import { VariantGridShorthand } from '../../variant/grid/grid-shorthand'
 // import { SolutionHash } from '../solution-hash/solution-hash'
 // import { Solutions } from '../solutions'
 // import { HintCalculatorFrontend } from './frontend'

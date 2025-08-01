@@ -1,15 +1,15 @@
 import { Translator } from '~/@/l18n/generated'
 import { s } from '~/@/schema'
 import { h } from '~/@/vdom/h'
-import { VariantGridDimensions } from './grid'
+import { VariantGridDimensions } from './grid/grid-dimensions'
 import { VariantHexDimensions } from './hex'
 import { VariantTriDimensions } from './tri'
 
-export const Model = s.or(VariantGridDimensions.Model, VariantHexDimensions.Model, VariantTriDimensions.Model)
+const schema = s.or(VariantGridDimensions.schema, VariantHexDimensions.Model, VariantTriDimensions.Model)
 
-export type Model = s.Infer<typeof Model>
+export type VariantDimensions = s.Infer<typeof schema>
 
-export const init = (model: Model): Model => {
+const init = (model: VariantDimensions): VariantDimensions => {
   switch (model.t) {
     case 'grid': {
       return VariantGridDimensions.init(model)
@@ -25,9 +25,9 @@ export const init = (model: Model): Model => {
   }
 }
 
-export const ViewForm = (input: {
-  form: Model
-  onInput: (dimensions: Model) => void
+const ViewForm = (input: {
+  form: VariantDimensions
+  onInput: (dimensions: VariantDimensions) => void
   ctx: {
     t: Translator
   }
@@ -45,4 +45,10 @@ export const ViewForm = (input: {
       return h(VariantTriDimensions.ViewForm, { form: input.form, onInput: input.onInput })
     }
   }
+}
+
+export const VariantDimensions = {
+  schema,
+  init,
+  ViewForm,
 }

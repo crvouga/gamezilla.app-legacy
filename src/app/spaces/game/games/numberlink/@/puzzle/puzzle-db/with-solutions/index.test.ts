@@ -2,7 +2,7 @@ import { Logger } from '~/@/logger'
 import { Result } from '~/@/result'
 import { describe, expect, test } from '~/@/test-runner'
 import { WithSolutions } from '.'
-import { VariantGridShorthand } from '../../../variant/grid'
+import { VariantGridShorthand } from '../../../variant/grid/grid-shorthand'
 import { Puzzle } from '../../puzzle'
 import { BaseFixtures } from '../fixture'
 

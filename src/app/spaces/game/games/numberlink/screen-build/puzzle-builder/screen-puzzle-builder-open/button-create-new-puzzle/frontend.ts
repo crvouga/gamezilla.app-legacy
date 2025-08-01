@@ -1,6 +1,7 @@
 import { isErr, RemoteResult, Result } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'
 import { IconPlus } from '~/@/ui/icon'
+import { h } from '~/@/vdom/h'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -10,9 +11,9 @@ import { ActionCreateProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { AddPuzzlesCmd } from '../../../../@/frontend/add-puzzles-cmd.$msg'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { IPuzzleDb } from '../../../../@/puzzle/puzzle-db'
-import { NumberlinkVariant, NumberlinkVariantDimensions } from '../../../../@/variant'
+import { NumberlinkVariant } from '../../../../@/variant'
+import { VariantDimensions } from '../../../../@/variant/variant-dimensions'
 import { FrontendModule } from '../../../types'
-import { h } from '~/@/vdom/h'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
@@ -89,7 +90,7 @@ const createNewPuzzle = async (input: { now: UnixMs; createdByUserId: UserId; pu
     createdBy: input.createdByUserId,
     numberlink: NumberlinkVariant.init({
       terminalsByGroupId: {},
-      dimensions: NumberlinkVariantDimensions.init({ t: 'grid', height: 8, width: 8 }),
+      dimensions: VariantDimensions.init({ t: 'grid', height: 8, width: 8 }),
     }),
   })
 

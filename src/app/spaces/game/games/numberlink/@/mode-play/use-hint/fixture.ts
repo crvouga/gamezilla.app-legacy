@@ -1,7 +1,7 @@
 // import { UseHint } from '.'
 // import { FixtureNumberlinkFrontend } from '../../frontend/fixture'
 // import { NumberlinkVariant } from '../../variant'
-// import { VariantGridShorthand } from '../../variant/grid'
+// import { VariantGridShorthand } from '../../variant/grid/grid-shorthand'
 
 // type Input = {
 //   msg: UseHint.Msg

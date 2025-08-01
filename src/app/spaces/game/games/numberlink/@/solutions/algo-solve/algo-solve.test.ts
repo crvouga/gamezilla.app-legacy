@@ -1,6 +1,6 @@
 import { describe, expect, test } from '~/@/test-runner'
 import { Numberlink } from '../../numberlink'
-import { VariantGridShorthand } from '../../variant/grid'
+import { VariantGridShorthand } from '../../variant/grid/grid-shorthand'
 import * as AlgoSolve from './algo-solve'
 import { AlgoIsSolved } from '../algo-is-solved/algo-is-solved'
 

@@ -4,36 +4,28 @@ import { EdgeId } from '../../numberlink/edge-id'
 import { GroupId } from '../../numberlink/group-id'
 import { NodeId } from '../../numberlink/node-id'
 import { Terminal } from '../../numberlink/terminal'
-import * as VariantGridDimensions from './grid-dimensions'
-import { Position } from './grid-position'
+import { VariantGridDimensions } from './grid-dimensions'
+import { VariantGridPosition } from './grid-position'
 
-//
-//
-//
-// Model
-//
-//
-//
-
-export const Model = s.and(
+const schema = s.and(
   Numberlink.Model,
-  VariantGridDimensions.Model,
+  VariantGridDimensions.schema,
   s.obj({
     t: s.l('grid'),
-    positions: s.dict(NodeId, Position.schema),
+    positions: s.dict(NodeId, VariantGridPosition.schema),
   }),
 )
-export type Model = s.Infer<typeof Model>
+export type VariantGrid = s.Infer<typeof schema>
 
 const initNodeId = (x: number, y: number): NodeId => {
   return NodeId.init(`${x},${y}`)
 }
 
-export const toNodeId = (position: Position): NodeId => {
+const toNodeId = (position: VariantGridPosition): NodeId => {
   return initNodeId(position.x, position.y)
 }
 
-export const distance = (model: Model, a: NodeId, b: NodeId): number => {
+const distance = (model: VariantGrid, a: NodeId, b: NodeId): number => {
   const positionA = model.positions[a]
 
   if (!positionA) return Number.POSITIVE_INFINITY
@@ -42,7 +34,7 @@ export const distance = (model: Model, a: NodeId, b: NodeId): number => {
 
   if (!positionB) return Number.POSITIVE_INFINITY
 
-  return Position.manhattanDistance(positionA, positionB)
+  return VariantGridPosition.manhattanDistance(positionA, positionB)
 }
 
 //
@@ -53,12 +45,12 @@ export const distance = (model: Model, a: NodeId, b: NodeId): number => {
 //
 //
 
-export const init = (input: {
-  dimensions: VariantGridDimensions.Model
+const init = (input: {
+  dimensions: VariantGridDimensions
   terminalsByGroupId?: Numberlink.Model['terminalsByGroupId']
   pipesBySourceId?: Numberlink.Model['pipesBySourceId']
-}): Model => {
-  const model: Model = {
+}): VariantGrid => {
+  const model: VariantGrid = {
     t: 'grid',
     width: input.dimensions.width,
     height: input.dimensions.height,
@@ -177,14 +169,14 @@ export const init = (input: {
 //
 //
 
-export type Node = Numberlink.Node & Position
+export type Node = Numberlink.Node & VariantGridPosition
 
 export type Edge = Numberlink.Edge & {
   source: Node
   target: Node
 }
 
-export const toNode = (model: Model, nodeId: NodeId): Node | null => {
+const toNode = (model: VariantGrid, nodeId: NodeId): Node | null => {
   const node = Numberlink.toNode(model, nodeId)
 
   if (!node) return null
@@ -196,7 +188,7 @@ export const toNode = (model: Model, nodeId: NodeId): Node | null => {
   return { ...position, ...node }
 }
 
-export const toEdge = (model: Model, edgeId: EdgeId): Edge | null => {
+const toEdge = (model: VariantGrid, edgeId: EdgeId): Edge | null => {
   const edge = Numberlink.toEdge(model, edgeId)
 
   if (!edge) return null
@@ -215,7 +207,7 @@ export const toEdge = (model: Model, edgeId: EdgeId): Edge | null => {
 /**
  * Adds a node to the puzzle.
  */
-export const addNode = (model: Model, position: Position): Model => {
+const addNode = (model: VariantGrid, position: VariantGridPosition): VariantGrid => {
   const nodeId = toNodeId(position)
   const added = Numberlink.addNode(model, { nodeId })
   return {
@@ -228,7 +220,7 @@ export const addNode = (model: Model, position: Position): Model => {
   }
 }
 
-export const yieldPositions = function* (model: Model): Generator<Position> {
+const yieldPositions = function* (model: VariantGrid): Generator<VariantGridPosition> {
   for (const node of Numberlink.yieldNodes(model)) {
     const position = model.positions[node.nodeId]
     if (!position) continue
@@ -236,7 +228,7 @@ export const yieldPositions = function* (model: Model): Generator<Position> {
   }
 }
 
-export const yieldEdges = function* (model: Model): Generator<Edge> {
+const yieldEdges = function* (model: VariantGrid): Generator<Edge> {
   for (const edge of Numberlink.yieldEdges(model)) {
     const source = toNode(model, edge.sourceId)
 
@@ -250,7 +242,7 @@ export const yieldEdges = function* (model: Model): Generator<Edge> {
   }
 }
 
-export const yieldNodes = function* (model: Model): Generator<Node> {
+const yieldNodes = function* (model: VariantGrid): Generator<Node> {
   for (const node of Numberlink.yieldNodes(model)) {
     const position = model.positions[node.nodeId]
     if (!position) continue
@@ -263,7 +255,7 @@ export type GridTerminal = Terminal & {
   end?: Node | null
 }
 
-export const yieldTerminals = function* (model: Model): Generator<GridTerminal> {
+const yieldTerminals = function* (model: VariantGrid): Generator<GridTerminal> {
   for (const terminal of Numberlink.yieldTerminals(model)) {
     const start = toNode(model, terminal.startId)
 
@@ -280,7 +272,7 @@ export type PipeJoined = Numberlink.PipeJoined & {
   target: Node
 }
 
-export const yieldPipes = function* (model: Model): Generator<PipeJoined> {
+const yieldPipes = function* (model: VariantGrid): Generator<PipeJoined> {
   for (const pipe of Numberlink.yieldPipes(model)) {
     const source = toNode(model, pipe.edge.sourceId)
 
@@ -298,13 +290,13 @@ export const yieldPipes = function* (model: Model): Generator<PipeJoined> {
   }
 }
 
-export const yieldPipelines = function* (model: Model): Iterable<Iterable<PipeJoined>> {
+const yieldPipelines = function* (model: VariantGrid): Iterable<Iterable<PipeJoined>> {
   for (const terminal of Numberlink.yieldTerminals(model)) {
     yield toPipeline(model, terminal.startId)
   }
 }
 
-const pipeToPipeJoined = (model: Model, pipe: Numberlink.Pipe): PipeJoined[] => {
+const pipeToPipeJoined = (model: VariantGrid, pipe: Numberlink.Pipe): PipeJoined[] => {
   const edge = Numberlink.toEdge(model, pipe.edgeId)
 
   if (!edge) return []
@@ -320,16 +312,34 @@ const pipeToPipeJoined = (model: Model, pipe: Numberlink.Pipe): PipeJoined[] => 
   return [{ ...pipe, source, target, edge }]
 }
 
-export const toPipeline = (model: Model, startingNodeId: NodeId): PipeJoined[] => {
+const toPipeline = (model: VariantGrid, startingNodeId: NodeId): PipeJoined[] => {
   const pipeline = Numberlink.toPipeline(model, startingNodeId)
   const pipelineJoined = pipeline.flatMap((pipe) => pipeToPipeJoined(model, pipe))
   return pipelineJoined
 }
 
-export const toDimensions = (model: Model): VariantGridDimensions.Model => {
+const toDimensions = (model: VariantGrid): VariantGridDimensions => {
   return {
     t: 'grid',
     width: model.width,
     height: model.height,
   }
+}
+
+export const VariantGrid = {
+  schema,
+  toNodeId,
+  distance,
+  init,
+  toNode,
+  toEdge,
+  addNode,
+  yieldPositions,
+  yieldEdges,
+  yieldNodes,
+  yieldTerminals,
+  yieldPipes,
+  yieldPipelines,
+  toPipeline,
+  toDimensions,
 }

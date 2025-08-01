@@ -1,11 +1,11 @@
 import { Sub } from '~/@/sub'
-import { VariantGrid } from '../..'
 import { BoardProps } from '../../../../ui/board'
+import { VariantGrid } from '../../grid'
 import { createShaderProgram } from './create-shader-program'
 import { drawGrid } from './draw-grid'
 // import { drawTerminals } from './draw-terminals'
 
-export const onCreateContext = (gl: WebGLRenderingContext, props: Sub<BoardProps<VariantGrid.Model>>) => {
+export const onCreateContext = (gl: WebGLRenderingContext, props: Sub<BoardProps<VariantGrid>>) => {
   const program = createShaderProgram(gl)
   gl.useProgram(program)
 

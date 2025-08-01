@@ -8,7 +8,7 @@ describe('UseHintFrontend', () => {
 
 // import { Logger } from '~/@/logger'
 // import { Solutions } from '../../solutions/solutions'
-// import { VariantGridShorthand } from '../../variant/grid'
+// import { VariantGridShorthand } from '../../variant/grid/grid-shorthand'
 // import { FixtureModePlayUseHint } from './fixture'
 // import { UseHintFrontend } from './frontend'
 

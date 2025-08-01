@@ -1,12 +1,13 @@
 import { eq } from '~/@/equals/equals'
 import { History } from '~/@/history'
 import { s } from '~/@/schema'
+import { Sound } from '~/@/sound/sound'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { Numberlink } from '../numberlink'
 import { GroupId } from '../numberlink/group-id'
 import { NodeId } from '../numberlink/node-id'
-import { NumberlinkVariant, NumberlinkVariantDimensions } from '../variant'
-import { Sound } from '~/@/sound/sound'
+import { NumberlinkVariant } from '../variant'
+import { VariantDimensions } from '../variant/variant-dimensions'
 
 //
 //
@@ -28,14 +29,14 @@ type DraftTerminals = s.Infer<typeof DraftTerminals>
 
 const Form = s.obj({
   terminalsByGroupId: DraftTerminals,
-  dimensions: NumberlinkVariantDimensions.Model,
+  dimensions: VariantDimensions.schema,
 })
 type Form = s.Infer<typeof Form>
 
 const Opened = s.or(
   s.obj({
     t: s.l('dimensions'),
-    draftDimensions: NumberlinkVariantDimensions.Model,
+    draftDimensions: VariantDimensions.schema,
   }),
 )
 
@@ -54,7 +55,7 @@ export const canClear = (model: Model): boolean => {
 
 export const init = (input: { numberlink: NumberlinkVariant.Model }): Model => {
   const form: Form = {
-    dimensions: NumberlinkVariantDimensions.init(input.numberlink),
+    dimensions: VariantDimensions.init(input.numberlink),
     terminalsByGroupId: input.numberlink.terminalsByGroupId,
   }
   return {
@@ -69,7 +70,7 @@ export const isUnsavedChanges = (model: Model, numberlink: NumberlinkVariant.Mod
 
   const actual: Form = {
     terminalsByGroupId: numberlink.terminalsByGroupId,
-    dimensions: NumberlinkVariantDimensions.init(numberlink),
+    dimensions: VariantDimensions.init(numberlink),
   }
 
   const areTerminalsDifferent = !Numberlink.isSameTerminalsByGroupId(
@@ -100,7 +101,7 @@ export const Msg = s.or(
   s.obj({ t: s.l('dimensions-form.closed') }),
   s.obj({ t: s.l('dimensions-form.clicked-cancel') }),
   s.obj({ t: s.l('dimensions-form.clicked-save') }),
-  s.obj({ t: s.l('dimensions-form.inputted'), dimensions: NumberlinkVariantDimensions.Model }),
+  s.obj({ t: s.l('dimensions-form.inputted'), dimensions: VariantDimensions.schema }),
 )
 export type Msg = s.Infer<typeof Msg>
 

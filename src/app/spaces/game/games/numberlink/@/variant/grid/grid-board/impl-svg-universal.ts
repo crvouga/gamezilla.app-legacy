@@ -17,7 +17,7 @@ import { Numberlink } from '../../../numberlink'
 import { NodeId } from '../../../numberlink/node-id'
 import { BoardProps } from '../../../ui/board'
 import { Color } from '../../../ui/color'
-import * as VariantGrid from '../grid'
+import { GridTerminal, PipeJoined, VariantGrid } from '../grid'
 
 const TERMINAL_NODE_RADIUS = 0.33
 const EDGE_STROKE_WIDTH = 0.3
@@ -26,7 +26,7 @@ let layoutWidth = 0
 let layoutHeight = 0
 let lastDraggedOverNodeId: NodeId | null = null
 
-const eventToNodeId = (e: any, props: BoardProps<VariantGrid.Model>) => {
+const eventToNodeId = (e: any, props: BoardProps<VariantGrid>) => {
   switch (props.platform) {
     case 'native': {
       const x = e.nativeEvent?.locationX
@@ -51,7 +51,7 @@ const eventToNodeId = (e: any, props: BoardProps<VariantGrid.Model>) => {
     }
   }
 }
-const View = (props: BoardProps<VariantGrid.Model>) => {
+const View = (props: BoardProps<VariantGrid>) => {
   return h(
     Svg,
     {
@@ -100,7 +100,7 @@ const View = (props: BoardProps<VariantGrid.Model>) => {
   )
 }
 
-const ViewGrid = (input: BoardProps<VariantGrid.Model>) => {
+const ViewGrid = (input: BoardProps<VariantGrid>) => {
   return h(G, {}, [
     h(Defs, {}, [
       h(
@@ -133,7 +133,7 @@ const ViewGrid = (input: BoardProps<VariantGrid.Model>) => {
   ])
 }
 
-const ViewPipelines = (input: BoardProps<VariantGrid.Model>) => {
+const ViewPipelines = (input: BoardProps<VariantGrid>) => {
   return h(
     G,
     {
@@ -144,8 +144,8 @@ const ViewPipelines = (input: BoardProps<VariantGrid.Model>) => {
 }
 
 const ViewPipeline = (
-  input: BoardProps<VariantGrid.Model> & {
-    terminal: VariantGrid.GridTerminal
+  input: BoardProps<VariantGrid> & {
+    terminal: GridTerminal
   },
 ) => {
   const terminal = input.terminal
@@ -238,7 +238,7 @@ const WithPadding = (input: {
   })
 }
 
-const ViewAutocompleteEdge = (input: BoardProps<VariantGrid.Model>) => {
+const ViewAutocompleteEdge = (input: BoardProps<VariantGrid>) => {
   return (
     input.autocompleteEdge &&
     h(G, { transform: 'translate(0.5, 0.5)' }, [
@@ -255,7 +255,7 @@ const ViewAutocompleteEdge = (input: BoardProps<VariantGrid.Model>) => {
   )
 }
 
-const ViewCoordinates = (input: BoardProps<VariantGrid.Model>) => {
+const ViewCoordinates = (input: BoardProps<VariantGrid>) => {
   if (!input.showCoordinates) return null
   return h(
     G,
@@ -278,7 +278,7 @@ const ViewCoordinates = (input: BoardProps<VariantGrid.Model>) => {
   )
 }
 
-const pipelineToSvgPathData = (pipeline: Iterable<VariantGrid.PipeJoined>): string => {
+const pipelineToSvgPathData = (pipeline: Iterable<PipeJoined>): string => {
   let path = ''
   for (const pipe of pipeline) {
     path += `M ${pipe.source.x} ${pipe.source.y} L ${pipe.target.x} ${pipe.target.y} `

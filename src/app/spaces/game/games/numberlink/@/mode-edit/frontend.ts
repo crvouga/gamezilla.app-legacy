@@ -16,7 +16,8 @@ import { GroupId } from '../numberlink/group-id'
 import { BoardLayout } from '../ui/board-layout'
 import { BorderImpl } from '../ui/border-impl'
 import { Color } from '../ui/color'
-import { NumberlinkVariantBoard, NumberlinkVariantDimensions } from '../variant'
+import { NumberlinkVariantBoard } from '../variant'
+import { VariantDimensions } from '../variant/variant-dimensions'
 
 const View = (input: {
   ctx: AppFrontendCtx
@@ -104,7 +105,7 @@ const View = (input: {
                 body: {
                   render: () =>
                     input.model.opened?.draftDimensions &&
-                    h(NumberlinkVariantDimensions.ViewForm, {
+                    h(VariantDimensions.ViewForm, {
                       ctx: input.ctx,
                       form: input.model.opened?.draftDimensions,
                       onInput: (dimensions) => input.dispatch({ t: 'dimensions-form.inputted', dimensions }),

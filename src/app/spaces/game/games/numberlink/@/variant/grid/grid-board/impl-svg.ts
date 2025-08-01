@@ -3,7 +3,7 @@ import { BoardProps } from '../../../ui/board'
 import * as VariantGrid from '../grid'
 import { ImplSvgUniversal } from './impl-svg-universal'
 
-const View = (input: BoardProps<VariantGrid.Model>) => {
+const View = (input: BoardProps<VariantGrid.VariantGrid>) => {
   return h(ImplSvgUniversal.View, input)
 }
 

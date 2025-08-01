@@ -12,7 +12,7 @@ import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-pro
 import { ModePlay } from '../../../@/mode-play'
 import { SolutionHash } from '../../../@/solutions/solution-hash/solution-hash'
 import { SolutionsDbQueryCache } from '../../../@/solutions/solutions-db-query-cache'
-import { VariantGridShorthand } from '../../../@/variant/grid'
+import { VariantGridShorthand } from '../../../@/variant/grid/grid-shorthand'
 import type { FrontendModule, MsgFrontend } from '../../types'
 
 export const update: FrontendModule['update'] = (input) => {

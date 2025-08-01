@@ -1,8 +1,9 @@
 import { describe, expect, test } from '~/@/test-runner'
 import { ModeEdit } from '.'
 import { Numberlink } from '../numberlink'
-import { NumberlinkVariant, NumberlinkVariantDimensions } from '../variant'
-import { VariantGridShorthand } from '../variant/grid'
+import { NumberlinkVariant } from '../variant'
+import { VariantDimensions } from '../variant/variant-dimensions'
+import { VariantGridShorthand } from '../variant/grid/grid-shorthand'
 
 type Output = ReturnType<typeof ModeEdit.update>
 
@@ -41,7 +42,7 @@ describe('ModeEdit', () => {
       { t: 'dimensions-form.closed' },
       {
         t: 'dimensions-form.inputted',
-        dimensions: NumberlinkVariantDimensions.init({ t: 'grid', height: 0, width: 0 }),
+        dimensions: VariantDimensions.init({ t: 'grid', height: 0, width: 0 }),
       },
     ]
 
@@ -61,7 +62,7 @@ describe('ModeEdit', () => {
       },
       {
         t: 'dimensions-form.inputted',
-        dimensions: NumberlinkVariantDimensions.init({
+        dimensions: VariantDimensions.init({
           t: 'grid',
           height: beforeDim.t === 'grid' ? beforeDim.height + 1 : Math.floor(Math.random() * 20),
           width: beforeDim.t === 'grid' ? beforeDim.width + 1 : Math.floor(Math.random() * 20),
@@ -88,7 +89,7 @@ describe('ModeEdit', () => {
       },
       {
         t: 'dimensions-form.inputted',
-        dimensions: NumberlinkVariantDimensions.init({
+        dimensions: VariantDimensions.init({
           t: 'grid',
           height: Math.floor(Math.random() * 20),
           width: Math.floor(Math.random() * 20),
@@ -122,7 +123,7 @@ describe('ModeEdit', () => {
       },
       {
         t: 'dimensions-form.inputted',
-        dimensions: NumberlinkVariantDimensions.init({
+        dimensions: VariantDimensions.init({
           t: 'grid',
           height: 2,
           width: 2,
@@ -137,7 +138,7 @@ describe('ModeEdit', () => {
 
   test('clear should only remove terminals not change dimensions', async () => {
     const f = await Fixture()
-    const dimensionsNew = NumberlinkVariantDimensions.init({
+    const dimensionsNew = VariantDimensions.init({
       t: 'grid',
       height: Math.floor(Math.random() * 10),
       width: Math.floor(Math.random() * 10),

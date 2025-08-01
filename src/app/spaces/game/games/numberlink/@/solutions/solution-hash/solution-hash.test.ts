@@ -1,7 +1,8 @@
 import { describe, expect, test } from '~/@/test-runner'
 import { Numberlink } from '../../numberlink'
 import { EdgeId } from '../../numberlink/edge-id'
-import { VariantGrid, VariantGridShorthand } from '../../variant/grid'
+import { VariantGrid } from '../../variant/grid/grid'
+import { VariantGridShorthand } from '../../variant/grid/grid-shorthand'
 import { SolutionHash } from './solution-hash'
 
 describe('SolutionHash', () => {

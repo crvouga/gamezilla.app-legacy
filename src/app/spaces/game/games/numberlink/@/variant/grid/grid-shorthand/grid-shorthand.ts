@@ -3,8 +3,8 @@ import { Numberlink } from '../../../numberlink'
 import { GroupId } from '../../../numberlink/group-id'
 import { NodeId } from '../../../numberlink/node-id'
 import { Terminal as FlowTerminal } from '../../../numberlink/terminal'
-import * as VariantGrid from '../grid'
-import * as VariantGridDimensions from '../grid-dimensions'
+import { VariantGrid } from '../grid'
+import { VariantGridDimensions } from '../grid-dimensions'
 
 //
 //
@@ -135,8 +135,8 @@ type DraftTerminal = {
   endId: NodeId | null
 }
 
-const toTerminalsByGroupId = (model: Model): VariantGrid.Model['terminalsByGroupId'] => {
-  const terminalsByGroupId: VariantGrid.Model['terminalsByGroupId'] = {}
+const toTerminalsByGroupId = (model: Model): VariantGrid['terminalsByGroupId'] => {
+  const terminalsByGroupId: VariantGrid['terminalsByGroupId'] = {}
 
   for (let y = 0; y < model.length; y++) {
     const row = model[y]
@@ -222,15 +222,15 @@ const DELTAS = [
  */
 const toPipesBySourceIdForTerminalList = (input: {
   model: Model
-  grid: VariantGrid.Model
+  grid: VariantGrid
   terminal: FlowTerminal
-}): VariantGrid.Model['pipesBySourceId'][] => {
-  const allPaths: VariantGrid.Model['pipesBySourceId'][] = []
+}): VariantGrid['pipesBySourceId'][] => {
+  const allPaths: VariantGrid['pipesBySourceId'][] = []
   const visitedNodeIds = new Set<NodeId>()
 
   const groupId = input.terminal.groupId
 
-  const findPaths = (currentNodeId: NodeId, path: VariantGrid.Model['pipesBySourceId']) => {
+  const findPaths = (currentNodeId: NodeId, path: VariantGrid['pipesBySourceId']) => {
     if (visitedNodeIds.has(currentNodeId)) {
       return
     }
@@ -376,12 +376,9 @@ const toPipesBySourceIdForTerminalList = (input: {
  * Returns a list of all possible pipes for a grid.
  * It will return solutions with the longest pipelines.
  */
-const toPipesBySourceIdList = (
-  model: Model,
-  grid: VariantGrid.Model,
-): NonEmpty<VariantGrid.Model['pipesBySourceId']> => {
+const toPipesBySourceIdList = (model: Model, grid: VariantGrid): NonEmpty<VariantGrid['pipesBySourceId']> => {
   const pipesBySourceIdListByGroupId: {
-    [groupId in GroupId]?: VariantGrid.Model['pipesBySourceId'][]
+    [groupId in GroupId]?: VariantGrid['pipesBySourceId'][]
   } = {}
   for (const groupId in grid.terminalsByGroupId) {
     const terminal = grid.terminalsByGroupId[groupId as GroupId]
@@ -475,7 +472,7 @@ const maxAllBy = <T>(arr: T[], fn: (item: T) => number): T[] => {
   return arr.filter((item) => fn(item) === max)
 }
 
-export const toDimensions = (model: Model): VariantGridDimensions.Model => {
+export const toDimensions = (model: Model): VariantGridDimensions => {
   let maxWidth = 0
 
   for (let y = 0; y < model.length; y++) {
@@ -492,7 +489,7 @@ export const toDimensions = (model: Model): VariantGridDimensions.Model => {
   })
 }
 
-export const toGrid = (model: Model): VariantGrid.Model => {
+export const toGrid = (model: Model): VariantGrid => {
   return toGrids(model)[0]
 }
 
@@ -506,7 +503,7 @@ export const toGrid = (model: Model): VariantGrid.Model => {
  * 		["a", "a", "A"],
  * 	]);
  */
-export const toGrids = (model: Model): NonEmpty<VariantGrid.Model> => {
+export const toGrids = (model: Model): NonEmpty<VariantGrid> => {
   const dimensions = toDimensions(model)
   const grid = VariantGrid.init({
     dimensions,
@@ -514,7 +511,7 @@ export const toGrids = (model: Model): NonEmpty<VariantGrid.Model> => {
   })
   const solutions = NonEmpty.map(
     toPipesBySourceIdList(model, grid),
-    (pipesBySourceId): VariantGrid.Model => ({
+    (pipesBySourceId): VariantGrid => ({
       ...grid,
       pipesBySourceId,
     }),
@@ -523,7 +520,7 @@ export const toGrids = (model: Model): NonEmpty<VariantGrid.Model> => {
   const flippedGrid = Numberlink.flipAllTerminals(grid)
   const flippedSolutions = NonEmpty.map(
     toPipesBySourceIdList(model, flippedGrid),
-    (pipesBySourceId): VariantGrid.Model => ({
+    (pipesBySourceId): VariantGrid => ({
       ...flippedGrid,
       pipesBySourceId,
     }),
@@ -544,7 +541,7 @@ const isValid = (maybeModel: Element[][]): maybeModel is Model => {
   return NonEmpty.is(maybeModel) && maybeModel.every((row) => NonEmpty.is(row))
 }
 
-export const fromGrid = (grid: VariantGrid.Model): Model => {
+export const fromGrid = (grid: VariantGrid): Model => {
   const shorthand: Element[][] = []
 
   for (let y = 0; y < grid.height; y++) {

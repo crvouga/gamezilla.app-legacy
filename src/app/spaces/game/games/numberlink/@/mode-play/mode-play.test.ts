@@ -5,7 +5,7 @@ import { Numberlink } from '../numberlink'
 import { AlgoIsSolved } from '../solutions/algo-is-solved/algo-is-solved'
 import { Solutions } from '../solutions/solutions'
 import type { NumberlinkVariant } from '../variant'
-import { VariantGrid } from '../variant/grid'
+import { VariantGrid } from '../variant/grid/grid'
 import { VariantGridShorthand } from '../variant/grid/grid-shorthand'
 import { toStatus } from './mode-play'
 

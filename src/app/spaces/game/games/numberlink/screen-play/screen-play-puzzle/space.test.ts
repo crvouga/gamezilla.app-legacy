@@ -9,11 +9,12 @@ import { Puzzle } from '../../@/puzzle/puzzle'
 import { AlgoIsSolved } from '../../@/solutions/algo-is-solved/algo-is-solved'
 import { Solutions } from '../../@/solutions/solutions'
 import { type NumberlinkVariant } from '../../@/variant'
-import { VariantGrid, VariantGridShorthand } from '../../@/variant/grid'
 import { NumberlinkPlaySpaceFixture } from '../@/space/fixture'
 import { FixtureScreenPuzzlePlaySpaceChild } from './@/fixture/space'
 import { ScreenPlayPuzzleSpace } from './space'
 import type { MsgSpace } from './types'
+import { VariantGrid } from '../../@/variant/grid/grid'
+import { VariantGridShorthand } from '../../@/variant/grid/grid-shorthand'
 
 const Fixture = async (input?: { numberlink?: NumberlinkVariant.Model }) => {
   const f = await FixtureScreenPuzzlePlaySpaceChild(input)

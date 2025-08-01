@@ -1,6 +1,0 @@
-export * as VariantGrid from './grid'
-export * from './grid-board'
-export * as VariantGridDimensions from './grid-dimensions'
-export * as VariantGridPosition from './grid-position'
-export * as VariantGridSamples from './grid-samples'
-export * from './grid-shorthand'

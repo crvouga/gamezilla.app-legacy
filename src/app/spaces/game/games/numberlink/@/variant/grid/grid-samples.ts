@@ -1,8 +1,8 @@
 import { VariantGridShorthand } from './grid-shorthand'
 
-export type Size = '5x5' | '6x6' | '7x7' | '8x8' | '15x15'
+export type VariantGridSampleSize = '5x5' | '6x6' | '7x7' | '8x8' | '15x15'
 
-export const samples = {
+const samples = {
   '5x5': {
     '1': VariantGridShorthand.toGrid([
       [' ', 'C', 'B', ' ', ' '],
@@ -72,4 +72,8 @@ export const samples = {
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ]),
   },
+}
+
+export const VariantGridSamples = {
+  samples,
 }

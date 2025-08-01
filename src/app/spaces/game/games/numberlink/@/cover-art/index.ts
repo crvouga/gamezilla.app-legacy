@@ -1,8 +1,9 @@
 import { pipe } from '~/@/function/pipe'
-import { Box } from '~/@/vdom/primitives/box'
-import { h } from '~/@/vdom/h'
-import { VariantGridBoard, VariantGridShorthand } from '../variant/grid'
 import { IPlatform } from '~/@/platform/platform'
+import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { VariantGridBoard } from '../variant/grid/grid-board'
+import { VariantGridShorthand } from '../variant/grid/grid-shorthand'
 
 const init = (x: VariantGridShorthand.Model) => pipe(VariantGridShorthand.init(x), VariantGridShorthand.toGrid)
 

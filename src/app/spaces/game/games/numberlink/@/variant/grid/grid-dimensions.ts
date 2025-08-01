@@ -1,21 +1,21 @@
 import { Translator } from '~/@/l18n/generated'
 import { TranslatedText } from '~/@/l18n/translations'
-import { Box } from '~/@/vdom/primitives/box'
 import { s } from '~/@/schema'
-import { IconXMark } from '~/@/ui/icon'
 import { ChipSelection } from '~/@/ui/chip-selection'
+import { IconXMark } from '~/@/ui/icon'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
 
-export const Model = s.obj({
+const schema = s.obj({
   t: s.l('grid'),
   width: s.num(),
   height: s.num(),
 })
 
-export type Model = s.Infer<typeof Model>
+export type VariantGridDimensions = s.Infer<typeof schema>
 
-export const init = (model: { width: number; height: number }): Model => {
+const init = (model: { width: number; height: number }): VariantGridDimensions => {
   return {
     t: 'grid',
     width: model.width,
@@ -23,9 +23,9 @@ export const init = (model: { width: number; height: number }): Model => {
   }
 }
 
-export const ViewForm = (input: {
-  form: Model
-  onInput: (dimensions: Model) => void
+const ViewForm = (input: {
+  form: VariantGridDimensions
+  onInput: (dimensions: VariantGridDimensions) => void
   ctx: {
     t: Translator
   }
@@ -60,4 +60,10 @@ export const ViewForm = (input: {
       }),
     ]),
   ])
+}
+
+export const VariantGridDimensions = {
+  schema,
+  init,
+  ViewForm,
 }

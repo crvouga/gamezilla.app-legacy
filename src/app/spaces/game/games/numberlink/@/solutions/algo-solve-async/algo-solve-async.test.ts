@@ -2,7 +2,7 @@ import { describe, expect, test } from '~/@/test-runner'
 import { Logger } from '~/@/logger'
 import { isErr, unwrap } from '~/@/result'
 import { Numberlink } from '../../numberlink'
-import { VariantGridShorthand } from '../../variant/grid'
+import { VariantGridShorthand } from '../../variant/grid/grid-shorthand'
 import * as AlgoSolveAsync from './algo-solve-async'
 import { TimeSpan } from '~/@/time/time-span'
 

@@ -1,5 +1,5 @@
 import { describe, expect, test } from '~/@/test-runner'
-import { VariantGridShorthand } from '../../variant/grid'
+import { VariantGridShorthand } from '../../variant/grid/grid-shorthand'
 import { AlgoIsSolved } from './algo-is-solved'
 
 describe('AlgoIsSolved', () => {
