@@ -169,7 +169,9 @@ const ViewMain: FrontendModule['View'] = (props) => {
     parentScreen: props.ctx.parentScreen,
     navBar: {
       title: props.ctx.t('l18n.settings'),
-      back: { onPress: () => props.dispatch({ t: 'settings.clicked-back-button' }) },
+      back: {
+        onPress: () => props.dispatch({ t: 'settings.clicked-back-button' }),
+      },
     },
     renderBody: () =>
       h(ScrollBox, { class: 'flex flex-1 flex-col' }, [

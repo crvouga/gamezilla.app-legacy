@@ -506,6 +506,27 @@ CREATE INDEX space_projection_user_user_id_idx ON public.space_projection_user U
 
 
 --
+-- Name: user_session_client_session_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX user_session_client_session_id_idx ON public.user_session USING btree (client_session_id);
+
+
+--
+-- Name: user_session_session_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX user_session_session_id_idx ON public.user_session USING btree (session_id);
+
+
+--
+-- Name: user_session_user_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX user_session_user_id_idx ON public.user_session USING btree (user_id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 

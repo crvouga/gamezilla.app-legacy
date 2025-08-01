@@ -1,4 +1,5 @@
 import { SpaceId } from '~/app/@/data/space-id'
+import { UserId } from '~/app/@/data/user-id'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import * as GameTypes from '../game/games/types'
 import { GamesTypes } from './games'
@@ -21,4 +22,6 @@ export type MsgFrontend =
   | {
       t: 'game.clicked-game-tile'
       gameName: GameName
+      userId: UserId
+      spaceId: SpaceId
     }

@@ -52,7 +52,7 @@ const main = async () => {
     migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger }),
   })
 
-  const vdomImplStorage = VdomImplWebStorage.init({ keyValueDb, fallback: 'inferno' })
+  const vdomImplStorage = VdomImplWebStorage.init({ keyValueDb })
 
   const ctx = await AppFrontend.initCtx({
     backendUrl,

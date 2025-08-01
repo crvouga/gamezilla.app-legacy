@@ -16,7 +16,7 @@
     "cg:watch": "pnpm exec tsx watch cg",
     "check": "pnpm cir-deps && pnpm exec tsc",
     "check-imports": "pnpm exec tsx scripts/check-imports.ts",
-    "ci": "pnpm env:ci && pnpm infra:e2e:down && pnpm install --frozen-lockfile && pnpm cir-deps && pnpm tc && pnpm unit && pnpm infra:int:up && sleep 3 && pnpm db:up && pnpm int && pnpm infra:e2e:up && pnpm e2e:setup && pnpm e2e",
+    "ci": "pnpm env:ci && pnpm infra:e2e:down && pnpm install --frozen-lockfile && pnpm cir-deps && pnpm tc && pnpm unit && pnpm infra:int:up && sleep 3 && pnpm db:up && pnpm int && pnpm infra:e2e:up && pnpm e2e:setup && pnpm e2e && echo '✅ ci passed'",
     "cir-deps": "pnpm cir-deps:backend && pnpm cir-deps:topic && pnpm cir-deps:frontend",
     "cir-deps:backend": "pnpm exec dpdm --no-warning --no-tree --exit-code circular:1 ./src/backend.ts",
     "cir-deps:frontend": "pnpm exec dpdm --no-warning --no-tree --exit-code circular:1 ./src/frontend.ts",

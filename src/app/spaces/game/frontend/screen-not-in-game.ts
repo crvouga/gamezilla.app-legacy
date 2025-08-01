@@ -82,9 +82,16 @@ const GameTile = (input: { gameName: GameName; ctx: SpaceFrontendCtx; dispatch: 
         flexDirection: 'col',
         gap: 4,
       }),
-      role: 'button',
+      role: 'link',
       'aria-label': input.gameName,
-      onPress: () => input.dispatch({ t: 'game.clicked-game-tile', gameName: input.gameName }),
+      onPress: () => {
+        input.dispatch({
+          t: 'game.clicked-game-tile',
+          gameName: input.gameName,
+          spaceId: input.ctx.space.spaceId,
+          userId: input.ctx.currentUser.userId,
+        })
+      },
     },
     [
       h(GameCoverArt, {

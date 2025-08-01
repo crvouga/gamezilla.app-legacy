@@ -10,7 +10,7 @@ import {
   styleModule,
 } from 'snabbdom'
 import { PrimitiveProps } from '../primitive-props'
-import { FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG, TEXT_INPUT_TAG } from '../tags'
+import { FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { updateSafeAreaProps, updateScrollBoxProps } from './web'
 
@@ -58,27 +58,6 @@ const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
             updateScrollBoxProps(props)
             return createPrimitiveElement('div', props, children)
           }
-
-          case TEXT_INPUT_TAG:
-            return h(
-              'input',
-              {
-                ...props,
-                onChange: (e: unknown) => {
-                  if (
-                    typeof props.onChangeText === 'function' &&
-                    e instanceof Event &&
-                    e.target instanceof HTMLInputElement &&
-                    'currentTarget' in e &&
-                    e.currentTarget instanceof HTMLInputElement
-                  ) {
-                    props.onChangeText(e.target.value)
-                  }
-                },
-              },
-              children,
-            )
-
           default: {
             if (typeof tag === 'function') {
               return tag({ ...props, key: props?.key, children })

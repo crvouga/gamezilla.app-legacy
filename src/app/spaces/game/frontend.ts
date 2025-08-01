@@ -25,31 +25,25 @@ const update: SpaceFrontendModule['update'] = (input) => {
   )
 }
 
-const updateFromMsg: SpaceFrontendModule['update'] = ({ msg, model, ctx }) => {
-  switch (msg?.t) {
+const updateFromMsg: SpaceFrontendModule['update'] = (input) => {
+  switch (input.msg?.t) {
     case 'game.clicked-game-tile': {
-      const currentUserId = ctx.currentUser?.userId
-
-      if (!currentUserId) return { model }
-
-      const currentUserSpaceId = CurrentUserSpaceLoader.toCurrentUserSpaceId(ctx)
-
-      if (!currentUserSpaceId) return { model }
+      if (!input.ctx.currentUser) return { model: input.model }
 
       return {
-        model,
+        model: input.model,
         msgSpace: [
           withEventId({
             t: 'user-inputted-game',
-            game: msg.gameName,
-            spaceId: currentUserSpaceId,
-            userId: currentUserId,
+            game: input.msg.gameName,
+            spaceId: input.msg.spaceId,
+            userId: input.ctx.currentUser.userId,
           }),
         ],
       }
     }
   }
-  return { model }
+  return { model: input.model }
 }
 
 const updateFromCmd: SpaceFrontendModule['update'] = (input) => {

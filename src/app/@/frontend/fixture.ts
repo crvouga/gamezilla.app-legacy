@@ -48,7 +48,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     }),
   })
   const keyValueDbSync = KeyValueDbSync.init({ t: 'hash-map', logger: Logger.init({ t: 'noop' }) })
-  const vdomImplStorage = VdomImplWebStorage.init({ keyValueDb, fallback: 'inferno' })
+  const vdomImplStorage = VdomImplWebStorage.init({ keyValueDb })
   const vdomImpl = await vdomImplStorage.get()
   const ctx: AppFrontendCtx = {
     syncEngine,

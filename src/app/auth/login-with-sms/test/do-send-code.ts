@@ -8,10 +8,8 @@ export const doSendCode = async (f: IFixtureApp, config?: { phoneNumber?: string
   expect(screen).toBeTruthy()
   const input = await screen!.findByRole('textbox', 'Phone number')
   expect(input).toBeTruthy()
-  await input!.do({
-    t: 'input',
-    value: config?.phoneNumber ?? String(randomPhoneNumber()),
-  })
+  const inputValue = config?.phoneNumber ?? String(randomPhoneNumber())
+  await input!.do({ t: 'input', value: inputValue })
   const button = await screen!.findByRole('button', 'Send code')
   expect(button).toBeTruthy()
   await button!.do({ t: 'click' })

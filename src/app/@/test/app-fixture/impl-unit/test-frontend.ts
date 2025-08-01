@@ -74,7 +74,7 @@ export const TestFrontend = async (config: {
     logger: Logger.init({ t: 'noop' }),
   })
 
-  const vdomImplStorage = VdomImplWebStorage.init({ keyValueDb, fallback: 'inferno' })
+  const vdomImplStorage = VdomImplWebStorage.init({ keyValueDb })
 
   const ctxBase: AppFrontendCtxBase = {
     platform: 'web',

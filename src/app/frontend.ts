@@ -114,7 +114,7 @@ const initCtx = async (config: {
     crudTransactionDb,
   })
 
-  const vdomImplStorage = VdomImplWebStorage.init({ keyValueDb: config.keyValueDb, fallback: 'inferno' })
+  const vdomImplStorage = VdomImplWebStorage.init({ keyValueDb: config.keyValueDb })
 
   const ctx: AppFrontendCtxBase = {
     vdomImpl: await vdomImplStorage.get(),

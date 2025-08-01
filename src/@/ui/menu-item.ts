@@ -21,12 +21,13 @@ type Input = {
 
 export const MenuItem = (input: Input) => {
   return h(
-    Box,
+    ClickableTransparent,
     {
       role: 'menuitem',
       'aria-label': input.primary,
       class: cn(input.class, BASE_CLASS, toColorClass(input)),
       'aria-selected': input.selected,
+      onPress: input.onPress,
     },
     [
       h(MenuItemContent, {
@@ -50,28 +51,24 @@ const MenuItemContent = (input: {
   secondary?: TranslatedText
   onPress?: (event: unknown) => void
 }) => {
-  return h(
-    ClickableTransparent,
-    { class: 'flex flex-row flex-1 items-center gap-3 truncate', onPress: input.onPress },
-    [
-      input.icon?.({ class: 'size-8', width: 24, height: 24, fill: '#fff', stroke: '#fff' }),
-      h(Box, { class: 'flex flex-col gap-1 text-left' }, [
+  return h(Box, { class: 'h-full flex flex-row flex-1 items-center gap-3 truncate' }, [
+    input.icon?.({ class: 'size-8', width: 24, height: 24, fill: '#fff', stroke: '#fff' }),
+    h(Box, { class: 'flex flex-col gap-1 text-left' }, [
+      h(Typography, {
+        variant: 'body',
+        class: 'text-white',
+        sizeClassName: 'text-lg',
+        text: input.primary,
+      }),
+      input.secondary &&
         h(Typography, {
-          variant: 'body',
-          class: 'text-white',
-          sizeClassName: 'text-lg',
-          text: input.primary,
+          class: 'text-left',
+          sizeClassName: 'text-xs',
+          color: 'text-secondary',
+          text: input.secondary,
         }),
-        input.secondary &&
-          h(Typography, {
-            class: 'text-left',
-            sizeClassName: 'text-xs',
-            color: 'text-secondary',
-            text: input.secondary,
-          }),
-      ]),
-    ],
-  )
+    ]),
+  ])
 }
 
 const BASE_CLASS = 'flex flex-row w-full shrink-0 items-center truncate h-16 px-4 text-xl font-bold'

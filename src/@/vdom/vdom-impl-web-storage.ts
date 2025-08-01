@@ -8,24 +8,25 @@ export type IVdomImplWebStorage = {
   set: (vdomImplWeb: VDomImplWeb) => Promise<void>
 }
 
-const init = (input: { keyValueDb: IKeyValueDb; fallback: VDomImplWeb }): IVdomImplWebStorage => {
+const FALLBACK = VDomImplWeb.of('inferno')
+
+const init = (input: { keyValueDb: IKeyValueDb }): IVdomImplWebStorage => {
   const KEY = 'vdomImplWeb'
-  const fallback = input.fallback
   return {
     async get() {
       const gotClientSessionId = await input.keyValueDb.get(KEY, s.str())
 
       if (isErr(gotClientSessionId)) {
-        return fallback
+        return FALLBACK
       }
 
       const maybeClientSessionId = gotClientSessionId.value
 
-      if (!maybeClientSessionId) return fallback
+      if (!maybeClientSessionId) return FALLBACK
 
       const vdomImplWeb = VDomImplWeb.from(maybeClientSessionId)
 
-      if (!vdomImplWeb) return fallback
+      if (!vdomImplWeb) return FALLBACK
 
       return vdomImplWeb
     },
