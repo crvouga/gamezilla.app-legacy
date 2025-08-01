@@ -1,4 +1,5 @@
 import { ThemeColor } from './theme-color'
+import { ThemeSize } from './theme-size'
 
 export type Theme = {
   position?: 'absolute' | 'relative' | null
@@ -18,19 +19,22 @@ export type Theme = {
   rounded?: 'full' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | null
   textColor?: ThemeColor | null
   fontWeight?: 'normal' | 'bold' | 'black' | null
-  textSize?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | null
+  textSize?: ThemeSize | null
   backgroundColor?: ThemeColor | null
   textAlign?: 'left' | 'center' | 'right' | null
   borderColor?: ThemeColor | null
   width?: 'full' | number | null
   height?: 'full' | number | null
+  size?: number | null
   borderWidth?: number | null
   gap?: number | null
   inset?: number | null
+  minWidth?: ThemeSize | null
 }
 
 export const theme = (config: Theme): Record<string, string | number | null> => {
   const styles: Record<string, string | number | null> = {}
+  applyMinWidth(styles, config.minWidth)
   applyPosition(styles, config.position)
   applyFlex(styles, config)
   applyItems(styles, config.items)
@@ -41,6 +45,7 @@ export const theme = (config: Theme): Record<string, string | number | null> => 
   applyFontSize(styles, config.textSize)
   applyTextAlign(styles, config.textAlign)
   applyColors(styles, config)
+  applySize(styles, config.size)
   applyWidth(styles, config.width)
   applyHeight(styles, config.height)
   applyBorderWidth(styles, config.borderWidth)
@@ -54,6 +59,48 @@ export const theme = (config: Theme): Record<string, string | number | null> => 
 const applyGap = (styles: Record<string, string | number | null>, gap: number | null | undefined) => {
   if (gap != null) {
     styles.gap = gap * 4
+  }
+}
+
+const applySize = (styles: Record<string, string | number | null>, size: number | null | undefined) => {
+  if (size != null) {
+    styles.width = size * 4
+    styles.height = size * 4
+  }
+}
+
+const applyMinWidth = (styles: Record<string, string | number | null>, minWidth: Theme['minWidth']) => {
+  if (!minWidth) return
+  switch (minWidth) {
+    case 'xs':
+      styles.minWidth = 16
+      break
+    case 'sm':
+      styles.minWidth = 24
+      break
+    case 'md':
+      styles.minWidth = 32
+      break
+    case 'lg':
+      styles.minWidth = 40
+      break
+    case 'xl':
+      styles.minWidth = 48
+      break
+    case '2xl':
+      styles.minWidth = 56
+      break
+    case '3xl':
+      styles.minWidth = 64
+      break
+    case '4xl':
+      styles.minWidth = 72
+      break
+    case '5xl':
+      styles.minWidth = 80
+      break
+    default:
+      break
   }
 }
 
