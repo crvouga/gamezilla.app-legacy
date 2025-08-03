@@ -44,9 +44,9 @@ import {
 } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { inPlaceMapPropsToReactNativeProps } from './react-native/map-props-to-react-native-props'
-import { inPlaceMapPropsToReactProps } from './react/map-props-to-react-props'
 import { ReactNativeCanvas } from './react-native/react-native-canvas'
-import { SafeAreaInsets } from './react-native/safe-area-insets'
+import { ReactNativeSafeAreaBox } from './react-native/react-native-safe-area-box'
+import { inPlaceMapPropsToReactProps } from './react/map-props-to-react-props'
 
 const ALLOWED_PROPS = new Set([
   'style',
@@ -166,21 +166,7 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
         case SCROLL_BOX_TAG:
           return createElement(ScrollView, props, ...children) as any
         case SAFE_AREA_BOX_TAG:
-          const safeAreaInsets = SafeAreaInsets.get()
-          return createElement(
-            View,
-            {
-              ...props,
-              style: {
-                ...props.style,
-                paddingTop: safeAreaInsets.top,
-                paddingBottom: safeAreaInsets.bottom,
-                paddingLeft: safeAreaInsets.left,
-                paddingRight: safeAreaInsets.right,
-              },
-            },
-            ...children,
-          ) as any
+          return createElement(ReactNativeSafeAreaBox as any, props, ...children) as any
         case BOX_TAG:
           return createElement(View, props, ...children) as any
         case TEXT_TAG:

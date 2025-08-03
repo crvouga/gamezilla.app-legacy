@@ -40,3 +40,7 @@ coverage
 
 ci_logs.txt
 .expo
+
+# Native
+ios
+android

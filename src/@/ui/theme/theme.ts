@@ -27,7 +27,7 @@ export type Theme = {
   textAlign?: 'left' | 'center' | 'right' | null
   borderColor?: ThemeColor | null
   width?: 'full' | '1/2' | number | null
-  maxWidth?: 'full' | '1/2' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | number | null
+  maxWidth?: 'full' | '1/2' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | number | null
   height?: 'full' | '1/2' | number | null
   size?: number | null
   borderWidth?: number | null
@@ -95,33 +95,42 @@ const applyOpacity = (styles: Record<string, string | number | null>, opacity: n
 
 const applyMaxWidth = (styles: Record<string, string | number | null>, maxWidth: Theme['maxWidth']) => {
   if (!maxWidth) return
-  if (maxWidth === 'full') {
-    styles.maxWidth = '100%'
-  }
-  if (maxWidth === '1/2') {
-    styles.maxWidth = '50%'
-  }
   switch (maxWidth) {
+    case 'full':
+      styles.maxWidth = '100%'
+      break
+    case '1/2':
+      styles.maxWidth = '50%'
+      break
     case 'sm':
-      styles.maxWidth = 32
+      styles.maxWidth = 160 // 40rem
       break
     case 'md':
-      styles.maxWidth = 40
+      styles.maxWidth = 192 // 48rem
       break
     case 'lg':
-      styles.maxWidth = 48
+      styles.maxWidth = 224 // 56rem
       break
     case 'xl':
-      styles.maxWidth = 56
+      styles.maxWidth = 288 // 72rem
       break
     case '2xl':
-      styles.maxWidth = 64
+      styles.maxWidth = 336 // 84rem
       break
     case '3xl':
-      styles.maxWidth = 72
+      styles.maxWidth = 384 // 96rem
       break
     case '4xl':
-      styles.maxWidth = 80
+      styles.maxWidth = 448 // 112rem
+      break
+    case '5xl':
+      styles.maxWidth = 512 // 128rem
+      break
+    case '6xl':
+      styles.maxWidth = 576 // 144rem
+      break
+    case '7xl':
+      styles.maxWidth = 640 // 160rem
       break
   }
   if (typeof maxWidth === 'number') {

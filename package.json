@@ -65,7 +65,9 @@
     "vitest:e2e": "IS_VITEST_TEST=true NODE_ENV=test vitest run .e2e.ts",
     "vitest:int": "IS_INTEGRATION_TEST=true IS_VITEST_TEST=true NODE_ENV=test vitest run",
     "vitest:int:coverage": "IS_INTEGRATION_TEST=true IS_VITEST_TEST=true NODE_ENV=test vitest run --coverage",
-    "viz-bundle": "pnpm exec vite-bundle-visualizer"
+    "viz-bundle": "pnpm exec vite-bundle-visualizer",
+    "android": "expo run:android",
+    "ios": "expo run:ios"
   },
   "prettier": {
     "jsxSingleQuote": true,
@@ -90,7 +92,7 @@
     "preact": "^10.27.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-native": "0.80.2",
+    "react-native": "0.79.2",
     "react-native-svg": "15.11.2",
     "react-native-web": "^0.21.0",
     "snabbdom": "^3.6.2",
