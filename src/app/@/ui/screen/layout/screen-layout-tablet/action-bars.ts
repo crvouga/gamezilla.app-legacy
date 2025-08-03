@@ -39,7 +39,6 @@ const renderActionBars = (
 
     if (shouldRenderStart || shouldRenderEnd) {
       const id = screen.actionBar.id ?? `${screen.id}-actions`
-      const class_ = position === 'start' ? 'order-first' : 'order-last'
 
       bars.push(
         h(VerticalActionBar, {
@@ -47,7 +46,6 @@ const renderActionBars = (
           id: id,
           ctx: ctx,
           key: id,
-          class: class_,
         }),
       )
     }
