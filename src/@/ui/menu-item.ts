@@ -92,36 +92,27 @@ const MenuItemContent = (input: {
     },
     [
       input.renderIcon?.({
-        style: theme({ size: 8 }),
+        style: theme({ size: 8, textColor: 'white' }),
       }),
-      h(
-        Box,
-        {
+      h(Box, { style: theme({ flexDirection: 'col', gap: 1 }) }, [
+        h(Typography, {
+          variant: 'body',
           style: theme({
-            flexDirection: 'col',
-            gap: 1,
+            textColor: 'white',
+            fontSize: 'lg',
           }),
-        },
-        [
+          text: input.primary,
+        }),
+        input.secondary &&
           h(Typography, {
-            variant: 'body',
             style: theme({
-              textColor: 'white',
-              fontSize: 'lg',
+              textAlign: 'left',
+              fontSize: 'xs',
+              textColor: 'neutral-300',
             }),
-            text: input.primary,
+            text: input.secondary,
           }),
-          input.secondary &&
-            h(Typography, {
-              style: theme({
-                textAlign: 'left',
-                fontSize: 'xs',
-                textColor: 'neutral-300',
-              }),
-              text: input.secondary,
-            }),
-        ],
-      ),
+      ]),
     ],
   )
 }

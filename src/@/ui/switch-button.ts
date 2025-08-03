@@ -12,43 +12,39 @@ export const SwitchButton = ({
   checked: boolean
   onToggle?: (e: Event | unknown) => void
 }) => {
-  return h(Box, { style: theme({ flexDirection: 'row', alignItems: 'center', gap: 2 }) }, [
-    // h(Text, {}, label),
-    h(
-      Pressable,
-      {
-        onPress: onToggle,
-        // 'aria-role': 'switch',
-        'aria-checked': checked,
-        'aria-label': label,
+  return h(
+    Pressable,
+    {
+      onPress: onToggle,
+      'aria-checked': checked,
+      'aria-label': label,
+      style: {
+        ...theme({
+          position: 'relative',
+          height: 6,
+          width: 11,
+          rounded: 'full',
+          backgroundColor: checked ? 'blue-500' : 'neutral-700',
+        }),
+      },
+    },
+    [
+      h(Box, {
         style: {
           ...theme({
-            position: 'relative',
-            height: 6,
-            width: 11,
+            position: 'absolute',
+            top: 0.5,
+            height: 5,
+            width: 5,
             rounded: 'full',
-          }),
-          backgroundColor: checked ? 'blue-500' : 'neutral-200',
-        },
-      },
-      [
-        h(Box, {
-          style: {
-            ...theme({
-              position: 'absolute',
-              top: 0.5,
-              height: 5,
-              width: 5,
-              rounded: 'full',
-              borderWidth: 1,
-            }),
+            borderWidth: 1,
             backgroundColor: 'white',
-            transform: checked ? 'translateX(22px)' : 'translateX(2px)',
             borderColor: checked ? 'white' : 'neutral-300',
-            transition: 'all',
-          },
-        }),
-      ],
-    ),
-  ])
+          }),
+          transform: checked ? 'translateX(22px)' : 'translateX(2px)',
+          transition: 'all',
+        },
+      }),
+    ],
+  )
 }

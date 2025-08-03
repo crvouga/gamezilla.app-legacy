@@ -1,4 +1,5 @@
 import { ThemeColor } from './theme-color'
+import { ThemeRounded } from './theme-rounded'
 import { ThemeSize } from './theme-size'
 
 export type Theme = {
@@ -19,7 +20,9 @@ export type Theme = {
   overflow?: 'hidden' | null
   opacity?: number | null
   pointerEvents?: 'none' | 'auto' | null
-  rounded?: 'full' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | null
+  rounded?: ThemeRounded | null
+  roundedTop?: ThemeRounded | null
+  roundedBottom?: ThemeRounded | null
   textColor?: ThemeColor | null
   fontWeight?: 'normal' | 'bold' | 'black' | null
   fontSize?: ThemeSize | number | null
@@ -51,7 +54,7 @@ export const theme = (config: Theme): Record<string, string | number | null> => 
   applyItems(styles, config.alignItems)
   applyJustify(styles, config.justifyContent)
   applyPadding(styles, config)
-  applyBorderRadius(styles, config.rounded)
+  applyBorderRadius(styles, config)
   applyFontWeight(styles, config.fontWeight)
   applyFontSize(styles, config.fontSize)
   applyTextAlign(styles, config.textAlign)
@@ -242,19 +245,22 @@ const applyPadding = (styles: Record<string, string | number | null>, config: Th
   }
 }
 
-const applyBorderRadius = (styles: Record<string, string | number | null>, rounded: Theme['rounded']) => {
-  if (!rounded) return
-  const radiusMap = {
-    full: 9999,
-    md: 6,
-    lg: 8,
-    xl: 12,
-    '2xl': 16,
-    '3xl': 24,
-    '4xl': 32,
-    '5xl': 40,
+const applyBorderRadius = (styles: Record<string, string | number | null>, config: Theme) => {
+  const { rounded, roundedTop, roundedBottom } = config
+
+  if (rounded) {
+    styles.borderRadius = ThemeRounded.BORDER_RADIUS_MAP[rounded] ?? 0
   }
-  styles.borderRadius = radiusMap[rounded] ?? 0
+
+  if (roundedTop) {
+    styles.borderTopLeftRadius = ThemeRounded.BORDER_RADIUS_MAP[roundedTop]
+    styles.borderTopRightRadius = ThemeRounded.BORDER_RADIUS_MAP[roundedTop] ?? 0
+  }
+
+  if (roundedBottom) {
+    styles.borderBottomLeftRadius = ThemeRounded.BORDER_RADIUS_MAP[roundedBottom] ?? 0
+    styles.borderBottomRightRadius = ThemeRounded.BORDER_RADIUS_MAP[roundedBottom] ?? 0
+  }
 }
 
 const FONT_WEIGHT_MAP = {

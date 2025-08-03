@@ -312,7 +312,7 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
 }
 
 export const SettingsFrontend = {
-  ViewLogoutMenuItem: ViewLogoutMenuItem,
+  ViewLogoutMenuItem,
   init,
   update,
   subscriptions,

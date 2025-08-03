@@ -32,7 +32,13 @@ const DrawerContent = (props: { position: 'top' | 'bottom'; open: boolean; child
         transform: props.open ? 'translateY(0)' : isTop ? 'translateY(-100%)' : 'translateY(100%)',
         transitionProperty: 'transform',
         transitionDuration: '200ms',
-        borderRadius: isTop ? '0 0 1rem 1rem' : '1rem 1rem 0 0',
+        ...(isTop
+          ? theme({
+              rounded: 'lg',
+            })
+          : theme({
+              rounded: 'lg',
+            })),
       },
     },
     [
