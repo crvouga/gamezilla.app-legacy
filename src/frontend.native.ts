@@ -1,7 +1,6 @@
 import '@expo/metro-runtime'
 import { registerRootComponent } from 'expo'
 import { ComponentType, useEffect, useState } from 'react'
-import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { AudioPlayerImplExpoAudio } from './@/audio-player/impl-expo-audio'
 import { KeyValueDb } from './@/key-value-db'
 import { KeyValueDbSyncImplHashMap } from './@/key-value-db-sync/impl-hash-map'
@@ -18,7 +17,6 @@ import { ImplReactNative } from './@/vdom/vdom-engine/impl-react-native'
 import { ViewportImplReactNative } from './@/viewport/impl-react-native'
 import { SplashScreen } from './app/@/ui/logo/splash-screen'
 import { AppFrontend } from './app/frontend'
-import './frontend.css'
 
 const logger = Logger.init({
   t: 'console',
@@ -125,7 +123,7 @@ const Main = () => {
 
   if (!input) return h(SplashScreen, {}, [])
 
-  return h(SafeAreaProvider, {}, [h(AppFrontend.View, input, [])])
+  return h(AppFrontend.View, input, [])
 }
 
 registerRootComponent(Main as ComponentType<unknown>)

@@ -9,14 +9,13 @@ import { Logger } from './@/logger'
 import { Navigation } from './@/navigation/impl'
 import { Pglite } from './@/pglite/impl'
 import { DebuggerReduxDevTools } from './@/program/debugger'
+import { SqlDbMigrationPolicy } from './@/sql-db-migration-policy/impl'
 import { FrontendSqlDb } from './@/sql-db/frontend-impl'
 import { Url } from './@/url/url'
 import { h, render } from './@/vdom'
 import { SwapVDomEngine } from './@/vdom/swap-vdom-engine'
-import { Viewport } from './@/viewport/impl'
-import './frontend.css'
-import { SqlDbMigrationPolicy } from './@/sql-db-migration-policy/impl'
 import { VdomImplWebStorage } from './@/vdom/vdom-impl-web-storage'
+import { Viewport } from './@/viewport/impl'
 
 const main = async () => {
   const logger = Logger.init({ t: 'console', namespace: ['frontend'], newLinePerMsg: false, maxLogLevel: 'debug' })

@@ -1,4 +1,3 @@
-const { withNativeWind } = require('nativewind/metro')
 const { getDefaultConfig } = require('expo/metro-config')
 
 const config = getDefaultConfig(__dirname)
@@ -15,4 +14,4 @@ config.server.enhanceMiddleware = (middleware) => {
   }
 }
 
-module.exports = withNativeWind(config, { input: './src/frontend.css' })
+module.exports = config

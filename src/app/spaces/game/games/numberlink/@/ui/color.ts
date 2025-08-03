@@ -20,7 +20,6 @@ const COLOR_TO_HEX_DIM = {
   rose: '#e11d48',
 } as const
 
-// source: https://tailwindcss.com/docs/customizing-colors
 const COLOR_TO_HEX_BRIGHT = {
   red: '#ef4444',
   orange: '#f97316',

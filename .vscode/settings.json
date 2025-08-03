@@ -43,7 +43,7 @@
     "msgpack",
     "mypassword",
     "myuser",
-    "nativewind",
+
     "nixpacks",
     "nodelay",
     "noninteractive",
@@ -75,8 +75,6 @@
     "Supabase",
     "swiper",
     "swiperslidechange",
-    "tailwindcss",
-    "tailwindcssv",
     "tetris",
     "tetromino",
     "tmpfs",

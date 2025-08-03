@@ -1,8 +1,5 @@
-import { cssInterop } from 'nativewind'
 import { createElement, Fragment } from 'react'
 import { Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
-import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import Svg, {
   Circle,
   ClipPath,
@@ -49,62 +46,8 @@ import { IVirtualDomEngine } from './interface'
 import { inPlaceMapPropsToReactNativeProps } from './react-native/map-props-to-react-native-props'
 import { inPlaceMapPropsToReactProps } from './react/map-props-to-react-props'
 import { ReactNativeCanvas } from './react-native/react-native-canvas'
+import { SafeAreaInsets } from './react-native/safe-area-insets'
 
-cssInterop(Svg, {
-  className: {
-    target: 'style',
-    nativeStyleToProp: {
-      width: true,
-      height: true,
-      stroke: true,
-      fill: true,
-    },
-  },
-})
-
-cssInterop(Circle, {
-  className: {
-    target: true,
-    nativeStyleToProp: {
-      stroke: true,
-      fill: true,
-    },
-  },
-})
-
-cssInterop(Rect, {
-  className: {
-    target: true,
-    nativeStyleToProp: {
-      width: true,
-      height: true,
-      stroke: true,
-      fill: true,
-    },
-  },
-})
-
-cssInterop(Line, {
-  className: {
-    target: true,
-    nativeStyleToProp: { stroke: true },
-  },
-})
-
-cssInterop(Path, {
-  className: {
-    target: true,
-    nativeStyleToProp: {
-      stroke: true,
-      fill: true,
-    },
-  },
-})
-
-configureReanimatedLogger({
-  level: ReanimatedLogLevel.warn,
-  strict: false,
-})
 const ALLOWED_PROPS = new Set([
   'style',
   'onPress',
@@ -122,8 +65,6 @@ const ALLOWED_PROPS = new Set([
   'accessibilityState',
   'accessibilityHint',
   'children',
-  'class',
-  'className',
   'role',
   'viewBox',
   'width',
@@ -225,7 +166,21 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
         case SCROLL_BOX_TAG:
           return createElement(ScrollView, props, ...children) as any
         case SAFE_AREA_BOX_TAG:
-          return createElement(SafeAreaView, props, ...children) as any
+          const safeAreaInsets = SafeAreaInsets.get()
+          return createElement(
+            View,
+            {
+              ...props,
+              style: {
+                ...props.style,
+                paddingTop: safeAreaInsets.top,
+                paddingBottom: safeAreaInsets.bottom,
+                paddingLeft: safeAreaInsets.left,
+                paddingRight: safeAreaInsets.right,
+              },
+            },
+            ...children,
+          ) as any
         case BOX_TAG:
           return createElement(View, props, ...children) as any
         case TEXT_TAG:
