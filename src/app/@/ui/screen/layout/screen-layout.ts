@@ -1,15 +1,13 @@
-import { Frag } from '~/@/vdom/primitives/frag'
-import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Frag } from '~/@/vdom/primitives/frag'
+import { ScreenLayoutMobile } from './screen-layout-mobile'
 import { ScreenLayoutProps, toDataTestIds } from './screen-layout-props'
 import { ScreenLayoutTablet } from './screen-layout-tablet'
-import { ScreenLayoutMobile } from './screen-layout-mobile'
 
 export const ScreenLayout = (input: ScreenLayoutProps) => {
   return h(Frag, {}, [
-    ...toDataTestIds(input).map((dataTestId) =>
-      h(Box, { key: dataTestId, class: 'hidden', 'data-testid': dataTestId }),
-    ),
+    ...toDataTestIds(input).map((dataTestId) => h(Box, { key: dataTestId, 'data-testid': dataTestId })),
     h(ScreenLayoutVariant, input, []),
   ])
 }

@@ -1,11 +1,12 @@
 import type { TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/primitives/box'
 import type { Translator } from '~/@/l18n/generated'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconArrowLeft } from '~/@/ui/icon'
 import { IconButton } from '~/@/ui/icon-button'
+import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 import { VDom } from '~/@/vdom/vdom'
 
 export const ScreenNavBarTablet = (input: {
@@ -33,7 +34,7 @@ export const ScreenNavBarTablet = (input: {
             render: () =>
               IconButton({
                 onPress: input.back?.onPress,
-                class: '-ml-2',
+                style: theme({ px: 2 }),
                 size: 'lg',
                 label: input.ctx.t('app.exit'),
                 renderIcon: (inputIcon) => IconArrowLeft(inputIcon),
@@ -43,20 +44,18 @@ export const ScreenNavBarTablet = (input: {
         },
       }),
 
-    h(Box, { class: 'flex flex-1 flex-col truncate' }, [
+    h(Box, { style: theme({ flexDirection: 'col', flex: 1, overflow: 'hidden' }) }, [
       input.title &&
         h(Typography, {
           role: 'heading',
-          class: 'truncate px-2',
-          sizeClassName: 'text-3xl font-bold',
+          style: theme({ overflow: 'hidden', padding: 2, textSize: '3xl', fontWeight: 'bold' }),
           variant: 'title',
           text: input.title,
         }),
       input.subtitle &&
         h(Typography, {
-          class: 'truncate px-2',
+          style: theme({ overflow: 'hidden', padding: 2 }),
           color: 'text-secondary',
-          sizeClassName: 'text-xl',
           role: 'heading',
           variant: 'subtitle',
           text: input.subtitle,
@@ -67,5 +66,18 @@ export const ScreenNavBarTablet = (input: {
 }
 
 export const ScreenNavBarTabletRoot = (input: { children: VDom }) => {
-  return h(Box, { class: 'flex flex-row h-24 w-full shrink-0 items-center px-6' }, [input.children])
+  return h(
+    Box,
+    {
+      style: theme({
+        flexDirection: 'row',
+        height: 24,
+        width: 'full',
+        flexShrink: 0,
+        alignItems: 'center',
+        padding: 6,
+      }),
+    },
+    [input.children],
+  )
 }
