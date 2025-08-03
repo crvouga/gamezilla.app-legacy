@@ -13,7 +13,7 @@ import { Stop } from '~/@/vdom/primitives/svg/stop'
 
 const coverArtId = Uuid.generate()
 
-export const CoverArt = (input: { style?: Record<string, unknown>; class?: string }) => {
+export const CoverArt = (input: { style?: Record<string, unknown> }) => {
   const ids = {
     playerOneGradient: `playerOneGradient${coverArtId}`,
     playerTwoGradient: `playerTwoGradient${coverArtId}`,

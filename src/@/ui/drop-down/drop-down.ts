@@ -13,7 +13,7 @@ export const DropDown = (props: {
   onClose: () => void
   renderReference: () => VDom
   renderFloating: () => VDom
-  class?: string
+  style?: Record<string, unknown>
   position?: DropDownPosition
   alignment?: DropDownAlignment
   testId?: string
@@ -44,7 +44,7 @@ export const DropDown = (props: {
             position: 'relative',
           }),
           zIndex: props.open ? 50 : undefined,
-          ...(props.class ? { className: props.class } : {}),
+          ...props.style,
         },
         onKeyDown,
       },

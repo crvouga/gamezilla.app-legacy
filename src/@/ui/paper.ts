@@ -9,6 +9,6 @@ export const PAPER_STYLE = theme({
   rounded: 'lg',
 })
 
-export const Paper = (props: { style?: Record<string, unknown>; class?: string; children: VDom[] }) => {
+export const Paper = (props: { style?: Record<string, unknown>; children: VDom[] }) => {
   return h(Box, { style: { ...PAPER_STYLE, ...props.style } }, props.children)
 }

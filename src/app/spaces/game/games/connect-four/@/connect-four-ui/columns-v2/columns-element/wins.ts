@@ -80,7 +80,7 @@ export function createWinNode(win: Win) {
   winNode.setAttribute('stroke', '#fff')
   winNode.setAttribute('fill', 'transparent')
   winNode.setAttribute('stroke-width', `${N / 8}`)
-  winNode.classList.add('pointer-events-none')
+  winNode.style.pointerEvents = 'none'
   winNode.setAttribute('transform', `rotate(${theta} ${originX} ${originY})`)
   return winNode
 }

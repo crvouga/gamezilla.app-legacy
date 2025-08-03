@@ -5,7 +5,6 @@ export type PrimitiveSvgProps = PrimitiveProps & {
   width?: number | string
   height?: number | string
   viewBox?: string
-  class?: string
   key?: string | number | undefined
   xmlns?: string
   x?: number | string

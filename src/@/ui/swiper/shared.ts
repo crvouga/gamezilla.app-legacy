@@ -5,7 +5,6 @@ export type PrivateSwiperInput = {
   id: string
   onSlideIndexChanged: (index: number) => void
   children?: VDom
-  class?: string
   slideIndex: number
 }
 

@@ -9,7 +9,6 @@ import * as Numberlink from './numberlink/cover-art'
 export const GameCoverArt = (input: {
   style?: Record<string, unknown>
   rounded?: boolean
-  class?: string
   gameName: GameName
   platform: IPlatform
 }) => {
@@ -25,7 +24,6 @@ export const GameCoverArt = (input: {
 
 const GameCoverArtSwitch = (input: {
   style?: Record<string, unknown>
-  class?: string
   gameName: GameName
   platform: IPlatform
 }): VDom => {

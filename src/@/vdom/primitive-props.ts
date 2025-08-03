@@ -5,7 +5,6 @@ export type PrimitiveProps = {
   key?: string | number | boolean | null | undefined
   children?: VDom[]
   id?: string
-  // class?: string
   role?: AriaRole
   'aria-role'?: AriaRole
   'aria-label'?: string

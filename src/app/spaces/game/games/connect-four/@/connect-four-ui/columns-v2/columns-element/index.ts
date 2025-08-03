@@ -194,9 +194,9 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
 
         if (root) {
           if (this.input?.disabled) {
-            root.classList.add('pointer-events-none')
+            root.style.pointerEvents = 'none'
           } else {
-            root.classList.remove('pointer-events-none')
+            root.style.pointerEvents = 'auto'
           }
         }
       }

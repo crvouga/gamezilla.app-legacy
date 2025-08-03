@@ -4,7 +4,6 @@ import { Path } from '../vdom/primitives/svg/path'
 import { Svg } from '../vdom/primitives/svg/svg'
 
 export type Props = {
-  class?: string
   fill?: string
   stroke?: string
   style?: Record<string, unknown>
