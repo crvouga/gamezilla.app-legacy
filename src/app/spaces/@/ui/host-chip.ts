@@ -4,17 +4,14 @@ import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 
-export const ViewHostChip = (input: { ctx: AppFrontendCtxBase }) => {
+export const ViewHostChip = (props: { ctx: AppFrontendCtxBase }) => {
   return h(Chip, {
     size: 'sm',
-    renderStartIcon: (startIconInput) =>
+    renderStartIcon: (iconProps) =>
       h(IconCrown, {
-        ...startIconInput,
-        style: {
-          ...startIconInput.style,
-          ...theme({ textColor: 'yellow-300' }),
-        },
+        ...iconProps,
+        style: { ...iconProps.style, ...theme({ textColor: 'yellow-300' }) },
       }),
-    label: input.ctx.t('host'),
+    label: props.ctx.t('host'),
   })
 }

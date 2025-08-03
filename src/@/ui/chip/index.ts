@@ -33,10 +33,7 @@ export const Chip = (input: ChipProps) => {
     },
     [
       input.renderStartIcon?.({
-        style: theme({
-          ...toIconSizeStyles(input),
-          textColor: 'white',
-        }),
+        style: toIconSizeStyles(input),
       }),
       h(Text, {
         text: input.label,
@@ -85,17 +82,11 @@ const toSizeStyles = (input: ChipProps): Theme => {
   }
 }
 
-const toIconSizeStyles = (input: ChipProps): Theme => {
-  switch (input.size) {
+const toIconSizeStyles = (props: ChipProps): Record<string, unknown> => {
+  switch (props.size) {
     case 'sm':
-      return {
-        width: 4,
-        height: 4,
-      }
+      return theme({ size: 4 })
     case 'lg':
-      return {
-        width: 5,
-        height: 5,
-      }
+      return theme({ size: 5 })
   }
 }

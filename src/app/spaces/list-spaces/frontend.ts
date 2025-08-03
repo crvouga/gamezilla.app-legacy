@@ -75,6 +75,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
           style: theme({
             flex: 1,
             flexDirection: 'col',
+            padding: 6,
           }),
           contentContainerStyle: {
             rowGap: 16,
