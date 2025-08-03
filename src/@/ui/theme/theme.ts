@@ -5,8 +5,10 @@ export type Theme = {
   position?: 'absolute' | 'relative' | null
   flexDirection?: 'row' | 'col' | null
   flex?: number | null
-  items?: 'center' | 'start' | 'end' | 'stretch' | 'baseline' | null
-  justify?: 'center' | 'start' | 'end' | 'between' | 'around' | 'evenly' | null
+  flexGrow?: number | null
+  flexShrink?: number | null
+  items?: 'center' | 'flex-start' | 'flex-end' | 'stretch' | 'baseline' | null
+  justify?: 'center' | 'flex-start' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly' | null
   p?: number | null
   px?: number | null
   py?: number | null
@@ -116,6 +118,12 @@ const applyFlex = (styles: Record<string, string | number | null>, config: Theme
   }
   if (config.flex) {
     styles.flex = config.flex
+  }
+  if (config.flexGrow) {
+    styles.flexGrow = config.flexGrow
+  }
+  if (config.flexShrink) {
+    styles.flexShrink = config.flexShrink
   }
 }
 

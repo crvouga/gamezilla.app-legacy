@@ -111,27 +111,21 @@ const ViewActionButton = (props: {
   ctx: AppFrontendCtx
   dispatch: (msg: MsgFrontend) => void
 }) => {
-  return h(
-    Box,
-    { style: theme({ p: 4, flexDirection: 'row', justify: 'end', items: 'center' }) },
-    [
-      props.isCurrentUserHost &&
-        h(IconButton, {
+  return h(Box, { style: theme({ flexDirection: 'row', justify: 'flex-end', items: 'center' }) }, [
+    props.isCurrentUserHost
+      ? h(IconButton, {
           renderIcon: (iconInput) => h(IconXMark, iconInput),
           label: props.ctx.t('spaces.end'),
           size: 'lg',
           onPress: () => props.dispatch({ t: 'end-space.clicked-end-space-button', spaceId: props.spaceId }),
-        }),
-
-      !props.isCurrentUserHost &&
-        h(IconButton, {
+        })
+      : h(IconButton, {
           renderIcon: (iconInput) => h(IconXMark, iconInput),
           label: props.ctx.t('spaces.leave'),
           size: 'lg',
           onPress: () => props.dispatch({ t: 'leave-space.clicked-leave-space-button', spaceId: props.spaceId }),
         }),
-    ].filter(Boolean),
-  )
+  ])
 }
 
 const ViewRoot = (input: { children: VDom[] }) => {
@@ -145,7 +139,6 @@ const ViewRoot = (input: { children: VDom[] }) => {
         minWidth: '5xl',
         width: 'full',
         backgroundColor: 'blue-600',
-        px: 6,
       }),
     },
     input.children,

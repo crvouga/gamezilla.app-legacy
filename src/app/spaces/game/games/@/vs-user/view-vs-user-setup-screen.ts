@@ -152,7 +152,7 @@ export const VsUserSetupScreen = ({
 }: {
   ctx: SpaceFrontendCtx
   title: TranslatedText
-  renderCoverArt: (props: { class: string }) => VDom
+  renderCoverArt: (props: { style: Record<string, unknown> }) => VDom
   playerOne: PlayerProp
   playerTwo: PlayerProp
   onStartGame: () => void

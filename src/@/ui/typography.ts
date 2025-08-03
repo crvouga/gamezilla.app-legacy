@@ -2,26 +2,36 @@ import { AriaRole } from '~/@/html/aria-role'
 import type { TranslatedText } from '~/@/l18n'
 import { h } from '~/@/vdom/h'
 import { Text } from '../vdom/primitives/text'
-import { cn } from './cn'
+import { theme } from './theme/theme'
 
 export type TypographyVariant = 'title' | 'body' | 'label' | 'subtitle' | 'caption'
 
-const sizeClassNames: { [variant in TypographyVariant]: string } = {
-  title: 'text-3xl',
-  body: 'text-base',
-  label: 'text-xs',
-  subtitle: 'text-sm',
-  caption: 'text-xs',
+const toSizeStyle = (variant: TypographyVariant) => {
+  switch (variant) {
+    case 'title':
+      return theme({ textSize: '3xl' })
+    case 'body':
+      return theme({ textSize: 'md' })
+    case 'label':
+      return theme({ textSize: 'xs' })
+    case 'subtitle':
+      return theme({ textSize: 'sm' })
+    case 'caption':
+      return theme({ textSize: 'xs' })
+  }
 }
 
 export type TypographyColor = 'inherit' | 'text-primary' | 'text-secondary'
 
-export const TEXT_SECONDARY_CLASS_NAME = 'text-neutral-300'
-
-const colorClassNames: { [color in TypographyColor]: string } = {
-  'text-secondary': TEXT_SECONDARY_CLASS_NAME,
-  'text-primary': 'text-white',
-  inherit: 'text-inherit',
+const toColorStyle = (color: TypographyColor) => {
+  switch (color) {
+    case 'text-secondary':
+      return theme({ textColor: 'neutral-300' })
+    case 'text-primary':
+      return theme({ textColor: 'white' })
+    case 'inherit':
+      return theme({ textColor: 'white' })
+  }
 }
 
 export type TypographyProps = {
@@ -62,37 +72,38 @@ const toAriaLevel = (input: TypographyProps): number | undefined => {
   }
 }
 
-const SKELETON_CLASS = 'animate-pulse text-transparent select-none pointer-events-none bg-neutral-500 rounded'
+const SKELETON_STYLE = theme({
+  backgroundColor: 'neutral-500',
+  pointerEvents: 'none',
+})
 
-const toTextAlignClass = (input: TypographyProps): string => {
-  switch (input.align) {
+const toTextAlignStyle = (align?: 'left' | 'center' | 'right') => {
+  switch (align) {
     case 'left':
-      return 'text-left'
+      return theme({ textAlign: 'left' })
     case 'center':
-      return 'text-center'
+      return theme({ textAlign: 'center' })
     case 'right':
-      return 'text-right'
+      return theme({ textAlign: 'right' })
     default:
-      return 'text-left'
+      return theme({ textAlign: 'left' })
   }
 }
 
 export const Typography = (input: TypographyProps) => {
-  const sizeClassName = input.sizeClassName ?? sizeClassNames[input.variant ?? 'body']
-  const colorClassName = input.colorClassName
-    ? input.colorClassName
-    : input.color && !input.skeleton
-      ? colorClassNames[input.color]
-      : 'text-white'
+  const variant = input.variant ?? 'body'
+  const color = input.color ?? 'text-primary'
+
+  const styles = {
+    ...toSizeStyle(variant),
+    ...(input.skeleton ? SKELETON_STYLE : toColorStyle(color)),
+    ...toTextAlignStyle(input.align),
+    ...input.style,
+  }
+
   return h(Text, {
-    class: cn(
-      sizeClassName,
-      colorClassName,
-      input.skeleton ? SKELETON_CLASS : null,
-      input.class,
-      toTextAlignClass(input),
-    ),
-    style: input.style,
+    style: styles,
+    class: input.class,
     role: input.role,
     'aria-busy': input.skeleton,
     'aria-level': toAriaLevel(input),

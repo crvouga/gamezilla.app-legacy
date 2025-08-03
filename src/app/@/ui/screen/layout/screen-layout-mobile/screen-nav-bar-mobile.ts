@@ -1,11 +1,12 @@
 import type { TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/primitives/box'
 import type { Translator } from '~/@/l18n/generated'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconArrowLeft } from '~/@/ui/icon'
 import { IconButton, IconButtonEmpty } from '~/@/ui/icon-button'
+import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 import { VDom } from '~/@/vdom/vdom'
 
 export const ScreenNavBarMobile = (input: {
@@ -30,7 +31,15 @@ export const ScreenNavBarMobile = (input: {
   return h(
     Box,
     {
-      class: 'flex flex-row h-16 w-full shrink-0 items-center truncate px-6 text-center justify-center',
+      style: theme({
+        height: 16,
+        width: 'full',
+        items: 'center',
+        justify: 'center',
+        overflow: 'hidden',
+        flexDirection: 'row',
+        px: 3,
+      }),
     },
     [
       shouldRenderBack &&
@@ -42,7 +51,6 @@ export const ScreenNavBarMobile = (input: {
               render: () =>
                 h(IconButton, {
                   onPress: input.back?.onPress,
-                  class: '-ml-2',
                   label: input.ctx.t('app.exit'),
                   ariaLabel: input.ctx.t('app.back'),
                   renderIcon: (inputIcon) => h(IconArrowLeft, inputIcon),
@@ -55,27 +63,44 @@ export const ScreenNavBarMobile = (input: {
       h(
         Box,
         {
-          class: 'flex flex-1 flex-col truncate',
+          style: theme({
+            flex: 1,
+            flexDirection: 'col',
+            overflow: 'hidden',
+            items: 'center',
+            justify: 'center',
+          }),
         },
         [
           typeof input.title === 'string' &&
             h(Typography, {
               role: 'heading',
-              sizeClassName: 'text-xl font-bold',
-              class: 'truncate px-2 text-center',
               variant: 'title',
               text: input.title,
               align: 'center',
+              style: theme({
+                textSize: 'xl',
+                fontWeight: 'bold',
+                textAlign: 'center',
+                flexDirection: 'col',
+                items: 'center',
+                justify: 'center',
+              }),
             }),
 
           typeof input.subtitle === 'string' &&
+            input.subtitle.length > 0 &&
             h(Typography, {
-              class: 'truncate px-2 text-xs text-center',
-              color: 'text-secondary',
               role: 'heading',
               variant: 'subtitle',
               text: input.subtitle,
               align: 'center',
+              style: theme({
+                textSize: 'xs',
+                textAlign: 'center',
+                px: 2,
+                textColor: 'neutral-300',
+              }),
             }),
         ],
       ),

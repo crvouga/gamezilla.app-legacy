@@ -3,6 +3,7 @@ import { G } from '~/@/vdom/primitives/svg/g'
 import { Path } from '~/@/vdom/primitives/svg/path'
 import { Rect } from '~/@/vdom/primitives/svg/rect'
 import { Svg } from '~/@/vdom/primitives/svg/svg'
+import { VDom } from '~/@/vdom/vdom'
 
 const theme = {
   // lightSquare: "#EBEBD0",
@@ -12,8 +13,8 @@ const theme = {
   pawn: '#93BA46',
 }
 
-export const CoverArt = (input: { class?: string }) => {
-  return h(Svg, { width: '100%', viewBox: '0 0 2 2', ...input }, [
+export const CoverArt = (props: { style: Record<string, unknown>; children?: VDom[] }) => {
+  return h(Svg, { width: '100%', viewBox: '0 0 2 2', ...props }, [
     h(Rect, { x: 0, y: 0, width: 1, height: 1, fill: theme.lightSquare }),
 
     h(Rect, { x: 0, y: 1, width: 1, height: 1, fill: theme.darkSquare }),

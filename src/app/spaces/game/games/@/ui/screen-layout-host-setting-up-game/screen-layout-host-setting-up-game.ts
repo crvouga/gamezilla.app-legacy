@@ -1,5 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
+import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
@@ -21,7 +22,7 @@ export const ScreenLayoutHostSettingUpGame = (input: {
     screenSize: ScreenSize
   }
   dataTestId?: string
-  renderCoverArt?: (input: { class: string }) => VDom
+  renderCoverArt?: (input: { style: Record<string, unknown> }) => VDom
 }) => {
   return h(ScreenLayoutGameCoverArt, {
     id: 'host-setting-up-game',
@@ -34,8 +35,12 @@ export const ScreenLayoutHostSettingUpGame = (input: {
       h(Typography, {
         text: input.ctx.t('game.host-is-setting-up-game'),
         variant: 'title',
-        class: 'w-full px-4 text-center',
-        sizeClassName: 'text-lg',
+        style: theme({
+          width: 'full',
+          px: 4,
+          textAlign: 'center',
+          textSize: 'lg',
+        }),
       }),
   })
 }

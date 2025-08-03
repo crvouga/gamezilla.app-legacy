@@ -29,7 +29,7 @@ const init = (config: ImplStandardSql): ISqlDb => {
       const end = Date.now()
       const durationMs = end - start
       const durationFormatted = `${durationMs.toFixed(2)}ms`
-      logger.debug(durationFormatted, sql)
+      logger.debug(durationFormatted, sql.slice(0, 2000))
       const output: s.Infer<typeof input.schema>[] = []
 
       for (const row of rows) {

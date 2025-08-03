@@ -189,9 +189,7 @@ export const View = ({
             userId: ctx.currentUser.userId,
           },
         ]),
-      renderCoverArt: (input) => {
-        return h(Box, { ...input }, [h(CoverArt, {})])
-      },
+      renderCoverArt: (props) => h(CoverArt, props, []),
       title: ctx.t('tic-tac-toe'),
       canStartGame: model.X !== 'none' && model.O !== 'none',
       playerOne: {

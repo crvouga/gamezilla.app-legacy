@@ -7,7 +7,7 @@ export type PlayerType = 'player-one' | 'player-two'
 export type VsBotInput = {
   ctx: SpaceFrontendCtx
   title: TranslatedText
-  renderCoverArt: (input: { class: string }) => VDom
+  renderCoverArt: (input: { style: Record<string, unknown> }) => VDom
   onQuit: () => void
   onStartGame: () => void
   onSwapSides: () => void

@@ -250,7 +250,7 @@ export const View = ({
     case 'none': {
       return h(GameMainMenu.View, {
         title: ctx.t('gomoku'),
-        renderCoverArt: (input) => h(CoverArt, input),
+        renderCoverArt: (props) => h(CoverArt, props, []),
         ctx: spaceCtx,
         dispatch: () => {
           //

@@ -6,7 +6,7 @@ import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { ScreenAction } from '../screen-action-bar-props'
 
-export const ScreenActionButton = (input: ScreenAction & { class?: string }) => {
+export const ScreenActionButton = (input: ScreenAction & { class?: string; style?: Record<string, unknown> }) => {
   const isDisabled = input.disabled || input.loading
   const size = input.size ?? 'md'
   if (input.hidden) return null

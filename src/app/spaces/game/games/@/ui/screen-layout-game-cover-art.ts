@@ -1,39 +1,63 @@
-import { cn } from '~/@/ui/cn'
-import { Box } from '~/@/vdom/primitives/box'
 import { Paper } from '~/@/ui/paper'
-import { TEXT_SECONDARY_CLASS_NAME } from '~/@/ui/typography'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Path } from '~/@/vdom/primitives/svg/path'
+import { Svg } from '~/@/vdom/primitives/svg/svg'
 import type { VDom } from '~/@/vdom/vdom'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ScreenLayoutProps } from '~/app/@/ui/screen/layout/screen-layout-props'
-import { Svg } from '~/@/vdom/primitives/svg/svg'
-import { Path } from '~/@/vdom/primitives/svg/path'
 
 export const ScreenLayoutGameCoverArt = (
   input: ScreenLayoutProps & {
-    renderCoverArt?: (input: { class: string }) => VDom
+    renderCoverArt?: (input: { style: Record<string, unknown> }) => VDom
   },
 ) => {
-  const renderCoverArtFinal = input.renderCoverArt || renderDefaultCoverArt
+  const renderCoverArt = input.renderCoverArt || renderDefaultCoverArt
   return h(ScreenLayout, {
     ...input,
     renderBody: () =>
-      h(Box, { class: 'flex w-full flex-1 flex-col items-center justify-start gap-6 py-4' }, [
-        renderCoverArtFinal({ class: 'size-28 overflow-hidden rounded-lg mx-auto' }),
-        input.renderBody(),
-      ]),
+      h(
+        Box,
+        {
+          style: theme({
+            width: 'full',
+            flexDirection: 'col',
+            items: 'center',
+            justify: 'flex-start',
+            gap: 6,
+            py: 4,
+          }),
+        },
+        [
+          renderCoverArt({
+            style: theme({
+              size: 32,
+              overflow: 'hidden',
+              rounded: 'lg',
+            }),
+          }),
+          input.renderBody(),
+        ],
+      ),
   })
 }
 
-const renderDefaultCoverArt = (input: { class: string }) => {
+const renderDefaultCoverArt = (input: { style: Record<string, unknown> }) => {
   return h(
     Paper,
     {
-      class: cn(
-        TEXT_SECONDARY_CLASS_NAME,
-        'flex flex-row items-center justify-center overflow-hidden rounded-lg p-4',
-        input.class,
-      ),
+      style: {
+        ...theme({
+          flexDirection: 'row',
+          items: 'center',
+          justify: 'center',
+          overflow: 'hidden',
+          rounded: 'lg',
+          p: 4,
+        }),
+        ...input.style,
+      },
     },
     [
       h(
@@ -41,7 +65,9 @@ const renderDefaultCoverArt = (input: { class: string }) => {
         {
           xmlns: 'http://www.w3.org/2000/svg',
           viewBox: '0 0 640 512',
-          class: 'size-16',
+          style: theme({
+            size: 16,
+          }),
           fill: 'currentColor',
           stroke: 'currentColor',
         },

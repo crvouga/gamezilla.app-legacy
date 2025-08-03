@@ -62,7 +62,7 @@ export const View = (props: {
   ctx: SpaceFrontendCtx
   title: TranslatedText
   dispatch: (msg: Msg) => void
-  renderCoverArt: (input: { class: string }) => VDom
+  renderCoverArt: (input: { style: Record<string, unknown> }) => VDom
   buttons: MainMenuButton[]
   dataTestId?: string
 }) => {

@@ -86,7 +86,7 @@ export const View = ({
       title: ctx.t('tic-tac-toe'),
       onBack: () => dispatch({ t: 'game-main-menu.clicked-exit-game-button' }),
       ctx,
-      renderCoverArt: (input) => h(CoverArt, input),
+      renderCoverArt: (props) => h(CoverArt, props),
       buttons: [
         GameMainMenu.buttons.playFriend({
           ctx,

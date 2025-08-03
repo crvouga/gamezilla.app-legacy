@@ -36,7 +36,7 @@ const init = (config: AudioPlayerImplExpoAudio): IAudioPlayer => {
 
       // Option 3: Direct function call
       if (typeof ExpoAudio.createAudioPlayer === 'function') {
-        return await ExpoAudio.createAudioPlayer({ uri: src })
+        return ExpoAudio.createAudioPlayer({ uri: src })
       }
 
       // Option 4: Using useAudioPlayer hook equivalent

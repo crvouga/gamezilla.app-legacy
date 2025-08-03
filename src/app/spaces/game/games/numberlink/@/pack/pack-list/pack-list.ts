@@ -1,20 +1,21 @@
 import { descend } from '~/@/array/sorting'
-import { Box } from '~/@/vdom/primitives/box'
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
-import { ClickableTransparent } from '~/@/ui/clickable'
+import { Clickable } from '~/@/ui/clickable'
 import { EmptyState } from '~/@/ui/empty-state'
 import { IconBox } from '~/@/ui/icon'
 import { SpinnerBlock } from '~/@/ui/spinner-block'
+import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import type { Pack } from '../pack'
 import { PackDbQueryCache } from '../pack-db-query-cache'
 import { PackQuery } from '../pack-db/interface-query'
-import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 
 const View = (input: {
   ctx: FlowFrontendCtxBase
@@ -26,47 +27,57 @@ const View = (input: {
   const isLoading = PackDbQueryCache.isLoading(input.ctx, input.query)
   const isEmpty = PackDbQueryCache.isEmpty(input.ctx, input.query)
 
-  return h(Box, { class: 'relative flex w-full flex-1 flex-col gap-2 overflow-hidden' }, [
-    h(
-      ScrollBox,
-      {
-        class: 'relative flex max-h-full w-full flex-1 flex-col border-t-neutral-800',
-        contentContainerStyle: {
-          rowGap: 0,
-        },
+  return h(
+    ScrollBox,
+    {
+      style: theme({ flexDirection: 'col', gap: 0, overflow: 'hidden' }),
+      contentContainerStyle: {
+        rowGap: 0,
       },
-      [
-        isEmpty &&
-          h(EmptyState, {
-            label: input.ctx.t('game.numberlink.no-packs'),
-            renderIcon: (input) => h(IconBox, input),
-          }),
+    },
+    [
+      isEmpty &&
+        h(EmptyState, {
+          label: input.ctx.t('game.numberlink.no-packs'),
+          renderIcon: (input) => h(IconBox, input),
+        }),
 
-        ...packs.sort(descend((pack) => UnixMs.toNumber(pack.lastUpdatedAt))).map((pack) =>
-          h(ViewPackMenuItem, {
-            ctx: input.ctx,
-            key: pack.id,
-            pack: pack,
-            onPress: () => input.onPress(pack),
-          }),
-        ),
+      ...packs.sort(descend((pack) => UnixMs.toNumber(pack.lastUpdatedAt))).map((pack) =>
+        h(ViewPackMenuItem, {
+          ctx: input.ctx,
+          key: pack.id,
+          pack: pack,
+          onPress: () => input.onPress(pack),
+        }),
+      ),
 
-        isLoading && h(SpinnerBlock, {}),
-      ].filter(Boolean),
-    ),
-  ])
+      isLoading && h(SpinnerBlock, {}),
+    ].filter(Boolean),
+  )
 }
 
 const ViewPackMenuItem = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pack; onPress: () => void }) => {
   return h(
-    ClickableTransparent,
+    Clickable,
     {
-      class: 'flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden px-4 py-6 text-left',
       onPress: input.onPress,
+      style: theme({
+        flexDirection: 'row',
+        width: 'full',
+        flexShrink: 0,
+        items: 'center',
+        justify: 'space-between',
+        gap: 6,
+        overflow: 'hidden',
+        px: 4,
+        py: 6,
+        textAlign: 'left',
+      }),
+      role: 'menuitem',
     },
     [
-      false && h(IconBox, { class: 'h-9 w-9 shrink-0' }),
-      h(Box, { class: 'flex flex-1 flex-col overflow-hidden' }, [
+      false && h(IconBox, { style: theme({ flexShrink: 0, size: 9 }) }),
+      h(Box, { style: theme({ flex: 1, flexDirection: 'col', overflow: 'hidden' }) }, [
         h(Typography, { text: TranslatedText.of(input.pack.name), variant: 'body' }),
         h(Typography, { text: toMenuItemSecondaryText(input), variant: 'subtitle', color: 'text-secondary' }),
       ]),
@@ -74,7 +85,7 @@ const ViewPackMenuItem = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pa
         text: input.ctx.t('game.numberlink.puzzle-count', input.pack.puzzleIds.length),
         variant: 'body',
         color: 'text-secondary',
-        class: 'text-xs',
+        style: theme({ textSize: 'xs' }),
       }),
     ].filter(Boolean),
   )

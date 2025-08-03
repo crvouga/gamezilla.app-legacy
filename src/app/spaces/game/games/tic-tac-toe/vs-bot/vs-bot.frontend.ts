@@ -203,7 +203,7 @@ export const View = (input: {
         }),
       renderIcon: (input) => h(PlayerTypeIcon, { ...input, playerType: 'O' }),
     },
-    renderCoverArt: (input) => h(CoverArt, input),
+    renderCoverArt: (props) => h(CoverArt, props, []),
     title: input.ctx.t('tic-tac-toe'),
   }
 

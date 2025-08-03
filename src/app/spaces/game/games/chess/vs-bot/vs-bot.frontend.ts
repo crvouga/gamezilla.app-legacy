@@ -308,9 +308,7 @@ export const View = ({
       model: model.vsBotSetup,
       dispatch: (c) => dispatch({ t: 'vs-bot-setup', c }),
       title: ctx.t('chess'),
-      renderCoverArt: (input) => {
-        return h(CoverArt, input)
-      },
+      renderCoverArt: (props) => h(CoverArt, props, []),
       bot: {
         label: ctx.t('chess.bot-level', model.spaceModel.botLevel),
         renderIcon: (input) =>

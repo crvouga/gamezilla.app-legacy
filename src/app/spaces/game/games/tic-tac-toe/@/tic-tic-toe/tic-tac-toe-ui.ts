@@ -319,7 +319,7 @@ export const PlayerTypeIcon = ({ playerType, class: class_ }: { playerType: Play
   ])
 }
 
-export const CoverArt = (input: { class?: string }) => {
+export const CoverArt = (props: { style: Record<string, unknown>; children?: VDom[] }) => {
   const positions: [Position, Slot][] = [
     [{ row: 0, column: 0 }, 'X'],
     [{ row: 0, column: 1 }, Empty],
@@ -332,7 +332,7 @@ export const CoverArt = (input: { class?: string }) => {
     { x1: 0, y1: 1, x2: 3, y2: 1 },
   ] as const
 
-  return h(Svg, { width: '100%', viewBox: '0 0 2 2', ...input }, [
+  return h(Svg, { width: '100%', viewBox: '0 0 2 2', ...props }, [
     h(Rect, { x: 0, y: 0, width: 2, height: 2, fill: gameTheme.background }),
     ...LINES.map((line, index) => h(Line, { key: index, ...line, stroke: gameTheme.line, 'stroke-width': 0.1 })),
     ...positions.map(([{ column, row }, slot], index) =>

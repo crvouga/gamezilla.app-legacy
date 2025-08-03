@@ -1,7 +1,7 @@
-import { cn } from '~/@/ui/cn'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconEllipsisVertical } from '~/@/ui/icon'
 import { MenuItem } from '~/@/ui/menu-item'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Frag } from '~/@/vdom/primitives/frag'
@@ -36,56 +36,64 @@ const toDropDownConfig = (reference: { render: () => VDom }): DropDownConfig => 
   }
 }
 
+const BASE_STYLE = theme({
+  flexDirection: 'row',
+  items: 'center',
+  justify: 'center',
+  width: 'full',
+  px: 6,
+})
+
 const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) => {
   const size = input.size ?? 'md'
   const limit = input.limit?.max ?? DEFAULT_LIMIT
   const firstActions = input.actions.slice(0, limit)
   const lastActions = input.actions.slice(limit)
   const hasLastActions = lastActions.some((button) => button !== null)
-  return h(
-    Box,
-    { class: cn('flex flex-row w-full shrink-0 items-center justify-center', toHeightClass(size)), role: 'toolbar' },
-    [
-      ...firstActions.map((action) => {
-        if (!action) return null
+  return h(Box, { role: 'toolbar', style: { ...BASE_STYLE, ...toHeightStyle(size) } }, [
+    ...firstActions.map((action) => {
+      if (!action) return null
 
-        const button = h(ScreenActionButton, { ...action, size: input.size, class: 'flex-1' })
+      const button = h(ScreenActionButton, {
+        ...action,
+        size: input.size,
+        style: theme({ flex: 1 }),
+      })
 
-        if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
+      if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
 
-        return h(Frag, { key: action.id }, [
-          action.renderSurface({
-            dropDown: toDropDownConfig({ render: () => button }),
-            screenActionLocation: 'bar',
-          }),
-        ])
-      }),
-
-      hasLastActions &&
-        h(SurfaceLayout, {
-          ctx: input.ctx,
-          id: input.id,
-          ariaLabel: input.ctx.t('app.more'),
-          onClose: input.limit?.onToggle ?? (() => {}),
-          open: input.limit?.open ?? false,
-          body: {
-            render: () => h(SurfaceMoreContent, { actions: lastActions }),
-          },
-          dropDown: {
-            reference: {
-              render: () =>
-                h(ScreenActionButton, {
-                  id: input.ctx.t('app.more'),
-                  icon: (input) => h(IconEllipsisVertical, input),
-                  label: input.ctx.t('app.more'),
-                  size: input.size,
-                  onPress: input.limit?.onToggle ?? (() => {}),
-                }),
-            },
-          },
+      return h(Frag, { key: action.id }, [
+        action.renderSurface({
+          dropDown: toDropDownConfig({ render: () => button }),
+          screenActionLocation: 'bar',
         }),
-    ],
-  )
+      ])
+    }),
+
+    hasLastActions &&
+      h(SurfaceLayout, {
+        ctx: input.ctx,
+        id: input.id,
+        ariaLabel: input.ctx.t('app.more'),
+        onClose: input.limit?.onToggle ?? (() => {}),
+        open: input.limit?.open ?? false,
+        body: {
+          render: () => h(SurfaceMoreContent, { actions: lastActions }),
+        },
+        dropDown: {
+          reference: {
+            render: () =>
+              h(ScreenActionButton, {
+                id: input.ctx.t('app.more'),
+                icon: (input) => h(IconEllipsisVertical, input),
+                label: input.ctx.t('app.more'),
+                size: input.size,
+                onPress: input.limit?.onToggle ?? (() => {}),
+              }),
+          },
+        },
+      }),
+  ])
 }
 
 const SurfaceMoreContent = (input: { actions: (ScreenAction | null)[] }) => {
@@ -115,57 +123,76 @@ const SurfaceMoreContent = (input: { actions: (ScreenAction | null)[] }) => {
 
 const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpaceBetween) => {
   const size = input.size ?? 'md'
-  return h(
-    Box,
-    { class: cn('flex flex-row w-full shrink-0 items-center justify-between', toHeightClass(size)), role: 'toolbar' },
-    [
-      h(
-        Box,
-        { class: 'flex flex-row items-center justify-start flex-1' },
-        input.start.map((action) => {
-          if (!action) return null
-
-          const button = h(ScreenActionButton, { ...action, size: input.size, class: 'w-20' })
-
-          if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
-
-          return h(Frag, { key: action.id }, [
-            action.renderSurface({
-              dropDown: toDropDownConfig({ render: () => button }),
-              screenActionLocation: 'bar',
-            }),
-          ])
+  return h(Box, { role: 'toolbar', style: { ...BASE_STYLE, ...toHeightStyle(size) } }, [
+    h(
+      Box,
+      {
+        style: theme({
+          flexDirection: 'row',
+          items: 'center',
+          justify: 'flex-start',
+          flex: 1,
         }),
-      ),
+      },
+      input.start.map((action) => {
+        if (!action) return null
 
-      h(
-        Box,
-        { class: 'flex flex-row items-center justify-end flex-1' },
-        input.end.map((action) => {
-          if (!action) return null
+        const button = h(ScreenActionButton, {
+          ...action,
+          size: input.size,
+          style: theme({ width: 20 }),
+        })
 
-          const button = h(ScreenActionButton, { ...action, size: input.size, class: 'w-20' })
+        if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
 
-          if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
+        return h(Frag, { key: action.id }, [
+          action.renderSurface({
+            dropDown: toDropDownConfig({ render: () => button }),
+            screenActionLocation: 'bar',
+          }),
+        ])
+      }),
+    ),
 
-          return h(Frag, { key: action.id }, [
-            action.renderSurface({
-              dropDown: toDropDownConfig({ render: () => button }),
-              screenActionLocation: 'bar',
-            }),
-          ])
+    h(
+      Box,
+      {
+        style: theme({
+          flexDirection: 'row',
+          items: 'center',
+          justify: 'flex-end',
+          flex: 1,
         }),
-      ),
-    ],
-  )
+      },
+      input.end.map((action) => {
+        if (!action) return null
+
+        const button = h(ScreenActionButton, {
+          ...action,
+          size: input.size,
+          style: theme({ width: 20 }),
+        })
+
+        if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
+
+        return h(Frag, { key: action.id }, [
+          action.renderSurface({
+            dropDown: toDropDownConfig({ render: () => button }),
+            screenActionLocation: 'bar',
+          }),
+        ])
+      }),
+    ),
+  ])
 }
 
-const toHeightClass = (size: ScreenAction['size']): string => {
+const toHeightStyle = (size: ScreenAction['size']): Record<string, unknown> => {
   switch (size) {
     case 'sm':
-      return 'h-12'
+      return theme({ height: 12 })
     case 'md':
+      return theme({ height: 16 })
     default:
-      return 'h-16'
+      return theme({ height: 16 })
   }
 }

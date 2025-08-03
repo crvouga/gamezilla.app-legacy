@@ -8,6 +8,7 @@ import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { type Board, type Bounds, type Stone, allPositions, bounds, presetToStars } from './gomoku'
 import type { Position } from './gomoku-position'
 import { Circle } from '~/@/vdom/primitives/svg/circle'
+import { VDom } from '~/@/vdom/vdom'
 
 const backgroundColor = '#C88655'
 const lineColor = Hex.darken(backgroundColor, 0.3)
@@ -41,9 +42,9 @@ export const viewStoneIcon = ({ stone }: { stone: Stone }) => {
   ])
 }
 
-export const CoverArt = (input: { class?: string }) => {
+export const CoverArt = (props: { style: Record<string, unknown>; children?: VDom[] }) => {
   return h(ViewBoard, {
-    ...input,
+    ...props,
     viewBoxOffset: 0.5,
     bounds: {
       lower: {

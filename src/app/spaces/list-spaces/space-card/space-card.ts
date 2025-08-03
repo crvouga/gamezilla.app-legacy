@@ -53,7 +53,7 @@ const ViewRoot = (input: { onPress?: () => void; children?: VDom }) => {
 }
 
 const ViewLiveIndicator = (input: { ctx: AppFrontendCtxBase }) => {
-  return h(Box, { style: theme({ flexDirection: 'row', items: 'center', justify: 'start', gap: 2 }) }, [
+  return h(Box, { style: theme({ flexDirection: 'row', items: 'center', justify: 'flex-start', gap: 2 }) }, [
     h(Typography, {
       variant: 'label',
       style: theme({ flex: 1, textColor: 'white', fontWeight: 'bold', textSize: 'lg' }),
@@ -65,7 +65,7 @@ const ViewLiveIndicator = (input: { ctx: AppFrontendCtxBase }) => {
 const ViewSpaceCardGame = (input: { gameName: GameName | null; ctx: AppFrontendCtxBase }) => {
   if (!input.gameName) return null
 
-  return h(Box, { style: theme({ flexDirection: 'row', items: 'center', justify: 'start', gap: 2 }) }, [
+  return h(Box, { style: theme({ flexDirection: 'row', items: 'center', justify: 'flex-start', gap: 2 }) }, [
     h(GameCoverArt, {
       rounded: true,
       style: theme({ width: 12, height: 12 }),
@@ -81,25 +81,29 @@ const ViewSpaceCardGame = (input: { gameName: GameName | null; ctx: AppFrontendC
 }
 
 const ViewSpaceCardHost = (input: { host?: UserProfile | null; ctx: AppFrontendCtxBase }) => {
-  return h(Box, { style: theme({ flexDirection: 'row', items: 'center', justify: 'start', gap: 2, width: 'full' }) }, [
-    h(Avatar, { src: UserProfile.toAvatarUrl(input.host), alt: 'avatar', style: theme({ width: 12, height: 12 }) }),
-    h(Box, { style: theme({ flexDirection: 'row', flex: 1, items: 'center', justify: 'start', gap: 2 }) }, [
-      input.host &&
-        h(Typography, {
-          variant: 'body',
-          style: theme({ textSize: 'lg', fontWeight: 'normal' }),
-          text: input.ctx.t('username', input.host.username),
-        }),
-      h(ViewHostChip, { ctx: input.ctx }),
-    ]),
-    input.ctx.currentUser?.userId === input.host?.id && h(ViewYouChip, { ctx: input.ctx }),
-  ])
+  return h(
+    Box,
+    { style: theme({ flexDirection: 'row', items: 'center', justify: 'flex-start', gap: 2, width: 'full' }) },
+    [
+      h(Avatar, { src: UserProfile.toAvatarUrl(input.host), alt: 'avatar', style: theme({ width: 12, height: 12 }) }),
+      h(Box, { style: theme({ flexDirection: 'row', flex: 1, items: 'center', justify: 'flex-start', gap: 2 }) }, [
+        input.host &&
+          h(Typography, {
+            variant: 'body',
+            style: theme({ textSize: 'lg', fontWeight: 'normal' }),
+            text: input.ctx.t('username', input.host.username),
+          }),
+        h(ViewHostChip, { ctx: input.ctx }),
+      ]),
+      input.ctx.currentUser?.userId === input.host?.id && h(ViewYouChip, { ctx: input.ctx }),
+    ],
+  )
 }
 
 const ViewSpaceCardUsers = (input: { users: UserProfile[]; ctx: AppFrontendCtxBase }) => {
   if (input.users.length <= 1) return null
 
-  return h(Box, { style: theme({ flexDirection: 'row', items: 'center', justify: 'start', gap: 2 }) }, [
+  return h(Box, { style: theme({ flexDirection: 'row', items: 'center', justify: 'flex-start', gap: 2 }) }, [
     h(Box, { style: theme({ flexDirection: 'row', items: 'center' }) }, [
       ...input.users.slice(0, MAX_AVATAR_COUNT).map((user, index) =>
         h(Avatar, {
