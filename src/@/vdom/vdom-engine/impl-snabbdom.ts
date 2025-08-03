@@ -35,12 +35,12 @@ const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
     },
     createElement: (tag: any, props: any, children: any) => {
       try {
-        inPlaceMapPropsToWebProps(props)
-        children = inPlaceFlatTruthyArray(children ?? props?.children)
         if (typeof tag === 'function') {
           props.children = children
           return tag(props)
         }
+        children = inPlaceFlatTruthyArray(children ?? props?.children)
+        inPlaceMapPropsToWebProps(props)
         switch (tag) {
           case FRAGMENT_TAG:
             return fragment(children)

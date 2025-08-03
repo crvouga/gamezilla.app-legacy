@@ -1,24 +1,24 @@
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
-import { Box } from '~/@/vdom/primitives/box'
 import { SafeAreaBox } from '~/@/vdom/primitives/safe-area-box'
 import { VDom } from '~/@/vdom/vdom'
 
 export const AppRoot = (input: { children: VDom[] }) => {
   return h(
-    Box,
+    SafeAreaBox,
     {
-      class:
-        'flex flex-col items-center justify-center overflow-hidden bg-black text-white flex-1 w-screen h-screen max-w-[100dvw] max-h-[100dvh]',
+      edges: ['top', 'bottom', 'left', 'right'],
+      style: theme({
+        flex: 1,
+        width: 'full',
+        flexDirection: 'col',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        backgroundColor: 'black',
+        textColor: 'white',
+      }),
     },
-    [
-      h(
-        SafeAreaBox,
-        {
-          edges: ['top', 'bottom', 'left', 'right'],
-          class: 'flex flex-col flex-1 w-full',
-        },
-        input.children,
-      ),
-    ],
+    input.children,
   )
 }

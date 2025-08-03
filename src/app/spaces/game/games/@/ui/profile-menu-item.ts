@@ -1,9 +1,10 @@
 import { TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/primitives/box'
 import { Translator } from '~/@/l18n/generated'
 import { Avatar } from '~/@/ui/avatar'
+import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 import { UserProfile } from '~/app/@/data/user-profile'
 
 export const ProfileMenuItem = ({
@@ -17,11 +18,11 @@ export const ProfileMenuItem = ({
   profile?: UserProfile | null
   subtitle?: TranslatedText
 }) => {
-  return h(Box, { class: 'flex flex-row w-full items-center gap-2 p-2' }, [
-    h(Avatar, { class: 'size-12', src: profile ? UserProfile.toAvatarUrl(profile) : '' }),
+  return h(Box, { style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 2, padding: 2 }) }, [
+    h(Avatar, { style: theme({ size: 12 }), src: profile ? UserProfile.toAvatarUrl(profile) : '' }),
     h(
       Box,
-      { class: 'flex flex-1 flex-col gap-0.5' },
+      { style: theme({ flexDirection: 'col', flex: 1, gap: 0.5 }) },
       [
         profile && h(Typography, { variant: 'body', text: ctx.t('username', profile.username) }),
         subtitle && h(Typography, { color: 'text-secondary', variant: 'caption', text: subtitle }),

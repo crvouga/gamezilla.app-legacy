@@ -64,7 +64,7 @@ const ViewMenuItem = (input: { model: BackendConnectionStatus; ctx: { t: Transla
 }
 
 const Dot = (input: { style: Record<string, unknown> }) => {
-  return h(Box, { style: { ...theme({ position: 'relative', p: 1 }), ...input.style } }, [
+  return h(Box, { style: { ...theme({ position: 'relative', padding: 1 }), ...input.style } }, [
     h(Box, {
       style: { ...theme({ position: 'absolute', height: 'full', width: 'full', rounded: 'full' }) },
     }),

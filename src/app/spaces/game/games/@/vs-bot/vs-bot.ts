@@ -13,23 +13,23 @@ export type VsBotInput = {
   onSwapSides: () => void
   bot: {
     label: TranslatedText
-    renderIcon: (input: { class: string }) => VDom
+    renderIcon: (input: { style: Record<string, unknown> }) => VDom
   }
   playerOne: {
     label: TranslatedText
-    renderIcon: (input: { class: string }) => VDom
+    renderIcon: (input: { style: Record<string, unknown> }) => VDom
     onStartPlaying: () => void
     onStopPlaying: () => void
   }
   playerTwo: {
     label: TranslatedText
-    renderIcon: (input: { class: string }) => VDom
+    renderIcon: (input: { style: Record<string, unknown> }) => VDom
     onStartPlaying: () => void
     onStopPlaying: () => void
   }
   botVariants: {
     label: TranslatedText
-    renderIcon: (input: { class: string }) => VDom
+    renderIcon: (input: { style: Record<string, unknown> }) => VDom
     onSelect: () => void
   }[]
 }

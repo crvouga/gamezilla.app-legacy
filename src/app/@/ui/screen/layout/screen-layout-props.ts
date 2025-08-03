@@ -21,7 +21,7 @@ export type ActionEditProps = {
 }
 
 export type ActionCreateProps = {
-  submitIcon: (input: { class?: string }) => VDom
+  submitIcon: (input: { style?: Record<string, unknown> }) => VDom
   onSubmit: () => void
   submitText: TranslatedText
   submitLoading: boolean

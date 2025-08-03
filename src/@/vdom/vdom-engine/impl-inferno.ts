@@ -1,5 +1,7 @@
 import { Fragment, render } from 'inferno'
 import { createElement } from 'inferno-create-element'
+import { inPlaceMapKeys } from '~/@/object/in-place-map-keys'
+import { camelToKebab } from '~/@/string/camel-to-kebab'
 import { CANVAS_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { inPlaceMapPropsToWebProps } from './web/map-props-to-web-props'
@@ -18,6 +20,7 @@ const init = (_config: ImplInferno): IVirtualDomEngine => {
     },
     createElement: (tag: any, props: any, children: any) => {
       inPlaceMapPropsToWebProps(props)
+      inPlaceMapKeys(props.style, camelToKebab)
 
       switch (tag) {
         case FRAGMENT_TAG:

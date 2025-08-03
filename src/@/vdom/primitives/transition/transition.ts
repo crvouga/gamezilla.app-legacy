@@ -10,7 +10,7 @@ export const Transition = ({
   onExit,
   onAppear,
   children,
-  class: class_,
+
   mode,
 }: TransitionInput & {
   children?: VDom
@@ -21,7 +21,6 @@ export const Transition = ({
     onEnter,
     onExit,
     onAppear,
-    class: class_,
     mode,
   })
   return h(TRANSITION_ELEMENT_TAG, { id: id }, [children])

@@ -1,4 +1,5 @@
 import { Button } from '~/@/ui/button'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { ScreenLayoutProps } from '../screen-layout-props'
@@ -9,7 +10,6 @@ export const CreateAction = (input: ScreenLayoutProps) => {
   return h(
     Box,
     {
-      class: 'absolute right-6 bottom-6 rounded-[30px]',
       style: {
         shadowColor: '#000',
         shadowOffset: {
@@ -19,6 +19,12 @@ export const CreateAction = (input: ScreenLayoutProps) => {
         shadowOpacity: 0.7,
         shadowRadius: 16,
         elevation: 32,
+        ...theme({
+          position: 'absolute',
+          right: 6,
+          bottom: 6,
+          rounded: 'lg',
+        }),
       },
     },
     [

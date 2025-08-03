@@ -1,14 +1,18 @@
-import { cn } from '~/@/ui/cn'
-import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 import { VDom } from '~/@/vdom/vdom'
 import { AriaRole } from '../html/aria-role'
+import { theme } from './theme/theme'
 
-export const SURFACE_CLASS_NAME = 'bg-black border border-neutral-700'
+export const SURFACE_STYLE = theme({
+  backgroundColor: 'black',
+  borderWidth: 1,
+  borderColor: 'neutral-700',
+})
 
 export const Surface = (input: {
   children?: VDom[]
-  class?: string
+  style?: Record<string, unknown>
   role?: AriaRole
   'aria-hidden'?: boolean
   'aria-label'?: string
@@ -16,7 +20,10 @@ export const Surface = (input: {
   return h(
     Box,
     {
-      class: cn(SURFACE_CLASS_NAME, input.class),
+      style: {
+        ...SURFACE_STYLE,
+        ...input.style,
+      },
       role: input.role,
       'aria-hidden': input['aria-hidden'],
       'aria-label': input['aria-label'],

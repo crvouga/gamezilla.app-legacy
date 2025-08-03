@@ -382,21 +382,31 @@ export const View = ({
     })
   }
 
-  const botSlot = h(Box, { class: 'flex flex-row w-full items-center gap-3 p-3' }, [
-    h(IconRobot, { class: 'h-10 w-10' }),
-    h(Box, { class: 'flex-1 text-lg' }, [h(Text, { text: ChessBotLevel.toString(model.spaceModel.botLevel) })]),
-    isBotTurn(model.spaceModel) && h(Spinner, { style: { ...theme({ size: 10 }) } }),
-  ])
+  const botSlot = h(
+    Box,
+    { style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 3, padding: 3 }) },
+    [
+      h(IconRobot, { style: theme({ width: 10, height: 10 }) }),
+      h(Box, { style: theme({ flex: 1, textSize: 'lg' }) }, [
+        h(Text, { text: ChessBotLevel.toString(model.spaceModel.botLevel) }),
+      ]),
+      isBotTurn(model.spaceModel) && h(Spinner, { style: { ...theme({ size: 10 }) } }),
+    ],
+  )
 
-  const userSlot = h(Box, { class: 'flex flex-row w-full items-center gap-3 p-3' }, [
-    h(Avatar, {
-      class: 'h-10 w-10',
-      src: UserProfile.toAvatarUrl(ctx.profilesByUserId[model.spaceModel.userId]),
-    }),
-    h(Box, { class: 'flex-1 text-lg' }, [
-      h(Text, { text: ctx.profilesByUserId[model.spaceModel.userId]?.username ?? '' }),
-    ]),
-  ])
+  const userSlot = h(
+    Box,
+    { style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 3, padding: 3 }) },
+    [
+      h(Avatar, {
+        style: theme({ width: 10, height: 10 }),
+        src: UserProfile.toAvatarUrl(ctx.profilesByUserId[model.spaceModel.userId]),
+      }),
+      h(Box, { style: theme({ flex: 1, textSize: 'lg' }) }, [
+        h(Text, { text: ctx.profilesByUserId[model.spaceModel.userId]?.username ?? '' }),
+      ]),
+    ],
+  )
 
   const boardOrientation = model.isFlipped
     ? Chess.toOppositeColor(model.spaceModel.userColor)
@@ -412,27 +422,39 @@ export const View = ({
     id: 'chess-vs-bot',
     renderBody: () =>
       h(LayoutGame, { ctx }, [
-        h(Box, { class: 'flex w-full flex-1 flex-col items-center justify-center' }, [
-          topSlot,
-          h(Chessboard, {
-            id: 'chessboard',
-            model: board,
-            orientation: boardOrientation,
-            onPieceDrop: (move) => {
-              const msg: MsgFrontend = {
-                t: 'input-move',
-                move: {
-                  from: move.source,
-                  to: move.target,
-                  promotion: 'q',
-                },
-              }
-              dispatch(msg)
-              return true
-            },
-          }),
-          bottomSlot,
-        ]),
+        h(
+          Box,
+          {
+            style: theme({
+              flexDirection: 'col',
+              width: 'full',
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }),
+          },
+          [
+            topSlot,
+            h(Chessboard, {
+              id: 'chessboard',
+              model: board,
+              orientation: boardOrientation,
+              onPieceDrop: (move) => {
+                const msg: MsgFrontend = {
+                  t: 'input-move',
+                  move: {
+                    from: move.source,
+                    to: move.target,
+                    promotion: 'q',
+                  },
+                }
+                dispatch(msg)
+                return true
+              },
+            }),
+            bottomSlot,
+          ],
+        ),
       ]),
     actionBar: {
       id: 'vs-bot-buttons',

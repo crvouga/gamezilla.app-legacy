@@ -1,7 +1,7 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import type { VDom } from '~/@/vdom/vdom'
-import { cn } from '../cn'
+import { theme } from '../theme/theme'
 
 export const Dialog = (input: {
   children?: VDom[]
@@ -14,12 +14,26 @@ export const Dialog = (input: {
     Box,
     {
       role: 'dialog',
-      class: cn(
-        'absolute top-0 left-0 z-50 grid h-full w-full place-items-center bg-black/50 transition-opacity duration-300 ease-in-out',
-        input.open ? 'opacity-100' : 'pointer-events-none opacity-0',
-        input.open ? (input.delay === '300ms' ? 'delay-300' : '') : '',
-      ),
-      ...(input.open ? {} : { 'aria-hidden': true }),
+      style: {
+        ...theme({
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          zIndex: 50,
+          height: 'full',
+          width: 'full',
+          // display: 'grid',
+          // placeItems: 'center',
+          backgroundColor: 'black/50',
+          // transitionProperty: 'opacity',
+          // transitionDuration: '300ms',
+          // transitionTimingFunction: 'ease-in-out',
+        }),
+        opacity: input.open ? 1 : 0,
+        pointerEvents: input.open ? 'auto' : 'none',
+        transitionDelay: input.open && input.delay === '300ms' ? '300ms' : undefined,
+      },
+      'aria-hidden': !input.open,
       'data-testid': input.testId,
       onPress: (e: unknown) => {
         if (

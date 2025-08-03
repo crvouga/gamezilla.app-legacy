@@ -1,7 +1,7 @@
 import { Translator } from '~/@/l18n/generated'
-import { Box } from '~/@/vdom/primitives/box'
-import { cn } from '~/@/ui/cn'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 import { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 
@@ -18,8 +18,29 @@ export const AuthScreenLayout = (input: {
     Box,
     {
       'data-testid': input.testId,
-      class: cn('flex h-full flex-col items-center', input.center ? 'justify-center' : 'justify-start'),
+      style: theme({
+        flexDirection: 'col',
+        width: 'full',
+        maxWidth: 'xl',
+        alignItems: 'center',
+        justifyContent: input.center ? 'center' : 'flex-start',
+      }),
     },
-    [h(Box, { class: 'flex w-full max-w-xl flex-col items-center justify-center gap-4 p-6' }, input.children)],
+    [
+      h(
+        Box,
+        {
+          style: theme({
+            flexDirection: 'col',
+            width: 'full',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 4,
+            padding: 6,
+          }),
+        },
+        input.children,
+      ),
+    ],
   )
 }

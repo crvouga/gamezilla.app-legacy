@@ -40,9 +40,6 @@ export type TypographyProps = {
   skeleton?: boolean
   dataTestId?: string
   style?: Record<string, unknown>
-  class?: string
-  sizeClassName?: string
-  colorClassName?: string
   role?: AriaRole
   color?: 'inherit' | 'text-primary' | 'text-secondary' | null
   align?: 'left' | 'center' | 'right'
@@ -103,7 +100,6 @@ export const Typography = (input: TypographyProps) => {
 
   return h(Text, {
     style: styles,
-    class: input.class,
     role: input.role,
     'aria-busy': input.skeleton,
     'aria-level': toAriaLevel(input),

@@ -28,7 +28,7 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
         onEnter: async () => {},
         onExit: async () => {},
         onAppear: async () => {},
-        class: '',
+
         mode: 'in-out',
       }
     }
@@ -40,7 +40,6 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
       this.unsubscribe = transitionSub.sub((event) => {
         if (event.id === this.getAttribute('id')) {
           this.input = event
-          this.syncUI()
         }
       })
 
@@ -54,10 +53,6 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
           }
         })
       }
-    }
-
-    syncUI() {
-      this.className = this.input.class ?? ''
     }
 
     disconnectedCallback() {

@@ -1,11 +1,12 @@
 import { TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/primitives/box'
 import { Translator } from '~/@/l18n/generated'
 import { IconXMark } from '~/@/ui/icon'
 import { IconButton } from '~/@/ui/icon-button'
 import { preventConsoleErrorWhenClosingDrawer } from '~/@/ui/surface-drawer/drawer-shared'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { theme } from '../theme/theme'
 
 export const SurfaceHeader = (input: {
   ctx: { t: Translator }
@@ -15,10 +16,21 @@ export const SurfaceHeader = (input: {
 }) => {
   return h(
     Box,
-    { class: 'flex flex-row w-full items-center justify-center px-6 pt-4 pb-0', 'data-testid': input.testId },
+    {
+      'data-testid': input.testId,
+      style: theme({
+        flexDirection: 'row',
+        width: 'full',
+        alignItems: 'center',
+        justifyContent: 'center',
+        px: 6,
+        pt: 4,
+        pb: 0,
+      }),
+    },
     [
-      h(Box, { class: 'flex-1' }, [
-        input.title && h(Typography, { text: input.title, variant: 'title', sizeClassName: 'text-2xl' }),
+      h(Box, { style: theme({ flex: 1 }) }, [
+        input.title && h(Typography, { text: input.title, variant: 'title', style: theme({ textSize: '2xl' }) }),
       ]),
       input.onClose &&
         h(IconButton, {
@@ -27,7 +39,6 @@ export const SurfaceHeader = (input: {
             preventConsoleErrorWhenClosingDrawer(event)
             input.onClose?.()
           },
-          class: '-mr-1',
           renderIcon: (inputIcon) => h(IconXMark, inputIcon),
         }),
     ],

@@ -1,6 +1,8 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Translator } from '~/@/l18n/generated'
+import { IPlatform } from '~/@/platform/platform'
 import { IconArrowRightOnRect } from '~/@/ui/icon'
+import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -21,7 +23,6 @@ import { GameCoverArt } from '../game/games/cover-art'
 import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
 import { MsgSpace } from '../space/msg-space'
 import { Space } from '../space/space'
-import { IPlatform } from '~/@/platform/platform'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -148,41 +149,51 @@ const view: SpaceFrontendModule['View'] = (input) => {
       },
     },
     renderBody: () =>
-      h(Box, { class: 'flex flex-row w-full flex-col gap-6' }, [
-        space.game && h(SectionGame, { ctx: input.ctx, gameName: space.game.t }),
+      h(
+        Box,
+        {
+          style: theme({
+            flexDirection: 'col',
+            width: 'full',
+            gap: 6,
+          }),
+        },
+        [
+          space.game && h(SectionGame, { ctx: input.ctx, gameName: space.game.t }),
 
-        h(SectionPeopleList, {
-          ctx: spaceCtx,
-          onPressItem: (userId) => input.dispatch({ t: 'join-space.clicked-person-menu-item', userId }),
-          renderItem: (profile, vDom) =>
-            h(SurfaceLayout, {
-              ctx: spaceCtx,
-              ariaLabel: input.ctx.t('?'),
-              open: input.model.opened === 'join-space.person-preview-surface',
-              onClose: () => input.dispatch({ t: 'join-space.closed-person-item-surface' }),
-              drawer: {
-                position: 'bottom',
-              },
-              dropDown: {
-                position: 'bottom',
-                alignment: 'starting',
-                reference: {
-                  render: () => vDom,
+          h(SectionPeopleList, {
+            ctx: spaceCtx,
+            onPressItem: (userId) => input.dispatch({ t: 'join-space.clicked-person-menu-item', userId }),
+            renderItem: (profile, vDom) =>
+              h(SurfaceLayout, {
+                ctx: spaceCtx,
+                ariaLabel: input.ctx.t('?'),
+                open: input.model.opened === 'join-space.person-preview-surface',
+                onClose: () => input.dispatch({ t: 'join-space.closed-person-item-surface' }),
+                drawer: {
+                  position: 'bottom',
                 },
-              },
-              id: 'user-preview',
-              body: {
-                render: () =>
-                  h(SectionPersonDetails, {
-                    onOpenDetails: () =>
-                      input.dispatch({ t: 'join-space.opened-person-details', userId: profile.userId }),
-                    ctx: spaceCtx,
-                    profile: profile,
-                  }),
-              },
-            }),
-        }),
-      ]),
+                dropDown: {
+                  position: 'bottom',
+                  alignment: 'starting',
+                  reference: {
+                    render: () => vDom,
+                  },
+                },
+                id: 'user-preview',
+                body: {
+                  render: () =>
+                    h(SectionPersonDetails, {
+                      onOpenDetails: () =>
+                        input.dispatch({ t: 'join-space.opened-person-details', userId: profile.userId }),
+                      ctx: spaceCtx,
+                      profile: profile,
+                    }),
+                },
+              }),
+          }),
+        ],
+      ),
   })
 }
 
@@ -193,15 +204,47 @@ const SectionGame = (props: {
   }
   gameName: GameName
 }) => {
-  return h(Box, { class: 'flex w-full flex-col gap-6 py-3' }, [
-    h(SectionTitle, { text: props.ctx.t('spaces.game') }),
+  return h(
+    Box,
+    {
+      style: theme({
+        flexDirection: 'col',
+        width: 'full',
+        gap: 6,
+        pt: 12,
+      }),
+    },
+    [
+      h(SectionTitle, { text: props.ctx.t('spaces.game') }),
 
-    h(Box, { class: 'flex flex-row w-fit items-center gap-4 px-6' }, [
-      h(GameCoverArt, { rounded: true, class: 'size-20', gameName: props.gameName, platform: props.ctx.platform }),
+      h(
+        Box,
+        {
+          style: theme({
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 4,
+            pl: 12,
+            pr: 12,
+          }),
+        },
+        [
+          h(GameCoverArt, {
+            rounded: true,
+            style: theme({ size: 20 }),
+            gameName: props.gameName,
+            platform: props.ctx.platform,
+          }),
 
-      h(Typography, { variant: 'label', sizeClassName: 'text-lg', text: props.ctx.t(props.gameName) }),
-    ]),
-  ])
+          h(Typography, {
+            variant: 'label',
+            text: props.ctx.t(props.gameName),
+            style: theme({ textSize: 'lg' }),
+          }),
+        ],
+      ),
+    ],
+  )
 }
 
 export const JoinSpaceFrontend = {

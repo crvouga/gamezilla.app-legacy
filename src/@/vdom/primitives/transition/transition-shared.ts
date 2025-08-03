@@ -5,7 +5,6 @@ export type TransitionInput = {
   onEnter: (node: HTMLElement) => Promise<void>
   onExit: (node: HTMLElement) => Promise<void>
   onAppear?: (node: HTMLElement) => Promise<void>
-  class?: string
   mode: 'in-out' | 'out-in'
   appear?: boolean
 }

@@ -1,6 +1,5 @@
 import { h } from '~/@/vdom/h'
-import { PrimitiveProps } from '../../primitive-props'
-import { ALL_SAFE_AREA_BOX_EDGES, SafeAreaBoxEdge } from '../../primitives/safe-area-box'
+import { ALL_SAFE_AREA_BOX_EDGES, SafeAreaBoxEdge, SafeAreaBoxProps } from '../../primitives/safe-area-box'
 import { BOX_TAG } from '../../tags'
 import { VDom } from '../../vdom'
 
@@ -19,19 +18,22 @@ const safeAreaEdgeToStyle = (edge: SafeAreaBoxEdge | unknown) => {
   }
 }
 
-const updateSafeAreaProps = (props: any) => {
-  if (Array.isArray(props.edges)) {
-    props.style = {
-      ...props.style,
-      padding: ALL_SAFE_AREA_BOX_EDGES.map((edge) => {
-        if (props.edges.includes(edge)) return safeAreaEdgeToStyle(edge)
-        return '0'
-      }).join(' '),
-    }
-  }
+const addSafeArea = (edges: SafeAreaBoxEdge[], styles: Record<string, unknown> = {}): Record<string, unknown> => {
+  styles.padding = ALL_SAFE_AREA_BOX_EDGES.map((edge) => (edges.includes(edge) ? safeAreaEdgeToStyle(edge) : '0')).join(
+    ' ',
+  )
+
+  return styles
 }
 
-export const WebSafeAreaBox = (props: PrimitiveProps): VDom => {
-  updateSafeAreaProps(props)
-  return h(BOX_TAG, props, props.children)
+export const WebSafeAreaBox = (props: SafeAreaBoxProps): VDom => {
+  const { edges, style } = props
+  return h(
+    BOX_TAG,
+    {
+      ...props,
+      style: addSafeArea(edges, style),
+    },
+    props.children,
+  )
 }

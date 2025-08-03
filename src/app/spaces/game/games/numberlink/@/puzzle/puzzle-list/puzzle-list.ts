@@ -38,14 +38,14 @@ const View = (input: {
   const totalCount = puzzles.length
   const selectedCount = Math.min(input.selected?.length ?? 0, totalCount)
 
-  return h(Box, { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
+  return h(Box, { style: theme({ flexDirection: 'col', width: 'full', flex: 1, overflow: 'hidden' }) }, [
     h(PuzzleListQueryForm.View, { ctx: input.ctx, query: input.query, onChange: input.onQueryChanged }),
 
     input.selectable &&
       h(
         Clickable,
         {
-          class: 'flex flex-row w-fit items-center gap-4 px-4 py-2',
+          style: theme({ flexDirection: 'row', alignItems: 'center', gap: 4, padding: 2 }),
           onPress: () => input.onHeaderCheckboxClick?.(puzzles.map((p) => p.id)),
         },
         [
@@ -53,7 +53,7 @@ const View = (input: {
           h(Typography, {
             variant: 'body',
             color: 'text-secondary',
-            class: 'text-lg',
+            style: theme({ textSize: 'lg' }),
             text: input.ctx.t('game.numberlink.puzzles-selected', {
               totalCount: puzzles.length,
               selectedCount: input.selected?.length ?? 0,
@@ -65,7 +65,7 @@ const View = (input: {
     h(
       ScrollBox,
       {
-        class: 'flex-1',
+        style: theme({ flex: 1 }),
         contentContainerStyle: {
           rowGap: 0,
         },
@@ -128,7 +128,8 @@ const ViewMenuItem = (input: {
       onPress: input.onPress,
     },
     [
-      input.selectable && h(Box, { class: 'px-4' }, [h(Checkbox, { state: input.selected ? 'checked' : 'unchecked' })]),
+      input.selectable &&
+        h(Box, { style: theme({ padding: 4 }) }, [h(Checkbox, { state: input.selected ? 'checked' : 'unchecked' })]),
 
       h(
         Box,
@@ -153,19 +154,17 @@ const ViewMenuItem = (input: {
         ],
       ),
 
-      h(Box, { class: 'flex flex-col gap-1 truncate overflow-hidden px-4' }, [
+      h(Box, { style: theme({ flexDirection: 'col', gap: 1, overflow: 'hidden', padding: 4 }) }, [
         h(Typography, {
           variant: 'body',
           color: 'text-primary',
           text: TranslatedText.of(input.puzzle.name),
-          class: 'truncate',
         }),
 
         h(Typography, {
           variant: 'subtitle',
           color: 'text-secondary',
           text: toMenuItemSecondaryText(input),
-          class: 'truncate text-xs',
         }),
       ]),
     ],

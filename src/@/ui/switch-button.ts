@@ -1,7 +1,7 @@
-import { cn } from '~/@/ui/cn'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Pressable } from '~/@/vdom/primitives/pressable'
+import { theme } from './theme/theme'
 
 export const SwitchButton = ({
   onToggle,
@@ -12,7 +12,7 @@ export const SwitchButton = ({
   checked: boolean
   onToggle?: (e: Event | unknown) => void
 }) => {
-  return h(Box, { class: 'flex flex-row items-center space-x-2' }, [
+  return h(Box, { style: theme({ flexDirection: 'row', alignItems: 'center', gap: 2 }) }, [
     // h(Text, {}, label),
     h(
       Pressable,
@@ -21,14 +21,32 @@ export const SwitchButton = ({
         // 'aria-role': 'switch',
         'aria-checked': checked,
         'aria-label': label,
-        class: cn('relative h-6 w-11 rounded-full', checked ? 'bg-blue-500' : 'bg-neutral-200'),
+        style: {
+          ...theme({
+            position: 'relative',
+            height: 6,
+            width: 11,
+            rounded: 'full',
+          }),
+          backgroundColor: checked ? 'blue-500' : 'neutral-200',
+        },
       },
       [
         h(Box, {
-          class: cn(
-            'absolute top-0.5 h-5 w-5 rounded-full border bg-white transition-all',
-            checked ? 'translate-x-[22px] border-white' : 'translate-x-[2px] border-neutral-300',
-          ),
+          style: {
+            ...theme({
+              position: 'absolute',
+              top: 0.5,
+              height: 5,
+              width: 5,
+              rounded: 'full',
+              borderWidth: 1,
+            }),
+            backgroundColor: 'white',
+            transform: checked ? 'translateX(22px)' : 'translateX(2px)',
+            borderColor: checked ? 'white' : 'neutral-300',
+            transition: 'all',
+          },
         }),
       ],
     ),

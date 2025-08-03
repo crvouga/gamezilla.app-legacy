@@ -1,8 +1,9 @@
 import { Avatar } from '~/@/ui/avatar'
-import { Box } from '~/@/vdom/primitives/box'
 import { TextField } from '~/@/ui/text-field'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
-import { AppFrontendCtxBase, AppFrontendCtx } from '~/app/@/frontend/ctx'
+import { Box } from '~/@/vdom/primitives/box'
+import { AppFrontendCtx, AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import type { ModelFrontend, MsgFrontend } from '../types'
 
@@ -22,9 +23,9 @@ const View = (input: {
       },
     },
     renderBody: () =>
-      h(Box, { class: 'flex w-full flex-1 flex-col gap-8 p-4' }, [
-        h(Avatar, { src: undefined, class: 'mx-auto size-28' }),
-        h(Box, { class: 'flex w-full flex-col gap-4' }, [
+      h(Box, { style: theme({ flexDirection: 'col', width: 'full', flex: 1, gap: 8, padding: 4 }) }, [
+        h(Avatar, { src: undefined, style: theme({ size: 28 }) }),
+        h(Box, { style: theme({ flexDirection: 'col', width: 'full', gap: 4 }) }, [
           h(TextField, {
             label: input.ctx.t('profile-avatar.seed'),
             // value: input.model.draft?.avatarSeed ?? '',

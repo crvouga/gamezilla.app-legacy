@@ -4,6 +4,7 @@ import { G } from '~/@/vdom/primitives/svg/g'
 import { Line } from '~/@/vdom/primitives/svg/line'
 import { Rect } from '~/@/vdom/primitives/svg/rect'
 import { Svg } from '~/@/vdom/primitives/svg/svg'
+import { VDom } from '~/@/vdom/vdom'
 import {
   Empty,
   MAX_X,
@@ -16,7 +17,6 @@ import {
   toSlot,
   toWins,
 } from './tic-tac-toe'
-import { VDom } from '~/@/vdom/vdom'
 
 export const gameTheme = {
   background: '#14BDAC',
@@ -74,7 +74,6 @@ export const ViewBoard = ({ board, onPress }: { board: Model; onPress: (position
     ...allPositions.map((position) =>
       h(Rect, {
         key: [position.column, position.row, toSlot(board, position)].join(' '),
-        class: 'cursor-pointer',
         x: Number(position.column) * scale,
         y: Number(position.row) * scale,
         width: 1 * scale,

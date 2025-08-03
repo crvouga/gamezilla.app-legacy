@@ -3,6 +3,7 @@ import { exhaustive } from '~/@/function/exhaustive'
 import { Option } from '~/@/option/option'
 import { type Result, isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Canvas } from '~/@/vdom/primitives/canvas'
@@ -195,7 +196,12 @@ export const View = ({ model, dispatch }: { ctx: AppFrontendCtx; model: Model; d
 
 export const ViewBoard = (_input: { model: Model; dispatch: (msg: Msg) => void }) => {
   return h(Canvas, {
-    class: 'pointer-events-none h-full max-h-full min-h-full w-full touch-none select-none',
+    style: theme({
+      pointerEvents: 'none',
+      height: 'full',
+      width: 'full',
+      overflow: 'hidden',
+    }),
     onCreateContext: (_gl) => {
       // paint(gl)
     },

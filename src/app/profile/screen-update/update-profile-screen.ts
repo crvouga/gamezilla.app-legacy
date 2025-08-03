@@ -3,6 +3,7 @@ import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
 import { Clickable } from '~/@/ui/clickable'
 import { IconChevronRight } from '~/@/ui/icon'
+import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -29,24 +30,35 @@ export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFronten
       },
     },
     renderBody: () =>
-      h(Box, { class: 'flex w-full flex-1 flex-col items-center gap-4' }, [
-        h(Box, { class: 'flex w-full flex-col items-center justify-center gap-2' }, [
-          h(Avatar, {
-            src: UserProfile.toAvatarUrl(profile),
-            class: 'size-16',
-            //   alt: input.ctx.t('avatar-title'),
-            // onPress: () => input.dispatch({ t: 'clicked-avatar' }),
-          }),
-          h(Button, {
-            size: 'sm',
-            color: 'primary',
-            variant: 'text',
-            width: 'full',
-            class: 'block',
-            // onPress: () => input.dispatch({ t: 'clicked-change-avatar-button' }),
-            text: input.ctx.t('profile.update-avatar'),
-          }),
-        ]),
+      h(Box, { style: theme({ flexDirection: 'col', width: 'full', flex: 1, alignItems: 'center', gap: 4 }) }, [
+        h(
+          Box,
+          {
+            style: theme({
+              flexDirection: 'col',
+              width: 'full',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 2,
+            }),
+          },
+          [
+            h(Avatar, {
+              src: UserProfile.toAvatarUrl(profile),
+              style: theme({ size: 16 }),
+              //   alt: input.ctx.t('avatar-title'),
+              // onPress: () => input.dispatch({ t: 'clicked-avatar' }),
+            }),
+            h(Button, {
+              size: 'sm',
+              color: 'primary',
+              variant: 'text',
+              width: 'full',
+              // onPress: () => input.dispatch({ t: 'clicked-change-avatar-button' }),
+              text: input.ctx.t('profile.update-avatar'),
+            }),
+          ],
+        ),
 
         h(ViewField, {
           // onPress: () => input.dispatch({ t: 'clicked-update-username-button' }),
@@ -58,14 +70,27 @@ export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFronten
 }
 
 const ViewField = (input: { label: TranslatedText; value: TranslatedText; onPress?: () => void }) => {
-  return h(Clickable, { onPress: input.onPress, class: 'flex flex-row w-full items-center justify-start px-4 py-2' }, [
-    h(Box, { class: 'flex flex-1 flex-col items-start' }, [
-      h(Typography, { variant: 'label', text: input.label }),
-      input.value && h(Typography, { variant: 'body', text: input.value }),
-    ]),
+  return h(
+    Clickable,
+    {
+      onPress: input.onPress,
+      style: theme({
+        flexDirection: 'row',
+        width: 'full',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        padding: 4,
+      }),
+    },
+    [
+      h(Box, { style: theme({ flexDirection: 'col', flex: 1, alignItems: 'flex-start' }) }, [
+        h(Typography, { variant: 'label', text: input.label }),
+        input.value && h(Typography, { variant: 'body', text: input.value }),
+      ]),
 
-    h(IconChevronRight, { class: 'size-6' }),
-  ])
+      h(IconChevronRight, { style: theme({ size: 6 }) }),
+    ],
+  )
 }
 
 export const UpdateProfileScreen = {

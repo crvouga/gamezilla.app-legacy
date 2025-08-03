@@ -1,12 +1,13 @@
 import { TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/primitives/box'
 import { Translator } from '~/@/l18n/generated'
 import { isOk } from '~/@/result'
 import { s } from '~/@/schema'
 import { ClickablePaper } from '~/@/ui/clickable'
 import { IconRobot, IconUsers } from '~/@/ui/icon'
+import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 import type { VDom } from '~/@/vdom/vdom'
 import { UserId } from '~/app/@/data/user-id'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
@@ -51,7 +52,7 @@ export const update = <TModel, TMsg>({
 }
 
 type MainMenuButton = {
-  renderIcon: (input: { class: string; fill: string; stroke: string }) => VDom
+  renderIcon: (input: { style: Record<string, unknown>; fill: string; stroke: string }) => VDom
   title: TranslatedText
   description: TranslatedText
   onPress: () => void
@@ -85,7 +86,7 @@ export const View = (props: {
     navBar: { title: props.title, back: { onPress: props.onBack } },
     renderCoverArt: props.renderCoverArt,
     renderBody: () =>
-      h(Box, { class: 'flex w-full flex-col gap-6 px-6', role: 'menu' }, [
+      h(Box, { style: theme({ flexDirection: 'col', width: 'full', gap: 6, padding: 6 }), role: 'menu' }, [
         ...props.buttons.map((button) =>
           h(ViewMainMenuButton, {
             key: `${button.title}${button.description}`,
@@ -100,24 +101,24 @@ const ViewMainMenuButton = (props: MainMenuButton) => {
   return h(
     ClickablePaper,
     {
-      class: 'flex flex-row w-full items-center gap-4 rounded p-6',
+      style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 4, rounded: 'md', padding: 6 }),
       onPress: props.onPress,
       role: 'menuitem',
       'aria-label': props.title,
     },
     [
-      props.renderIcon({ class: 'aspect-square w-12 h-12', fill: '#fff', stroke: 'none' }),
-      h(Box, { class: 'flex flex-1 flex-col gap-1 text-left' }, [
+      props.renderIcon({ style: theme({ aspectRatio: 1, width: 12, height: 12 }), fill: '#fff', stroke: 'none' }),
+      h(Box, { style: theme({ flexDirection: 'col', flex: 1, gap: 1, textAlign: 'left' }) }, [
         h(Typography, {
           variant: 'title',
           text: props.title,
-          class: 'font-bold',
+          style: theme({ fontWeight: 'bold' }),
         }),
         props.description &&
           h(Typography, {
             variant: 'label',
             text: props.description,
-            class: 'text-secondary',
+            style: theme({ textColor: 'neutral-400' }),
           }),
       ]),
     ],

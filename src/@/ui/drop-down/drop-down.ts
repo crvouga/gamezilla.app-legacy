@@ -3,7 +3,7 @@ import { Box } from '~/@/vdom/primitives/box'
 import { Pressable } from '~/@/vdom/primitives/pressable'
 import { VDom } from '~/@/vdom/vdom'
 import { Transition } from '../../vdom/primitives/transition'
-import { cn } from '../cn'
+import { theme } from '../theme/theme'
 import { DropDownAlignment } from './drop-down-alignment'
 import { DropDownPosition } from './drop-down-position'
 
@@ -35,22 +35,46 @@ export const DropDown = (props: {
 
   return h(Box, {}, [
     h(Backdrop, { open: props.open, onPress: onClose, onKeyDown }),
-    h(Box, { id: props.id, class: cn('relative', props.class, props.open && 'z-50'), onKeyDown }, [
-      props.renderReference(),
-      h(Transition, { id: `${props.id}-transition`, mode: 'in-out', onEnter, onExit }, [
-        props.open &&
-          h(Box, { id: props.id, class: toPositionClasses(position, alignment), 'data-testid': props.testId }, [
-            props.renderFloating(),
-          ]),
-      ]),
-    ]),
+    h(
+      Box,
+      {
+        id: props.id,
+        style: {
+          ...theme({
+            position: 'relative',
+          }),
+          zIndex: props.open ? 50 : undefined,
+          ...(props.class ? { className: props.class } : {}),
+        },
+        onKeyDown,
+      },
+      [
+        props.renderReference(),
+        h(Transition, { id: `${props.id}-transition`, mode: 'in-out', onEnter, onExit }, [
+          props.open &&
+            h(
+              Box,
+              {
+                id: props.id,
+                style: toPositionStyles(position, alignment),
+                'data-testid': props.testId,
+              },
+              [props.renderFloating()],
+            ),
+        ]),
+      ],
+    ),
   ])
 }
 
 const Backdrop = (props: { open: boolean; onPress: () => void; onKeyDown: (e: unknown) => void }) => {
   if (!props.open) return null
   return h(Pressable, {
-    class: 'absolute inset-0 z-40 bg-black/50',
+    style: theme({
+      position: 'absolute',
+      inset: 0,
+      backgroundColor: 'black/50',
+    }),
     onPress: props.onPress,
     onKeyDown: props.onKeyDown,
   })
@@ -84,54 +108,59 @@ const onExit = async (node: HTMLElement) => {
   ).finished
 }
 
-const toPositionClasses = (position: DropDownPosition, alignment: DropDownAlignment): string => {
-  const positionClass = toPositionClass(position)
-  const alignmentClass = toAlignmentClass(position, alignment)
-  return `absolute z-50 ${positionClass} ${alignmentClass}`
+const toPositionStyles = (position: DropDownPosition, alignment: DropDownAlignment) => {
+  return {
+    ...theme({
+      position: 'absolute',
+    }),
+    zIndex: 50,
+    ...toPositionStyle(position),
+    ...toAlignmentStyle(position, alignment),
+  }
 }
 
-const toPositionClass = (position: DropDownPosition): string => {
+const toPositionStyle = (position: DropDownPosition): Record<string, unknown> => {
   switch (position) {
     case 'bottom':
-      return 'top-full'
+      return { top: '100%' }
     case 'top':
-      return 'bottom-full'
+      return { bottom: '100%' }
     case 'start':
-      return 'right-full'
+      return { right: '100%' }
     case 'end':
-      return 'left-full'
+      return { left: '100%' }
   }
 }
 
-const toAlignmentClass = (position: DropDownPosition, alignment: DropDownAlignment): string => {
+const toAlignmentStyle = (position: DropDownPosition, alignment: DropDownAlignment): Record<string, unknown> => {
   switch (position) {
     case 'bottom':
     case 'top':
-      return toVerticalAlignmentClass(alignment)
+      return toVerticalAlignmentStyle(alignment)
     case 'start':
     case 'end':
-      return toHorizontalAlignmentClass(alignment)
+      return toHorizontalAlignmentStyle(alignment)
   }
 }
 
-const toVerticalAlignmentClass = (alignment: DropDownAlignment): string => {
+const toVerticalAlignmentStyle = (alignment: DropDownAlignment): Record<string, unknown> => {
   switch (alignment) {
     case 'ending':
-      return 'right-0'
+      return { right: 0 }
     case 'starting':
-      return 'left-0'
+      return { left: 0 }
     case 'centered':
-      return 'left-1/2 -translate-x-1/2'
+      return { left: '50%', transform: 'translateX(-50%)' }
   }
 }
 
-const toHorizontalAlignmentClass = (alignment: DropDownAlignment): string => {
+const toHorizontalAlignmentStyle = (alignment: DropDownAlignment): Record<string, unknown> => {
   switch (alignment) {
     case 'ending':
-      return 'bottom-0'
+      return { bottom: 0 }
     case 'starting':
-      return 'top-0'
+      return { top: 0 }
     case 'centered':
-      return 'top-1/2 -translate-y-1/2'
+      return { top: '50%', transform: 'translateY(-50%)' }
   }
 }

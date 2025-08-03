@@ -7,7 +7,14 @@ import { Circle } from '~/@/vdom/primitives/svg/circle'
 import { RadialGradient } from '~/@/vdom/primitives/svg/radial-gradient'
 import { Stop } from '~/@/vdom/primitives/svg/stop'
 
-export const PlayerIcon = ({ playerType, ...input }: { playerType: PlayerType; key?: string; class?: string }) => {
+export const PlayerIcon = ({
+  playerType,
+  ...input
+}: {
+  playerType: PlayerType
+  key?: string
+  style?: Record<string, unknown>
+}) => {
   switch (playerType) {
     case 'player-one': {
       return h(PlayerOneIcon, input)
@@ -43,7 +50,7 @@ export const ViewPlayerTwoGradientDef = ({ gradientId }: { gradientId: string })
   ])
 }
 
-export const PlayerOneIcon = (input: { key?: string; class?: string }) => {
+export const PlayerOneIcon = (input: { key?: string; style?: Record<string, unknown> }) => {
   const playerOneId = Uuid.generate()
   return h(Svg, { viewBox: '-1 -1 2 2', ...input }, [
     h(ViewPlayerOneGradientDef, { cx: 0, cy: 0, r: 1, gradientId: playerOneId }),
@@ -51,7 +58,7 @@ export const PlayerOneIcon = (input: { key?: string; class?: string }) => {
   ])
 }
 
-export const PlayerTwoIcon = (input: { key?: string; class?: string }) => {
+export const PlayerTwoIcon = (input: { key?: string; style?: Record<string, unknown> }) => {
   const playerTwoId = Uuid.generate()
   return h(Svg, { viewBox: '-1 -1 2 2', ...input }, [
     h(ViewPlayerTwoGradientDef, { gradientId: playerTwoId }),

@@ -11,6 +11,7 @@ import { ScreenPuzzlePlay } from './screen-play-puzzle/frontend'
 import { ScreenPuzzleGrid } from './screen-puzzle-grid/frontend'
 import { EditPackNameFrontend } from './surface-edit-pack-name/frontend'
 import type { FrontendModule } from './types'
+import { theme } from '~/@/ui/theme/theme'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
@@ -33,7 +34,15 @@ export const TEST_ID_NUMBERLINK_PACK_BUILDER_SCREEN = 'numberlink-pack-builder-s
 const View: FrontendModule['View'] = (input) => {
   return h(
     Box,
-    { class: 'flex w-full h-full flex flex-col flex-1', 'data-testid': TEST_ID_NUMBERLINK_PACK_BUILDER_SCREEN },
+    {
+      'data-testid': TEST_ID_NUMBERLINK_PACK_BUILDER_SCREEN,
+      style: theme({
+        flexDirection: 'col',
+        flex: 1,
+        width: 'full',
+        height: 'full',
+      }),
+    },
     [h(ViewScreen, input), h(EditPackNameFrontend.ViewSurface, input)],
   )
 }

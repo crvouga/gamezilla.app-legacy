@@ -1,7 +1,20 @@
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { VDom } from '~/@/vdom/vdom'
 
 export const BoardLayout = (props: { children: VDom[] }) => {
-  return h(Box, { class: 'flex w-full flex-1 flex-col items-center justify-center' }, props.children)
+  return h(
+    Box,
+    {
+      style: theme({
+        flexDirection: 'col',
+        width: 'full',
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }),
+    },
+    props.children,
+  )
 }

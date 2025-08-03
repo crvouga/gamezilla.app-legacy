@@ -5,9 +5,9 @@ import { Pressable } from '~/@/vdom/primitives/pressable'
 import { TextInput } from '~/@/vdom/primitives/text-input'
 import type { VDom } from '~/@/vdom/vdom'
 import { Text } from '../vdom/primitives/text'
-import { cn } from './cn'
 import { IconXMark } from './icon'
-import { PAPER_CLASS_NAME } from './paper'
+import { PAPER_STYLE } from './paper'
+import { theme } from './theme/theme'
 
 export const TextField = (input: {
   startIcon?: VDom
@@ -25,17 +25,41 @@ export const TextField = (input: {
   onClear?: () => void
   onChangeText: (value: string) => void
 }) => {
-  return h(Box, { class: 'flex w-full flex-col gap-1' }, [
-    h(Text, { class: cn('text-base', input.error && 'text-red-500'), text: input.label }),
+  return h(Box, { style: theme({ width: 'full', flexDirection: 'col', gap: 1 }) }, [
+    h(Text, {
+      text: input.label,
+      style: {
+        ...theme({ textSize: 'sm' }),
+        textColor: input.error ? 'red-500' : 'white',
+      },
+    }),
     h(
       Box,
       {
-        class: cn(
-          PAPER_CLASS_NAME,
-          'flex flex-row h-20 w-full overflow-hidden rounded-md border-2',
-          input.error && 'border-2 border-red-500 text-red-500',
-          !input.error && 'ring-blue-500 focus-within:ring-2',
-        ),
+        style: {
+          ...PAPER_STYLE,
+          ...theme({
+            flexDirection: 'row',
+            height: 20,
+            width: 'full',
+            overflow: 'hidden',
+            rounded: 'md',
+            borderWidth: 2,
+          }),
+          ...(input.error
+            ? {
+                borderColor: 'red-500',
+                textColor: 'red-500',
+              }
+            : {
+                ringColor: 'blue-500',
+                ringWidth: 2,
+                ringOpacity: 0,
+                ':focus-within': {
+                  ringOpacity: 1,
+                },
+              }),
+        },
       },
       [
         h(TextInput, {
@@ -46,10 +70,17 @@ export const TextField = (input: {
           type: input.type,
           defaultValue: input.value,
           onChangeText: input.onChangeText,
-          class: cn(
-            'flex flex-row flex-1 appearance-none items-center gap-2 bg-transparent p-3 py-4 text-xl outline-none',
-            '[&:-webkit-autofill]:!bg-transparent [&:-webkit-autofill]:!text-white [&:-webkit-autofill]:!shadow-[0_0_0_1000px_#000000_inset] [&:-webkit-autofill]:![-webkit-text-fill-color:white]',
-          ),
+          style: {
+            ...theme({
+              flexDirection: 'row',
+              flex: 1,
+              alignItems: 'center',
+              gap: 2,
+              padding: 3,
+              textSize: 'lg',
+            }),
+            backgroundColor: 'transparent',
+          },
         }),
         input.onClear &&
           typeof input.value === 'string' &&
@@ -57,13 +88,18 @@ export const TextField = (input: {
           h(
             Pressable,
             {
-              class: 'rounded-md px-3 ring-blue-500 outline-none focus:ring-2',
+              style: {
+                ...theme({
+                  rounded: 'md',
+                  px: 3,
+                }),
+              },
               'aria-label': 'Clear input',
               onPress: (_e: any) => {
                 input.onClear?.()
               },
             },
-            [h(IconXMark, { class: 'size-6 text-white' })],
+            [h(IconXMark, { style: theme({ size: 6, textColor: 'white' }) })],
           ),
       ],
     ),
@@ -74,7 +110,10 @@ export const TextField = (input: {
           role: 'alert',
           'data-error': input.error,
           'data-info': !input.error,
-          class: cn('text-sm', input.error && 'text-red-500'),
+          style: {
+            ...theme({ textSize: 'sm' }),
+            textColor: input.error ? 'red-500' : 'neutral-300',
+          },
         },
         [h(Text, { text: input.helperText ?? '' })],
       ),

@@ -5,7 +5,16 @@ import { Svg } from '../vdom/primitives/svg/svg'
 import { theme } from './theme/theme'
 
 export const Spinner = (props: { style?: Record<string, unknown> }) => {
-  return h(Box, { class: 'animate-spin', style: props.style }, [h(IconSpinner, { style: { ...theme({ size: 8 }) } })])
+  return h(
+    Box,
+    {
+      style: theme({
+        // animation: 'spin'
+      }),
+      ...props.style,
+    },
+    [h(IconSpinner, { style: { ...theme({ size: 8 }) } })],
+  )
 }
 
 const IconSpinner = (input: { style?: Record<string, unknown> }) => {

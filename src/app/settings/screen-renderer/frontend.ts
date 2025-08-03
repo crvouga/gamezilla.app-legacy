@@ -68,7 +68,7 @@ const View: FrontendModule['View'] = (input) => {
     renderBody: () =>
       h(
         ScrollBox,
-        { class: 'flex flex-1 flex-col' },
+        { style: theme({ flexDirection: 'col', flex: 1 }) },
         VDomImplWeb.VISIBLE.map((vDomImpl) => {
           const isSelected = vDomImpl === input.model.renderVDomImpl
           const isDefault = vDomImpl === input.model.renderVDomImplInitial
@@ -79,7 +79,7 @@ const View: FrontendModule['View'] = (input) => {
             onPress: () => input.dispatch({ t: 'renderer.clicked-renderer', vDomImpl }),
             renderEnd: () =>
               h(RadioInputIcon, {
-                style: { ...theme({ size: 7, textColor: 'white' }) },
+                style: theme({ size: 7, textColor: 'white' }),
                 status: isSelected ? 'selected' : 'unselected',
               }),
             selected: isSelected,

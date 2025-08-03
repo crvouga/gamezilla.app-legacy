@@ -1,5 +1,6 @@
 import { Sub } from '~/@/sub'
 import { IconPen, IconPlay } from '~/@/ui/icon'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
@@ -206,7 +207,7 @@ const viewToggleModeAction = (
           id: input.ctx.t('game.numberlink.play-mode'),
           renderIcon: (input) => h(IconPlay, input),
           label: input.ctx.t('game.numberlink.play-mode'),
-          classNames: { button: 'text-blue-500' },
+          styles: { button: 'text-blue-500' },
           onPress: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
         },
       ]
@@ -217,7 +218,7 @@ const viewToggleModeAction = (
           id: input.ctx.t('game.numberlink.edit-mode'),
           renderIcon: (input) => h(IconPen, input),
           label: input.ctx.t('game.numberlink.edit-mode'),
-          classNames: { button: 'text-amber-500' },
+          styles: { button: 'text-amber-500' },
           onPress: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
         },
       ]
@@ -261,9 +262,20 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
     ctx: input.ctx,
     renderBody: () =>
       h(BoardLayout, {}, [
-        h(Box, { class: 'flex flex-row w-full items-center justify-center gap-1 p-2' }, [
-          h(Text, { text: input.ctx.t('game.numberlink.playing') }),
-        ]),
+        h(
+          Box,
+          {
+            style: theme({
+              flexDirection: 'row',
+              width: 'full',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 1,
+              padding: 2,
+            }),
+          },
+          [h(Text, { text: input.ctx.t('game.numberlink.playing') })],
+        ),
         h(ModePlayFrontend.View, {
           platform: input.ctx.platform,
           model: puzzleBuilder.modePlay,
@@ -303,7 +315,7 @@ const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
     },
     renderBody: () =>
       h(LayoutGame, { ctx: input.ctx, isSpectating: true }, [
-        h(Box, { class: 'flex w-full flex-1 flex-col' }, [
+        h(Box, { style: theme({ flexDirection: 'col', width: 'full', flex: 1 }) }, [
           h(ProfileMenuItem, {
             ctx: input.ctx,
             profile: input.ctx.profilesByUserId[input.ctx.space.hostId],

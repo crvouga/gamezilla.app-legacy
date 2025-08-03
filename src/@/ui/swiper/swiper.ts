@@ -1,19 +1,50 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import type { VDom } from '~/@/vdom/vdom'
+import { theme } from '../theme/theme'
 
 const Container = (input: {
   id: string
   onSlideIndexChanged?: (index: number) => void
   children?: VDom
-  class?: string
   slideIndex: number
+  style?: Record<string, unknown>
 }) => {
-  return h(Box, { class: input.class }, [input.children])
+  return h(
+    Box,
+    {
+      style: {
+        ...input.style,
+        ...theme({
+          flexDirection: 'row',
+          height: 'full',
+          width: 'full',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }),
+      },
+    },
+    [input.children],
+  )
 }
 
-const Slide = (input: { children?: VDom; class?: string }) => {
-  return h(Box, { class: input.class }, [input.children])
+const Slide = (input: { children?: VDom; style?: Record<string, unknown> }) => {
+  return h(
+    Box,
+    {
+      style: {
+        ...input.style,
+        ...theme({
+          flexDirection: 'col',
+          height: 'full',
+          width: 'full',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }),
+      },
+    },
+    [input.children],
+  )
 }
 
 export const Swiper = {

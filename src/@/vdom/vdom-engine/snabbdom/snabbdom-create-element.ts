@@ -1,7 +1,16 @@
 import { Attrs, On, h } from 'snabbdom'
 import { propKeyToEventName } from '../web/prop-key-to-event-name'
 
-const isSpecialKey = (key: string) => key === 'children' || key === 'key' || key === 'style'
+const isSpecialKey = (key: string): boolean => {
+  switch (key) {
+    case 'children':
+    case 'key':
+    case 'style':
+      return true
+    default:
+      return false
+  }
+}
 
 export const createElement = (tag: string, props: any, children: any) => {
   const attrs: Attrs = {}
@@ -16,7 +25,8 @@ export const createElement = (tag: string, props: any, children: any) => {
       if (propValue == null || propValue === undefined) continue
 
       if (propKey.startsWith('on')) {
-        on[propKeyToEventName(propKey)] = propValue
+        const eventName = propKeyToEventName(propKey)
+        on[eventName] = propValue
         hasEvents = true
       } else if (!isSpecialKey(propKey)) {
         attrs[propKey] = propValue
@@ -26,10 +36,18 @@ export const createElement = (tag: string, props: any, children: any) => {
   }
 
   const snabbdomProps: Record<string, unknown> = {}
-  if (hasAttrs) snabbdomProps.attrs = attrs
-  if (hasEvents) snabbdomProps.on = on
-  if (props?.key) snabbdomProps.key = props.key
-  if (props?.style) snabbdomProps.style = props.style
+  if (hasAttrs) {
+    snabbdomProps.attrs = attrs
+  }
+  if (hasEvents) {
+    snabbdomProps.on = on
+  }
+  if (props?.key) {
+    snabbdomProps.key = props.key
+  }
+  if (props?.style) {
+    snabbdomProps.style = props.style
+  }
 
   return h(tag, snabbdomProps, children)
 }

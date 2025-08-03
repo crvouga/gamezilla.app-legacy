@@ -1,8 +1,10 @@
 import { Avatar } from '~/@/ui/avatar'
-import { Box } from '~/@/vdom/primitives/box'
 import { Clickable } from '~/@/ui/clickable'
-import { Frag } from '~/@/vdom/primitives/frag'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Frag } from '~/@/vdom/primitives/frag'
+import { Text } from '~/@/vdom/primitives/text'
 import { VDom } from '~/@/vdom/vdom'
 import type { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
@@ -10,7 +12,6 @@ import { SectionTitle } from '~/app/@/ui/section/section-title'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ViewHostChip } from '~/app/spaces/@/ui/host-chip'
 import { ViewYouChip } from '~/app/spaces/@/ui/you-chip'
-import { Text } from '~/@/vdom/primitives/text'
 
 export const SectionPeopleList = (input: {
   ctx: SpaceFrontendCtx
@@ -22,11 +23,11 @@ export const SectionPeopleList = (input: {
 
   const renderItem = input.renderItem ?? ((_profile, vDom) => vDom)
 
-  return h(Box, { class: 'flex w-full flex-col gap-3 py-6' }, [
+  return h(Box, { style: theme({ flexDirection: 'col', width: 'full', gap: 3, padding: 6 }) }, [
     h(SectionTitle, { text: input.ctx.t('app.people') }),
     h(
       Box,
-      { class: 'flex flex-row w-full flex-col' },
+      { style: theme({ flexDirection: 'row', width: 'full' }) },
       profiles.map((profile) =>
         h(Frag, { key: profile.id }, [
           renderItem(
@@ -55,10 +56,17 @@ const PersonMenuItem = (input: {
     {
       key: input.key,
       onPress: input.onPress,
-      class: 'flex flex-row w-full items-center gap-2 p-2 px-6',
+      style: theme({
+        flexDirection: 'row',
+        width: 'full',
+        alignItems: 'center',
+        gap: 2,
+        padding: 2,
+        px: 6,
+      }),
     },
     [
-      h(Avatar, { class: 'size-12', src: UserProfile.toAvatarUrl(input.profile) }),
+      h(Avatar, { style: theme({ size: 12 }), src: UserProfile.toAvatarUrl(input.profile) }),
       h(Box, {}, [h(Text, { text: input.profile.username })]),
       input.profile.userId === input.ctx.space.hostId && h(ViewHostChip, { ctx: input.ctx }),
       input.profile.userId === input.ctx.currentUser.userId && h(ViewYouChip, { ctx: input.ctx }),

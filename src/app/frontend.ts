@@ -47,6 +47,7 @@ import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract, topicContra
 import { toBackendConnectionStatus } from './wire/backend-connection/backend-connection-status'
 import { WireFrontend } from './wire/frontend'
 import { VdomImplWebStorage } from '~/@/vdom/vdom-impl-web-storage'
+import { theme } from '~/@/ui/theme/theme'
 
 const initCtx = async (config: {
   backendUrl: Url
@@ -411,23 +412,35 @@ const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
         dispatch: (c) => input.dispatch({ t: 'auth', c }),
       })
     default:
-      return h(Box, { class: 'flex w-full flex-1 items-center justify-center' }, [
-        h(Text, { text: 'Logged out', class: 'text-white' }),
-        h(
-          Button,
-          {
-            variant: 'contained',
-            color: 'primary',
-            onPress: () =>
-              input.dispatch({
-                t: 'frontend',
-                c: { t: 'current-screen', c: { t: 'clicked-link', screen: { t: 'login', n: 'auth' } } },
-              }),
-            text: input.ctx.t('login'),
-          },
-          [h(Text, { text: 'Login' })],
-        ),
-      ])
+      return h(
+        Box,
+        {
+          style: theme({
+            flexDirection: 'col',
+            width: 'full',
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }),
+        },
+        [
+          h(Text, { text: 'Logged out', style: theme({ textColor: 'white' }) }),
+          h(
+            Button,
+            {
+              variant: 'contained',
+              color: 'primary',
+              onPress: () =>
+                input.dispatch({
+                  t: 'frontend',
+                  c: { t: 'current-screen', c: { t: 'clicked-link', screen: { t: 'login', n: 'auth' } } },
+                }),
+              text: input.ctx.t('login'),
+            },
+            [h(Text, { text: 'Login' })],
+          ),
+        ],
+      )
   }
 }
 
@@ -452,23 +465,35 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
 
     case 'settings':
     case 'auth':
-      return h(Box, { class: 'flex w-full flex-1 items-center justify-center' }, [
-        h(Text, { text: 'Logged in', class: 'text-white' }),
-        h(
-          Button,
-          {
-            variant: 'contained',
-            color: 'primary',
-            onPress: () =>
-              input.dispatch({
-                t: 'frontend',
-                c: { t: 'current-screen', c: { t: 'clicked-link', screen: { t: 'space-list', n: 'spaces' } } },
-              }),
-            text: input.ctx.t('spaces.spaces'),
-          },
-          [],
-        ),
-      ])
+      return h(
+        Box,
+        {
+          style: theme({
+            flexDirection: 'col',
+            width: 'full',
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }),
+        },
+        [
+          h(Text, { text: 'Logged in', style: theme({ textColor: 'white' }) }),
+          h(
+            Button,
+            {
+              variant: 'contained',
+              color: 'primary',
+              onPress: () =>
+                input.dispatch({
+                  t: 'frontend',
+                  c: { t: 'current-screen', c: { t: 'clicked-link', screen: { t: 'space-list', n: 'spaces' } } },
+                }),
+              text: input.ctx.t('spaces.spaces'),
+            },
+            [],
+          ),
+        ],
+      )
   }
 }
 

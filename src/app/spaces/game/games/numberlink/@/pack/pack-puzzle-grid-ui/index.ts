@@ -1,15 +1,16 @@
 import { TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/primitives/box'
-import { IconPlus } from '~/@/ui/icon'
-import { Swiper } from '~/@/ui/swiper/swiper'
-import { Typography } from '~/@/ui/typography'
 import { Clickable, ClickablePaper } from '~/@/ui/clickable'
+import { IconPlus } from '~/@/ui/icon'
 import { PaginationDots } from '~/@/ui/pagination-dots'
 import { Paper } from '~/@/ui/paper'
+import { Swiper } from '~/@/ui/swiper/swiper'
+import { theme } from '~/@/ui/theme/theme'
+import { Typography } from '~/@/ui/typography'
+import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Text } from '~/@/vdom/primitives/text'
 import type { VDom } from '~/@/vdom/vdom'
 import type { PuzzleId } from '../../puzzle/puzzle-id'
-import { h } from '~/@/vdom/h'
-import { Text } from '~/@/vdom/primitives/text'
 
 const COLUMN_COUNT = 5
 const ROW_COUNT = 6
@@ -30,21 +31,33 @@ const View = (input: {
   const cellCount = (puzzleIds.length ?? 0) + (input.addCell?.include ? 1 : 0)
   const slideCount = Math.ceil(cellCount / (COLUMN_COUNT * ROW_COUNT))
 
-  return h(Box, { class: 'flex h-full w-full flex-col gap-4 py-6' }, [
+  return h(Box, { style: theme({ flexDirection: 'col', height: 'full', width: 'full', gap: 4, padding: 6 }) }, [
     h(
       Swiper.Container,
       {
         onSlideIndexChanged: (newSlideIndex: number) => input.onSlideIndexChanged?.(newSlideIndex),
         id: input.id ?? 'pack-puzzle-grid-swiper-container',
         slideIndex: input.currentSlideIndex ?? 0,
-        class: 'flex flex-row h-full w-full items-center justify-center',
+        style: theme({
+          flexDirection: 'row',
+          height: 'full',
+          width: 'full',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }),
       },
       Array.from({ length: slideCount }).map((_, slideIndex) =>
         h(
           Swiper.Slide,
           {
             key: slideIndex,
-            class: 'flex h-full w-3/4 flex-col items-center justify-center',
+            style: theme({
+              flexDirection: 'col',
+              height: 'full',
+              // width: '3/4',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }),
           },
           [
             h(ViewSlideContent, {
@@ -70,7 +83,7 @@ const ViewSlideContent = (input: {
   }
   onPressPuzzleCell?: (input: { puzzleIndex: number; puzzleId: PuzzleId }) => void
 }) => {
-  return h(Box, { class: 'flex w-fit flex-col items-center justify-center gap-1' }, [
+  return h(Box, { style: theme({ flexDirection: 'col', alignItems: 'center', justifyContent: 'center', gap: 1 }) }, [
     h(ViewSlideHeading, { slideIndex: input.slideIndex, puzzleIds: input.puzzleIds }),
     h(ViewGrid, {
       slideIndex: input.slideIndex,
@@ -104,7 +117,14 @@ const ViewSlideHeading = (input: { slideIndex: number; puzzleIds: PuzzleId[] }) 
 
   return h(Typography, {
     text: TranslatedText.of(`${startPosition} - ${endPositionPuzzle}`),
-    class: 'flex flex-row w-full items-center justify-start p-1 text-2xl',
+    style: theme({
+      flexDirection: 'row',
+      width: 'full',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      padding: 1,
+      textSize: '2xl',
+    }),
     role: 'heading',
   })
 }
@@ -118,7 +138,13 @@ const ViewGrid = (input: {
 
   return h(
     Box,
-    { role: 'grid', class: 'grid aspect-square w-full grid-cols-5 grid-rows-6' },
+    {
+      role: 'grid',
+      style: theme({
+        // gridTemplateColumns: COLUMN_COUNT,
+        // gridTemplateRows: ROW_COUNT,
+      }),
+    },
     range2d({ x: COLUMN_COUNT, y: ROW_COUNT }).map(({ x, y }) =>
       h(ViewGridCell, {
         key: `${x}-${y}`,
@@ -147,7 +173,16 @@ const ViewGridCell = (input: {
     Box,
     {
       role: 'gridcell',
-      class: 'flex flex-row aspect-square h-12 w-12 items-center justify-center overflow-hidden p-1 sm:h-16 sm:w-16',
+      style: theme({
+        flexDirection: 'row',
+        aspectRatio: 1,
+        width: 12,
+        height: 12,
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        padding: 1,
+      }),
     },
     [
       input.renderCell({
@@ -174,9 +209,17 @@ const ViewAddCell = (input: { onPress?: () => void }) => {
     ClickablePaper,
     {
       onPress: input.onPress,
-      class: 'flex flex-row h-full w-full items-center justify-center overflow-hidden rounded border-2',
+      style: theme({
+        flexDirection: 'row',
+        width: 'full',
+        height: 'full',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        rounded: 'md',
+      }),
     },
-    [h(IconPlus, { class: 'h-8 w-8' })],
+    [h(IconPlus, { style: theme({ size: 8 }) })],
   )
 }
 
@@ -185,7 +228,17 @@ const ViewPuzzleCell = ({ onPress, index }: { onPress: () => void; index: number
     ClickablePaper,
     {
       onPress: onPress,
-      class: 'flex flex-row h-full w-full items-center justify-center overflow-hidden rounded text-lg font-normal',
+      style: theme({
+        flexDirection: 'row',
+        width: 'full',
+        height: 'full',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        rounded: 'md',
+        textSize: 'lg',
+        fontWeight: 'normal',
+      }),
     },
     [h(Text, { text: String(index + 1) })],
   )
@@ -193,13 +246,34 @@ const ViewPuzzleCell = ({ onPress, index }: { onPress: () => void; index: number
 
 const ViewEmptyCell = () => {
   return h(Box, {
-    class: 'flex flex-row h-full w-full items-center justify-center overflow-hidden rounded border-2 opacity-70',
+    style: theme({
+      flexDirection: 'row',
+      width: 'full',
+      height: 'full',
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'hidden',
+      rounded: 'md',
+      borderWidth: 2,
+      backgroundColor: 'orange-500/50',
+    }),
   })
 }
 
 export const _ViewLoadingCell = () => {
   return h(Paper, {
-    class: 'flex flex-row h-full w-full animate-pulse items-center justify-center overflow-hidden rounded opacity-70',
+    style: theme({
+      flexDirection: 'row',
+      width: 'full',
+      height: 'full',
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'hidden',
+      rounded: 'md',
+      backgroundColor: 'orange-500/50',
+      textSize: 'xl',
+      fontWeight: 'bold',
+    }),
   })
 }
 
@@ -208,8 +282,18 @@ export const _ViewErrorCell = ({ onPress, index }: { onPress: () => void; index:
     Clickable,
     {
       onPress,
-      class:
-        'flex flex-row h-full w-full items-center justify-center overflow-hidden rounded bg-orange-500/50 text-xl font-bold',
+      style: theme({
+        flexDirection: 'row',
+        width: 'full',
+        height: 'full',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        rounded: 'md',
+        backgroundColor: 'orange-500/50',
+        textSize: 'xl',
+        fontWeight: 'bold',
+      }),
     },
     [h(Text, { text: String(index + 1) })],
   )

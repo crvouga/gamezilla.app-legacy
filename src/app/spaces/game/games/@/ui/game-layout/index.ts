@@ -1,5 +1,5 @@
 import { Translator } from '~/@/l18n/generated'
-import { cn } from '~/@/ui/cn'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
@@ -8,31 +8,55 @@ import type { VDom } from '~/@/vdom/vdom'
 export const LayoutGame = ({
   children,
   isSpectating,
-  class: class_,
+  style,
   ctx,
   ...props
 }: {
   ctx: {
     t: Translator
   }
-  class?: string
+  style?: Record<string, unknown>
   isSpectating?: boolean
   children?: VDom
 }) => {
   return h(
     Box,
     {
-      class: cn('flex w-full flex-1 flex-col', isSpectating && 'border-8 border-t-0 border-blue-500', class_),
       ...props,
+      style: {
+        ...theme({
+          flexDirection: 'col',
+          width: 'full',
+          flex: 1,
+        }),
+        ...(isSpectating
+          ? theme({
+              borderWidth: 8,
+              borderColor: 'blue-500',
+            })
+          : {}),
+        ...style,
+      },
     },
     [
       isSpectating &&
         h(
           Box,
           {
-            class: 'flex flex-row w-full items-center justify-center bg-blue-500 py-1 text-sm font-semibold text-white',
+            style: theme({
+              flexDirection: 'row',
+              width: 'full',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'blue-500',
+            }),
           },
-          [h(Text, { text: ctx.t('game.you-are-spectating') })],
+          [
+            h(Text, {
+              text: ctx.t('game.you-are-spectating'),
+              style: theme({ textSize: 'sm', fontWeight: 'bold', textColor: 'white', padding: 1 }),
+            }),
+          ],
         ),
       children,
     ].filter(Boolean),

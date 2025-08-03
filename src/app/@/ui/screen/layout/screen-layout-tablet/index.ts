@@ -4,23 +4,32 @@ import { VDom } from '~/@/vdom/vdom'
 import { ParentScreenProps, ScreenLayoutProps } from '../screen-layout-props'
 import { ActionBars } from './action-bars'
 import { renderNavBars } from './nav-bars'
+import { theme } from '~/@/ui/theme/theme'
 
 export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
   return h(
     Box,
     {
-      class: 'relative flex flex-row w-full flex-1 flex-row overflow-hidden',
+      style: theme({
+        position: 'relative',
+        flexDirection: 'row',
+        width: 'full',
+        flex: 1,
+        overflow: 'hidden',
+      }),
     },
     [
       h(ActionBars, { position: 'start', input: input }),
 
-      h(Box, { class: 'flex max-w-3xl flex-[4] shrink-0 flex-col border-x' }, [
+      h(Box, { style: theme({ flex: 4, borderWidth: 1 }) }, [
         ...renderNavBars(input.ctx, input),
 
-        h(Box, { class: 'flex w-full flex-1 flex-col overflow-hidden' }, [
+        h(Box, { style: theme({ flex: 1, overflow: 'hidden' }) }, [
           input.renderBody(),
           (input.renderMiniPlayer || input.parentScreen?.renderMiniPlayer) &&
-            h(Box, { class: 'absolute right-8 bottom-8 bg-black' }, [...renderMiniPlayers(input)]),
+            h(Box, { style: theme({ position: 'absolute', right: 8, bottom: 8, backgroundColor: 'black' }) }, [
+              ...renderMiniPlayers(input),
+            ]),
         ]),
       ]),
 

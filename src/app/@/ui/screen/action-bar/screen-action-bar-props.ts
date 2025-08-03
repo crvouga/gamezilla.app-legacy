@@ -11,9 +11,9 @@ export type ScreenAction = {
   label: TranslatedText
   disabled?: boolean
   renderIcon: (input: { style: Record<string, unknown> }) => VDom
-  classNames?: {
-    button?: string
-    label?: string
+  styles?: {
+    button?: Record<string, unknown>
+    label?: Record<string, unknown>
   }
   testId?: string
   onPress: () => void

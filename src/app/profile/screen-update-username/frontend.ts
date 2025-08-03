@@ -1,10 +1,11 @@
 import { RequestResponse } from '~/@/request-response/request-response'
-import { Box } from '~/@/vdom/primitives/box'
 import { TextField } from '~/@/ui/text-field'
+import { theme } from '~/@/ui/theme/theme'
+import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { FrontendModule } from './types'
-import { h } from '~/@/vdom/h'
 
 const init: FrontendModule['init'] = (input) => {
   return {
@@ -68,7 +69,7 @@ const View: FrontendModule['View'] = (input) => {
       cancelDisabled: false,
     },
     renderBody: () =>
-      h(Box, { class: 'flex w-full flex-col gap-4 p-4' }, [
+      h(Box, { style: theme({ flexDirection: 'col', width: 'full', gap: 4, padding: 4 }) }, [
         h(TextField, {
           id: 'username',
           label: input.ctx.t('username.username-label'),

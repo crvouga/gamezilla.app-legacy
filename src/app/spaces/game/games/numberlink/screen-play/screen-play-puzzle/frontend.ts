@@ -23,6 +23,7 @@ import type { FrontendModule, MsgFrontend } from '../types'
 import * as CopyPuzzleFrontend from './button-copy-puzzle/frontend'
 import { LastPuzzleFrontend } from './last-puzzle/frontend'
 import { ScreenPlayPuzzleSpace } from './space'
+import { theme } from '~/@/ui/theme/theme'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
@@ -148,7 +149,13 @@ const ViewHosting: FrontendModule['View'] = (input) => {
       h(
         Box,
         {
-          class: 'flex flex-row w-full flex-1 items-center justify-center',
+          style: theme({
+            flexDirection: 'row',
+            width: 'full',
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }),
           'data-testid': puzzle.t === 'got' ? puzzle.c.id : null,
         },
         [
@@ -244,26 +251,37 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
           profile: input.ctx.profilesByUserId[input.ctx.space.hostId],
           subtitle: input.ctx.t('game.player'),
         }),
-        h(Box, { class: 'flex flex-row flex-1 items-center justify-center' }, [
-          puzzle.t === 'got'
-            ? h(ModePlayFrontend.View, {
-                disabled: true,
-                platform: input.ctx.platform,
-                key: puzzle.c.id,
-                numberlink: puzzle.c.model,
-                model:
-                  modePlay ??
-                  ModePlay.init({
-                    ctx: ModePlay.initCtx({
-                      numberlink: puzzle.c.model,
-                      solutions: SolutionsDbQueryCache.read(input.ctx, SolutionHash.init(puzzle.c.model)),
+        h(
+          Box,
+          {
+            style: theme({
+              flexDirection: 'row',
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }),
+          },
+          [
+            puzzle.t === 'got'
+              ? h(ModePlayFrontend.View, {
+                  disabled: true,
+                  platform: input.ctx.platform,
+                  key: puzzle.c.id,
+                  numberlink: puzzle.c.model,
+                  model:
+                    modePlay ??
+                    ModePlay.init({
+                      ctx: ModePlay.initCtx({
+                        numberlink: puzzle.c.model,
+                        solutions: SolutionsDbQueryCache.read(input.ctx, SolutionHash.init(puzzle.c.model)),
+                      }),
                     }),
-                  }),
-                dispatch: () => {},
-                showSolvedAnimation: true,
-              })
-            : h(PuzzleResult.ViewNotFound, { ctx: input.ctx }),
-        ]),
+                  dispatch: () => {},
+                  showSolvedAnimation: true,
+                })
+              : h(PuzzleResult.ViewNotFound, { ctx: input.ctx }),
+          ],
+        ),
       ]),
   })
 }

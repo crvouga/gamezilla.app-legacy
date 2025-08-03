@@ -4,19 +4,19 @@ import { Sub } from '~/@/sub'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
-import { cn } from '~/@/ui/cn'
 import { IconXMark } from '~/@/ui/icon'
-import { PAPER_CLASS_NAME } from '~/@/ui/paper'
+import { PAPER_STYLE } from '~/@/ui/paper'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Pressable } from '~/@/vdom/primitives/pressable'
+import { SafeAreaBox } from '~/@/vdom/primitives/safe-area-box'
 import { Text } from '~/@/vdom/primitives/text'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { APP_SOUND } from '../../@/frontend/app-sound'
-import { SafeAreaBox } from '~/@/vdom/primitives/safe-area-box'
 
 type Ctx = {
   now: UnixMs
@@ -158,8 +158,19 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
       'data-error': input.toast.variant === 'error',
       'data-info': input.toast.variant === 'info',
       'data-success': input.toast.variant === 'success',
-      class:
-        'pointer-events-none absolute top-0 left-0 z-40 flex flex-row w-full items-center justify-center overflow-visible p-4',
+      style: theme({
+        pointerEvents: 'none',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        zIndex: 40,
+        flexDirection: 'row',
+        width: 'full',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        padding: 4,
+      }),
       onPress: () => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast }),
       onPressOut: () => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast }),
     },
@@ -168,30 +179,40 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
         SafeAreaBox,
         {
           edges: ['top'],
-          class: cn('w-full', toWidthClass(input)),
+          style: theme({ width: 'full', maxWidth: input.ctx.screenSize === 'mobile' ? undefined : 'sm' }),
         },
         [
           h(
             Box,
             {
-              class: cn(
-                'pointer-events-auto z-40 flex flex-row w-full items-center justify-between overflow-hidden rounded-lg border p-3 text-lg text-white shadow-2xl',
-                input.toast.variant === 'info' && PAPER_CLASS_NAME,
-                input.toast.variant === 'success' && PAPER_CLASS_NAME,
-                input.toast.variant === 'error' && 'border-red-400 bg-red-500',
-              ),
+              style: {
+                ...theme({
+                  pointerEvents: 'auto',
+                  zIndex: 40,
+                  flexDirection: 'row',
+                  width: 'full',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  overflow: 'hidden',
+                  rounded: 'lg',
+                  borderWidth: 1,
+                }),
+                ...(input.toast.variant === 'info' && PAPER_STYLE),
+                ...(input.toast.variant === 'success' && PAPER_STYLE),
+                ...(input.toast.variant === 'error' && { borderColor: 'red-400', backgroundColor: 'red-500' }),
+              },
             },
             [
-              h(Text, { text: input.toast.text, class: 'text-white' }),
+              h(Text, { text: input.toast.text, style: theme({ textColor: 'white' }) }),
               typeof errorMsg === 'string' &&
                 h(
                   Pressable,
                   {
-                    class: 'font-bold',
+                    style: theme({ fontWeight: 'bold' }),
                     onPress: () =>
                       input.dispatch({ t: 'clicked-see-error', errorMsg: errorMsg, toastId: input.toast.toastId }),
                   },
-                  [h(Text, { text: 'See Error', class: 'text-white' })],
+                  [h(Text, { text: 'See Error', style: theme({ textColor: 'white' }) })],
                 ),
               h(
                 Pressable,
@@ -200,7 +221,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
                   'aria-label': input.ctx.t('app.dismiss'),
                   onPress: () => input.dispatch({ t: 'clicked-dismiss-button', toastId: input.toast.toastId }),
                 },
-                [h(IconXMark, { class: 'h-5 w-5 text-white' })],
+                [h(IconXMark, { style: theme({ size: 5, textColor: 'white' }) })],
               ),
             ],
           ),
@@ -208,13 +229,4 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
       ),
     ],
   )
-}
-
-const toWidthClass = (input: { ctx: Ctx }) => {
-  switch (input.ctx.screenSize) {
-    case 'mobile':
-      return 'w-full'
-    case 'tablet':
-      return 'w-full max-w-sm'
-  }
 }

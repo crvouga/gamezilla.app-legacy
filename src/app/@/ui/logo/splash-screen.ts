@@ -1,10 +1,13 @@
 import { TranslatedText } from '~/@/l18n'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
 
 export const SplashScreen = (_props: { reason?: TranslatedText }) => {
-  return h(Box, { class: 'h-screen w-screen flex items-center justify-center bg-black' }, [
-    h(Text, { text: '🦕', class: 'text-[64px] text-white' }),
-  ])
+  return h(
+    Box,
+    { style: theme({ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'black' }) },
+    [h(Text, { text: '🦕', style: theme({ textSize: 64, textColor: 'white' }) })],
+  )
 }

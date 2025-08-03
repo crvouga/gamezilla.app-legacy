@@ -264,7 +264,6 @@ const ViewCoordinates = (input: BoardProps<VariantGrid>) => {
       return h(
         SvgText,
         {
-          class: 'pointer-events-none',
           key: node.nodeId,
           x: node.x,
           y: node.y,

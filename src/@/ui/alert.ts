@@ -2,31 +2,64 @@ import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
 import type { VDom } from '~/@/vdom/vdom'
-import { cn } from './cn'
 import { IconCheckmarkCircle, IconExclamationCircle, IconInfoCircle } from './icon'
+import { theme } from './theme/theme'
 
-export const AlertError = ({ class: class_, text }: { text?: string; class?: string }) => {
+export const AlertError = ({ text }: { text?: string }) => {
   return h(
     Box,
     {
       role: 'alert',
       'aria-label': text,
-      class: cn('flex flex-row w-full items-center rounded-md bg-red-500 p-4 text-white', class_),
+      style: theme({
+        flexDirection: 'row',
+        width: 'full',
+        alignItems: 'center',
+        rounded: 'md',
+        backgroundColor: 'red-500',
+        padding: 4,
+        textColor: 'white',
+      }),
     },
-    [h(Box, { class: 'mr-2' }, [h(IconExclamationCircle, { class: 'size-6' })]), h(Text, { text: text ?? '' })],
+    [
+      h(Box, { style: theme({ pr: 2 }) }, [h(IconExclamationCircle, { style: theme({ size: 6 }) })]),
+      h(Text, { text: text ?? '' }),
+    ],
   )
 }
 
-export const AlertInfo = ({ children, class: class_ }: { children?: VDom; class?: string }) => {
-  return h(Box, { class: cn(class_, 'flex flex-row w-full items-center rounded-md bg-blue-500 p-4 text-white') }, [
-    h(Box, { class: 'mr-2' }, [h(IconInfoCircle, { class: 'size-6' })]),
-    children,
-  ])
+export const AlertInfo = ({ children }: { children?: VDom }) => {
+  return h(
+    Box,
+    {
+      style: theme({
+        flexDirection: 'row',
+        width: 'full',
+        alignItems: 'center',
+        rounded: 'md',
+        backgroundColor: 'blue-500',
+        padding: 4,
+        textColor: 'white',
+      }),
+    },
+    [h(Box, { style: theme({ pr: 2 }) }, [h(IconInfoCircle, { style: theme({ size: 6 }) })]), children],
+  )
 }
 
-export const AlertSuccess = ({ children, class: class_ }: { children?: VDom; class?: string }) => {
-  return h(Box, { class: cn(class_, 'flex flex-row w-full items-center rounded-md bg-green-500 p-4 text-white') }, [
-    h(Box, { class: 'mr-2' }, [h(IconCheckmarkCircle, { class: 'size-6' })]),
-    children,
-  ])
+export const AlertSuccess = ({ children }: { children?: VDom }) => {
+  return h(
+    Box,
+    {
+      style: theme({
+        flexDirection: 'row',
+        width: 'full',
+        alignItems: 'center',
+        rounded: 'md',
+        backgroundColor: 'green-500',
+        padding: 4,
+        textColor: 'white',
+      }),
+    },
+    [h(Box, { style: theme({ pr: 2 }) }, [h(IconCheckmarkCircle, { style: theme({ size: 6 }) })]), children],
+  )
 }

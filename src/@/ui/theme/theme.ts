@@ -9,10 +9,11 @@ export type Theme = {
   flexShrink?: number | null
   alignItems?: 'center' | 'flex-start' | 'flex-end' | 'stretch' | 'baseline' | null
   justifyContent?: 'center' | 'flex-start' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly' | null
-  p?: number | null
+  padding?: number | null
   px?: number | null
   py?: number | null
   overflow?: 'hidden' | null
+  opacity?: number | null
   pt?: number | null
   pb?: number | null
   pointerEvents?: 'none' | 'auto' | null
@@ -21,23 +22,30 @@ export type Theme = {
   rounded?: 'full' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | null
   textColor?: ThemeColor | null
   fontWeight?: 'normal' | 'bold' | 'black' | null
-  textSize?: ThemeSize | null
+  textSize?: ThemeSize | number | null
   backgroundColor?: ThemeColor | null
   textAlign?: 'left' | 'center' | 'right' | null
   borderColor?: ThemeColor | null
-  width?: 'full' | number | null
-  height?: 'full' | number | null
+  width?: 'full' | '1/2' | number | null
+  maxWidth?: 'full' | '1/2' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | number | null
+  height?: 'full' | '1/2' | number | null
   size?: number | null
   borderWidth?: number | null
   gap?: number | null
   inset?: number | null
   minWidth?: ThemeSize | null
   aspectRatio?: number | null
+  zIndex?: number | null
+  top?: number | null
+  right?: number | null
+  bottom?: number | null
+  left?: number | null
 }
 
 export const theme = (config: Theme): Record<string, string | number | null> => {
   const styles: Record<string, string | number | null> = {}
   applyMinWidth(styles, config.minWidth)
+  applyMaxWidth(styles, config.maxWidth)
   applyPosition(styles, config.position)
   applyFlex(styles, config)
   applyItems(styles, config.alignItems)
@@ -56,7 +64,13 @@ export const theme = (config: Theme): Record<string, string | number | null> => 
   applyInset(styles, config.inset)
   applyPointerEvents(styles, config.pointerEvents)
   applyOverflow(styles, config.overflow)
+  applyOpacity(styles, config.opacity)
   applyAspectRatio(styles, config.aspectRatio)
+  applyZIndex(styles, config.zIndex)
+  applyTop(styles, config.top)
+  applyRight(styles, config.right)
+  applyBottom(styles, config.bottom)
+  applyLeft(styles, config.left)
   return styles
 }
 
@@ -70,6 +84,48 @@ const applySize = (styles: Record<string, string | number | null>, size: number 
   if (size != null) {
     styles.width = size * 4
     styles.height = size * 4
+  }
+}
+
+const applyOpacity = (styles: Record<string, string | number | null>, opacity: number | null | undefined) => {
+  if (opacity != null) {
+    styles.opacity = opacity
+  }
+}
+
+const applyMaxWidth = (styles: Record<string, string | number | null>, maxWidth: Theme['maxWidth']) => {
+  if (!maxWidth) return
+  if (maxWidth === 'full') {
+    styles.maxWidth = '100%'
+  }
+  if (maxWidth === '1/2') {
+    styles.maxWidth = '50%'
+  }
+  switch (maxWidth) {
+    case 'sm':
+      styles.maxWidth = 32
+      break
+    case 'md':
+      styles.maxWidth = 40
+      break
+    case 'lg':
+      styles.maxWidth = 48
+      break
+    case 'xl':
+      styles.maxWidth = 56
+      break
+    case '2xl':
+      styles.maxWidth = 64
+      break
+    case '3xl':
+      styles.maxWidth = 72
+      break
+    case '4xl':
+      styles.maxWidth = 80
+      break
+  }
+  if (typeof maxWidth === 'number') {
+    styles.maxWidth = maxWidth * 4
   }
 }
 
@@ -141,7 +197,7 @@ const applyJustify = (styles: Record<string, string | number | null>, justify: T
 }
 
 const applyPadding = (styles: Record<string, string | number | null>, config: Theme) => {
-  const { p, px, py, pt, pb, pl, pr } = config
+  const { padding: p, px, py, pt, pb, pl, pr } = config
 
   if (p != null) {
     styles.padding = p * 4
@@ -207,6 +263,10 @@ const SIZE_MAP = {
 }
 const applyFontSize = (styles: Record<string, string | number | null>, size: Theme['textSize']) => {
   if (!size) return
+  if (typeof size === 'number') {
+    styles.fontSize = size
+    return
+  }
   styles.fontSize = SIZE_MAP[size] ?? 16
 }
 
@@ -227,9 +287,16 @@ const applyColors = (styles: Record<string, string | number | null>, config: The
   }
 }
 
-const applyWidth = (styles: Record<string, string | number | null>, width: 'full' | number | null | undefined) => {
+const applyWidth = (
+  styles: Record<string, string | number | null>,
+  width: 'full' | '1/2' | number | null | undefined,
+) => {
   if (width === 'full') {
     styles.width = '100%'
+    return
+  }
+  if (width === '1/2') {
+    styles.width = '50%'
     return
   }
   if (width != null) {
@@ -237,9 +304,16 @@ const applyWidth = (styles: Record<string, string | number | null>, width: 'full
   }
 }
 
-const applyHeight = (styles: Record<string, string | number | null>, height: 'full' | number | null | undefined) => {
+const applyHeight = (
+  styles: Record<string, string | number | null>,
+  height: 'full' | '1/2' | number | null | undefined,
+) => {
   if (height === 'full') {
     styles.height = '100%'
+    return
+  }
+  if (height === '1/2') {
+    styles.height = '50%'
     return
   }
   if (height != null) {
@@ -274,6 +348,36 @@ const applyOverflow = (styles: Record<string, string | number | null>, overflow:
 const applyAspectRatio = (styles: Record<string, string | number | null>, aspectRatio: Theme['aspectRatio']) => {
   if (aspectRatio != null) {
     styles.aspectRatio = aspectRatio
+  }
+}
+
+const applyZIndex = (styles: Record<string, string | number | null>, zIndex: Theme['zIndex']) => {
+  if (zIndex != null) {
+    styles.zIndex = zIndex
+  }
+}
+
+const applyTop = (styles: Record<string, string | number | null>, top: Theme['top']) => {
+  if (top != null) {
+    styles.top = top * 4
+  }
+}
+
+const applyRight = (styles: Record<string, string | number | null>, right: Theme['right']) => {
+  if (right != null) {
+    styles.right = right * 4
+  }
+}
+
+const applyBottom = (styles: Record<string, string | number | null>, bottom: Theme['bottom']) => {
+  if (bottom != null) {
+    styles.bottom = bottom * 4
+  }
+}
+
+const applyLeft = (styles: Record<string, string | number | null>, left: Theme['left']) => {
+  if (left != null) {
+    styles.left = left * 4
   }
 }
 

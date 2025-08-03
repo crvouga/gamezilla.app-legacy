@@ -15,7 +15,7 @@ export const REACT_JS_PROP_MAP_KEYS = Array.from(REACT_JS_PROP_MAP.keys())
 export const inPlaceMapPropsToReactProps = (props: Record<string, unknown>, tag: unknown) => {
   try {
     if (isObject(props?.style)) {
-      inPlaceMapKeys(props?.style, (key) => kebabToCamel(key))
+      inPlaceMapKeys(props?.style, kebabToCamel)
     }
 
     if (typeof tag === 'string') {

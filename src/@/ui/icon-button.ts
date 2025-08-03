@@ -3,15 +3,15 @@ import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { ClickableTransparent } from './clickable'
-import { cn } from './cn'
+import { theme } from './theme/theme'
 
 type IconButtonSize = 'xs' | 'sm' | 'md' | 'lg'
 
 export const IconButton = (input: {
   onPress?: (event: unknown) => void
   label: TranslatedText
-  renderIcon: (input: { class: string; fill: string; stroke: string }) => VDom
-  class?: string
+  renderIcon: (input: { style: Record<string, unknown>; fill: string; stroke: string }) => VDom
+  style?: Record<string, unknown>
   size?: IconButtonSize
   dataTestId?: string
   ariaLabel?: TranslatedText
@@ -19,11 +19,17 @@ export const IconButton = (input: {
   return h(
     ClickableTransparent,
     {
-      class: cn(
-        'display flex flex-row items-center justify-center overflow-hidden rounded-full',
-        toSizeClassName(input.size ?? 'md'),
-        input.class,
-      ),
+      style: {
+        ...theme({
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden',
+          rounded: 'full',
+        }),
+        ...toSizeStyle(input.size ?? 'md'),
+        ...input.style,
+      },
       onPress: input.onPress,
       'aria-label': input.ariaLabel ?? input.label,
       'data-testid': input.dataTestId,
@@ -31,7 +37,10 @@ export const IconButton = (input: {
     },
     [
       input.renderIcon({
-        class: 'w-full h-full cursor-pointer',
+        style: theme({
+          width: 'full',
+          height: 'full',
+        }),
         fill: 'white',
         stroke: 'white',
       }),
@@ -40,18 +49,34 @@ export const IconButton = (input: {
 }
 
 export const IconButtonEmpty = (input: { size?: IconButtonSize }) => {
-  return h(Box, { class: toSizeClassName(input.size ?? 'md') })
+  return h(Box, { style: toSizeStyle(input.size ?? 'md') })
 }
 
-const toSizeClassName = (size: IconButtonSize): string => {
+const toSizeStyle = (size: IconButtonSize): Record<string, unknown> => {
   switch (size) {
     case 'xs':
-      return 'w-7 h-7 p-1'
+      return theme({
+        width: 7,
+        height: 7,
+        padding: 1,
+      })
     case 'sm':
-      return 'w-8 h-8 p-1.5'
+      return theme({
+        width: 8,
+        height: 8,
+        padding: 1.5,
+      })
     case 'md':
-      return 'w-10 h-10 p-2'
+      return theme({
+        width: 10,
+        height: 10,
+        padding: 2,
+      })
     case 'lg':
-      return 'w-12 h-12 p-2.5'
+      return theme({
+        width: 12,
+        height: 12,
+        padding: 2.5,
+      })
   }
 }

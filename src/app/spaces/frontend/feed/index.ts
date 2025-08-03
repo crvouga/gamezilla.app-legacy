@@ -1,6 +1,7 @@
 import { WithEventId } from '~/@/event-sourced/event'
-import { Box } from '~/@/vdom/primitives/box'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { FeedItem } from '../../@/feed-item'
 import { GamesFrontend } from '../../game/games/frontend'
@@ -19,9 +20,20 @@ const View = ({
 }) => {
   const msgEvt: WithEventId<MsgSpace> | null = null
 
-  return h(Box, { class: 'flex flex-row h-6 w-full items-center justify-center p-1' }, [
-    spaceState.type === 'started' && msgEvt ? h(ViewFeedItem, { ctx, msgEvt, state: spaceState }) : null,
-  ])
+  return h(
+    Box,
+    {
+      style: theme({
+        flexDirection: 'row',
+        height: 6,
+        width: 'full',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 1,
+      }),
+    },
+    [spaceState.type === 'started' && msgEvt ? h(ViewFeedItem, { ctx, msgEvt, state: spaceState }) : null],
+  )
 }
 
 const ViewFeedItem = ({

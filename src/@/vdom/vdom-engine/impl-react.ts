@@ -24,6 +24,7 @@ const init = (_config: ImplReact): IVirtualDomEngine => {
     createElement: (tag: any, props: any, children: any) => {
       inPlaceMapPropsToWebProps(props)
       inPlaceMapPropsToReactProps(props, tag)
+
       children = ensureArray(children)
       switch (tag) {
         case FRAGMENT_TAG:

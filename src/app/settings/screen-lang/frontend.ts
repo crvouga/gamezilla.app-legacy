@@ -1,11 +1,14 @@
 import { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/primitives/box'
 import { translations } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
 import { Gutter } from '~/@/ui/gutter'
 import { MenuItem } from '~/@/ui/menu-item'
 import { RadioInputIcon } from '~/@/ui/radio-input'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
+import { Text } from '~/@/vdom/primitives/text'
 import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
@@ -13,8 +16,6 @@ import { APP_SOUND } from '../../@/frontend/app-sound'
 import { AppFrontendCtxBase } from '../../@/frontend/ctx'
 import { FrontendModule } from '../types'
 import { ModelFrontend, MsgFrontend } from './types'
-import { Text } from '~/@/vdom/primitives/text'
-import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 
 const LANG_STORAGE_KEY = 'lang'
 
@@ -76,7 +77,7 @@ const View: FrontendModule['View'] = (input) => {
       back: { onPress: () => input.dispatch({ t: 'lang.clicked-back-button' }) },
     },
     renderBody: () =>
-      h(ScrollBox, { class: 'flex flex-1 flex-col' }, [
+      h(ScrollBox, { style: theme({ flexDirection: 'col', flex: 1 }) }, [
         ...LanguageCodeISO_639_1.ALL.map((langCode) =>
           h(ViewChooseLangMenuItem, {
             key: langCode,
@@ -101,7 +102,10 @@ const ViewChooseLangMenuItem = (input: {
   return h(MenuItem, {
     link: true,
     primary: TranslatedText.of(primary),
-    renderEnd: () => h(Box, {}, [h(Text, { class: 'text-white text-lg', text: input.ctx.t(input.langCode) })]),
+    renderEnd: () =>
+      h(Box, {}, [
+        h(Text, { style: theme({ textColor: 'white', textSize: 'lg' }), text: input.ctx.t(input.langCode) }),
+      ]),
     onPress: () => input.dispatch({ t: 'lang.clicked-lang', lang: input.langCode }),
     renderIcon: (iconProps) => h(RadioInputIcon, { ...iconProps, status: toStatus(input) }),
   })

@@ -1,9 +1,9 @@
 import { TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
-import { ClickableTransparent } from './clickable'
-import { cn } from './cn'
+import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '../vdom/primitives/text'
+import { ClickableTransparent } from './clickable'
+import { theme } from './theme/theme'
 
 export const Tabs = <TTab extends string>({
   tabs,
@@ -19,25 +19,50 @@ export const Tabs = <TTab extends string>({
   return h(
     Box,
     {
-      class: 'flex flex-row w-full items-center',
+      style: theme({
+        flexDirection: 'row',
+        width: 'full',
+        alignItems: 'center',
+      }),
     },
     tabs.map((tab, index) =>
       h(
         Box,
         {
           key: tab,
-          class: 'flex-1 shrink-0',
+          style: theme({
+            flex: 1,
+            flexShrink: 0,
+          }),
         },
         [
           h(
             ClickableTransparent,
             {
               onPress: () => onSelect(tab),
-              class: cn(
-                'flex flex-row h-full w-full items-center justify-center py-3 text-xl font-bold',
-                index !== tabs.length - 1 && 'border-r-2',
-                selected === tab ? 'border-b-blue-500 text-blue-500' : 'text-neutral-300',
-              ),
+              style: {
+                ...theme({
+                  flexDirection: 'row',
+                  height: 'full',
+                  width: 'full',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  py: 3,
+                  textSize: 'xl',
+                }),
+                fontWeight: 'bold',
+                ...(index !== tabs.length - 1 && {
+                  borderRightWidth: 2,
+                }),
+                ...(selected === tab
+                  ? {
+                      borderBottomColor: 'blue-500',
+                      textColor: 'blue-500',
+                    }
+                  : {
+                      textColor: 'neutral-300',
+                    }),
+              },
             },
             [h(Text, { text: labels[tab] })],
           ),

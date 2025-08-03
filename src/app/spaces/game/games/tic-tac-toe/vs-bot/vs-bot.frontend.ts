@@ -1,9 +1,10 @@
 import type { Eff } from '~/@/eff'
-import { Box } from '~/@/vdom/primitives/box'
 import { UnixMs } from '~/@/time/unix-ms'
 import { IconArrowLeft, IconArrowRotateLeft, IconRightLeft } from '~/@/ui/icon'
 import { LoadingBar } from '~/@/ui/loading-bar'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
@@ -239,20 +240,30 @@ export const View = (input: {
     ctx: input.ctx,
     id: 'tic-tac-toe-vs-bot',
     renderBody: () =>
-      h(Box, { class: 'flex flex-col items-center justify-center' }, [
-        h(VsBotGame.VsBotPlayerSection, vsBotGameInput),
+      h(
+        Box,
+        {
+          style: theme({
+            flexDirection: 'col',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }),
+        },
+        [
+          h(VsBotGame.VsBotPlayerSection, vsBotGameInput),
 
-        h(LoadingBar, {
-          class: 'w-full',
-          disabled: input.model.userPlayerType === turn || status.type !== 'Turn',
-          color: gameTheme.background,
-        }),
+          h(LoadingBar, {
+            style: theme({ width: 'full' }),
+            disabled: input.model.userPlayerType === turn || status.type !== 'Turn',
+            color: gameTheme.background,
+          }),
 
-        h(ViewBoard, {
-          board: board,
-          onPress: (position) => input.dispatch({ t: 'input-move', position }),
-        }),
-      ]),
+          h(ViewBoard, {
+            board: board,
+            onPress: (position) => input.dispatch({ t: 'input-move', position }),
+          }),
+        ],
+      ),
     actionBar: {
       variant: {
         t: 'uniform',

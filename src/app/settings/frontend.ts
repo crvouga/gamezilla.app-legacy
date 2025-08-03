@@ -2,7 +2,6 @@ import { Eff } from '~/@/eff'
 import { TranslatedText } from '~/@/l18n'
 import { Sub } from '~/@/sub'
 import { Clickable } from '~/@/ui/clickable'
-import { cn } from '~/@/ui/cn'
 import { Gutter } from '~/@/ui/gutter'
 import { IconCode, IconGear, IconLanguage, IconPowerOff } from '~/@/ui/icon'
 import { MenuItem } from '~/@/ui/menu-item'
@@ -175,7 +174,7 @@ const ViewMain: FrontendModule['View'] = (props) => {
       },
     },
     renderBody: () =>
-      h(ScrollBox, { class: 'flex flex-1 flex-col' }, [
+      h(ScrollBox, { style: theme({ flexDirection: 'col', flex: 1 }) }, [
         h(MenuItem, {
           primary: props.ctx.t('l18n.language'),
           renderEnd: (endProps) => h(Text, { ...endProps, text: props.ctx.t(props.model.lang) }),
@@ -238,11 +237,27 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
             Clickable,
             {
               'data-testid': TEST_ID_TOP_BAR_SURFACE_OPEN_BUTTON,
-              class: cn(
+              style:
                 props.ctx.screenSize === 'mobile'
-                  ? 'flex flex-row w-full items-center justify-end gap-3 px-3 py-1 w-full'
-                  : 'flex flex-row justify-center gap-4 px-6 py-3 pl-8 absolute top-0 right-0 z-10 w-fit',
-              ),
+                  ? theme({
+                      flexDirection: 'row',
+                      width: 'full',
+                      alignItems: 'center',
+                      justifyContent: 'flex-end',
+                      gap: 3,
+                      padding: 3,
+                    })
+                  : theme({
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      gap: 4,
+                      padding: 6,
+                      pl: 8,
+                      position: 'absolute',
+                      top: 0,
+                      right: 0,
+                      zIndex: 10,
+                    }),
               'aria-label': props.ctx.t('app.open-settings'),
               onPress: () => {
                 props.dispatch({ t: 'settings.clicked-top-bar' })

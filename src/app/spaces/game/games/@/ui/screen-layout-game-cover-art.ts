@@ -54,7 +54,7 @@ const renderDefaultCoverArt = (input: { style: Record<string, unknown> }) => {
           justifyContent: 'center',
           overflow: 'hidden',
           rounded: 'lg',
-          p: 4,
+          padding: 4,
         }),
         ...input.style,
       },

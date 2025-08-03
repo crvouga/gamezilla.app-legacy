@@ -7,6 +7,7 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { GameMainMenu } from '../../../@/ui/game-main-menu'
 import type { FrontendModule } from '../types'
+import { theme } from '~/@/ui/theme/theme'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen({ model: input.model }, (model) => updateFromMsgSpace({ ...input, model }))
@@ -52,7 +53,11 @@ const View: FrontendModule['View'] = (input) => {
         },
       }),
     renderCoverArt: (input) =>
-      h(Box, input, [h(Box, { class: 'h-full w-full p-4' }, [h(IconScrewdriverWrench, { class: 'h-full w-full' })])]),
+      h(Box, input, [
+        h(Box, { style: theme({ height: 'full', width: 'full', padding: 4 }) }, [
+          h(IconScrewdriverWrench, { style: theme({ height: 'full', width: 'full' }) }),
+        ]),
+      ]),
     title: input.ctx.t('game.numberlink.build'),
     buttons: [
       {

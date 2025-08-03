@@ -220,18 +220,29 @@ const View: Module['View'] = (input) => {
             LayoutGame,
             {
               isSpectating,
-              class: 'flex w-full flex-1 flex-col items-center justify-center gap-2',
+              style: theme({
+                flexDirection: 'col',
+                width: 'full',
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 2,
+              }),
               ctx: input.ctx,
             },
             [
-              h(Box, { class: 'flex flex-row w-full items-center gap-2 px-2' }, [
-                h(PlayerSlot, { playerType: 'player-one', modelSpace, ctx: input.ctx }),
-                h(PlayerSlot, { playerType: 'player-two', modelSpace, ctx: input.ctx }),
-              ]),
+              h(
+                Box,
+                { style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 2, padding: 2 }) },
+                [
+                  h(PlayerSlot, { playerType: 'player-one', modelSpace, ctx: input.ctx }),
+                  h(PlayerSlot, { playerType: 'player-two', modelSpace, ctx: input.ctx }),
+                ],
+              ),
 
               h(Feedback, { ctx: input.ctx, modelSpace }),
 
-              h(Box, { class: 'relative w-full' }, [
+              h(Box, { style: theme({ position: 'relative', width: 'full' }) }, [
                 h(ViewColumns, {
                   columns: modelSpace.columns,
                   gameId: modelSpace.gameId,
@@ -252,8 +263,16 @@ const View: Module['View'] = (input) => {
                   h(
                     Box,
                     {
-                      class:
-                        'absolute top-0 left-0 flex flex-row h-full w-full items-center justify-center bg-black/50',
+                      style: theme({
+                        position: 'absolute',
+                        inset: 0,
+                        flexDirection: 'row',
+                        height: 'full',
+                        width: 'full',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: 'black/50',
+                      }),
                     },
                     [
                       h(ViewGameOverMessage, {
@@ -346,7 +365,9 @@ const ViewGameOverMessage = ({
 
   if (modelSpace.rematch.type === 'Asking' && modelSpace.rematch.asker === currentPlayerType) {
     return h(Box, {}, [
-      h(Box, { class: 'mb-4 text-center text-xl' }, [h(Text, { text: 'Waiting for response' })]),
+      h(Box, { style: theme({ pb: 4, textAlign: 'center', textSize: 'xl' }) }, [
+        h(Text, { text: 'Waiting for response' }),
+      ]),
       h(Spinner, { style: { ...theme({ size: 8 }) } }),
       h(Button, {
         variant: 'contained',
@@ -368,37 +389,43 @@ const ViewGameOverMessage = ({
   ) {
     return h(Box, {}, [
       h(Box, {}, [h(Text, { text: 'Rematch?' })]),
-      h(Box, { class: 'flex flex-row w-full items-center justify-center gap-4' }, [
-        h(Button, {
-          variant: 'contained',
-          onPress: () =>
-            dispatch({
-              t: 'user-responded-to-rematch-request',
-              userId: ctx.currentUser.userId,
-              response: 'Decline',
-            }),
-          renderIconStart: (iconInput) => h(IconXMark, iconInput),
-          text: ctx.t('app.decline'),
-          width: 'full',
-        }),
-        h(Button, {
-          variant: 'contained',
-          width: 'full',
-          onPress: () =>
-            dispatch({
-              t: 'user-responded-to-rematch-request',
-              userId: ctx.currentUser.userId,
-              response: 'Decline',
-            }),
-          renderIconStart: (iconInput) => h(IconCheckmarkCircle, iconInput),
-          text: ctx.t('app.accept'),
-        }),
-      ]),
+      h(
+        Box,
+        {
+          style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', justifyContent: 'center', gap: 4 }),
+        },
+        [
+          h(Button, {
+            variant: 'contained',
+            onPress: () =>
+              dispatch({
+                t: 'user-responded-to-rematch-request',
+                userId: ctx.currentUser.userId,
+                response: 'Decline',
+              }),
+            renderIconStart: (iconInput) => h(IconXMark, iconInput),
+            text: ctx.t('app.decline'),
+            width: 'full',
+          }),
+          h(Button, {
+            variant: 'contained',
+            width: 'full',
+            onPress: () =>
+              dispatch({
+                t: 'user-responded-to-rematch-request',
+                userId: ctx.currentUser.userId,
+                response: 'Decline',
+              }),
+            renderIconStart: (iconInput) => h(IconCheckmarkCircle, iconInput),
+            text: ctx.t('app.accept'),
+          }),
+        ],
+      ),
     ])
   }
 
   if (modelSpace.gameOver.type === 'Draw') {
-    return h(Box, { class: 'text-xl' }, [h(Text, { text: 'Tie' })])
+    return h(Box, { style: theme({ textSize: 'xl' }) }, [h(Text, { text: 'Tie' })])
   }
 
   if (modelSpace.gameOver.type === 'resignation') {
@@ -408,15 +435,27 @@ const ViewGameOverMessage = ({
 
     if (currentPlayerType === null) {
       return h(Box, {}, [
-        h(Box, { class: 'flex flex-row w-full items-center justify-center' }, [
-          h(PlayerIcon, { playerType: winner }),
-          h(Avatar, {
-            class: 'size-12',
-            alt: '',
-            src: UserProfile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[winner]]),
-          }),
-        ]),
-        h(Box, {}, [h(Text, { text: 'Winner' })]),
+        h(
+          Box,
+          {
+            style: theme({
+              flexDirection: 'row',
+              width: 'full',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 2,
+            }),
+          },
+          [
+            h(PlayerIcon, { playerType: winner }),
+            h(Avatar, {
+              style: theme({ size: 12 }),
+              alt: '',
+              src: UserProfile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[winner]]),
+            }),
+            h(Box, {}, [h(Text, { text: 'Winner' })]),
+          ],
+        ),
       ])
     }
 
@@ -430,16 +469,34 @@ const ViewGameOverMessage = ({
     const { winner } = modelSpace.gameOver
 
     if (currentPlayerType === null) {
-      return h(Box, { class: 'flex w-full flex-col items-center justify-center gap-2' }, [
-        h(Box, { class: 'flex flex-row w-full items-center justify-center gap-2' }, [
-          h(PlayerIcon, { playerType: winner, class: 'size-20' }),
-          h(Avatar, {
-            class: 'size-20',
-            src: UserProfile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[winner]]),
-          }),
-        ]),
-        h(Box, {}, [h(Text, { text: 'Winner' })]),
-      ])
+      return h(
+        Box,
+        {
+          style: theme({ flexDirection: 'col', width: 'full', alignItems: 'center', justifyContent: 'center', gap: 2 }),
+        },
+        [
+          h(
+            Box,
+            {
+              style: theme({
+                flexDirection: 'row',
+                width: 'full',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 2,
+              }),
+            },
+            [
+              h(PlayerIcon, { playerType: winner, style: theme({ size: 20 }) }),
+              h(Avatar, {
+                style: theme({ size: 20 }),
+                src: UserProfile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[winner]]),
+              }),
+            ],
+          ),
+          h(Box, {}, [h(Text, { text: 'Winner' })]),
+        ],
+      )
     }
 
     return h(Box, {}, [h(Text, { text: currentPlayerType === winner ? 'You Won' : 'You Lost' })])
@@ -453,7 +510,7 @@ const Feedback = ({ ctx, modelSpace }: { ctx: SpaceFrontendCtx; modelSpace: Stat
     return h(Typography, {
       text: TranslatedText.of('Game Over'),
       color: 'text-secondary',
-      class: 'flex flex-row items-center justify-center',
+      style: theme({ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }),
     })
   }
 
@@ -462,16 +519,37 @@ const Feedback = ({ ctx, modelSpace }: { ctx: SpaceFrontendCtx; modelSpace: Stat
   const currentUserPlayerType = toPlayerType(ctx.currentUser.userId, modelSpace)
 
   if (currentUserPlayerType !== turn) {
-    return h(Box, { class: 'flex flex-row items-center justify-center gap-2 text-center' }, [
-      h(PlayerIcon, { class: 'h-4 w-4', playerType: turn }),
-      h(Typography, { text: TranslatedText.of('Turn'), color: 'text-secondary' }),
-    ])
+    return h(
+      Box,
+      {
+        style: theme({
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 2,
+          textAlign: 'center',
+        }),
+      },
+      [
+        h(PlayerIcon, { style: theme({ width: 4, height: 4 }), playerType: turn }),
+        h(Typography, { text: TranslatedText.of('Turn'), color: 'text-secondary' }),
+      ],
+    )
   }
 
-  return h(Box, { class: 'flex flex-row items-center justify-center gap-2 text-center' }, [
-    h(PlayerIcon, { class: 'h-4 w-4', playerType: turn }),
-    h(Text, { text: 'Your Turn' }),
-  ])
+  return h(
+    Box,
+    {
+      style: theme({
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 2,
+        textAlign: 'center',
+      }),
+    },
+    [h(PlayerIcon, { style: theme({ width: 4, height: 4 }), playerType: turn }), h(Text, { text: 'Your Turn' })],
+  )
 }
 
 const PlayerSlot = ({
@@ -483,18 +561,32 @@ const PlayerSlot = ({
   playerType: PlayerType
   ctx: SpaceFrontendCtx
 }) => {
-  return h(Paper, { class: 'flex flex-row flex-1 items-center gap-2 overflow-hidden rounded p-2' }, [
-    h(PlayerIcon, { class: 'h-8 w-8', playerType }),
-    h(Avatar, {
-      class: 'h-8 w-8',
-      alt: '',
-      src: UserProfile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[playerType]]),
-    }),
-    h(Typography, {
-      text: TranslatedText.of(ctx.profilesByUserId[modelSpace.players[playerType]]?.username ?? '...'),
-      color: 'text-secondary',
-    }),
-  ])
+  return h(
+    Paper,
+    {
+      style: theme({
+        flexDirection: 'row',
+        flex: 1,
+        alignItems: 'center',
+        gap: 2,
+        overflow: 'hidden',
+        rounded: 'md',
+        padding: 2,
+      }),
+    },
+    [
+      h(PlayerIcon, { style: theme({ width: 8, height: 8 }), playerType }),
+      h(Avatar, {
+        style: theme({ width: 8, height: 8 }),
+        alt: '',
+        src: UserProfile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[playerType]]),
+      }),
+      h(Typography, {
+        text: TranslatedText.of(ctx.profilesByUserId[modelSpace.players[playerType]]?.username ?? '...'),
+        color: 'text-secondary',
+      }),
+    ],
+  )
 }
 
 const ViewFeedItem: Module['ViewFeedItem'] = () => {

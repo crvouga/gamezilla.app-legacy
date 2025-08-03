@@ -1,6 +1,8 @@
 import { Fragment, render } from 'preact'
 import { createElement } from 'preact/compat'
 import { ensureArray } from '~/@/array/ensure-array'
+import { inPlaceMapKeys } from '~/@/object/in-place-map-keys'
+import { camelToKebab } from '~/@/string/camel-to-kebab'
 import { CANVAS_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { inPlaceMapPropsToWebProps } from './web/map-props-to-web-props'
@@ -19,6 +21,7 @@ const init = (_config: ImplPreact): IVirtualDomEngine => {
     },
     createElement: (tag: any, props: any, children: any) => {
       inPlaceMapPropsToWebProps(props)
+      inPlaceMapKeys(props.style, camelToKebab)
       children = ensureArray(children)
       switch (tag) {
         case FRAGMENT_TAG:

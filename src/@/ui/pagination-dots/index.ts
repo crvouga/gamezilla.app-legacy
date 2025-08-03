@@ -1,7 +1,7 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Clickable } from '../clickable'
-import { cn } from '../cn'
+import { theme } from '../theme/theme'
 
 export const PAGINATION_DOTS_TEST_ID = 'pagination-dots'
 
@@ -13,7 +13,12 @@ export const PaginationDots = (input: { count: number; activeIndex: number; onPr
   return h(
     Box,
     {
-      class: 'flex flex-row items-center justify-center space-x-2',
+      style: theme({
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 2,
+      }),
       role: 'tablist',
       'aria-label': 'Pagination Dots',
       'data-testid': PAGINATION_DOTS_TEST_ID,
@@ -22,14 +27,26 @@ export const PaginationDots = (input: { count: number; activeIndex: number; onPr
       if (input.onPress) {
         return h(Clickable, {
           role: 'tab',
-          class: cn('size-2 rounded-full', i === input.activeIndex ? 'bg-white' : 'bg-neutral-500'),
+          style: {
+            ...theme({
+              size: 2,
+              rounded: 'full',
+            }),
+            backgroundColor: i === input.activeIndex ? 'rgb(255 255 255)' : 'rgb(115 115 115)',
+          },
           'aria-label': `pagination dot ${i + 1}`,
           onPress: () => input.onPress?.(i),
         })
       }
       return h(Box, {
         role: 'tab',
-        class: cn('size-2 rounded-full', i === input.activeIndex ? 'bg-white' : 'bg-neutral-500'),
+        style: {
+          ...theme({
+            size: 2,
+            rounded: 'full',
+          }),
+          backgroundColor: i === input.activeIndex ? 'rgb(255 255 255)' : 'rgb(115 115 115)',
+        },
         'aria-label': `pagination dot ${i + 1}`,
         'aria-selected': i === input.activeIndex,
         onPress: () => input.onPress?.(i),

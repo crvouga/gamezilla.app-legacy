@@ -3,13 +3,14 @@ import { Eff } from '~/@/eff'
 import { ClickableTransparent } from '~/@/ui/clickable'
 import { IconMagnifyingGlass, IconXMark } from '~/@/ui/icon'
 import { Paper } from '~/@/ui/paper'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import { TextInput } from '~/@/vdom/primitives/text-input'
 import { Pressable } from '~/@/vdom/primitives/pressable'
+import { Text } from '~/@/vdom/primitives/text'
+import { TextInput } from '~/@/vdom/primitives/text-input'
 import type { VDom } from '~/@/vdom/vdom'
 import type { ModelFrontend, MsgFrontend, MsgToFrontend } from './search.types'
-import { Text } from '~/@/vdom/primitives/text'
 
 //
 //
@@ -117,34 +118,47 @@ export const View = ({
   const results = matchSort(Object.values(model.searchResults), (item) => item.username, model.searchText)
 
   return h(Box, {}, [
-    h(Box, { class: 'flex flex-row h-full w-full flex-col' }, [
+    h(Box, { style: theme({ flexDirection: 'row', height: 'full', width: 'full' }) }, [
       // input
-      h(Box, { class: 'w-full p-4' }, [
-        h(Paper, { class: 'flex flex-row w-full items-center gap-2 rounded-full px-4 py-2' }, [
-          h(IconMagnifyingGlass, { class: 'size-6' }),
-          h(TextInput, {
-            id: searchInputId,
-            class: 'flex-1 bg-transparent text-lg outline-none',
-            placeholder: 'Search',
-            defaultValue: model.searchText,
-            onChangeText: (e: unknown) =>
-              dispatch({
-                t: 'inputted-search-text',
-                // @ts-ignore
-                searchText: e.currentTarget.value,
-              }),
-          }),
-          h(
-            Pressable,
-            {
-              onPress: () =>
+      h(Box, { style: theme({ width: 'full', padding: 4 }) }, [
+        h(
+          Paper,
+          {
+            style: theme({
+              flexDirection: 'row',
+              width: 'full',
+              alignItems: 'center',
+              gap: 2,
+              rounded: 'full',
+              padding: 4,
+            }),
+          },
+          [
+            h(IconMagnifyingGlass, { style: theme({ size: 6 }) }),
+            h(TextInput, {
+              id: searchInputId,
+              style: theme({ flex: 1, textSize: 'lg' }),
+              placeholder: 'Search',
+              defaultValue: model.searchText,
+              onChangeText: (e: unknown) =>
                 dispatch({
-                  t: 'clicked-clear',
+                  t: 'inputted-search-text',
+                  // @ts-ignore
+                  searchText: e.currentTarget.value,
                 }),
-            },
-            [h(IconXMark, { class: 'size-6' })],
-          ),
-        ]),
+            }),
+            h(
+              Pressable,
+              {
+                onPress: () =>
+                  dispatch({
+                    t: 'clicked-clear',
+                  }),
+              },
+              [h(IconXMark, { style: theme({ size: 6 }) })],
+            ),
+          ],
+        ),
       ]),
       // results
       h(
@@ -155,7 +169,7 @@ export const View = ({
             h(
               ClickableTransparent,
               {
-                class: 'flex flex-row w-full items-center gap-4 p-4',
+                style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 4, padding: 4 }),
                 onPress: () =>
                   dispatch({
                     t: 'clicked-result',

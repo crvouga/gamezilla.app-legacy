@@ -1,6 +1,7 @@
 import { Translator } from '~/@/l18n/generated'
 import { IPlatform } from '~/@/platform/platform'
 import { Sub } from '~/@/sub'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
@@ -32,8 +33,15 @@ const View = (input: {
   return h(
     Box,
     {
-      class:
-        'relative aspect-square w-full touch-none flex flex-col overflow-hidden select-none items-center justify-center',
+      style: theme({
+        position: 'relative',
+        aspectRatio: 1,
+        width: 'full',
+        flexDirection: 'col',
+        overflow: 'hidden',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }),
     },
     [
       h(NumberlinkVariantBoard.View, {

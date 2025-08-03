@@ -58,7 +58,7 @@ const ViewHostGameSelection = (input: { ctx: SpaceFrontendCtx; dispatch: (msg: M
     columnCount: 3,
     rootStyle: theme({
       gap: 4,
-      p: 4,
+      padding: 4,
     }),
     rowStyle: theme({
       gap: 4,

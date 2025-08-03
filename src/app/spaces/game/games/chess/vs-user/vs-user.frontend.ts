@@ -20,6 +20,7 @@ import {
   initSpace,
 } from './vs-user.types'
 import { Text } from '~/@/vdom/primitives/text'
+import { theme } from '~/@/ui/theme/theme'
 
 //
 //
@@ -420,11 +421,11 @@ export const View = ({
 }) => {
   if (model.spaceModel.type === 'setup') {
     return h(Box, {}, [
-      h(Box, { class: 'flex-1' }),
-      h(Box, { class: 'flex flex-row items-center gap-4 p-4' }, [
+      h(Box, { style: theme({ flex: 1 }) }),
+      h(Box, { style: theme({ flexDirection: 'row', alignItems: 'center', gap: 4, padding: 4 }) }, [
         h(Button, {
           width: 'full',
-          class: 'flex-1',
+          style: theme({ flex: 1 }),
           onPress: onQuit,
           renderIconStart: (iconInput) => h(IconArrowLeft, iconInput),
           text: ctx.t('app.exit'),
@@ -433,7 +434,7 @@ export const View = ({
           width: 'full',
           variant: 'contained',
           color: 'primary',
-          class: 'flex-1',
+          style: theme({ flex: 1 }),
           text: ctx.t('game.start-game'),
         }),
       ]),
@@ -485,7 +486,7 @@ export const View = ({
       },
     }), */
 
-    h(Box, { class: 'flex-1' }),
+    h(Box, { style: theme({ flex: 1 }) }),
 
     h(ViewGameOverDialog, { model, dispatch }),
   ])

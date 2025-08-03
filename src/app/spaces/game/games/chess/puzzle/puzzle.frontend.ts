@@ -3,7 +3,6 @@ import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { isErr } from '~/@/result'
 import { Avatar } from '~/@/ui/avatar'
-import { cn } from '~/@/ui/cn'
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -15,10 +14,14 @@ import {
 } from '~/@/ui/icon'
 import { Paper } from '~/@/ui/paper'
 import { Spinner } from '~/@/ui/spinner'
+import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
+import { Circle } from '~/@/vdom/primitives/svg/circle'
+import { Line } from '~/@/vdom/primitives/svg/line'
 import { Svg } from '~/@/vdom/primitives/svg/svg'
+import { Text } from '~/@/vdom/primitives/text'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -43,10 +46,6 @@ import {
   toPlayerColor,
   updateSpace,
 } from './puzzle.types'
-import { Line } from '~/@/vdom/primitives/svg/line'
-import { Circle } from '~/@/vdom/primitives/svg/circle'
-import { Text } from '~/@/vdom/primitives/text'
-import { theme } from '~/@/ui/theme/theme'
 
 //
 //
@@ -242,112 +241,178 @@ export const View = ({
   return h(LayoutGame, { ctx, isSpectating }, [
     h(ViewStatusBar, { model }),
 
-    h(Box, { class: 'flex w-full flex-1 flex-col items-center justify-center' }, [
-      h(Box, { class: 'flex flex-row w-full items-center gap-2 px-3 py-2' }, [
-        h(Avatar, {
-          src: UserProfile.toAvatarUrl(ctx.profilesByUserId[ctx.space.hostId]),
-          class: 'h-10 w-10',
-          alt: '',
-        }),
-
-        h(Box, { class: 'flex flex-1 flex-col justify-center' }, [
-          h(Typography, {
-            text: TranslatedText.of('Rating'),
-            variant: 'label',
-            color: 'text-secondary',
-            class: '-mb-1/2 text-xs',
+    h(
+      Box,
+      {
+        style: theme({ flexDirection: 'col', width: 'full', flex: 1, alignItems: 'center', justifyContent: 'center' }),
+      },
+      [
+        h(Box, { style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 2, px: 3, py: 2 }) }, [
+          h(Avatar, {
+            src: UserProfile.toAvatarUrl(ctx.profilesByUserId[ctx.space.hostId]),
+            style: theme({ size: 10 }),
+            alt: '',
           }),
-          h(Box, { class: 'flex flex-row items-center gap-1' }, [
-            h(Box, { class: 'text-xl font-semibold' }, [h(Text, { text: String(model.profile?.eloRating ?? '...') })]),
 
-            model.t === 'solved' &&
-              !model.hasLost &&
-              nextEloRating &&
-              h(Box, { class: 'rounded-xl text-lg font-semibold text-green-500' }, [
-                h(Text, { text: `+${nextEloRating - model.profile.eloRating}` }),
+          h(Box, { style: theme({ flexDirection: 'col', flex: 1, justifyContent: 'center' }) }, [
+            h(Typography, {
+              text: TranslatedText.of('Rating'),
+              variant: 'label',
+              color: 'text-secondary',
+              style: theme({ textSize: 'xs' }),
+            }),
+            h(Box, { style: theme({ flexDirection: 'row', alignItems: 'center', gap: 1 }) }, [
+              h(Box, { style: theme({ textSize: 'xl', fontWeight: 'semibold' }) }, [
+                h(Text, { text: String(model.profile?.eloRating ?? '...') }),
               ]),
 
-            model.t !== 'loading' &&
-              model.hasLost &&
-              nextEloRating &&
-              h(Box, { class: 'rounded-xl text-lg font-semibold text-red-500' }, [
-                h(Text, { text: String(nextEloRating - model.profile.eloRating) }),
-              ]),
+              model.t === 'solved' &&
+                !model.hasLost &&
+                nextEloRating &&
+                h(
+                  Box,
+                  { style: theme({ rounded: 'xl', textSize: 'lg', fontWeight: 'semibold', textColor: 'green-500' }) },
+                  [h(Text, { text: `+${nextEloRating - model.profile.eloRating}` })],
+                ),
+
+              model.t !== 'loading' &&
+                model.hasLost &&
+                nextEloRating &&
+                h(
+                  Box,
+                  { style: theme({ rounded: 'xl', textSize: 'lg', fontWeight: 'semibold', textColor: 'red-500' }) },
+                  [h(Text, { text: String(nextEloRating - model.profile.eloRating) })],
+                ),
+            ]),
+          ]),
+
+          h(Box, { style: theme({ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 2 }) }, [
+            h(TickingClock, { sec: durationMs ? Math.floor(durationMs / 1_000) : 0 }),
+            h(Typography, {
+              text: TranslatedText.of(durationMs ? formatDuration(durationMs) : '-:--'),
+              color: 'text-secondary',
+              style: theme({ fontWeight: 'bold', textSize: 'lg' }),
+            }),
           ]),
         ]),
 
-        h(Box, { class: 'flex flex-row items-center justify-end gap-2' }, [
-          h(TickingClock, { sec: durationMs ? Math.floor(durationMs / 1_000) : 0 }),
-          h(Typography, {
-            text: TranslatedText.of(durationMs ? formatDuration(durationMs) : '-:--'),
-            color: 'text-secondary',
-            class: 'font-mono text-lg font-bold',
-          }),
-        ]),
-      ]),
-
-      h(Paper, { class: 'relative flex flex-row aspect-square w-full items-center justify-end overflow-hidden' }, [
-        h(Chessboard, {
-          id: 'puzzle-chess-board',
-          orientation: model.t === 'loading' ? undefined : toPlayerColor(model.puzzle),
-          model: model.t === 'loading' ? undefined : toCurrentBoard(model),
-          isPieceDraggable: (input) => {
-            if (model.t !== 'started') {
-              return false
-            }
-            const color = Chess.toColor(input.piece)
-            return color === toPlayerColor(model.puzzle) && ctx.space.hostId === ctx.currentUser.userId
+        h(
+          Paper,
+          {
+            style: theme({
+              position: 'relative',
+              flexDirection: 'row',
+              aspectRatio: 1,
+              width: 'full',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              overflow: 'hidden',
+            }),
           },
-          onPieceDrop: (input) => {
-            const chessModel = toCurrentBoard(model)
-            const moved = Chess.move(
-              {
-                from: input.source,
-                to: input.target,
-                promotion: 'q',
+          [
+            h(Chessboard, {
+              id: 'puzzle-chess-board',
+              orientation: model.t === 'loading' ? undefined : toPlayerColor(model.puzzle),
+              model: model.t === 'loading' ? undefined : toCurrentBoard(model),
+              isPieceDraggable: (input) => {
+                if (model.t !== 'started') {
+                  return false
+                }
+                const color = Chess.toColor(input.piece)
+                return color === toPlayerColor(model.puzzle) && ctx.space.hostId === ctx.currentUser.userId
               },
-              chessModel,
-            )
-            if (moved.t === 'ok') {
-              dispatch({
-                t: 'input-move',
-                didCapture: moved.value.didCapture,
-                moveInput: {
-                  from: input.source,
-                  to: input.target,
-                  promotion: 'q',
+              onPieceDrop: (input) => {
+                const chessModel = toCurrentBoard(model)
+                const moved = Chess.move(
+                  {
+                    from: input.source,
+                    to: input.target,
+                    promotion: 'q',
+                  },
+                  chessModel,
+                )
+                if (moved.t === 'ok') {
+                  dispatch({
+                    t: 'input-move',
+                    didCapture: moved.value.didCapture,
+                    moveInput: {
+                      from: input.source,
+                      to: input.target,
+                      promotion: 'q',
+                    },
+                  })
+                }
+                return moved.t === 'ok'
+              },
+            }),
+            model.t === 'loading' &&
+              h(
+                Box,
+                {
+                  style: theme({
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    zIndex: 20,
+                    width: 'full',
+                    height: 'full',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: 'black/50',
+                  }),
                 },
-              })
-            }
-            return moved.t === 'ok'
-          },
-        }),
-        model.t === 'loading' &&
-          h(Box, { class: 'absolute top-0 left-0 z-20 grid h-full w-full place-items-center bg-black/50' }, [
-            h(Spinner, { style: { ...theme({ size: 12 }) } }),
-          ]),
-      ]),
+                [h(Spinner, { style: theme({ size: 12 }) })],
+              ),
+          ],
+        ),
 
-      h(Box, { class: 'grid w-full grid-cols-2 px-2 py-1' }, [
-        h(Box, { class: 'flex flex-row items-center justify-start gap-1 text-xs' }, [
-          h(Typography, { text: TranslatedText.of('Puzzle Rating'), color: 'text-secondary' }),
-          h(Box, {}, [h(Text, { text: model.t === 'loading' ? '...' : String(model.puzzle.rating) })]),
-        ]),
+        h(Box, { style: theme({ width: 'full', px: 2, py: 1 }) }, [
+          h(
+            Box,
+            {
+              style: theme({
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'flex-start',
+                gap: 1,
+                textSize: 'xs',
+              }),
+            },
+            [
+              h(Typography, { text: TranslatedText.of('Puzzle Rating'), color: 'text-secondary' }),
+              h(Box, {}, [h(Text, { text: model.t === 'loading' ? '...' : String(model.puzzle.rating) })]),
+            ],
+          ),
 
-        h(Box, { class: 'flex flex-row flex-1 items-center justify-end gap-1 text-right text-xs' }, [
-          h(Typography, { text: TranslatedText.of('Moved'), color: 'text-secondary' }),
-          h(Typography, {
-            text: TranslatedText.of(model.t === 'loading' ? '0' : (model.moves?.length ?? '0').toString()),
-            color: 'inherit',
-          }),
-          h(Typography, { text: TranslatedText.of('out of'), color: 'text-secondary' }),
-          h(Typography, {
-            text: TranslatedText.of(model.t === 'loading' ? '0' : (model.puzzle?.moves?.length ?? '0').toString()),
-            color: 'inherit',
-          }),
+          h(
+            Box,
+            {
+              style: theme({
+                flexDirection: 'row',
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                gap: 1,
+                textAlign: 'right',
+                textSize: 'xs',
+              }),
+            },
+            [
+              h(Typography, { text: TranslatedText.of('Moved'), color: 'text-secondary' }),
+              h(Typography, {
+                text: TranslatedText.of(model.t === 'loading' ? '0' : (model.moves?.length ?? '0').toString()),
+                color: 'inherit',
+              }),
+              h(Typography, { text: TranslatedText.of('out of'), color: 'text-secondary' }),
+              h(Typography, {
+                text: TranslatedText.of(model.t === 'loading' ? '0' : (model.puzzle?.moves?.length ?? '0').toString()),
+                color: 'inherit',
+              }),
+            ],
+          ),
         ]),
-      ]),
-    ]),
+      ],
+    ),
   ])
 }
 
@@ -442,60 +507,116 @@ export const BottomBarActions = ({
 
 const ViewStatusBar = (input: { model: ModelFrontend }) => {
   if (input.model.t === 'loading') {
-    return h(Box, { class: 'flex flex-row w-full items-center justify-center p-2' }, [
-      h(Box, { class: 'text-xl' }, [h(Text, { text: '...' })]),
-    ])
+    return h(
+      Box,
+      { style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', justifyContent: 'center', p: 2 }) },
+      [h(Box, { style: theme({ textSize: 'xl' }) }, [h(Text, { text: '...' })])],
+    )
   }
 
   if (input.model.t === 'incorrect') {
-    return h(Box, { class: 'flex flex-row w-full items-center justify-center gap-2 bg-red-500 p-2 text-white' }, [
-      h(IconXMark, { class: 'size-6' }),
-      h(Box, { class: 'text-xl' }, [h(Text, { text: 'Incorrect' })]),
-    ])
-  }
-
-  if (input.model.t === 'solved') {
-    return h(Box, { class: 'flex flex-row w-full items-center justify-center gap-2 bg-green-500 p-2 text-white' }, [
-      h(IconCheckmarkCircle, { class: 'size-6' }),
-      h(Box, { class: 'text-xl' }, [h(Text, { text: 'Correct' })]),
-    ])
-  }
-
-  if (input.model.t === 'started') {
     return h(
       Box,
       {
-        class: cn(
-          'flex flex-row w-full items-center justify-center gap-2 p-2',
-          toPlayerColor(input.model.puzzle) === 'b' ? 'bg-black text-white' : 'bg-white text-black',
-        ),
+        style: theme({
+          flexDirection: 'row',
+          width: 'full',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 2,
+          backgroundColor: 'red-500',
+          p: 2,
+          textColor: 'white',
+        }),
+      },
+      [
+        h(IconXMark, { style: theme({ size: 6 }) }),
+        h(Box, { style: theme({ textSize: 'xl' }) }, [h(Text, { text: 'Incorrect' })]),
+      ],
+    )
+  }
+
+  if (input.model.t === 'solved') {
+    return h(
+      Box,
+      {
+        style: theme({
+          flexDirection: 'row',
+          width: 'full',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 2,
+          backgroundColor: 'green-500',
+          p: 2,
+          textColor: 'white',
+        }),
+      },
+      [
+        h(IconCheckmarkCircle, { style: theme({ size: 6 }) }),
+        h(Box, { style: theme({ textSize: 'xl' }) }, [h(Text, { text: 'Correct' })]),
+      ],
+    )
+  }
+
+  if (input.model.t === 'started') {
+    const playerColor = toPlayerColor(input.model.puzzle)
+    return h(
+      Box,
+      {
+        style: theme({
+          flexDirection: 'row',
+          width: 'full',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 2,
+          p: 2,
+          backgroundColor: playerColor === 'b' ? 'black' : 'white',
+          textColor: playerColor === 'b' ? 'white' : 'black',
+        }),
       },
       [
         h(Box, {
-          class: cn(
-            'size-6 rounded-full border-2',
-            toPlayerColor(input.model.puzzle) === 'b' ? 'border-[#ababab] bg-black' : 'border-black bg-white',
-          ),
+          style: theme({
+            size: 6,
+            rounded: 'full',
+            borderWidth: 2,
+            borderColor: playerColor === 'b' ? '[#ababab]' : 'black',
+            backgroundColor: playerColor === 'b' ? 'black' : 'white',
+          }),
         }),
-        h(Box, { class: 'text-xl text-inherit' }, [
-          h(Text, { text: `${Chess.colorToString(toPlayerColor(input.model.puzzle))} to move` }),
+        h(Box, { style: theme({ textSize: 'xl' }) }, [
+          h(Text, { text: `${Chess.colorToString(playerColor)} to move` }),
         ]),
       ],
     )
   }
 
   if (input.model.t === 'solved-with-hint') {
-    return h(Paper, { class: 'flex flex-row w-full items-center justify-center gap-2 p-2 text-white' }, [
-      h(IconCheckmarkCircle, { class: 'size-6' }),
-      h(Box, { class: 'text-xl' }, [h(Text, { text: 'Solved with hint' })]),
-    ])
+    return h(
+      Paper,
+      {
+        style: theme({
+          flexDirection: 'row',
+          width: 'full',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 2,
+          p: 2,
+          textColor: 'white',
+        }),
+      },
+      [
+        h(IconCheckmarkCircle, { style: theme({ size: 6 }) }),
+        h(Box, { style: theme({ textSize: 'xl' }) }, [h(Text, { text: 'Solved with hint' })]),
+      ],
+    )
   }
 
   return h(Box, {})
 }
 
 const TickingClock = (input: { sec: number }) => {
-  return h(Svg, { class: 'h-5 w-5', viewBox: '-1 -1 2 2', stroke: 'currentColor', 'stroke-width': '0.2' }, [
+  return h(Svg, { style: theme({ size: 5 }), viewBox: '-1 -1 2 2', stroke: 'currentColor', 'stroke-width': '0.2' }, [
     h(Circle, { cx: '0', cy: '0', r: '0.9' }),
     h(Line, {
       stroke: input.sec % 4 === 0 ? undefined : 'transparent',

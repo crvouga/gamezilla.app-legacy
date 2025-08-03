@@ -1,4 +1,4 @@
-import { cn } from '~/@/ui/cn'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { VDom } from '~/@/vdom/vdom'
@@ -11,10 +11,13 @@ export const ActionBars = (props: { position: 'start' | 'end'; input: ScreenLayo
   return h(
     Box,
     {
-      class: cn(
-        'flex flex-row h-full flex-1 flex-row items-start',
-        props.position === 'start' ? 'justify-end' : 'justify-start',
-      ),
+      style: theme({
+        flexDirection: 'row',
+        height: 'full',
+        flex: 1,
+        alignItems: 'flex-start',
+        justifyContent: props.position === 'start' ? 'flex-end' : 'flex-start',
+      }),
     },
     actionBars,
   )

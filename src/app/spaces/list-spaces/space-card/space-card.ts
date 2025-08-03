@@ -43,7 +43,7 @@ const ViewRoot = (input: { onPress?: () => void; children?: VDom }) => {
     gap: 3,
     rounded: 'md',
     backgroundColor: 'blue-600',
-    p: 4,
+    padding: 4,
   })
 
   if (typeof input.onPress === 'function') {

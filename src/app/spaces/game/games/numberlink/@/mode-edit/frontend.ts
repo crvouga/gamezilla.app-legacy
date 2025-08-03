@@ -1,6 +1,7 @@
 import { History } from '~/@/history'
 import { IconArrowRotateLeft, IconArrowRotateRight, IconExpand, IconXMark } from '~/@/ui/icon'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
+import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -121,21 +122,34 @@ const View = (input: {
 
 const ViewStatus: typeof View = (input) => {
   const position = ModeEdit.toCurrentPlacingTerminalPosition(input.model) === 'start' ? 'first' : 'last'
-  return h(Box, { class: 'flex flex-row w-full items-center justify-center gap-1 p-2' }, [
-    h(Typography, {
-      variant: 'body',
-      text: input.ctx.t('game.numberlink.placing', { position }),
-    }),
-    h(ViewTerminal, {
-      groupId: ModeEdit.toCurrentPlacingGroupId(input.model),
-      class: 'size-6',
-    }),
-  ])
+  return h(
+    Box,
+    {
+      style: theme({
+        flexDirection: 'row',
+        width: 'full',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 1,
+        padding: 2,
+      }),
+    },
+    [
+      h(Typography, {
+        variant: 'body',
+        text: input.ctx.t('game.numberlink.placing', { position }),
+      }),
+      h(ViewTerminal, {
+        groupId: ModeEdit.toCurrentPlacingGroupId(input.model),
+        style: theme({ size: 6 }),
+      }),
+    ],
+  )
 }
 
-const ViewTerminal = ({ groupId, class: class_ }: { class: string; groupId: GroupId }) => {
+const ViewTerminal = ({ groupId, style }: { style: Record<string, unknown>; groupId: GroupId }) => {
   const color = Color.groupIdToHex(groupId)
-  return h(Svg, { class: class_, viewBox: '-1 -1 2 2' }, [h(Circle, { cx: '0', cy: '0', r: '0.8', fill: color })])
+  return h(Svg, { style, viewBox: '-1 -1 2 2' }, [h(Circle, { cx: '0', cy: '0', r: '0.8', fill: color })])
 }
 
 export const ModeEditFrontend = {

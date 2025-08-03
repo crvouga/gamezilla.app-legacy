@@ -4,6 +4,7 @@ import { DialogSurface } from '~/@/ui/surface-dialog/dialog-surface'
 import { SurfaceActions } from '~/@/ui/surface/surface-actions'
 import { SurfaceBody } from '~/@/ui/surface/surface-body'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
+import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
@@ -49,9 +50,8 @@ const ViewDialog = (input: { open: boolean; dispatch: (m: MsgFrontend) => void; 
 
       h(SurfaceActions, {}, [
         h(Button, {
-          class: 'w-full',
+          style: theme({ width: 'full' }),
           text: input.ctx.t('game.numberlink.select-next-pack'),
-          width: 'full',
           onPress: () =>
             input.dispatch({
               t: 'got-msg-space',

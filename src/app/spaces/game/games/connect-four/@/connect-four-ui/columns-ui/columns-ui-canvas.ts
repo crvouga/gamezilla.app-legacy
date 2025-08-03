@@ -1,4 +1,5 @@
 import { rescale } from '~/@/math/rescale'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Canvas } from '~/@/vdom/primitives/canvas'
 import { COLUMN_COUNT, type Columns, isColumnIndex, MAX_COLUMN_HEIGHT } from '../../connect-four'
@@ -30,7 +31,7 @@ export const doPaint = (columns: Columns) => {
 export const ViewColumnsCanvas = (input: ViewColumnsInput) => {
   return h(Canvas, {
     id: 'view-columns-canvas',
-    class: 'w-full cursor-pointer',
+    style: theme({ width: 'full' }),
     onPress: (e: unknown) => {
       if (!(e instanceof MouseEvent)) {
         return

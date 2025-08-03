@@ -1,14 +1,26 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
+import { theme } from '../theme/theme'
 
 export const SwiperDots = (input: { activeIndex: number; slideCount: number }) => {
   return h(
     Box,
-    {},
+    {
+      style: theme({
+        flexDirection: 'row',
+      }),
+    },
     range(input.slideCount).map((index) =>
       h(Box, {
         key: index,
-        class: `mx-1 h-2 w-2 rounded-full bg-neutral-300 ${input.activeIndex === index ? 'bg-neutral-500' : ''}`,
+        style: {
+          ...theme({
+            height: 2,
+            width: 2,
+            rounded: 'full',
+          }),
+          backgroundColor: input.activeIndex === index ? 'neutral-500' : 'neutral-300',
+        },
       }),
     ),
   )

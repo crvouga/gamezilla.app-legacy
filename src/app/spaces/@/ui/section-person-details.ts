@@ -1,5 +1,6 @@
 import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
+import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -19,20 +20,27 @@ export const SectionPersonDetails = (input: {
       Pressable,
       {
         role: 'button',
-        class: 'flex w-full flex-col items-center justify-center gap-2 p-4',
+        style: theme({
+          flexDirection: 'col',
+          width: 'full',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 2,
+          padding: 4,
+        }),
         onPress: input.onOpenDetails,
       },
       [
-        h(Avatar, { src: input.profile ? UserProfile.toAvatarUrl(input.profile) : '', class: 'size-24' }),
+        h(Avatar, { src: input.profile ? UserProfile.toAvatarUrl(input.profile) : '', style: theme({ size: 24 }) }),
         input.profile && h(Typography, { variant: 'title', text: input.ctx.t('username', input.profile?.username) }),
-        h(Box, { class: 'flex flex-row items-center gap-2' }, [
+        h(Box, { style: theme({ flexDirection: 'row', alignItems: 'center', gap: 2 }) }, [
           input.ctx.space.hostId === input.profile?.userId && h(ViewHostChip, { ctx: input.ctx }),
           input.ctx.currentUser.userId === input.profile?.userId && h(ViewYouChip, { ctx: input.ctx }),
         ]),
       ],
     ),
 
-    h(Box, { class: 'w-full px-4 pb-8' }, [
+    h(Box, { style: theme({ width: 'full', padding: 4, pb: 8 }) }, [
       h(Button, { onPress: input.onOpenDetails, width: 'full', text: input.ctx.t('app.see-profile') }),
     ]),
   ])

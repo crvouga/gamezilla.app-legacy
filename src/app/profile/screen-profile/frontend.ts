@@ -1,12 +1,13 @@
 import { TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/primitives/box'
 import { Sub } from '~/@/sub'
 import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
 import { Gutter } from '~/@/ui/gutter'
 import { IconUserPen } from '~/@/ui/icon'
+import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
@@ -69,25 +70,38 @@ const ViewBody: typeof View = (input) => {
 
   const isCurrentUserProfile = input.ctx.currentUser?.userId === userId
 
-  return h(Box, { class: 'flex w-full flex-col items-center gap-4 p-6' }, [
-    h(Avatar, { class: 'size-28', src: UserProfile.toAvatarUrl(profile), alt: 'profile avatar' }),
+  return h(Box, { style: theme({ flexDirection: 'col', width: 'full', alignItems: 'center', gap: 4, padding: 6 }) }, [
+    h(Avatar, { style: theme({ size: 28 }), src: UserProfile.toAvatarUrl(profile), alt: 'profile avatar' }),
     h(Typography, {
       variant: 'title',
       text: profile ? input.ctx.t('username', profile.username) : TranslatedText.ellipsis,
     }),
 
     isCurrentUserProfile
-      ? h(Box, { class: 'flex flex-row w-full items-center justify-center gap-6 pt-4' }, [
-          h(Button, {
-            onPress: () =>
-              input.dispatch({ t: 'got-msg-out', c: PushScreenCmd.init({ t: 'profile-edit', n: 'profile' }) }),
-            class: 'max-w-64 flex-1',
-            renderIconStart: (iconInput) => h(IconUserPen, iconInput),
-            text: input.ctx.t('profile.edit-profile'),
-            size: 'sm',
-            width: 'full',
-          }),
-        ])
+      ? h(
+          Box,
+          {
+            style: theme({
+              flexDirection: 'row',
+              width: 'full',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
+              pt: 4,
+            }),
+          },
+          [
+            h(Button, {
+              onPress: () =>
+                input.dispatch({ t: 'got-msg-out', c: PushScreenCmd.init({ t: 'profile-edit', n: 'profile' }) }),
+              class: 'max-w-64 flex-1',
+              renderIconStart: (iconInput) => h(IconUserPen, iconInput),
+              text: input.ctx.t('profile.edit-profile'),
+              size: 'sm',
+              width: 'full',
+            }),
+          ],
+        )
       : null,
 
     h(Gutter, { variant: 'screen' }),

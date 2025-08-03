@@ -18,6 +18,7 @@ import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { AuthScreenFormLayout } from '../@/frontend/ui/auth-screen-form-layout'
 import { FrontendModule, ModelFrontend, toSendErrorMessage, toVerifyErrorMessage } from './types'
+import { theme } from '~/@/ui/theme/theme'
 
 const init: ModelFrontend = {
   code: '',
@@ -234,7 +235,7 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
     onSubmit: () => input.dispatch({ t: 'user-clicked-send-code-button' }),
     renderInputs: () =>
       h(Frag, {}, [
-        h(Text, { class: 'text-white', text: input.model.phone }),
+        h(Text, { style: theme({ textColor: 'white' }), text: input.model.phone }),
         h(TextField, {
           id: 'phoneNumberInput',
           testId: 'phone-number-input',

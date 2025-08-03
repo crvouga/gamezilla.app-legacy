@@ -1,5 +1,4 @@
 import { ClickableTransparent } from '~/@/ui/clickable'
-import { cn } from '~/@/ui/cn'
 import { Spinner } from '~/@/ui/spinner'
 import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
@@ -14,17 +13,33 @@ const SIZE = 'md' as 'md' | 'sm'
 
 export const VerticalActionBar = (
   input: ScreenActionBarProps & {
-    class?: string
+    style?: Record<string, unknown>
     renderNavBar?: () => VDom
   },
 ) => {
-  return h(Box, { class: cn('flex h-full max-w-48 flex-1 shrink-0 flex-col gap-1', input.class) }, [
-    h(ScreenNavBarTabletRoot, {}, [input.renderNavBar?.()]),
+  return h(
+    Box,
+    {
+      style: {
+        ...theme({
+          height: 'full',
+          maxWidth: 'md',
+          flex: 1,
+          flexShrink: 0,
+          flexDirection: 'col',
+          gap: 1,
+        }),
+        ...input.style,
+      },
+    },
+    [
+      h(ScreenNavBarTabletRoot, {}, [input.renderNavBar?.()]),
 
-    input.variant.t === 'uniform'
-      ? h(VerticalUniform, { actions: input.variant.actions })
-      : h(VerticalSpaceBetween, { start: input.variant.start, end: input.variant.end }),
-  ])
+      input.variant.t === 'uniform'
+        ? h(VerticalUniform, { actions: input.variant.actions })
+        : h(VerticalSpaceBetween, { start: input.variant.start, end: input.variant.end }),
+    ],
+  )
 }
 
 const VerticalUniform = (input: { actions: (ScreenAction | null)[] }) => {
@@ -34,20 +49,39 @@ const VerticalUniform = (input: { actions: (ScreenAction | null)[] }) => {
 const VerticalSpaceBetween = (input: { start: (ScreenAction | null)[]; end: (ScreenAction | null)[] }) => {
   return h(Toolbar, {}, [
     h(ActionButtonList, { actions: input.start }),
-    h(Box, { class: 'flex-1' }),
+    h(Box, { style: theme({ flex: 1 }) }),
     h(ActionButtonList, { actions: input.end }),
-    h(Box, { class: 'w-full pb-6' }),
+    h(Box, { style: theme({ width: 'full', pb: 6 }) }),
   ])
 }
 
 const Toolbar = (input: { children: VDom }) => {
-  return h(Box, { class: 'flex w-full flex-1 shrink-0 flex-col', role: 'toolbar' }, [input.children])
+  return h(
+    Box,
+    {
+      style: theme({
+        width: 'full',
+        flex: 1,
+        flexShrink: 0,
+        flexDirection: 'col',
+      }),
+      role: 'toolbar',
+    },
+    [input.children],
+  )
 }
 
 const ActionButtonList = (input: { actions: (ScreenAction | null)[] }) => {
   return h(
     Box,
-    { class: 'flex w-full shrink-0 flex-col gap-2' },
+    {
+      style: theme({
+        width: 'full',
+        flexShrink: 0,
+        flexDirection: 'col',
+        gap: 2,
+      }),
+    },
     input.actions.map((action) => {
       if (!action) return null
 
@@ -79,60 +113,90 @@ const ScreenActionButton = (input: ScreenAction) => {
       'aria-label': input.label,
       'aria-hidden': input.hidden,
       onPress: input.onPress,
-      class: cn(
-        'relative flex w-full min-w-32 flex-col items-center rounded-lg p-4 xl:flex-row',
-        toColorClasses(input),
-        input.hidden ? 'hidden' : '',
-        input.classNames?.button,
-        toSizeClasses(size),
-      ),
+      style: {
+        ...theme({
+          position: 'relative',
+          width: 'full',
+          flexDirection: 'col',
+          alignItems: 'center',
+          rounded: 'lg',
+          padding: 4,
+        }),
+        ...toColorStyle(input),
+        ...input.styles?.button,
+        ...toSizeStyle(size),
+        display: input.hidden ? 'none' : 'flex',
+      },
     },
     [
       h(
         Box,
         {
-          class: cn(
-            'flex flex-col items-center gap-1 xl:flex-row xl:gap-4',
-            input.loading ? 'opacity-0' : 'opacity-100',
-          ),
+          style: {
+            ...theme({
+              flexDirection: 'col',
+              alignItems: 'center',
+              gap: 1,
+            }),
+            opacity: input.loading ? 0 : 1,
+          },
         },
         [
           input.renderIcon({ style: { ...toIconSizeStyle(size), ...theme({ textColor: 'white' }) } }),
           h(Typography, {
             text: input.label,
-            class: cn('truncate text-center xl:text-left xl:text-xl', 'text-inherit', input.classNames?.label),
+            ...input.styles?.label,
+            style: {
+              ...theme({
+                overflow: 'hidden',
+                textAlign: 'center',
+                textColor: 'white',
+              }),
+            },
           }),
         ],
       ),
 
       input.loading &&
-        h(Box, { class: 'absolute inset-0 flex flex-row h-full w-full items-center justify-center' }, [
-          h(Spinner, { style: toIconSizeStyle(size) }),
-        ]),
+        h(
+          Box,
+          {
+            style: theme({
+              position: 'absolute',
+              inset: 0,
+              flexDirection: 'row',
+              width: 'full',
+              height: 'full',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }),
+          },
+          [h(Spinner, { style: toIconSizeStyle(size) })],
+        ),
     ],
   )
 }
 
-const toColorClasses = (input: ScreenAction): string => {
+const toColorStyle = (input: ScreenAction): Record<string, unknown> => {
   switch (input.color) {
     case 'danger':
-      return 'text-red-500'
+      return theme({ textColor: 'red-500' })
     case 'success':
-      return 'text-green-500'
+      return theme({ textColor: 'green-500' })
     case 'selected':
-      return 'text-blue-500 font-bold'
+      return { ...theme({ textColor: 'blue-500' }), fontWeight: 'bold' }
     default:
-      return ''
+      return {}
   }
 }
 
-const toSizeClasses = (size: ScreenAction['size']): string => {
+const toSizeStyle = (size: ScreenAction['size']): Record<string, unknown> => {
   switch (size) {
     case 'sm':
-      return 'text-lg'
+      return theme({ textSize: 'lg' })
     case 'md':
     default:
-      return 'text-lg'
+      return theme({ textSize: 'lg' })
   }
 }
 

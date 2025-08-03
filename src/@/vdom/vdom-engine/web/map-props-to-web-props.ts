@@ -1,20 +1,16 @@
-import { inPlaceMapKeys } from '~/@/object/in-place-map-keys'
+import { hasPixelUnit } from '~/@/css/has-pixel-unit'
 import { isObject } from '~/@/object/is-object'
-import { camelToKebab } from '~/@/string/camel-to-kebab'
 
 export const inPlaceMapPropsToWebProps = (props: Record<string, unknown>) => {
   if (props.onPress) {
     props.onClick = props.onPress
-    delete props.onPress
   }
   if (props.onPressIn) {
     props.onPointerDown = props.onPressIn
-    delete props.onPressIn
   }
   if (props.onPressOut) {
     props.onPointerUp = props.onPressOut
     props.onPointerCancel = props.onPressOut
-    delete props.onPressOut
   }
   const onChangeText = props.onChangeText
   if (typeof onChangeText === 'function') {
@@ -24,20 +20,18 @@ export const inPlaceMapPropsToWebProps = (props: Record<string, unknown>) => {
       if (value.length === 0) value = unknownToData(e) ?? ''
       onChangeText?.(value)
     }
-    delete props.onChangeText
   }
 
   if (isObject(props.style)) {
-    inPlaceMapKeys(props.style, camelToKebab)
     inPlaceMapStyles(props.style)
   }
 }
 
 const inPlaceMapStyles = (styles: Record<string, unknown>): void => {
   for (const key in styles) {
-    if (styles[key] === null) {
+    if (styles[key] === null || styles[key] === undefined) {
       delete styles[key]
-    } else if (typeof styles[key] === 'number') {
+    } else if (typeof styles[key] === 'number' && hasPixelUnit(key)) {
       styles[key] = `${styles[key]}px`
     }
   }

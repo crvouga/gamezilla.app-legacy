@@ -26,6 +26,7 @@ import { ContinueAsGuestFrontend } from './login-as-guest/frontend'
 import { LoginWithSMSFrontend } from './login-with-sms/frontend'
 import { LogoutFrontend } from './logout/frontend'
 import { FrontendCtxModule, FrontendModule, ModelFrontend, MsgFrontend, rpcContract } from './types'
+import { theme } from '~/@/ui/theme/theme'
 
 //
 //
@@ -235,10 +236,10 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
       center: true,
     },
     [
-      h(Box, { class: 'flex w-full flex-col gap-8' }, [
+      h(Box, { style: theme({ flexDirection: 'col', width: 'full', gap: 8 }) }, [
         h(AuthScreenHeaderCta, { ctx: input.ctx }),
 
-        h(Box, { class: 'flex w-full flex-col' }, [
+        h(Box, { style: theme({ flexDirection: 'col', width: 'full' }) }, [
           h(Button, {
             onPress: () => input.dispatch({ t: 'clicked-login-with-phone' }),
             size: 'lg',
@@ -247,14 +248,25 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
             text: input.ctx.t('auth.continue-with-phone'),
           }),
 
-          h(Box, { class: 'flex flex-row w-full items-center justify-center py-4' }, [
-            h(Typography, {
-              variant: 'body',
-              class: 'text-base font-bold uppercase',
-              color: 'text-secondary',
-              text: input.ctx.t('auth.or'),
-            }),
-          ]),
+          h(
+            Box,
+            {
+              style: theme({
+                flexDirection: 'row',
+                width: 'full',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 4,
+              }),
+            },
+            [
+              h(Typography, {
+                variant: 'body',
+                style: theme({ textSize: 'sm', fontWeight: 'bold' }),
+                text: input.ctx.t('auth.or'),
+              }),
+            ],
+          ),
 
           h(ContinueAsGuestFrontend.ViewButton, {
             ctx: input.ctx,

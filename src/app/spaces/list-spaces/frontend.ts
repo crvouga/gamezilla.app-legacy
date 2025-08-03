@@ -1,6 +1,7 @@
 import { EmptyState } from '~/@/ui/empty-state'
 import { IconGamepad } from '~/@/ui/icon'
 import { SpinnerBlock } from '~/@/ui/spinner-block'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
@@ -71,7 +72,10 @@ const View: SpaceFrontendModule['View'] = (input) => {
       return h(
         ScrollBox,
         {
-          class: 'flex flex-1 flex-col gap-4 overflow-y-auto p-6',
+          style: theme({
+            flex: 1,
+            flexDirection: 'col',
+          }),
           contentContainerStyle: {
             rowGap: 16,
           },

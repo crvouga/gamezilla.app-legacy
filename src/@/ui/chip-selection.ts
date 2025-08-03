@@ -2,8 +2,9 @@ import { TranslatedText } from '~/@/l18n'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Pressable } from '../vdom/primitives/pressable'
-import { Typography } from './typography'
 import { Text } from '../vdom/primitives/text'
+import { theme } from './theme/theme'
+import { Typography } from './typography'
 
 export type ChipSelectionOption<T = string> = {
   value: T
@@ -28,7 +29,10 @@ export const ChipSelection = <T>({
     h(
       Box,
       {
-        class: 'flex flex-row gap-3 flex-wrap', // increased gap for bigger chips
+        style: theme({
+          flexDirection: 'row',
+          gap: 3,
+        }),
       },
       options.map((option) =>
         h(
@@ -38,14 +42,32 @@ export const ChipSelection = <T>({
             disabled: disabled,
             'aria-selected': value === option.value,
             role: 'button',
-            class: [
-              // Bigger padding, larger text, dark mode colors
-              'px-5 py-2 rounded-full border transition-colors text-base font-medium',
-              value === option.value
-                ? 'bg-blue-500 text-white border-blue-600'
-                : 'bg-neutral-800 text-neutral-100 border-neutral-700 hover:bg-neutral-700',
-              disabled ? 'opacity-50 pointer-events-none' : '',
-            ].join(' '),
+            style: {
+              ...theme({
+                px: 5,
+                py: 2,
+                rounded: 'full',
+                borderWidth: 1,
+                ...(value === option.value
+                  ? {
+                      backgroundColor: 'blue-500',
+                      textColor: 'white',
+                      borderColor: 'blue-600',
+                    }
+                  : {
+                      backgroundColor: 'neutral-800',
+                      textColor: 'neutral-100',
+                      borderColor: 'neutral-700',
+                      hover: {
+                        backgroundColor: 'neutral-700',
+                      },
+                    }),
+                ...(disabled && {
+                  opacity: 50,
+                  pointerEvents: 'none',
+                }),
+              }),
+            },
             onPress: () => {
               if (!disabled && value !== option.value) {
                 onChange?.(option.value)

@@ -25,6 +25,7 @@ import {
   type MsgToFrontend,
   updateSpace,
 } from './vs-bot.types'
+import { theme } from '~/@/ui/theme/theme'
 
 //
 //
@@ -405,37 +406,63 @@ const View: Module['View'] = (input) => {
     id: 'connect-four-vs-bot',
     renderBody: () =>
       h(LayoutGame, { ctx: input.ctx, isSpectating }, [
-        h(Box, { class: 'flex w-full flex-1 flex-col items-center justify-center gap-1' }, [
-          h(VsBotGame.VsBotPlayerSection, vsBotGameInput),
-
-          h(VsBotGame.ViewStatusBar, { ...vsBotSetupInput, status: toVsBotStatus(status) }),
-
-          h(Box, { class: 'relative flex w-full flex-col items-center justify-center overflow-hidden' }, [
-            h(ViewColumns, {
-              gameId: 0,
-              columns: columns,
-              disabled: isSpectating || status.type !== 'Playing',
-              onDropDisc: (columnIndex) => {
-                input.dispatch({
-                  t: 'user-dropped-disc',
-                  columnIndex,
-                  userId: input.ctx.currentUser.userId,
-                })
-              },
+        h(
+          Box,
+          {
+            style: theme({
+              flexDirection: 'col',
+              width: 'full',
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 1,
             }),
-            input.model &&
-              h(VsBotGame.ViewGameOverOverlay, {
-                ...vsBotGameInput,
-                model: input.model.vsBotGame,
-                onPlayAgain: () =>
-                  input.dispatch({
-                    t: 'user-restarted-game',
-                    userId: input.ctx.currentUser.userId,
+          },
+          [
+            h(VsBotGame.VsBotPlayerSection, vsBotGameInput),
+
+            h(VsBotGame.ViewStatusBar, { ...vsBotSetupInput, status: toVsBotStatus(status) }),
+
+            h(
+              Box,
+              {
+                style: theme({
+                  position: 'relative',
+                  flexDirection: 'col',
+                  width: 'full',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden',
+                }),
+              },
+              [
+                h(ViewColumns, {
+                  gameId: 0,
+                  columns: columns,
+                  disabled: isSpectating || status.type !== 'Playing',
+                  onDropDisc: (columnIndex) => {
+                    input.dispatch({
+                      t: 'user-dropped-disc',
+                      columnIndex,
+                      userId: input.ctx.currentUser.userId,
+                    })
+                  },
+                }),
+                input.model &&
+                  h(VsBotGame.ViewGameOverOverlay, {
+                    ...vsBotGameInput,
+                    model: input.model.vsBotGame,
+                    onPlayAgain: () =>
+                      input.dispatch({
+                        t: 'user-restarted-game',
+                        userId: input.ctx.currentUser.userId,
+                      }),
+                    gameOver: toGameOver(columns),
                   }),
-                gameOver: toGameOver(columns),
-              }),
-          ]),
-        ]),
+              ],
+            ),
+          ],
+        ),
       ]),
     actionBar:
       input.ctx.currentUser.userId === input.modelSpace.playingUserId
