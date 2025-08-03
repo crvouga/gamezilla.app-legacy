@@ -207,7 +207,7 @@ const viewToggleModeAction = (
           id: input.ctx.t('game.numberlink.play-mode'),
           renderIcon: (input) => h(IconPlay, input),
           label: input.ctx.t('game.numberlink.play-mode'),
-          styles: { button: 'text-blue-500' },
+          styles: { button: theme({ textColor: 'blue-500' }) },
           onPress: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
         },
       ]
@@ -218,7 +218,7 @@ const viewToggleModeAction = (
           id: input.ctx.t('game.numberlink.edit-mode'),
           renderIcon: (input) => h(IconPen, input),
           label: input.ctx.t('game.numberlink.edit-mode'),
-          styles: { button: 'text-amber-500' },
+          styles: { button: theme({ textColor: 'amber-500' }) },
           onPress: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
         },
       ]

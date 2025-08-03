@@ -24,7 +24,7 @@ export const Badge = (input: { badgeContent: VDom; id: string; children: VDom[] 
               justifyContent: 'center',
               rounded: 'full',
               backgroundColor: 'blue-500',
-              textSize: 'xs',
+              fontSize: 'xs',
               fontWeight: 'bold',
               textColor: 'white',
             }),

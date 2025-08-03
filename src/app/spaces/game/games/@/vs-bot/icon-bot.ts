@@ -5,7 +5,7 @@ import { Path } from '~/@/vdom/primitives/svg/path'
 import { Svg } from '~/@/vdom/primitives/svg/svg'
 
 type Props = {
-  class?: string
+  style?: Record<string, unknown>
 }
 
 export const IconBotLevel0 = (input: Props) => {

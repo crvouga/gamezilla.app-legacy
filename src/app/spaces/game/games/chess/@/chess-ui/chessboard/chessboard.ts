@@ -1,5 +1,11 @@
 import { Chess } from 'chess.js'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
+import { Circle } from '~/@/vdom/primitives/svg/circle'
+import { G } from '~/@/vdom/primitives/svg/g'
+import { Path } from '~/@/vdom/primitives/svg/path'
+import { Rect } from '~/@/vdom/primitives/svg/rect'
+import { Svg } from '~/@/vdom/primitives/svg/svg'
 import type { VDom } from '~/@/vdom/vdom'
 import {
   type Color,
@@ -12,11 +18,6 @@ import {
   squareToChecker,
   toLowercaseSquare,
 } from '../../chess'
-import { Svg } from '~/@/vdom/primitives/svg/svg'
-import { Path } from '~/@/vdom/primitives/svg/path'
-import { G } from '~/@/vdom/primitives/svg/g'
-import { Rect } from '~/@/vdom/primitives/svg/rect'
-import { Circle } from '~/@/vdom/primitives/svg/circle'
 
 //
 //
@@ -405,7 +406,6 @@ export const Chessboard = (input: ChessboardInput) => {
     {
       width: '100%',
       viewBox: `0 0 ${WIDTH} ${HEIGHT}`,
-      class: 'touch-none overflow-visible select-none',
       preserveAspectRatio: 'xMinYMin meet',
       onPress: onDragStartOrMove(input),
       onPressOut: onDragEnd(input),
@@ -446,7 +446,7 @@ export const Chessboard = (input: ChessboardInput) => {
             id: square ? toLegalMoveDotId(square) : undefined,
             cx: checker.x * SCALE + SCALE / 2,
             cy: checker.y * SCALE + SCALE / 2,
-            class: 'pointer-events-none',
+            style: theme({ pointerEvents: 'none' }),
             r: (SCALE * 1) / 4,
             'fill-opacity': '0.5',
             fill: 'none',
@@ -464,7 +464,7 @@ export const Chessboard = (input: ChessboardInput) => {
             id: square ? toDropZoneId(square) : undefined,
             cx: checker.x * SCALE + SCALE / 2,
             cy: checker.y * SCALE + SCALE / 2,
-            class: 'pointer-events-none',
+            style: theme({ pointerEvents: 'none' }),
             r: SCALE * 1.25,
             'fill-opacity': '0.2',
             fill: 'none',

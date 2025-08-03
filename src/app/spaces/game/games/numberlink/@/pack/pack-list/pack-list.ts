@@ -69,7 +69,7 @@ const ViewPackMenuItem = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pa
         justifyContent: 'space-between',
         gap: 6,
         overflow: 'hidden',
-        px: 4,
+        paddingX: 4,
         textAlign: 'left',
         height: 20,
       }),
@@ -102,7 +102,7 @@ const ViewPackMenuItem = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pa
         text: input.ctx.t('game.numberlink.puzzle-count', input.pack.puzzleIds.length),
         variant: 'body',
         color: 'text-secondary',
-        style: theme({ textSize: 'xs' }),
+        style: theme({ fontSize: 'xs' }),
       }),
     ].filter(Boolean),
   )

@@ -102,7 +102,7 @@ const GameTile = (input: { gameName: GameName; ctx: SpaceFrontendCtx; dispatch: 
       h(Typography, {
         style: theme({
           width: 'full',
-          textSize: 'md',
+          fontSize: 'md',
           textAlign: 'center',
         }),
         variant: 'label',

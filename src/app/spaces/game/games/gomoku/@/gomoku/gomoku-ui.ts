@@ -1,14 +1,13 @@
 import { Hex } from '~/@/hex/hex'
-import { cn } from '~/@/ui/cn'
 import { h } from '~/@/vdom/h'
+import { Circle } from '~/@/vdom/primitives/svg/circle'
 import { G } from '~/@/vdom/primitives/svg/g'
 import { Line } from '~/@/vdom/primitives/svg/line'
 import { Rect } from '~/@/vdom/primitives/svg/rect'
 import { Svg } from '~/@/vdom/primitives/svg/svg'
+import { VDom } from '~/@/vdom/vdom'
 import { type Board, type Bounds, type Stone, allPositions, bounds, presetToStars } from './gomoku'
 import type { Position } from './gomoku-position'
-import { Circle } from '~/@/vdom/primitives/svg/circle'
-import { VDom } from '~/@/vdom/vdom'
 
 const backgroundColor = '#C88655'
 const lineColor = Hex.darken(backgroundColor, 0.3)
@@ -78,9 +77,9 @@ export const ViewBoard = ({
   board,
   bounds: bounds_ = bounds,
   viewBoxOffset = 0.8,
-  class: class_,
+  style,
 }: {
-  class?: string
+  style?: Record<string, unknown>
   board: Board
   onPress?: (position: Position) => void
   bounds?: Bounds
@@ -104,110 +103,101 @@ export const ViewBoard = ({
 
   const viewBox = [boundsView.lower.x, boundsView.lower.y, width, height].join(' ')
 
-  return h(
-    Svg,
-    {
-      width: '100%',
-      viewBox,
-      class: cn('overflow-hidden', class_),
-    },
-    [
-      h(G, { 'stroke-width': 0.05 }, [
+  return h(Svg, { width: '100%', viewBox, style }, [
+    h(G, { 'stroke-width': 0.05 }, [
+      h(Rect, {
+        x: boundsView.lower.x,
+        y: boundsView.lower.y,
+        width,
+        height,
+        fill: gameTheme.background,
+      }),
+
+      h(G, { stroke: gameTheme.line }, [
         h(Rect, {
-          x: boundsView.lower.x,
-          y: boundsView.lower.y,
-          width,
-          height,
+          x: bounds_.lower.x,
+          y: bounds_.lower.y,
+          width: bounds_.upper.x - 1 - bounds_.lower.x,
+          height: bounds_.upper.y - 1 - bounds_.lower.y,
           fill: gameTheme.background,
         }),
-
-        h(G, { stroke: gameTheme.line }, [
-          h(Rect, {
-            x: bounds_.lower.x,
-            y: bounds_.lower.y,
-            width: bounds_.upper.x - 1 - bounds_.lower.x,
-            height: bounds_.upper.y - 1 - bounds_.lower.y,
-            fill: gameTheme.background,
+        ...range({
+          lower: 1,
+          upper: bounds_.upper.y,
+        }).map((x) =>
+          h(Line, {
+            key: `x${x}`,
+            x1: x,
+            y1: bounds_.lower.y,
+            x2: x,
+            y2: bounds_.upper.y - 1,
           }),
-          ...range({
-            lower: 1,
-            upper: bounds_.upper.y,
-          }).map((x) =>
-            h(Line, {
-              key: `x${x}`,
-              x1: x,
-              y1: bounds_.lower.y,
-              x2: x,
-              y2: bounds_.upper.y - 1,
-            }),
-          ),
-          ...range({
-            lower: 1,
-            upper: bounds.upper.x,
-          }).map((y) =>
-            h(Line, {
-              key: `y${y}`,
-              x1: bounds_.lower.x,
-              y1: y,
-              x2: bounds_.upper.x - 1,
-              y2: y,
-            }),
-          ),
-        ]),
-
-        h(
-          G,
-          {},
-          stars.map((pos) =>
-            h(Circle, {
-              key: [pos.x, pos.y].join(', '),
-              cx: pos.x,
-              cy: pos.y,
-              r: 0.12,
-              fill: gameTheme.line,
-            }),
-          ),
         ),
-
-        ...allPositions.flatMap(({ x, y }) => {
-          const stone = board[x]?.[y] ?? null
-          if (!stone) {
-            return []
-          }
-
-          return [
-            h(Circle, {
-              key: [x, y, stone].join('-'),
-              cx: x,
-              cy: y,
-              r: 0.45,
-              fill: stoneToColor(stone),
-            }),
-          ]
-        }),
-
-        h(
-          G,
-          {},
-          allPositions.map(({ x, y }) =>
-            h(Circle, {
-              key: [x, y].join(', '),
-              cx: x,
-              cy: y,
-              r: 0.5,
-              fill: 'transparent',
-              onPress: () =>
-                onPress?.({
-                  x,
-                  y,
-                }),
-              class: 'cursor-pointer',
-            }),
-          ),
+        ...range({
+          lower: 1,
+          upper: bounds.upper.x,
+        }).map((y) =>
+          h(Line, {
+            key: `y${y}`,
+            x1: bounds_.lower.x,
+            y1: y,
+            x2: bounds_.upper.x - 1,
+            y2: y,
+          }),
         ),
       ]),
-    ],
-  )
+
+      h(
+        G,
+        {},
+        stars.map((pos) =>
+          h(Circle, {
+            key: [pos.x, pos.y].join(', '),
+            cx: pos.x,
+            cy: pos.y,
+            r: 0.12,
+            fill: gameTheme.line,
+          }),
+        ),
+      ),
+
+      ...allPositions.flatMap(({ x, y }) => {
+        const stone = board[x]?.[y] ?? null
+        if (!stone) {
+          return []
+        }
+
+        return [
+          h(Circle, {
+            key: [x, y, stone].join('-'),
+            cx: x,
+            cy: y,
+            r: 0.45,
+            fill: stoneToColor(stone),
+          }),
+        ]
+      }),
+
+      h(
+        G,
+        {},
+        allPositions.map(({ x, y }) =>
+          h(Circle, {
+            key: [x, y].join(', '),
+            cx: x,
+            cy: y,
+            r: 0.5,
+            fill: 'transparent',
+            onPress: () =>
+              onPress?.({
+                x,
+                y,
+              }),
+          }),
+        ),
+      ),
+    ]),
+  ])
 }
 
 const range = ({ lower, upper }: { lower: number; upper: number }): number[] => {

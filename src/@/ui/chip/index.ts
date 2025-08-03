@@ -70,16 +70,16 @@ const toSizeStyles = (input: ChipProps): Theme => {
   switch (input.size) {
     case 'sm':
       return {
-        textSize: 'xs' as const,
-        px: 2,
-        py: 1,
+        fontSize: 'xs' as const,
+        paddingX: 2,
+        paddingY: 1,
         rounded: 'xl' as const,
       }
     case 'lg':
       return {
-        textSize: 'md' as const,
-        px: 2.5,
-        py: 1.5,
+        fontSize: 'md' as const,
+        paddingX: 2.5,
+        paddingY: 1.5,
         rounded: '2xl' as const,
       }
   }

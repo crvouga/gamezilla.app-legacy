@@ -1,4 +1,4 @@
-export type ThemeColorBase = 'neutral' | 'red' | 'blue' | 'yellow' | 'green' | 'orange'
+export type ThemeColorBase = 'neutral' | 'red' | 'blue' | 'yellow' | 'green' | 'orange' | 'amber'
 
 export type ThemeColorLevel = '50' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900'
 
@@ -81,6 +81,18 @@ const palette: Record<ThemeColorBase, Record<ThemeColorLevel, string>> = {
     '700': '#c2410c',
     '800': '#9a3412',
     '900': '#7c2d12',
+  },
+  amber: {
+    '50': '#fffbeb',
+    '100': '#fef3c7',
+    '200': '#fde68a',
+    '300': '#fcd34d',
+    '400': '#fbbf24',
+    '500': '#f59e0b',
+    '600': '#d97706',
+    '700': '#b45309',
+    '800': '#92400e',
+    '900': '#78350f',
   },
 }
 

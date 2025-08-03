@@ -22,7 +22,7 @@ export const EmptyState = (input: {
         alignItems: 'center',
         justifyContent: 'center',
         gap: 2,
-        px: 6,
+        paddingX: 6,
         textAlign: 'center',
       }),
       'data-testid': EMPTY_STATE_TEST_ID,
@@ -36,7 +36,7 @@ export const EmptyState = (input: {
             alignItems: 'center',
             justifyContent: 'center',
             gap: 2,
-            pb: 20,
+            paddingBottom: 20,
           }),
         },
         [
@@ -51,8 +51,8 @@ export const EmptyState = (input: {
             variant: 'body',
             text: input.label,
             style: theme({
-              pb: 3,
-              textSize: 'lg',
+              paddingBottom: 3,
+              fontSize: 'lg',
               fontWeight: 'bold',
               opacity: 60,
             }),

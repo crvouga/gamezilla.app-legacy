@@ -13,7 +13,7 @@ export const SurfaceActions = (input: { children: VDom }) => {
         alignItems: 'center',
         gap: 6,
         padding: 6,
-        pt: 6,
+        paddingTop: 6,
       }),
     },
     [input.children],

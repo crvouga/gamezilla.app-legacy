@@ -49,7 +49,7 @@ const View = (input: { query: Model; ctx: FlowFrontendCtxBase; onChange: (query:
   }
   return h(
     Box,
-    { style: theme({ flexDirection: 'row', width: 'full', gap: 2, padding: 4, pt: 2 }) },
+    { style: theme({ flexDirection: 'row', width: 'full', gap: 2, padding: 4, paddingTop: 2 }) },
     [
       input.query.where.createdBy?.equals === input.ctx.currentUser.userId &&
         h(Chip, {

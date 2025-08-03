@@ -359,7 +359,7 @@ const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
       ctx: frontendCtx,
     }),
 
-    h(Box, { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
+    h(Box, { style: theme({ flexDirection: 'col', width: 'full', flex: 1, overflow: 'hidden' }) }, [
       h(ViewScreen, {
         model: input.model,
         dispatch: input.dispatch,

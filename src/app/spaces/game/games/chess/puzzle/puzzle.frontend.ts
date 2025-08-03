@@ -247,54 +247,71 @@ export const View = ({
         style: theme({ flexDirection: 'col', width: 'full', flex: 1, alignItems: 'center', justifyContent: 'center' }),
       },
       [
-        h(Box, { style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 2, px: 3, py: 2 }) }, [
-          h(Avatar, {
-            src: UserProfile.toAvatarUrl(ctx.profilesByUserId[ctx.space.hostId]),
-            style: theme({ size: 10 }),
-            alt: '',
-          }),
-
-          h(Box, { style: theme({ flexDirection: 'col', flex: 1, justifyContent: 'center' }) }, [
-            h(Typography, {
-              text: TranslatedText.of('Rating'),
-              variant: 'label',
-              color: 'text-secondary',
-              style: theme({ textSize: 'xs' }),
+        h(
+          Box,
+          {
+            style: theme({
+              flexDirection: 'row',
+              width: 'full',
+              alignItems: 'center',
+              gap: 2,
+              paddingX: 3,
+              paddingY: 2,
             }),
-            h(Box, { style: theme({ flexDirection: 'row', alignItems: 'center', gap: 1 }) }, [
-              h(Box, { style: theme({ textSize: 'xl', fontWeight: 'semibold' }) }, [
-                h(Text, { text: String(model.profile?.eloRating ?? '...') }),
+          },
+          [
+            h(Avatar, {
+              src: UserProfile.toAvatarUrl(ctx.profilesByUserId[ctx.space.hostId]),
+              style: theme({ size: 10 }),
+              alt: '',
+            }),
+
+            h(Box, { style: theme({ flexDirection: 'col', flex: 1, justifyContent: 'center' }) }, [
+              h(Typography, {
+                text: TranslatedText.of('Rating'),
+                variant: 'label',
+                color: 'text-secondary',
+                style: theme({ fontSize: 'xs' }),
+              }),
+              h(Box, { style: theme({ flexDirection: 'row', alignItems: 'center', gap: 1 }) }, [
+                h(Box, { style: theme({ fontSize: 'xl', fontWeight: 'bold' }) }, [
+                  h(Text, { text: String(model.profile?.eloRating ?? '...') }),
+                ]),
+
+                model.t === 'solved' &&
+                  !model.hasLost &&
+                  nextEloRating &&
+                  h(
+                    Box,
+                    { style: theme({ rounded: 'xl', fontSize: 'lg', fontWeight: 'bold', textColor: 'green-500' }) },
+                    [h(Text, { text: `+${nextEloRating - model.profile.eloRating}` })],
+                  ),
+
+                model.t !== 'loading' &&
+                  model.hasLost &&
+                  nextEloRating &&
+                  h(
+                    Box,
+                    { style: theme({ rounded: 'xl', fontSize: 'lg', fontWeight: 'bold', textColor: 'red-500' }) },
+                    [h(Text, { text: String(nextEloRating - model.profile.eloRating) })],
+                  ),
               ]),
-
-              model.t === 'solved' &&
-                !model.hasLost &&
-                nextEloRating &&
-                h(
-                  Box,
-                  { style: theme({ rounded: 'xl', textSize: 'lg', fontWeight: 'semibold', textColor: 'green-500' }) },
-                  [h(Text, { text: `+${nextEloRating - model.profile.eloRating}` })],
-                ),
-
-              model.t !== 'loading' &&
-                model.hasLost &&
-                nextEloRating &&
-                h(
-                  Box,
-                  { style: theme({ rounded: 'xl', textSize: 'lg', fontWeight: 'semibold', textColor: 'red-500' }) },
-                  [h(Text, { text: String(nextEloRating - model.profile.eloRating) })],
-                ),
             ]),
-          ]),
 
-          h(Box, { style: theme({ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 2 }) }, [
-            h(TickingClock, { sec: durationMs ? Math.floor(durationMs / 1_000) : 0 }),
-            h(Typography, {
-              text: TranslatedText.of(durationMs ? formatDuration(durationMs) : '-:--'),
-              color: 'text-secondary',
-              style: theme({ fontWeight: 'bold', textSize: 'lg' }),
-            }),
-          ]),
-        ]),
+            h(
+              Box,
+              { style: theme({ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 2 }) },
+              [
+                h(TickingClock, { sec: durationMs ? Math.floor(durationMs / 1_000) : 0 }),
+                h(Typography, {
+                  text: TranslatedText.of(durationMs ? formatDuration(durationMs) : '-:--'),
+                  color: 'text-secondary',
+                  style: theme({ fontWeight: 'bold', fontSize: 'lg' }),
+                }),
+              ],
+            ),
+          ],
+        ),
 
         h(
           Paper,
@@ -366,7 +383,7 @@ export const View = ({
           ],
         ),
 
-        h(Box, { style: theme({ width: 'full', px: 2, py: 1 }) }, [
+        h(Box, { style: theme({ width: 'full', paddingX: 2, paddingY: 1 }) }, [
           h(
             Box,
             {
@@ -375,7 +392,7 @@ export const View = ({
                 alignItems: 'center',
                 justifyContent: 'flex-start',
                 gap: 1,
-                textSize: 'xs',
+                fontSize: 'xs',
               }),
             },
             [
@@ -394,7 +411,7 @@ export const View = ({
                 justifyContent: 'flex-end',
                 gap: 1,
                 textAlign: 'right',
-                textSize: 'xs',
+                fontSize: 'xs',
               }),
             },
             [
@@ -509,8 +526,16 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
   if (input.model.t === 'loading') {
     return h(
       Box,
-      { style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', justifyContent: 'center', p: 2 }) },
-      [h(Box, { style: theme({ textSize: 'xl' }) }, [h(Text, { text: '...' })])],
+      {
+        style: theme({
+          flexDirection: 'row',
+          width: 'full',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 2,
+        }),
+      },
+      [h(Box, { style: theme({ fontSize: 'xl' }) }, [h(Text, { text: '...' })])],
     )
   }
 
@@ -525,13 +550,13 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
           justifyContent: 'center',
           gap: 2,
           backgroundColor: 'red-500',
-          p: 2,
+          padding: 2,
           textColor: 'white',
         }),
       },
       [
         h(IconXMark, { style: theme({ size: 6 }) }),
-        h(Box, { style: theme({ textSize: 'xl' }) }, [h(Text, { text: 'Incorrect' })]),
+        h(Box, { style: theme({ fontSize: 'xl' }) }, [h(Text, { text: 'Incorrect' })]),
       ],
     )
   }
@@ -547,13 +572,13 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
           justifyContent: 'center',
           gap: 2,
           backgroundColor: 'green-500',
-          p: 2,
+          padding: 2,
           textColor: 'white',
         }),
       },
       [
         h(IconCheckmarkCircle, { style: theme({ size: 6 }) }),
-        h(Box, { style: theme({ textSize: 'xl' }) }, [h(Text, { text: 'Correct' })]),
+        h(Box, { style: theme({ fontSize: 'xl' }) }, [h(Text, { text: 'Correct' })]),
       ],
     )
   }
@@ -569,7 +594,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
           alignItems: 'center',
           justifyContent: 'center',
           gap: 2,
-          p: 2,
+          padding: 2,
           backgroundColor: playerColor === 'b' ? 'black' : 'white',
           textColor: playerColor === 'b' ? 'white' : 'black',
         }),
@@ -580,11 +605,11 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
             size: 6,
             rounded: 'full',
             borderWidth: 2,
-            borderColor: playerColor === 'b' ? '[#ababab]' : 'black',
+            borderColor: playerColor === 'b' ? 'neutral-500' : 'black',
             backgroundColor: playerColor === 'b' ? 'black' : 'white',
           }),
         }),
-        h(Box, { style: theme({ textSize: 'xl' }) }, [
+        h(Box, { style: theme({ fontSize: 'xl' }) }, [
           h(Text, { text: `${Chess.colorToString(playerColor)} to move` }),
         ]),
       ],
@@ -601,13 +626,13 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
           alignItems: 'center',
           justifyContent: 'center',
           gap: 2,
-          p: 2,
+          padding: 2,
           textColor: 'white',
         }),
       },
       [
         h(IconCheckmarkCircle, { style: theme({ size: 6 }) }),
-        h(Box, { style: theme({ textSize: 'xl' }) }, [h(Text, { text: 'Solved with hint' })]),
+        h(Box, { style: theme({ fontSize: 'xl' }) }, [h(Text, { text: 'Solved with hint' })]),
       ],
     )
   }

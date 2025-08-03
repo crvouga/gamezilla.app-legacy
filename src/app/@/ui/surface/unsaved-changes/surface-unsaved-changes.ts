@@ -9,6 +9,7 @@ import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { ScreenSize } from '../../screen/screen-size'
 import { SurfaceLayout } from '../layout/surface-layout'
+import { theme } from '~/@/ui/theme/theme'
 
 export type SurfaceUnsavedChangesProps = {
   ctx: {
@@ -51,23 +52,36 @@ export const SurfaceUnsavedChanges = (input: SurfaceUnsavedChangesProps) => {
         h(Frag, {}, [
           h(Typography, {
             color: 'text-secondary',
-            class: 'p-4 px-6',
+            style: theme({ padding: 4, paddingLeft: 6 }),
             variant: 'body',
             text: input.body,
           }),
-          h(Box, { class: 'flex w-full flex-col gap-4 p-4 px-6 pb-6' }, [
-            h(Button, {
-              width: 'full',
-              text: input.saveText,
-              variant: 'contained',
-              color: 'primary',
-              loading: input.saveLoading,
-              onPress: input.onSave,
-            }),
-            h(Button, { width: 'full', text: input.discardText, onPress: input.onDiscard }),
-            h(Box, { class: 'w-full' }),
-            h(Button, { width: 'full', text: input.cancelText, onPress: input.onCancel }),
-          ]),
+          h(
+            Box,
+            {
+              style: theme({
+                flexDirection: 'col',
+                width: 'full',
+                gap: 4,
+                padding: 4,
+                paddingLeft: 6,
+                paddingBottom: 6,
+              }),
+            },
+            [
+              h(Button, {
+                width: 'full',
+                text: input.saveText,
+                variant: 'contained',
+                color: 'primary',
+                loading: input.saveLoading,
+                onPress: input.onSave,
+              }),
+              h(Button, { width: 'full', text: input.discardText, onPress: input.onDiscard }),
+              h(Box, { style: theme({ width: 'full' }) }),
+              h(Button, { width: 'full', text: input.cancelText, onPress: input.onCancel }),
+            ],
+          ),
         ]),
     },
   })

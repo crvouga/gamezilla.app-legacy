@@ -7,7 +7,7 @@ import { BorderImpl } from './border-impl'
 export type BoardProps<TModel> = {
   platform: IPlatform
   disabled?: boolean
-  class?: string
+  style?: Record<string, unknown>
   model: TModel
   isDragging?: boolean
   impl: BorderImpl

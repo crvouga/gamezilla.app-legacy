@@ -51,7 +51,7 @@ const VerticalSpaceBetween = (input: { start: (ScreenAction | null)[]; end: (Scr
     h(ActionButtonList, { actions: input.start }),
     h(Box, { style: theme({ flex: 1 }) }),
     h(ActionButtonList, { actions: input.end }),
-    h(Box, { style: theme({ width: 'full', pb: 6 }) }),
+    h(Box, { style: theme({ width: 'full', paddingBottom: 6 }) }),
   ])
 }
 
@@ -193,10 +193,10 @@ const toColorStyle = (input: ScreenAction): Record<string, unknown> => {
 const toSizeStyle = (size: ScreenAction['size']): Record<string, unknown> => {
   switch (size) {
     case 'sm':
-      return theme({ textSize: 'lg' })
+      return theme({ fontSize: 'lg' })
     case 'md':
     default:
-      return theme({ textSize: 'lg' })
+      return theme({ fontSize: 'lg' })
   }
 }
 

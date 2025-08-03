@@ -24,8 +24,8 @@ export const MenuItem = (props: MenuItemProps) => {
     alignItems: 'center',
     overflow: 'hidden',
     height: 16,
-    px: 4,
-    textSize: 'xl',
+    paddingX: 4,
+    fontSize: 'xl',
     fontWeight: 'bold',
   })
 
@@ -63,7 +63,7 @@ export const MenuItem = (props: MenuItemProps) => {
             props.renderEnd({
               style: theme({
                 textColor: 'white',
-                textSize: 'lg',
+                fontSize: 'lg',
               }),
             }),
           ],
@@ -107,7 +107,7 @@ const MenuItemContent = (input: {
             variant: 'body',
             style: theme({
               textColor: 'white',
-              textSize: 'lg',
+              fontSize: 'lg',
             }),
             text: input.primary,
           }),
@@ -115,7 +115,7 @@ const MenuItemContent = (input: {
             h(Typography, {
               style: theme({
                 textAlign: 'left',
-                textSize: 'xs',
+                fontSize: 'xs',
                 textColor: 'neutral-300',
               }),
               text: input.secondary,

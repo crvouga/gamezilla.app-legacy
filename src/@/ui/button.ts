@@ -20,9 +20,8 @@ export type ButtonInput = {
   text?: TranslatedText | string
   disabled?: boolean
   type?: 'button'
-  class?: string
   onPress?: (event: unknown) => void
-  renderIconStart?: (input: { class?: string; fill?: string; stroke?: string; style?: Record<string, unknown> }) => VDom
+  renderIconStart?: (input: { style?: Record<string, unknown> }) => VDom
   variant?: ButtonVariant
   color?: ButtonColor
   size?: ButtonSize
@@ -87,9 +86,7 @@ export const Button = (input: ButtonInput) => {
         },
         [
           input.renderIconStart?.({
-            style: { ...toIconSizeStyle(size), ...textStyle },
-            fill: 'currentColor',
-            stroke: 'currentColor',
+            style: { ...toIconSizeStyle(size), ...textStyle, textColor: 'currentColor' },
           }),
           h(Text, {
             text: input.text ?? '',
@@ -131,26 +128,26 @@ const toIconSizeStyle = (size: ButtonSize): Theme => {
 const toSizeStyle = (size: ButtonSize): Theme => {
   switch (size) {
     case 'lg':
-      return { height: 14, px: 6 }
+      return { height: 14, paddingX: 6 }
     case 'md':
-      return { height: 12, px: 4 }
+      return { height: 12, paddingX: 4 }
     case 'sm':
-      return { height: 10, px: 4 }
+      return { height: 10, paddingX: 4 }
     case 'xs':
-      return { height: 8, px: 2 }
+      return { height: 8, paddingX: 2 }
   }
 }
 
 const toTextSizeStyle = (size: ButtonSize): Theme => {
   switch (size) {
     case 'lg':
-      return { textSize: 'xl' }
+      return { fontSize: 'xl' }
     case 'md':
-      return { textSize: 'lg' }
+      return { fontSize: 'lg' }
     case 'sm':
-      return { textSize: 'md' }
+      return { fontSize: 'md' }
     case 'xs':
-      return { textSize: 'sm' }
+      return { fontSize: 'sm' }
   }
 }
 

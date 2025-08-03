@@ -9,15 +9,15 @@ export type TypographyVariant = 'title' | 'body' | 'label' | 'subtitle' | 'capti
 const toSizeStyle = (variant: TypographyVariant) => {
   switch (variant) {
     case 'title':
-      return theme({ textSize: '3xl' })
+      return theme({ fontSize: '3xl' })
     case 'body':
-      return theme({ textSize: 'md' })
+      return theme({ fontSize: 'md' })
     case 'label':
-      return theme({ textSize: 'xs' })
+      return theme({ fontSize: 'xs' })
     case 'subtitle':
-      return theme({ textSize: 'sm' })
+      return theme({ fontSize: 'sm' })
     case 'caption':
-      return theme({ textSize: 'xs' })
+      return theme({ fontSize: 'xs' })
   }
 }
 

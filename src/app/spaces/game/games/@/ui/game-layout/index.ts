@@ -54,7 +54,7 @@ export const LayoutGame = ({
           [
             h(Text, {
               text: ctx.t('game.you-are-spectating'),
-              style: theme({ textSize: 'sm', fontWeight: 'bold', textColor: 'white', padding: 1 }),
+              style: theme({ fontSize: 'sm', fontWeight: 'bold', textColor: 'white', padding: 1 }),
             }),
           ],
         ),

@@ -17,7 +17,7 @@ export const PawnIcon = (input: { stroke?: string }) => {
     G,
     {
       transform: 'translate(0 -2) scale(1)',
-      class: 'origin-center',
+      // style: theme({ origin: 'center' }),
     },
     [
       h(Path, {
@@ -31,19 +31,19 @@ export const PawnIcon = (input: { stroke?: string }) => {
   )
 }
 
-export const PlayerIcon = ({ class: class_, color }: { class?: string; color: 'w' | 'b' }) => {
+export const PlayerIcon = ({ style, color }: { style?: Record<string, unknown>; color: 'w' | 'b' }) => {
   return h(
     Svg,
     {
       viewBox: '0 0 45 45',
-      class: class_,
+      style,
     },
     [
       h(
         G,
         {
           transform: 'translate(0 -2) scale(1.25)',
-          class: 'origin-center',
+          // style: theme({ origin: 'center' }),
         },
         [
           h(Path, {

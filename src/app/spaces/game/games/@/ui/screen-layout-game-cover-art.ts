@@ -26,7 +26,7 @@ export const ScreenLayoutGameCoverArt = (
             alignItems: 'center',
             justifyContent: 'flex-start',
             gap: 6,
-            py: 4,
+            paddingY: 4,
           }),
         },
         [

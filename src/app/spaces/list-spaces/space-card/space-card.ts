@@ -59,7 +59,7 @@ const ViewLiveIndicator = (input: { ctx: AppFrontendCtxBase }) => {
     [
       h(Typography, {
         variant: 'label',
-        style: theme({ flex: 1, textColor: 'white', fontWeight: 'bold', textSize: 'lg' }),
+        style: theme({ flex: 1, textColor: 'white', fontWeight: 'bold', fontSize: 'lg' }),
         text: input.ctx.t('space-card.live'),
       }),
     ],
@@ -81,7 +81,7 @@ const ViewSpaceCardGame = (input: { gameName: GameName | null; ctx: AppFrontendC
       }),
       h(Typography, {
         variant: 'body',
-        style: theme({ textSize: 'lg', fontWeight: 'normal' }),
+        style: theme({ fontSize: 'lg', fontWeight: 'normal' }),
         text: input.ctx.t(input.gameName),
       }),
     ],
@@ -103,7 +103,7 @@ const ViewSpaceCardHost = (input: { host?: UserProfile | null; ctx: AppFrontendC
           input.host &&
             h(Typography, {
               variant: 'body',
-              style: theme({ textSize: 'lg', fontWeight: 'normal' }),
+              style: theme({ fontSize: 'lg', fontWeight: 'normal' }),
               text: input.ctx.t('username', input.host.username),
             }),
           h(ViewHostChip, { ctx: input.ctx }),
@@ -127,7 +127,7 @@ const ViewSpaceCardUsers = (input: { users: UserProfile[]; ctx: AppFrontendCtxBa
             key: user.username,
             src: UserProfile.toAvatarUrl(user),
             alt: 'avatar',
-            style: theme({ width: 8, height: 8, ...(index !== 0 && { pl: -2 }) }),
+            style: theme({ width: 8, height: 8, ...(index !== 0 && { paddingLeft: -2 }) }),
           }),
         ),
         input.users.length > MAX_AVATAR_COUNT &&
@@ -135,7 +135,7 @@ const ViewSpaceCardUsers = (input: { users: UserProfile[]; ctx: AppFrontendCtxBa
             Box,
             {
               style: theme({
-                pl: -2,
+                paddingLeft: -2,
                 flexDirection: 'row',
                 width: 8,
                 height: 8,
@@ -155,7 +155,7 @@ const ViewSpaceCardUsers = (input: { users: UserProfile[]; ctx: AppFrontendCtxBa
       ]),
       h(Typography, {
         variant: 'body',
-        style: theme({ textSize: 'lg', fontWeight: 'normal' }),
+        style: theme({ fontSize: 'lg', fontWeight: 'normal' }),
         text: input.ctx.t('space-card.people-count', input.users.length),
       }),
     ],

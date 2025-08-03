@@ -1,10 +1,11 @@
 import { TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/primitives/box'
 import { Translator } from '~/@/l18n/generated'
 import { IconArrowLeft } from '~/@/ui/icon'
 import { IconButton } from '~/@/ui/icon-button'
+import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 
 export const AuthScreenHeader = (input: {
   ctx: {
@@ -16,11 +17,10 @@ export const AuthScreenHeader = (input: {
   return h(
     Box,
     {
-      class: 'flex flex-row w-full flex-row items-center justify-start gap-2',
+      style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', justifyContent: 'flex-start', gap: 2 }),
     },
     [
       h(IconButton, {
-        class: '-ml-2',
         label: input.ctx.t('app.back'),
         renderIcon: (iconInput) => h(IconArrowLeft, iconInput),
         onPress: input.onBack,
@@ -29,7 +29,7 @@ export const AuthScreenHeader = (input: {
       h(Typography, {
         text: input.title,
         variant: 'title',
-        class: 'font-bold',
+        style: theme({ fontWeight: 'bold' }),
       }),
     ],
   )

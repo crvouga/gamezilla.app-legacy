@@ -24,6 +24,7 @@ import {
   initShared,
 } from './types'
 import { Text } from '~/@/vdom/primitives/text'
+import { theme } from '~/@/ui/theme/theme'
 
 //
 //
@@ -274,42 +275,48 @@ const ViewJoystick = ({
   activeFill: string
 }) => {
   return h(Box, {}, [
-    h(Svg, { width: '100%', viewBox: '-1 -1 2 2', class: 'touch-none overflow-hidden select-none' }, [
-      h(Defs, {}, [h(ClipPath, { id: 'cut-off-bottom' }, [h(Circle, { x: '0', y: '0', r: 1 })])]),
-      h(G, { 'stroke-width': 0.025 }, [
-        h(G, { 'clip-path': 'url(#cut-off-bottom)', stroke }, [
-          ...Direction.all.map((direction) => {
-            const { x, y } = directionToVector(direction)
-            return h(Rect, {
-              key: direction,
-              x,
-              y,
-              width: 1,
-              height: 1,
-              fill: activeDirection === direction ? activeFill : fill,
-              onPress: () => onChange(direction),
-              onPressOut: onDone,
-            })
+    h(
+      Svg,
+      {
+        width: '100%',
+        viewBox: '-1 -1 2 2',
+        style: theme({ pointerEvents: 'none', overflow: 'hidden' }),
+      },
+      [
+        h(Defs, {}, [h(ClipPath, { id: 'cut-off-bottom' }, [h(Circle, { x: '0', y: '0', r: 1 })])]),
+        h(G, { 'stroke-width': 0.025 }, [
+          h(G, { 'clip-path': 'url(#cut-off-bottom)', stroke }, [
+            ...Direction.all.map((direction) => {
+              const { x, y } = directionToVector(direction)
+              return h(Rect, {
+                key: direction,
+                x,
+                y,
+                width: 1,
+                height: 1,
+                fill: activeDirection === direction ? activeFill : fill,
+                onPress: () => onChange(direction),
+                onPressOut: onDone,
+              })
+            }),
+          ]),
+          h(Circle, {
+            x: '0',
+            y: '0',
+            r: 0.5,
+            fill,
+            stroke,
+          }),
+          h(Circle, {
+            x: '0',
+            y: '0',
+            r: 0.98,
+            fill: 'transparent',
+            stroke,
           }),
         ]),
-        h(Circle, {
-          x: '0',
-          y: '0',
-          r: 0.5,
-          fill,
-          class: 'pointer-events-none touch-none select-none',
-          stroke,
-        }),
-        h(Circle, {
-          x: '0',
-          y: '0',
-          r: 0.98,
-          class: 'pointer-events-none touch-none select-none',
-          fill: 'transparent',
-          stroke,
-        }),
-      ]),
-    ]),
+      ],
+    ),
   ])
 }
 

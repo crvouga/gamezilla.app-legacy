@@ -321,10 +321,10 @@ export const View = ({
       botVariants: ChessBotLevel.all.map((botLevel) => {
         return {
           label: ctx.t('chess.bot-level', botLevel),
-          renderIcon: (input: { class: string }) =>
+          renderIcon: (input) =>
             ChessBotLevel.render({
-              level: botLevel,
               ...input,
+              level: botLevel,
             }),
           onSelect: () =>
             dispatch({
@@ -387,10 +387,10 @@ export const View = ({
     { style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 3, padding: 3 }) },
     [
       h(IconRobot, { style: theme({ width: 10, height: 10 }) }),
-      h(Box, { style: theme({ flex: 1, textSize: 'lg' }) }, [
+      h(Box, { style: theme({ flex: 1, fontSize: 'lg' }) }, [
         h(Text, { text: ChessBotLevel.toString(model.spaceModel.botLevel) }),
       ]),
-      isBotTurn(model.spaceModel) && h(Spinner, { style: { ...theme({ size: 10 }) } }),
+      isBotTurn(model.spaceModel) && h(Spinner, { style: theme({ size: 10 }) }),
     ],
   )
 
@@ -402,7 +402,7 @@ export const View = ({
         style: theme({ width: 10, height: 10 }),
         src: UserProfile.toAvatarUrl(ctx.profilesByUserId[model.spaceModel.userId]),
       }),
-      h(Box, { style: theme({ flex: 1, textSize: 'lg' }) }, [
+      h(Box, { style: theme({ flex: 1, fontSize: 'lg' }) }, [
         h(Text, { text: ctx.profilesByUserId[model.spaceModel.userId]?.username ?? '' }),
       ]),
     ],

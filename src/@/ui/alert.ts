@@ -22,7 +22,7 @@ export const AlertError = ({ text }: { text?: string }) => {
       }),
     },
     [
-      h(Box, { style: theme({ pr: 2 }) }, [h(IconExclamationCircle, { style: theme({ size: 6 }) })]),
+      h(Box, { style: theme({ paddingRight: 2 }) }, [h(IconExclamationCircle, { style: theme({ size: 6 }) })]),
       h(Text, { text: text ?? '' }),
     ],
   )
@@ -42,7 +42,7 @@ export const AlertInfo = ({ children }: { children?: VDom }) => {
         textColor: 'white',
       }),
     },
-    [h(Box, { style: theme({ pr: 2 }) }, [h(IconInfoCircle, { style: theme({ size: 6 }) })]), children],
+    [h(Box, { style: theme({ paddingRight: 2 }) }, [h(IconInfoCircle, { style: theme({ size: 6 }) })]), children],
   )
 }
 
@@ -60,6 +60,6 @@ export const AlertSuccess = ({ children }: { children?: VDom }) => {
         textColor: 'white',
       }),
     },
-    [h(Box, { style: theme({ pr: 2 }) }, [h(IconCheckmarkCircle, { style: theme({ size: 6 }) })]), children],
+    [h(Box, { style: theme({ paddingRight: 2 }) }, [h(IconCheckmarkCircle, { style: theme({ size: 6 }) })]), children],
   )
 }

@@ -568,7 +568,7 @@ const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
   }
 }
 
-const ViewBotLevel = ({ level, ...input }: { level: BotLevel; class?: string }) => {
+const ViewBotLevel = ({ level, ...input }: { level: BotLevel; style?: Record<string, unknown> }) => {
   switch (level) {
     case 'Easy': {
       return h(IconBotHappy, input)

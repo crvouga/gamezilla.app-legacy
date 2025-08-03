@@ -11,10 +11,6 @@ export const Checkbox = (input: { state: CheckboxState; onChange?: (checkedNew: 
   return h(
     Pressable,
     {
-      // class: cn(
-      //   'flex flex-row size-6 items-center justify-center rounded border-2 border-neutral-500 text-xl font-black text-neutral-800',
-      //   input.state !== 'unchecked' && 'border-neutral-100 bg-neutral-100',
-      // ),
       style: theme({
         flexDirection: 'row',
         alignItems: 'center',
@@ -26,7 +22,7 @@ export const Checkbox = (input: { state: CheckboxState; onChange?: (checkedNew: 
         borderColor: input.state !== 'unchecked' ? 'neutral-100' : 'neutral-500',
         backgroundColor: input.state !== 'unchecked' ? 'neutral-100' : undefined,
         textColor: 'neutral-800',
-        textSize: 'xl',
+        fontSize: 'xl',
         fontWeight: 'black',
       }),
       role: 'checkbox',
@@ -41,7 +37,7 @@ export const Checkbox = (input: { state: CheckboxState; onChange?: (checkedNew: 
         }
       },
     },
-    [h(Text, { text: toCheckboxText(input.state), style: theme({ textSize: 'lg', fontWeight: 'black' }) })],
+    [h(Text, { text: toCheckboxText(input.state), style: theme({ fontSize: 'lg', fontWeight: 'black' }) })],
   )
 }
 

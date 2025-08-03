@@ -262,7 +262,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
             [
               h(Typography, {
                 variant: 'body',
-                style: theme({ textSize: 'sm', fontWeight: 'bold' }),
+                style: theme({ fontSize: 'sm', fontWeight: 'bold' }),
                 text: input.ctx.t('auth.or'),
               }),
             ],

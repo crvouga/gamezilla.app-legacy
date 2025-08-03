@@ -241,7 +241,7 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
           testId: 'phone-number-input',
           label: input.ctx.t('auth-sms.phone-number'),
           type: 'tel',
-          startIcon: h(IconMobilePhone, { class: 'h-5 w-5' }),
+          startIcon: h(IconMobilePhone, { style: theme({ size: 5 }) }),
           error: typeof input.model.phoneError === 'string',
           value: input.model.phone,
           helperText: input.model.phoneError,
@@ -279,7 +279,7 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
       h(Frag, {}, [
         h(Typography, {
           role: 'status',
-          class: 'text-lg',
+          style: theme({ fontSize: 'lg' }),
           variant: 'body',
           text: input.ctx.t('auth-sms.enter-code-sent-to', PhoneNumber.format(phoneNumber)),
         }),

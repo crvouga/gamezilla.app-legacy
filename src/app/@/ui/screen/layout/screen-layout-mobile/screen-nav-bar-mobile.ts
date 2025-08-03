@@ -38,7 +38,7 @@ export const ScreenNavBarMobile = (input: {
         justifyContent: 'center',
         overflow: 'hidden',
         flexDirection: 'row',
-        px: 3,
+        paddingX: 3,
       }),
     },
     [
@@ -79,7 +79,7 @@ export const ScreenNavBarMobile = (input: {
               text: input.title,
               align: 'center',
               style: theme({
-                textSize: 'xl',
+                fontSize: 'xl',
                 fontWeight: 'bold',
                 textAlign: 'center',
                 flexDirection: 'col',
@@ -96,9 +96,9 @@ export const ScreenNavBarMobile = (input: {
               text: input.subtitle,
               align: 'center',
               style: theme({
-                textSize: 'xs',
+                fontSize: 'xs',
                 textAlign: 'center',
-                px: 2,
+                paddingX: 2,
                 textColor: 'neutral-300',
               }),
             }),

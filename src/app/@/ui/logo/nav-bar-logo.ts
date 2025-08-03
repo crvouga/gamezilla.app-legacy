@@ -14,7 +14,7 @@ export const NavBarLogo = (input: { onPress: () => void }) => {
         height: 'full',
         alignItems: 'center',
         justifyContent: 'center',
-        textSize: '4xl',
+        fontSize: '4xl',
       }),
       onPress: input.onPress,
     },

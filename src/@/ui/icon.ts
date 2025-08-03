@@ -730,7 +730,6 @@ export const IconRightLeft = (props: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
-      class: 'size-6 fill-current',
       fill: 'currentColor',
       stroke: 'currentColor',
       ...props,

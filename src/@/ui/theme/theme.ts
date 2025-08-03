@@ -10,19 +10,19 @@ export type Theme = {
   alignItems?: 'center' | 'flex-start' | 'flex-end' | 'stretch' | 'baseline' | null
   justifyContent?: 'center' | 'flex-start' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly' | null
   padding?: number | null
-  px?: number | null
-  py?: number | null
+  paddingX?: number | null
+  paddingY?: number | null
+  paddingTop?: number | null
+  paddingBottom?: number | null
+  paddingLeft?: number | null
+  paddingRight?: number | null
   overflow?: 'hidden' | null
   opacity?: number | null
-  pt?: number | null
-  pb?: number | null
   pointerEvents?: 'none' | 'auto' | null
-  pl?: number | null
-  pr?: number | null
   rounded?: 'full' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | null
   textColor?: ThemeColor | null
   fontWeight?: 'normal' | 'bold' | 'black' | null
-  textSize?: ThemeSize | number | null
+  fontSize?: ThemeSize | number | null
   backgroundColor?: ThemeColor | null
   textAlign?: 'left' | 'center' | 'right' | null
   borderColor?: ThemeColor | null
@@ -53,7 +53,7 @@ export const theme = (config: Theme): Record<string, string | number | null> => 
   applyPadding(styles, config)
   applyBorderRadius(styles, config.rounded)
   applyFontWeight(styles, config.fontWeight)
-  applyFontSize(styles, config.textSize)
+  applyFontSize(styles, config.fontSize)
   applyTextAlign(styles, config.textAlign)
   applyColors(styles, config)
   applySize(styles, config.size)
@@ -197,7 +197,15 @@ const applyJustify = (styles: Record<string, string | number | null>, justify: T
 }
 
 const applyPadding = (styles: Record<string, string | number | null>, config: Theme) => {
-  const { padding: p, px, py, pt, pb, pl, pr } = config
+  const {
+    padding: p,
+    paddingX: px,
+    paddingY: py,
+    paddingTop: pt,
+    paddingBottom: pb,
+    paddingLeft: pl,
+    paddingRight: pr,
+  } = config
 
   if (p != null) {
     styles.padding = p * 4
@@ -261,7 +269,7 @@ const SIZE_MAP = {
   '4xl': 36,
   '5xl': 48,
 }
-const applyFontSize = (styles: Record<string, string | number | null>, size: Theme['textSize']) => {
+const applyFontSize = (styles: Record<string, string | number | null>, size: Theme['fontSize']) => {
   if (!size) return
   if (typeof size === 'number') {
     styles.fontSize = size

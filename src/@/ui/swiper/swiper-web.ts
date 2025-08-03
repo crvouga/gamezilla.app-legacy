@@ -68,7 +68,7 @@ const Container = (input: {
   id: string
   onSlideIndexChanged?: (index: number) => void
   children?: VDom
-  class?: string
+  style?: Record<string, unknown>
   slideIndex: number
 }) => {
   onContainer(input)
@@ -78,7 +78,7 @@ const Container = (input: {
     {
       id: input.id,
       'slides-per-view': 'auto',
-      class: input.class,
+      style: input.style,
       'grab-cursor': true,
       'centered-slides': true,
       'initial-slide': input.slideIndex,
@@ -89,12 +89,12 @@ const Container = (input: {
   )
 }
 
-const Slide = (input: { children?: VDom; class?: string }) => {
+const Slide = (input: { children?: VDom; style?: Record<string, unknown> }) => {
   return h(
     // @ts-ignore
     'swiper-slide',
     {
-      class: input.class,
+      style: input.style,
       role: 'tabpanel',
     },
     [input.children],

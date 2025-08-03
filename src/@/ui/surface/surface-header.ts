@@ -23,14 +23,14 @@ export const SurfaceHeader = (input: {
         width: 'full',
         alignItems: 'center',
         justifyContent: 'center',
-        px: 6,
-        pt: 4,
-        pb: 0,
+        paddingX: 6,
+        paddingTop: 4,
+        paddingBottom: 0,
       }),
     },
     [
       h(Box, { style: theme({ flex: 1 }) }, [
-        input.title && h(Typography, { text: input.title, variant: 'title', style: theme({ textSize: '2xl' }) }),
+        input.title && h(Typography, { text: input.title, variant: 'title', style: theme({ fontSize: '2xl' }) }),
       ]),
       input.onClose &&
         h(IconButton, {

@@ -47,8 +47,8 @@ export const Tabs = <TTab extends string>({
                   width: 'full',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  py: 3,
-                  textSize: 'xl',
+                  paddingY: 3,
+                  fontSize: 'xl',
                 }),
                 fontWeight: 'bold',
                 ...(index !== tabs.length - 1 && {

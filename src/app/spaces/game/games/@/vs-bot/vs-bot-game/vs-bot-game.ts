@@ -251,8 +251,8 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
                       flex: 1,
                       alignItems: 'center',
                       justifyContent: 'center',
-                      pb: 2,
-                      textSize: '2xl',
+                      paddingBottom: 2,
+                      fontSize: '2xl',
                       fontWeight: 'bold',
                     }),
                   },
@@ -288,8 +288,8 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
                       flex: 1,
                       alignItems: 'center',
                       justifyContent: 'center',
-                      pb: 2,
-                      textSize: '2xl',
+                      paddingBottom: 2,
+                      fontSize: '2xl',
                       fontWeight: 'bold',
                       opacity: 0,
                     }),
@@ -326,7 +326,7 @@ const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { win
       ]),
       h(Typography, {
         variant: 'title',
-        style: theme({ textAlign: 'center', textSize: '4xl', fontWeight: 'black' }),
+        style: theme({ textAlign: 'center', fontSize: '4xl', fontWeight: 'black' }),
         text: winner === 'player-one' ? ctx.t('game.winner') : ctx.t('game.loser'),
       }),
     ],
@@ -344,7 +344,7 @@ const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { win
       ]),
       h(Typography, {
         variant: 'title',
-        style: theme({ textAlign: 'center', textSize: '4xl', fontWeight: 'black' }),
+        style: theme({ textAlign: 'center', fontSize: '4xl', fontWeight: 'black' }),
         text: winner === 'player-two' ? ctx.t('game.winner') : ctx.t('game.loser'),
       }),
     ],
@@ -361,7 +361,7 @@ const Draw = (input: Input) => {
     h(Avatar, { src: UserProfile.toAvatarUrl(input.ctx.profilesByUserId[input.ctx.currentUser.userId]) }),
   ])
 
-  const botSlot = h(Box, {}, [h(IconRobot, { class: 'size-6' })])
+  const botSlot = h(Box, {}, [h(IconRobot, { style: theme({ size: 6 }) })])
 
   const playerOneSlot = h(Box, {}, [
     input.playerOne.renderIcon({
@@ -388,14 +388,14 @@ export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn
   const humanSlot = h(Box, {}, [
     h(Avatar, { style: theme({ size: 6 }), src: UserProfile.toAvatarUrl(profile) }),
     profile &&
-      h(Typography, { style: theme({ textSize: 'sm' }), variant: 'body', text: ctx.t('username', profile.username) }),
+      h(Typography, { style: theme({ fontSize: 'sm' }), variant: 'body', text: ctx.t('username', profile.username) }),
   ])
 
   const botSlot = h(Box, {}, [
     bot.renderIcon({
       style: theme({ size: 6, flexShrink: 0 }),
     }),
-    h(Typography, { style: theme({ textSize: 'sm' }), variant: 'body', text: bot.label }),
+    h(Typography, { style: theme({ fontSize: 'sm' }), variant: 'body', text: bot.label }),
   ])
 
   return h(Box, { style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 3, padding: 3 }) }, [
@@ -457,7 +457,7 @@ const Slot = ({ active, children }: { active: boolean; children?: VDom }) => {
         rounded: 'md',
         backgroundColor: 'black',
         padding: 2,
-        textSize: 'sm',
+        fontSize: 'sm',
         borderColor: active ? 'blue-500' : null,
         borderWidth: 1,
       }),

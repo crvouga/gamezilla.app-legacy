@@ -252,7 +252,7 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
                       justifyContent: 'center',
                       gap: 4,
                       padding: 6,
-                      pl: 8,
+                      paddingLeft: 8,
                       position: 'absolute',
                       top: 0,
                       right: 0,

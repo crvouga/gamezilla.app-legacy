@@ -304,8 +304,8 @@ const Naught = ({
   return h(Circle, { r, cx, cy, stroke: color, 'stroke-width': strokeWidth, fill: 'transparent' })
 }
 
-export const PlayerTypeIcon = ({ playerType, class: class_ }: { playerType: PlayerType; class?: string }) => {
-  return h(Svg, { viewBox: '-1 -1 2 2', fill: 'currentColor', class: class_ }, [
+export const PlayerTypeIcon = ({ playerType, style }: { playerType: PlayerType; style?: Record<string, unknown> }) => {
+  return h(Svg, { viewBox: '-1 -1 2 2', fill: 'currentColor', style }, [
     h(ViewSlot, {
       key: playerType,
       cx: 0,

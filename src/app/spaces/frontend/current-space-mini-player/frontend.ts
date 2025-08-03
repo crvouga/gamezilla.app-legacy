@@ -54,8 +54,8 @@ const ViewSpaceInfo = (props: { hostProfile: UserProfile | undefined; userCount:
         flex: 1,
         gap: 2,
         overflow: 'hidden',
-        py: 3,
-        pr: 3,
+        paddingY: 3,
+        paddingRight: 3,
       }),
     },
     [
@@ -63,7 +63,7 @@ const ViewSpaceInfo = (props: { hostProfile: UserProfile | undefined; userCount:
         variant: 'body',
         style: theme({
           textAlign: 'left',
-          textSize: 'lg',
+          fontSize: 'lg',
           fontWeight: 'normal',
         }),
         text: props.hostProfile
@@ -76,7 +76,7 @@ const ViewSpaceInfo = (props: { hostProfile: UserProfile | undefined; userCount:
         variant: 'subtitle',
         style: theme({
           textAlign: 'left',
-          textSize: 'sm',
+          fontSize: 'sm',
           fontWeight: 'normal',
         }),
         text: props.ctx.t('space-card.people-count', props.userCount),

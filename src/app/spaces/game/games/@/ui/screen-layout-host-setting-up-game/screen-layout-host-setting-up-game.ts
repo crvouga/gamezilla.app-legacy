@@ -37,9 +37,9 @@ export const ScreenLayoutHostSettingUpGame = (input: {
         variant: 'title',
         style: theme({
           width: 'full',
-          px: 4,
+          paddingX: 4,
           textAlign: 'center',
-          textSize: 'lg',
+          fontSize: 'lg',
         }),
       }),
   })

@@ -108,10 +108,10 @@ const toColorStyles = (input: ScreenAction): Record<string, unknown> => {
 const toSizeStyles = (size: ScreenAction['size']): Record<string, unknown> => {
   switch (size) {
     case 'sm':
-      return theme({ textSize: 'xs' })
+      return theme({ fontSize: 'xs' })
     case 'md':
     default:
-      return theme({ textSize: 'sm' })
+      return theme({ fontSize: 'sm' })
   }
 }
 

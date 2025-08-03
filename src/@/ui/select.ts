@@ -35,7 +35,7 @@ export const Select = <T>(props: {
         id: labelId,
         style: {
           ...theme({
-            textSize: 16,
+            fontSize: 16,
           }),
           color: props.error ? 'rgb(239 68 68)' : undefined,
         },
@@ -53,8 +53,8 @@ export const Select = <T>(props: {
               alignItems: 'center',
               rounded: 'md',
               padding: 3,
-              py: 4,
-              textSize: 20,
+              paddingY: 4,
+              fontSize: 20,
             }),
             border: '1px solid',
             borderColor: props.error ? 'rgb(239 68 68)' : 'rgb(82 82 82)',
@@ -97,7 +97,7 @@ export const Select = <T>(props: {
           {
             style: {
               ...theme({
-                textSize: 'sm',
+                fontSize: 'sm',
               }),
               color: props.error ? 'rgb(239 68 68)' : undefined,
             },

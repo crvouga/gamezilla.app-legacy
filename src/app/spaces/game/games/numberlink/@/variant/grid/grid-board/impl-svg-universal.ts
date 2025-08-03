@@ -55,7 +55,6 @@ const View = (props: BoardProps<VariantGrid>) => {
   return h(
     Svg,
     {
-      class: props.class,
       style: theme({
         pointerEvents: props.disabled ? 'none' : undefined,
         width: 'full',

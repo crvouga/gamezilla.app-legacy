@@ -41,7 +41,7 @@ const BASE_STYLE = theme({
   alignItems: 'center',
   justifyContent: 'center',
   width: 'full',
-  px: 6,
+  paddingX: 6,
 })
 
 const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) => {

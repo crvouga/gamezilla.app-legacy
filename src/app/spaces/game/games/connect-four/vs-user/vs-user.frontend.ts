@@ -365,7 +365,7 @@ const ViewGameOverMessage = ({
 
   if (modelSpace.rematch.type === 'Asking' && modelSpace.rematch.asker === currentPlayerType) {
     return h(Box, {}, [
-      h(Box, { style: theme({ pb: 4, textAlign: 'center', textSize: 'xl' }) }, [
+      h(Box, { style: theme({ paddingBottom: 4, textAlign: 'center', fontSize: 'xl' }) }, [
         h(Text, { text: 'Waiting for response' }),
       ]),
       h(Spinner, { style: { ...theme({ size: 8 }) } }),
@@ -425,7 +425,7 @@ const ViewGameOverMessage = ({
   }
 
   if (modelSpace.gameOver.type === 'Draw') {
-    return h(Box, { style: theme({ textSize: 'xl' }) }, [h(Text, { text: 'Tie' })])
+    return h(Box, { style: theme({ fontSize: 'xl' }) }, [h(Text, { text: 'Tie' })])
   }
 
   if (modelSpace.gameOver.type === 'resignation') {

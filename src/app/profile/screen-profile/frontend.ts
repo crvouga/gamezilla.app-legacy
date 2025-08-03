@@ -87,14 +87,14 @@ const ViewBody: typeof View = (input) => {
               alignItems: 'center',
               justifyContent: 'center',
               gap: 6,
-              pt: 4,
+              paddingTop: 4,
             }),
           },
           [
             h(Button, {
               onPress: () =>
                 input.dispatch({ t: 'got-msg-out', c: PushScreenCmd.init({ t: 'profile-edit', n: 'profile' }) }),
-              class: 'max-w-64 flex-1',
+              style: theme({ maxWidth: 64, flex: 1 }),
               renderIconStart: (iconInput) => h(IconUserPen, iconInput),
               text: input.ctx.t('profile.edit-profile'),
               size: 'sm',

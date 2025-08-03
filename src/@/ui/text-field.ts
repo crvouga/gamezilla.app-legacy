@@ -29,7 +29,7 @@ export const TextField = (input: {
     h(Text, {
       text: input.label,
       style: {
-        ...theme({ textSize: 'sm' }),
+        ...theme({ fontSize: 'sm' }),
         textColor: input.error ? 'red-500' : 'white',
       },
     }),
@@ -77,7 +77,7 @@ export const TextField = (input: {
               alignItems: 'center',
               gap: 2,
               padding: 3,
-              textSize: 'lg',
+              fontSize: 'lg',
             }),
             backgroundColor: 'transparent',
           },
@@ -91,7 +91,7 @@ export const TextField = (input: {
               style: {
                 ...theme({
                   rounded: 'md',
-                  px: 3,
+                  paddingX: 3,
                 }),
               },
               'aria-label': 'Clear input',
@@ -111,7 +111,7 @@ export const TextField = (input: {
           'data-error': input.error,
           'data-info': !input.error,
           style: {
-            ...theme({ textSize: 'sm' }),
+            ...theme({ fontSize: 'sm' }),
             textColor: input.error ? 'red-500' : 'neutral-300',
           },
         },

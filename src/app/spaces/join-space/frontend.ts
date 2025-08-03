@@ -211,7 +211,7 @@ const SectionGame = (props: {
         flexDirection: 'col',
         width: 'full',
         gap: 6,
-        pt: 12,
+        paddingTop: 12,
       }),
     },
     [
@@ -224,8 +224,8 @@ const SectionGame = (props: {
             flexDirection: 'row',
             alignItems: 'center',
             gap: 4,
-            pl: 12,
-            pr: 12,
+            paddingLeft: 12,
+            paddingRight: 12,
           }),
         },
         [
@@ -239,7 +239,7 @@ const SectionGame = (props: {
           h(Typography, {
             variant: 'label',
             text: props.ctx.t(props.gameName),
-            style: theme({ textSize: 'lg' }),
+            style: theme({ fontSize: 'lg' }),
           }),
         ],
       ),

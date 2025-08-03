@@ -40,7 +40,7 @@ export const SectionPersonDetails = (input: {
       ],
     ),
 
-    h(Box, { style: theme({ width: 'full', padding: 4, pb: 8 }) }, [
+    h(Box, { style: theme({ width: 'full', padding: 4, paddingBottom: 8 }) }, [
       h(Button, { onPress: input.onOpenDetails, width: 'full', text: input.ctx.t('app.see-profile') }),
     ]),
   ])

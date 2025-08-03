@@ -62,7 +62,7 @@ const PersonMenuItem = (input: {
         alignItems: 'center',
         gap: 2,
         padding: 2,
-        px: 6,
+        paddingX: 6,
       }),
     },
     [

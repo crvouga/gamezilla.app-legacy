@@ -1,5 +1,5 @@
 import { IPlatform } from '~/@/platform/platform'
-import { cn } from '~/@/ui/cn'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
 import { GameName } from './@/game-name'
@@ -14,8 +14,10 @@ export const GameCoverArt = (input: {
   platform: IPlatform
 }) => {
   return h(GameCoverArtSwitch, {
-    style: input.style,
-    class: cn(input.class, 'aspect-square', input.rounded && 'overflow-hidden rounded-lg border border-neutral-700'),
+    style: {
+      ...theme({ aspectRatio: 1, overflow: 'hidden', rounded: 'lg', borderWidth: 1, borderColor: 'neutral-700' }),
+      ...input.style,
+    },
     gameName: input.gameName,
     platform: input.platform,
   })

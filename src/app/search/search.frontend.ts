@@ -137,7 +137,7 @@ export const View = ({
             h(IconMagnifyingGlass, { style: theme({ size: 6 }) }),
             h(TextInput, {
               id: searchInputId,
-              style: theme({ flex: 1, textSize: 'lg' }),
+              style: theme({ flex: 1, fontSize: 'lg' }),
               placeholder: 'Search',
               defaultValue: model.searchText,
               onChangeText: (e: unknown) =>

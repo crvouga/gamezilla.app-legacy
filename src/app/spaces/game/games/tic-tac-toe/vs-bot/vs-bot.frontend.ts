@@ -308,7 +308,7 @@ export const ViewMsg = (input: { msg: Msg | MsgToFrontend }) => {
   return null
 }
 
-export const renderBotLevel = ({ level, ...input }: { level: BotLevel; class?: string }) => {
+export const renderBotLevel = ({ level, ...input }: { level: BotLevel; style?: Record<string, unknown> }) => {
   switch (level) {
     case 'Easy': {
       return h(IconBotCute, input)

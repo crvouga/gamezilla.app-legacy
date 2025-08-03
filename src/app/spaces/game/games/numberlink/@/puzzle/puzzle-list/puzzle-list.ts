@@ -53,7 +53,7 @@ const View = (input: {
           h(Typography, {
             variant: 'body',
             color: 'text-secondary',
-            style: theme({ textSize: 'lg' }),
+            style: theme({ fontSize: 'lg' }),
             text: input.ctx.t('game.numberlink.puzzles-selected', {
               totalCount: puzzles.length,
               selectedCount: input.selected?.length ?? 0,

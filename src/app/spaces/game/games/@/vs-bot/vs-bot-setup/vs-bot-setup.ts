@@ -15,6 +15,7 @@ import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ScreenLayoutGameCoverArt } from '../../ui/screen-layout-game-cover-art'
 import type { PlayerType, VsBotInput } from '../vs-bot'
 import { Text } from '~/@/vdom/primitives/text'
+import { theme } from '~/@/ui/theme/theme'
 
 //
 //
@@ -75,7 +76,7 @@ type PlayerProp =
       t: 'user'
       userId: UserId | null
       playerLabel: TranslatedText
-      renderIcon: (input: { class: string }) => VDom
+      renderIcon: (input: { style: Record<string, unknown> }) => VDom
       onStartPlaying: () => void
       onStopPlaying: () => void
     }
@@ -83,9 +84,9 @@ type PlayerProp =
       t: 'bot'
 
       botLabel: TranslatedText
-      renderBotIcon: (input: { class: string }) => VDom
+      renderBotIcon: (input: { style: Record<string, unknown> }) => VDom
       playerLabel: TranslatedText
-      renderIcon: (input: { class: string }) => VDom
+      renderIcon: (input: { style: Record<string, unknown> }) => VDom
       onStartPlaying: () => void
       onStopPlaying: () => void
     }
@@ -148,7 +149,7 @@ export const View = ({
           renderBotIcon: bot.renderIcon,
         }
 
-  return h(Box, { class: 'flex flex-row w-full flex-1 flex-col' }, [
+  return h(Box, { style: theme({ flexDirection: 'col', width: 'full', flex: 1 }) }, [
     h(ScreenLayoutGameCoverArt, {
       id: 'vs-bot-setup',
       parentScreen: ctx.parentScreen,
@@ -161,26 +162,36 @@ export const View = ({
       },
       renderCoverArt,
       renderBody: () =>
-        h(Box, { class: 'flex w-full flex-col gap-2 p-4' }, [
-          h(Box, { class: 'grid w-full grid-cols-7' }, [
+        h(Box, { style: theme({ flexDirection: 'col', width: 'full', gap: 2, padding: 4 }) }, [
+          h(Box, { style: theme({ flexDirection: 'row', width: 'full', justifyContent: 'space-between' }) }, [
             h(PlayerIcons, { player: playerOneProp, ctx }),
-            h(Box, { class: 'col-span-1 grid place-items-center' }, [
-              h(Typography, {
-                class: 'flex h-full flex-1 flex-col items-center justify-center text-3xl font-black',
-                variant: 'title',
-                text: ctx.t('game.vs'),
-              }),
-            ]),
+            h(
+              Box,
+              { style: theme({ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }) },
+              [
+                h(Typography, {
+                  style: theme({
+                    flexDirection: 'col',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '3xl',
+                    fontWeight: 'black',
+                  }),
+                  variant: 'title',
+                  text: ctx.t('game.vs'),
+                }),
+              ],
+            ),
             h(PlayerIcons, { player: playerTwoProp, ctx }),
           ]),
 
-          h(Box, { class: 'grid w-full grid-cols-7' }, [
+          h(Box, { style: theme({ flexDirection: 'row', width: 'full', justifyContent: 'space-between' }) }, [
             h(PlayerLabels, { player: playerOneProp, ctx }),
-            h(Box, { class: 'col-span-1' }),
+            h(Box, { style: theme({ flex: 1 }) }),
             h(PlayerLabels, { player: playerTwoProp, ctx }),
           ]),
 
-          h(Box, { class: 'mt-2 grid w-full grid-cols-7' }, [
+          h(Box, { style: theme({ flexDirection: 'row', width: 'full', justifyContent: 'space-between' }) }, [
             h(PlayerButtons, {
               onSwapSides,
               dispatch,
@@ -188,7 +199,7 @@ export const View = ({
               player: playerOneProp,
               ctx,
             }),
-            h(Box, { class: 'col-span-1' }),
+            h(Box, { style: theme({ flex: 1 }) }),
             h(PlayerButtons, {
               onSwapSides,
               dispatch,
@@ -201,7 +212,7 @@ export const View = ({
     }),
 
     ctx.currentUser.userId === ctx.space.hostId &&
-      h(Box, { class: 'flex flex-row items-center gap-4 p-4' }, [
+      h(Box, { style: theme({ flexDirection: 'row', alignItems: 'center', gap: 4, padding: 4 }) }, [
         h(Button, {
           disabled: !canStartGame,
           variant: 'contained',
@@ -248,12 +259,21 @@ export const View = ({
                 Clickable,
                 {
                   key: botLevel.label,
-                  class: 'flex flex-row w-full items-center gap-3 p-4 text-left text-xl font-bold',
+                  style: theme({
+                    flexDirection: 'row',
+                    width: 'full',
+                    alignItems: 'center',
+                    gap: 3,
+                    padding: 4,
+                    textAlign: 'left',
+                    fontSize: 'xl',
+                    fontWeight: 'bold',
+                  }),
                   onPress,
                 },
                 [
                   botLevel.renderIcon({
-                    class: 'w-10 h-10',
+                    style: theme({ width: 10, height: 10 }),
                   }),
                   h(Text, { text: botLevel.label }),
                 ],
@@ -266,44 +286,57 @@ export const View = ({
 }
 
 const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
-  return h(Box, { class: 'col-span-3 grid grid-cols-2 place-items-center' }, [
+  return h(Box, { style: theme({ flex: 1, flexDirection: 'row', justifyContent: 'center', gap: 2 }) }, [
     player.t === 'bot'
       ? player.renderBotIcon({
-          class: 'h-14 w-14',
+          style: theme({ height: 14, width: 14 }),
         })
       : player.userId
         ? h(Avatar, {
-            class: 'h-14 w-14',
+            style: theme({ height: 14, width: 14 }),
             src: UserProfile.toAvatarUrl(ctx.profilesByUserId[player.userId]),
           })
         : h(
             ClickablePaper,
             {
               role: 'button',
-              class: 'grid h-14 w-14 place-items-center overflow-hidden rounded-full',
+              style: theme({
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: 14,
+                width: 14,
+                overflow: 'hidden',
+                rounded: 'full',
+              }),
               onPress: player.onStartPlaying,
             },
-            [h(IconQuestionMark, { class: 'text-secondary h-10 w-10' })],
+            [h(IconQuestionMark, { style: theme({ height: 10, width: 10, textColor: 'neutral-500' }) })],
           ),
     player.renderIcon({
-      class: 'w-14 h-14',
+      style: theme({ width: 14, height: 14 }),
     }),
   ])
 }
 
 const PlayerLabels = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
   const profile = player.t === 'user' && player.userId ? ctx.profilesByUserId[player.userId] : null
-  return h(Box, { class: 'col-span-3 grid grid-cols-2 place-items-center' }, [
+  return h(Box, { style: theme({ flex: 1, flexDirection: 'row', justifyContent: 'center', gap: 2 }) }, [
     h(Typography, {
       variant: 'label',
       color: 'text-secondary',
-      class: 'w-full overflow-hidden text-center text-sm text-ellipsis whitespace-nowrap',
+      style: theme({
+        width: 'full',
+        overflow: 'hidden',
+        textAlign: 'center',
+        fontSize: 'sm',
+      }),
       text: player.t === 'bot' ? player.botLabel : profile ? ctx.t('username', profile.username) : ctx.t('?'),
     }),
     h(Typography, {
       color: 'text-secondary',
       variant: 'label',
-      class: 'text-center text-sm',
+      style: theme({ textAlign: 'center', fontSize: 'sm' }),
       text: player.playerLabel,
     }),
   ])
@@ -322,7 +355,7 @@ const PlayerButtons = ({
   player: PlayerProp
   dispatch: (m: Msg) => void
 }) => {
-  return h(Box, { class: 'col-span-3 flex flex-col gap-2' }, [
+  return h(Box, { style: theme({ flex: 1, flexDirection: 'col', gap: 2 }) }, [
     !human.userId &&
       h(Button, {
         onPress: player.onStartPlaying,

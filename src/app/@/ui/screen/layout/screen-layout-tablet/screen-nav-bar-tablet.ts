@@ -34,7 +34,7 @@ export const ScreenNavBarTablet = (input: {
             render: () =>
               IconButton({
                 onPress: input.back?.onPress,
-                style: theme({ px: 2 }),
+                style: theme({ paddingX: 2 }),
                 size: 'lg',
                 label: input.ctx.t('app.exit'),
                 renderIcon: (inputIcon) => IconArrowLeft(inputIcon),
@@ -48,7 +48,7 @@ export const ScreenNavBarTablet = (input: {
       input.title &&
         h(Typography, {
           role: 'heading',
-          style: theme({ overflow: 'hidden', padding: 2, textSize: '3xl', fontWeight: 'bold' }),
+          style: theme({ overflow: 'hidden', padding: 2, fontSize: '3xl', fontWeight: 'bold' }),
           variant: 'title',
           text: input.title,
         }),

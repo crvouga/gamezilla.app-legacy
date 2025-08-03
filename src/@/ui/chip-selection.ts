@@ -44,8 +44,8 @@ export const ChipSelection = <T>({
             role: 'button',
             style: {
               ...theme({
-                px: 5,
-                py: 2,
+                paddingX: 5,
+                paddingY: 2,
                 rounded: 'full',
                 borderWidth: 1,
                 ...(value === option.value

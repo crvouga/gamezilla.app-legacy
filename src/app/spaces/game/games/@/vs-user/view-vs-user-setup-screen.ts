@@ -11,8 +11,9 @@ import type { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ScreenLayoutGameCoverArt } from '../ui/screen-layout-game-cover-art'
+import { theme } from '~/@/ui/theme/theme'
 
-type IconProps = { class: string }
+type IconProps = { style: Record<string, unknown> }
 
 type PlayerProp = {
   label: TranslatedText
@@ -31,35 +32,43 @@ const VersusSection = ({
   playerTwo: PlayerProp
   ctx: SpaceFrontendCtx
 }) => {
-  return h(Box, { class: 'flex w-full flex-col gap-2 p-4' }, [
-    h(Box, { class: 'grid w-full grid-cols-7' }, [
-      h(PlayerIcons, { player: playerOne, ctx }),
+  return h(Box, { style: theme({ flexDirection: 'col', width: 'full', gap: 2, padding: 4 }) }, [
+    h(Box, { style: theme({ width: 'full', gap: 2 }) }, [
+      h(Box, { style: theme({ flex: 3 }) }, [h(PlayerIcons, { player: playerOne, ctx })]),
 
-      h(Box, { class: 'col-span-1' }, [
+      h(Box, { style: theme({ flex: 1 }) }, [
         h(Typography, {
           text: ctx.t('game.vs'),
           variant: 'title',
-          class: 'flex h-full flex-1 flex-col items-center justify-center text-3xl font-black',
+          style: theme({
+            height: 'full',
+            flex: 1,
+            flexDirection: 'col',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '3xl',
+            fontWeight: 'black',
+          }),
         }),
       ]),
 
-      h(PlayerIcons, { player: playerTwo, ctx }),
+      h(Box, { style: theme({ flex: 3 }) }, [h(PlayerIcons, { player: playerTwo, ctx })]),
     ]),
 
-    h(Box, { class: 'grid w-full grid-cols-7' }, [
-      h(PlayerLabels, { player: playerOne, ctx }),
+    h(Box, { style: theme({ width: 'full', gap: 2 }) }, [
+      h(Box, { style: theme({ flex: 3 }) }, [h(PlayerLabels, { player: playerOne, ctx })]),
 
-      h(Box, { class: 'col-span-1' }),
+      h(Box, { style: theme({ flex: 1 }) }),
 
-      h(PlayerLabels, { player: playerTwo, ctx }),
+      h(Box, { style: theme({ flex: 3 }) }, [h(PlayerLabels, { player: playerTwo, ctx })]),
     ]),
 
-    h(Box, { class: 'mt-2 grid w-full grid-cols-7' }, [
-      h(PlayerButtons, { player: playerOne, ctx }),
+    h(Box, { style: theme({ paddingTop: 2, width: 'full', gap: 2 }) }, [
+      h(Box, { style: theme({ flex: 3 }) }, [h(PlayerButtons, { player: playerOne, ctx })]),
 
-      h(Box, { class: 'col-span-1' }),
+      h(Box, { style: theme({ flex: 1 }) }),
 
-      h(PlayerButtons, { player: playerTwo, ctx }),
+      h(Box, { style: theme({ flex: 3 }) }, [h(PlayerButtons, { player: playerTwo, ctx })]),
     ]),
   ])
 }
@@ -69,7 +78,7 @@ export const VsUserSetup = {
 }
 
 const PlayerButtons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
-  return h(Box, { class: 'col-span-3 w-full' }, [
+  return h(Box, { style: theme({ width: 'full' }) }, [
     player.userId &&
       player.userId === ctx.currentUser.userId &&
       h(Button, {
@@ -95,13 +104,18 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
   return h(
     Box,
     {
-      class: 'col-span-3 grid w-full cursor-pointer grid-cols-2 place-items-center text-center',
+      style: theme({
+        width: 'full',
+        justifyContent: 'center',
+        gap: 2,
+        textAlign: 'center',
+      }),
       onPress: player.userId === ctx.currentUser.userId ? player.onStopPlaying : player.onStartPlaying,
     },
     [
       player.userId
         ? h(Avatar, {
-            class: 'h-14 w-14',
+            style: theme({ height: 14, width: 14 }),
             src: UserProfile.toAvatarUrl(ctx.profilesByUserId[player.userId]),
             alt: '',
           })
@@ -109,35 +123,62 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
             ClickablePaper,
             {
               role: 'button',
-              class: 'grid h-14 w-14 place-items-center overflow-hidden rounded-full',
+              style: theme({
+                height: 14,
+                width: 14,
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                rounded: 'full',
+              }),
               onPress: player.onStartPlaying,
             },
-            [h(IconQuestionMark, { class: 'text-secondary h-10 w-10' })],
+            [h(IconQuestionMark, { style: theme({ textColor: 'neutral-500', height: 10, width: 10 }) })],
           ),
 
       player.renderIcon({
-        class: 'h-14 w-14',
+        style: theme({ height: 14, width: 14 }),
       }),
     ],
   )
 }
 
 const PlayerLabels = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
-  return h(Box, { class: 'col-span-3 grid w-full grid-cols-2 place-items-center text-center text-sm' }, [
-    h(Typography, {
-      class: 'w-full overflow-hidden text-center text-ellipsis whitespace-nowrap',
-      text: TranslatedText.of(player.userId ? (ctx.profilesByUserId[player.userId]?.username ?? '...') : '?'),
-      variant: 'body',
-      color: 'text-secondary',
-    }),
+  return h(
+    Box,
+    {
+      style: theme({
+        width: 'full',
+        justifyContent: 'center',
+        gap: 2,
+        textAlign: 'center',
+        fontSize: 'sm',
+      }),
+    },
+    [
+      h(Typography, {
+        style: theme({
+          flex: 1,
+          overflow: 'hidden',
+          textAlign: 'center',
+        }),
+        text: TranslatedText.of(player.userId ? (ctx.profilesByUserId[player.userId]?.username ?? '...') : '?'),
+        variant: 'body',
+        color: 'text-secondary',
+      }),
 
-    h(Typography, {
-      color: 'text-secondary',
-      class: 'w-full overflow-hidden text-center text-ellipsis whitespace-nowrap',
-      text: player.label,
-      variant: 'body',
-    }),
-  ])
+      h(Typography, {
+        color: 'text-secondary',
+        style: theme({
+          flex: 1,
+          overflow: 'hidden',
+          textAlign: 'center',
+        }),
+        text: player.label,
+        variant: 'body',
+      }),
+    ],
+  )
 }
 
 export const VsUserSetupScreen = ({
@@ -159,32 +200,56 @@ export const VsUserSetupScreen = ({
   onQuit: () => void
   canStartGame?: boolean
 }) => {
-  return h(Box, { class: 'flex h-full w-full flex-1 flex-col overflow-hidden' }, [
-    h(ScreenLayoutGameCoverArt, {
-      id: 'vs-user-setup',
-      parentScreen: ctx.parentScreen,
-      ctx: ctx,
-      navBar: {
-        title,
-        back: {
-          onPress: onQuit,
+  return h(
+    Box,
+    {
+      style: theme({
+        height: 'full',
+        width: 'full',
+        flex: 1,
+        flexDirection: 'col',
+        overflow: 'hidden',
+      }),
+    },
+    [
+      h(ScreenLayoutGameCoverArt, {
+        id: 'vs-user-setup',
+        parentScreen: ctx.parentScreen,
+        ctx: ctx,
+        navBar: {
+          title,
+          back: {
+            onPress: onQuit,
+          },
         },
-      },
-      renderCoverArt: renderCoverArt,
-      renderBody: () => h(VersusSection, { playerOne, playerTwo, ctx }),
-    }),
+        renderCoverArt: renderCoverArt,
+        renderBody: () => h(VersusSection, { playerOne, playerTwo, ctx }),
+      }),
 
-    ctx.currentUser.userId === ctx.space.hostId &&
-      h(Box, { class: 'flex flex-row w-full items-center gap-4 p-4' }, [
-        h(Button, {
-          width: 'full',
-          disabled: !canStartGame,
-          variant: 'contained',
-          color: 'primary',
-          class: 'flex-1',
-          onPress: onStartGame,
-          text: ctx.t('game.start-game'),
-        }),
-      ]),
-  ])
+      ctx.currentUser.userId === ctx.space.hostId &&
+        h(
+          Box,
+          {
+            style: theme({
+              flexDirection: 'row',
+              width: 'full',
+              alignItems: 'center',
+              gap: 4,
+              padding: 4,
+            }),
+          },
+          [
+            h(Button, {
+              width: 'full',
+              disabled: !canStartGame,
+              variant: 'contained',
+              color: 'primary',
+              style: theme({ flex: 1 }),
+              onPress: onStartGame,
+              text: ctx.t('game.start-game'),
+            }),
+          ],
+        ),
+    ],
+  )
 }

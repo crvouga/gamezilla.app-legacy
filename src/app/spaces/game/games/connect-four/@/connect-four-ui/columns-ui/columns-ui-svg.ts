@@ -1,4 +1,4 @@
-import { cn } from '~/@/ui/cn'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Circle } from '~/@/vdom/primitives/svg/circle'
 import { Defs } from '~/@/vdom/primitives/svg/defs'
@@ -63,14 +63,6 @@ export const ViewColumnsSvg = ({ id, columns, onPress, disabled, model }: ViewCo
       h(ViewWins, { model, columns }),
       ...[...new Array(COLUMN_COUNT)].map((_, columnIndex) =>
         h(Rect, {
-          class: cn(
-            disabled || !onPress
-              ? undefined
-              : (columns[columnIndex]?.length ?? 0) >= MAX_COLUMN_HEIGHT
-                ? 'cursor-not-allowed'
-                : 'cursor-pointer',
-          ),
-
           onPress: () => {
             if (!disabled && isColumnIndex(columnIndex) && onPress) {
               onPress(columnIndex)
@@ -129,7 +121,7 @@ const ViewWins = ({ model }: { model?: Model; columns: Columns }) => {
           stroke: 'transparent',
           fill: 'transparent',
           'stroke-width': n / 8,
-          class: 'pointer-events-none',
+          style: theme({ pointerEvents: 'none' }),
         }),
       ]
     }),
