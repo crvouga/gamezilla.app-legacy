@@ -103,7 +103,7 @@ const ViewChooseLangMenuItem = (input: {
     primary: TranslatedText.of(primary),
     renderEnd: () => h(Box, {}, [h(Text, { class: 'text-white text-lg', text: input.ctx.t(input.langCode) })]),
     onPress: () => input.dispatch({ t: 'lang.clicked-lang', lang: input.langCode }),
-    renderIcon: (inputIcon) => h(RadioInputIcon, { ...inputIcon, status: toStatus(input) }),
+    renderIcon: (iconProps) => h(RadioInputIcon, { ...iconProps, status: toStatus(input) }),
   })
 }
 

@@ -1,9 +1,12 @@
 import { Fragment, render } from 'preact'
 import { createElement } from 'preact/compat'
-import { PrimitiveProps } from '../primitive-props'
-import { BOX_TAG, CANVAS_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
+import { ensureArray } from '~/@/array/ensure-array'
+import { CANVAS_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
-import { updateSafeAreaProps, updateScrollBoxProps } from './web'
+import { inPlaceMapPropsToWebProps } from './web/map-props-to-web-props'
+import { WebCanvas } from './web/web-canvas'
+import { WebSafeAreaBox } from './web/web-safe-area-box'
+import { WebScrollBox } from './web/web-scroll-box'
 
 export type ImplPreact = {
   t: 'preact'
@@ -15,30 +18,22 @@ const init = (_config: ImplPreact): IVirtualDomEngine => {
       render(vDom as any, node)
     },
     createElement: (tag: any, props: any, children: any) => {
-      props = PrimitiveProps.intoWebStandard(props)
-      children = normalizeChildren(children)
-
+      inPlaceMapPropsToWebProps(props)
+      children = ensureArray(children)
       switch (tag) {
         case FRAGMENT_TAG:
           return createElement(Fragment, props, ...children) as any
         case SCROLL_BOX_TAG:
-          updateScrollBoxProps(props)
-          return createElement(BOX_TAG, props, children) as any
+          return createElement(WebScrollBox, props, children) as any
         case SAFE_AREA_BOX_TAG:
-          updateSafeAreaProps(props)
-          return createElement(BOX_TAG, props, children) as any
+          return createElement(WebSafeAreaBox, props, children) as any
         case CANVAS_TAG:
-          // @ts-expect-error
-          return createElement(CanvasWebComponent, props, children) as any
+          return createElement(WebCanvas, props, children) as any
         default:
           return createElement(tag, props, ...children) as any
       }
     },
   }
-}
-
-const normalizeChildren = (children: unknown) => {
-  return Array.isArray(children) ? children : children ? [children] : []
 }
 
 export const ImplPreact = {

@@ -1,4 +1,15 @@
-export function editDistance(s1: string, s2: string): number {
+/**
+ * Calculates the Levenshtein distance between two strings
+ * @param s1 The first string
+ * @param s2 The second string
+ * @returns The minimum number of single-character edits required to change s1 into s2
+ * @example
+ * editDistance('cat', 'cut') // returns 1
+ * editDistance('kitten', 'sitting') // returns 3
+ * editDistance('sunday', 'saturday') // returns 3
+ * editDistance('', 'hello') // returns 5
+ */
+export const editDistance = (s1: string, s2: string): number => {
   const m = s1.length
   const n = s2.length
   const dp: number[][] = []

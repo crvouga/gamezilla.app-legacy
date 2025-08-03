@@ -4,16 +4,16 @@ import { Spinner } from './spinner'
 
 export type RadioInputStatus = 'loading' | 'selected' | 'unselected'
 
-export const RadioInputIcon = (input: { fill?: string; stroke?: string; class: string; status: RadioInputStatus }) => {
-  switch (input.status) {
+export const RadioInputIcon = (props: { style: Record<string, unknown>; status: RadioInputStatus }) => {
+  switch (props.status) {
     case 'loading': {
-      return h(Spinner, { ...input, iconClass: input.class })
+      return h(Spinner, props)
     }
     case 'selected': {
-      return h(IconCheckmarkCircle, input)
+      return h(IconCheckmarkCircle, props)
     }
     case 'unselected': {
-      return h(IconCircle, input)
+      return h(IconCircle, props)
     }
   }
 }

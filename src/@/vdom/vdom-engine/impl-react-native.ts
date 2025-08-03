@@ -1,4 +1,3 @@
-import { GLView } from 'expo-gl'
 import { cssInterop } from 'nativewind'
 import { createElement, Fragment } from 'react'
 import { Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
@@ -19,7 +18,7 @@ import Svg, {
   Stop,
   Text as SvgText,
 } from 'react-native-svg'
-import { PrimitiveProps } from '../primitive-props'
+import { ensureArray } from '~/@/array/ensure-array'
 import {
   BOX_TAG,
   CANVAS_TAG,
@@ -47,7 +46,9 @@ import {
   TRANSITION_ELEMENT_TAG,
 } from '../tags'
 import { IVirtualDomEngine } from './interface'
-import { normalizeChildren, normalizePropsInPlace } from './react'
+import { inPlaceMapPropsToReactNativeProps } from './react-native/map-props-to-react-native-props'
+import { inPlaceMapPropsToReactProps } from './react/map-props-to-react-props'
+import { ReactNativeCanvas } from './react-native/react-native-canvas'
 
 cssInterop(Svg, {
   className: {
@@ -202,14 +203,21 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
       return createElement(Text, {}, ['Not implemented'])
     },
     createElement: (tag: any, props: any, children: any) => {
-      // Only sanitize props for primitive components
-      props = PrimitiveProps.intoReactNativeStandard(props)
-      normalizePropsInPlace(props, tag)
-      if (tag === PRESSABLE_TAG || tag === BOX_TAG || tag === TEXT_TAG || tag === TEXT_INPUT_TAG) {
-        props = sanitizeProps(props)
+      inPlaceMapPropsToReactNativeProps(props)
+      inPlaceMapPropsToReactProps(props, tag)
+
+      switch (tag) {
+        case PRESSABLE_TAG:
+        case BOX_TAG:
+        case TEXT_TAG:
+        case TEXT_INPUT_TAG:
+          props = sanitizeProps(props)
+          break
+        default:
+          break
       }
 
-      children = normalizeChildren(children)
+      children = ensureArray(children)
 
       switch (tag) {
         case PRESSABLE_TAG:
@@ -227,16 +235,7 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
         case IMAGE_TAG:
           return createElement(Image, props, ...children) as any
         case CANVAS_TAG:
-          return createElement(
-            GLView,
-            {
-              ...props,
-              onContextCreate: (g) => {
-                props.onCreateContext(g)
-              },
-            },
-            ...children,
-          ) as any
+          return createElement(ReactNativeCanvas as any, props, ...children) as any
         case SVG_TAG:
           return createElement(Svg, props, ...children) as any
         case SVG_TEXT_TAG:

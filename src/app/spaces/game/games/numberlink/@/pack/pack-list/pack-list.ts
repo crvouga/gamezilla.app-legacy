@@ -3,7 +3,6 @@ import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
-import { Clickable } from '~/@/ui/clickable'
 import { EmptyState } from '~/@/ui/empty-state'
 import { IconBox } from '~/@/ui/icon'
 import { SpinnerBlock } from '~/@/ui/spinner-block'
@@ -11,6 +10,7 @@ import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
+import { Pressable } from '~/@/vdom/primitives/pressable'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import type { Pack } from '../pack'
@@ -58,29 +58,46 @@ const View = (input: {
 
 const ViewPackMenuItem = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pack; onPress: () => void }) => {
   return h(
-    Clickable,
+    Pressable,
     {
       onPress: input.onPress,
       style: theme({
         flexDirection: 'row',
         width: 'full',
         flexShrink: 0,
-        items: 'center',
-        justify: 'space-between',
+        alignItems: 'center',
+        justifyContent: 'space-between',
         gap: 6,
         overflow: 'hidden',
         px: 4,
-        py: 6,
         textAlign: 'left',
+        height: 20,
       }),
       role: 'menuitem',
     },
     [
       false && h(IconBox, { style: theme({ flexShrink: 0, size: 9 }) }),
-      h(Box, { style: theme({ flex: 1, flexDirection: 'col', overflow: 'hidden' }) }, [
-        h(Typography, { text: TranslatedText.of(input.pack.name), variant: 'body' }),
-        h(Typography, { text: toMenuItemSecondaryText(input), variant: 'subtitle', color: 'text-secondary' }),
-      ]),
+      h(
+        Box,
+        {
+          style: theme({
+            flex: 1,
+            flexDirection: 'col',
+            overflow: 'hidden',
+          }),
+        },
+        [
+          h(Typography, {
+            text: TranslatedText.of(input.pack.name),
+            variant: 'body',
+          }),
+          h(Typography, {
+            text: toMenuItemSecondaryText(input),
+            variant: 'subtitle',
+            color: 'text-secondary',
+          }),
+        ],
+      ),
       h(Typography, {
         text: input.ctx.t('game.numberlink.puzzle-count', input.pack.puzzleIds.length),
         variant: 'body',

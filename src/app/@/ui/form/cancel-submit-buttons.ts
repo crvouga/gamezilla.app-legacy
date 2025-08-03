@@ -22,8 +22,8 @@ export const CancelSubmitButtons = (input: {
       // class: 'flex flex-row w-full items-center gap-4 px-6 pt-4 pb-6',
       style: theme({
         flexDirection: 'row',
-        items: 'center',
-        justify: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
         width: 'full',
         gap: 4,
         pt: 4,

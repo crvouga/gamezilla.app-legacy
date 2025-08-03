@@ -7,7 +7,7 @@ import { theme } from './theme/theme'
 import { Typography } from './typography'
 
 export type MenuItemProps = {
-  renderIcon?: (input: { class: string; width: number; height: number; fill: string; stroke: string }) => VDom
+  renderIcon?: (input: { style: Record<string, unknown> }) => VDom
   renderEnd?: (input: { style: Record<string, unknown> }) => VDom
   primary: TranslatedText
   secondary?: TranslatedText
@@ -21,7 +21,7 @@ export const MenuItem = (props: MenuItemProps) => {
   const baseStyle = theme({
     flexDirection: 'row',
     width: 'full',
-    items: 'center',
+    alignItems: 'center',
     overflow: 'hidden',
     height: 16,
     px: 4,
@@ -55,7 +55,7 @@ export const MenuItem = (props: MenuItemProps) => {
           {
             style: theme({
               flexDirection: 'row',
-              items: 'center',
+              alignItems: 'center',
               gap: 2,
             }),
           },
@@ -74,7 +74,7 @@ export const MenuItem = (props: MenuItemProps) => {
 
 const MenuItemContent = (input: {
   primary: TranslatedText
-  renderIcon?: (input: { class: string; width: number; height: number; fill: string; stroke: string }) => VDom
+  renderIcon?: (input: { style: Record<string, unknown> }) => VDom
   end?: () => VDom
   secondary?: TranslatedText
 }) => {
@@ -85,18 +85,14 @@ const MenuItemContent = (input: {
         height: 'full',
         flexDirection: 'row',
         flex: 1,
-        items: 'center',
+        alignItems: 'center',
         gap: 3,
         overflow: 'hidden',
       }),
     },
     [
       input.renderIcon?.({
-        class: 'size-8',
-        width: 24,
-        height: 24,
-        fill: '#fff',
-        stroke: '#fff',
+        style: theme({ size: 8 }),
       }),
       h(
         Box,

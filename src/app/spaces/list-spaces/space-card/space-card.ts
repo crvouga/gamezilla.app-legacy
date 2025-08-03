@@ -53,48 +53,62 @@ const ViewRoot = (input: { onPress?: () => void; children?: VDom }) => {
 }
 
 const ViewLiveIndicator = (input: { ctx: AppFrontendCtxBase }) => {
-  return h(Box, { style: theme({ flexDirection: 'row', items: 'center', justify: 'flex-start', gap: 2 }) }, [
-    h(Typography, {
-      variant: 'label',
-      style: theme({ flex: 1, textColor: 'white', fontWeight: 'bold', textSize: 'lg' }),
-      text: input.ctx.t('space-card.live'),
-    }),
-  ])
+  return h(
+    Box,
+    { style: theme({ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 2 }) },
+    [
+      h(Typography, {
+        variant: 'label',
+        style: theme({ flex: 1, textColor: 'white', fontWeight: 'bold', textSize: 'lg' }),
+        text: input.ctx.t('space-card.live'),
+      }),
+    ],
+  )
 }
 
 const ViewSpaceCardGame = (input: { gameName: GameName | null; ctx: AppFrontendCtxBase }) => {
   if (!input.gameName) return null
 
-  return h(Box, { style: theme({ flexDirection: 'row', items: 'center', justify: 'flex-start', gap: 2 }) }, [
-    h(GameCoverArt, {
-      rounded: true,
-      style: theme({ width: 12, height: 12 }),
-      gameName: input.gameName,
-      platform: input.ctx.platform,
-    }),
-    h(Typography, {
-      variant: 'body',
-      style: theme({ textSize: 'lg', fontWeight: 'normal' }),
-      text: input.ctx.t(input.gameName),
-    }),
-  ])
+  return h(
+    Box,
+    { style: theme({ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 2 }) },
+    [
+      h(GameCoverArt, {
+        rounded: true,
+        style: theme({ width: 12, height: 12 }),
+        gameName: input.gameName,
+        platform: input.ctx.platform,
+      }),
+      h(Typography, {
+        variant: 'body',
+        style: theme({ textSize: 'lg', fontWeight: 'normal' }),
+        text: input.ctx.t(input.gameName),
+      }),
+    ],
+  )
 }
 
 const ViewSpaceCardHost = (input: { host?: UserProfile | null; ctx: AppFrontendCtxBase }) => {
   return h(
     Box,
-    { style: theme({ flexDirection: 'row', items: 'center', justify: 'flex-start', gap: 2, width: 'full' }) },
+    {
+      style: theme({ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 2, width: 'full' }),
+    },
     [
       h(Avatar, { src: UserProfile.toAvatarUrl(input.host), alt: 'avatar', style: theme({ width: 12, height: 12 }) }),
-      h(Box, { style: theme({ flexDirection: 'row', flex: 1, items: 'center', justify: 'flex-start', gap: 2 }) }, [
-        input.host &&
-          h(Typography, {
-            variant: 'body',
-            style: theme({ textSize: 'lg', fontWeight: 'normal' }),
-            text: input.ctx.t('username', input.host.username),
-          }),
-        h(ViewHostChip, { ctx: input.ctx }),
-      ]),
+      h(
+        Box,
+        { style: theme({ flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'flex-start', gap: 2 }) },
+        [
+          input.host &&
+            h(Typography, {
+              variant: 'body',
+              style: theme({ textSize: 'lg', fontWeight: 'normal' }),
+              text: input.ctx.t('username', input.host.username),
+            }),
+          h(ViewHostChip, { ctx: input.ctx }),
+        ],
+      ),
       input.ctx.currentUser?.userId === input.host?.id && h(ViewYouChip, { ctx: input.ctx }),
     ],
   )
@@ -103,43 +117,47 @@ const ViewSpaceCardHost = (input: { host?: UserProfile | null; ctx: AppFrontendC
 const ViewSpaceCardUsers = (input: { users: UserProfile[]; ctx: AppFrontendCtxBase }) => {
   if (input.users.length <= 1) return null
 
-  return h(Box, { style: theme({ flexDirection: 'row', items: 'center', justify: 'flex-start', gap: 2 }) }, [
-    h(Box, { style: theme({ flexDirection: 'row', items: 'center' }) }, [
-      ...input.users.slice(0, MAX_AVATAR_COUNT).map((user, index) =>
-        h(Avatar, {
-          key: user.username,
-          src: UserProfile.toAvatarUrl(user),
-          alt: 'avatar',
-          style: theme({ width: 8, height: 8, ...(index !== 0 && { pl: -2 }) }),
-        }),
-      ),
-      input.users.length > MAX_AVATAR_COUNT &&
-        h(
-          Box,
-          {
-            style: theme({
-              pl: -2,
-              flexDirection: 'row',
-              width: 8,
-              height: 8,
-              items: 'center',
-              justify: 'center',
-              rounded: 'full',
-              backgroundColor: 'white/30',
-            }),
-          },
-          [
-            h(Typography, {
-              variant: 'label',
-              text: input.ctx.t('app.+number', input.users.length - MAX_AVATAR_COUNT),
-            }),
-          ],
+  return h(
+    Box,
+    { style: theme({ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 2 }) },
+    [
+      h(Box, { style: theme({ flexDirection: 'row', alignItems: 'center' }) }, [
+        ...input.users.slice(0, MAX_AVATAR_COUNT).map((user, index) =>
+          h(Avatar, {
+            key: user.username,
+            src: UserProfile.toAvatarUrl(user),
+            alt: 'avatar',
+            style: theme({ width: 8, height: 8, ...(index !== 0 && { pl: -2 }) }),
+          }),
         ),
-    ]),
-    h(Typography, {
-      variant: 'body',
-      style: theme({ textSize: 'lg', fontWeight: 'normal' }),
-      text: input.ctx.t('space-card.people-count', input.users.length),
-    }),
-  ])
+        input.users.length > MAX_AVATAR_COUNT &&
+          h(
+            Box,
+            {
+              style: theme({
+                pl: -2,
+                flexDirection: 'row',
+                width: 8,
+                height: 8,
+                alignItems: 'center',
+                justifyContent: 'center',
+                rounded: 'full',
+                backgroundColor: 'white/30',
+              }),
+            },
+            [
+              h(Typography, {
+                variant: 'label',
+                text: input.ctx.t('app.+number', input.users.length - MAX_AVATAR_COUNT),
+              }),
+            ],
+          ),
+      ]),
+      h(Typography, {
+        variant: 'body',
+        style: theme({ textSize: 'lg', fontWeight: 'normal' }),
+        text: input.ctx.t('space-card.people-count', input.users.length),
+      }),
+    ],
+  )
 }

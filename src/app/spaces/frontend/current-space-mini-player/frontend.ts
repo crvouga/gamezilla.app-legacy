@@ -111,7 +111,7 @@ const ViewActionButton = (props: {
   ctx: AppFrontendCtx
   dispatch: (msg: MsgFrontend) => void
 }) => {
-  return h(Box, { style: theme({ flexDirection: 'row', justify: 'flex-end', items: 'center' }) }, [
+  return h(Box, { style: theme({ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }) }, [
     props.isCurrentUserHost
       ? h(IconButton, {
           renderIcon: (iconInput) => h(IconXMark, iconInput),
@@ -169,7 +169,7 @@ const View = (input: {
           flex: 1,
           overflow: 'hidden',
           rounded: 'lg',
-          items: 'center',
+          alignItems: 'center',
           gap: 4,
         }),
         onPress: () => input.dispatch({ t: 'current-space-bar.clicked-current-space-bottom-bar' }),

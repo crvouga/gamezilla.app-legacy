@@ -171,7 +171,7 @@ const view = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction |
 
   return {
     id: input.ctx.t('app.people'),
-    icon: (inputIcon) => h(IconUserGroup, inputIcon),
+    renderIcon: (iconProps) => h(IconUserGroup, iconProps),
     label: input.ctx.t('spaces.people-count', peopleCount),
     onPress: () => input.dispatch({ t: 'people-action.clicked-people-action' }),
     badge: peopleCount > 1 ? peopleCount : undefined,

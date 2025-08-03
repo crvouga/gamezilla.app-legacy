@@ -1,5 +1,4 @@
 import { AriaRole } from '../html/aria-role'
-import { Theme } from '../ui/theme/theme'
 import { VDom } from './vdom'
 
 export type PrimitiveProps = {
@@ -34,65 +33,6 @@ export type PrimitiveProps = {
   'data-error'?: boolean
   'data-warning'?: boolean
   'data-success'?: boolean
-  //
-  // [key: string]: unknown
 }
 
-const intoWebStandard = (props: PrimitiveProps) => {
-  if (props.onPress) {
-    ;(props as any).onClick = props.onPress
-  }
-  if (props.onPressIn) {
-    ;(props as any).onPointerDown = props.onPressIn
-  }
-  if (props.onPressOut) {
-    ;(props as any).onPointerUp = props.onPressOut
-    ;(props as any).onPointerCancel = props.onPressOut
-  }
-  if (props.onChangeText) {
-    ;(props as any).onInput = (e: unknown) => {
-      let value = ''
-      if (value.length === 0) value = unknownToCurrentTargetValue(e) ?? ''
-      if (value.length === 0) value = unknownToData(e) ?? ''
-
-      props.onChangeText?.(value)
-    }
-  }
-  if (props.style) {
-    Theme.normalizeToWebStandard(props.style as Record<string, string | number | null>)
-  }
-  return props
-}
-
-const unknownToData = (e: unknown): string | null => {
-  if (typeof e === 'object' && e !== null && 'data' in e && typeof e.data === 'string') {
-    return e.data.trim()
-  }
-  return null
-}
-
-const unknownToCurrentTargetValue = (e: unknown): string | null => {
-  if (
-    e instanceof Event &&
-    'currentTarget' in e &&
-    typeof e.currentTarget === 'object' &&
-    e.currentTarget !== null &&
-    'value' in e.currentTarget &&
-    typeof e.currentTarget.value === 'string'
-  ) {
-    return e.currentTarget.value.trim()
-  }
-  return null
-}
-
-const intoReactNativeStandard = (props: PrimitiveProps) => {
-  if (props.style) {
-    Theme.normalizeToReactNativeStandard(props.style as Record<string, string | number | null>)
-  }
-  return props
-}
-
-export const PrimitiveProps = {
-  intoWebStandard,
-  intoReactNativeStandard,
-}
+export const PrimitiveProps = {}

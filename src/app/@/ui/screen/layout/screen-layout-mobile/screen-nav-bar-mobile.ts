@@ -34,8 +34,8 @@ export const ScreenNavBarMobile = (input: {
       style: theme({
         height: 16,
         width: 'full',
-        items: 'center',
-        justify: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
         overflow: 'hidden',
         flexDirection: 'row',
         px: 3,
@@ -67,8 +67,8 @@ export const ScreenNavBarMobile = (input: {
             flex: 1,
             flexDirection: 'col',
             overflow: 'hidden',
-            items: 'center',
-            justify: 'center',
+            alignItems: 'center',
+            justifyContent: 'center',
           }),
         },
         [
@@ -83,8 +83,8 @@ export const ScreenNavBarMobile = (input: {
                 fontWeight: 'bold',
                 textAlign: 'center',
                 flexDirection: 'col',
-                items: 'center',
-                justify: 'center',
+                alignItems: 'center',
+                justifyContent: 'center',
               }),
             }),
 

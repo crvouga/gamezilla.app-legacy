@@ -109,7 +109,7 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
   return [
     {
       id: input.ctx.t('game.hint'),
-      icon: (input) => h(IconLightbulb, input),
+      renderIcon: (input) => h(IconLightbulb, input),
       label: input.ctx.t('game.hint'),
       onPress: () => input.dispatch({ t: 'dialog.clicked-open' }),
       testId: TEST_ID_HINT_CALCULATOR_ACTION,

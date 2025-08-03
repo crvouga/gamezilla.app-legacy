@@ -27,6 +27,7 @@ import {
   updateSpace,
 } from './vs-bot.types'
 import { Text } from '~/@/vdom/primitives/text'
+import { theme } from '~/@/ui/theme/theme'
 
 //
 //
@@ -384,11 +385,7 @@ export const View = ({
   const botSlot = h(Box, { class: 'flex flex-row w-full items-center gap-3 p-3' }, [
     h(IconRobot, { class: 'h-10 w-10' }),
     h(Box, { class: 'flex-1 text-lg' }, [h(Text, { text: ChessBotLevel.toString(model.spaceModel.botLevel) })]),
-    isBotTurn(model.spaceModel) &&
-      h(Spinner, {
-        class: 'h-10 w-10',
-        iconClass: 'h-10 w-10',
-      }),
+    isBotTurn(model.spaceModel) && h(Spinner, { style: { ...theme({ size: 10 }) } }),
   ])
 
   const userSlot = h(Box, { class: 'flex flex-row w-full items-center gap-3 p-3' }, [
@@ -444,7 +441,7 @@ export const View = ({
         actions: [
           {
             id: ctx.t('app.exit'),
-            icon: (props) => h(IconArrowLeft, props),
+            renderIcon: (props) => h(IconArrowLeft, props),
             label: ctx.t('app.exit'),
             onPress: onClose,
           },

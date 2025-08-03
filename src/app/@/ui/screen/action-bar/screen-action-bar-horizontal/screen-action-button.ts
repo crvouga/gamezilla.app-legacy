@@ -1,18 +1,18 @@
-import { ClickableTransparent } from '~/@/ui/clickable'
-import { cn } from '~/@/ui/cn'
 import { Spinner } from '~/@/ui/spinner'
+import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
+import { Pressable } from '~/@/vdom/primitives/pressable'
 import { ScreenAction } from '../screen-action-bar-props'
 
-export const ScreenActionButton = (input: ScreenAction & { class?: string; style?: Record<string, unknown> }) => {
+export const ScreenActionButton = (input: ScreenAction & { style?: Record<string, unknown> }) => {
   const isDisabled = input.disabled || input.loading
   const size = input.size ?? 'md'
   if (input.hidden) return null
-  const colorClasses = toColorClasses(input)
+  const colorStyles = toColorStyles(input)
   return h(
-    ClickableTransparent,
+    Pressable,
     {
       role: 'button',
       disabled: isDisabled,
@@ -20,36 +20,50 @@ export const ScreenActionButton = (input: ScreenAction & { class?: string; style
       'aria-label': input.label,
       'aria-hidden': input.hidden,
       onPress: input.onPress,
-      class: cn(
-        'relative flex flex-col items-center gap-0.5 font-normal h-16',
-        'disabled:cursor-not-allowed disabled:opacity-50',
-        colorClasses,
-        input.hidden ? 'hidden' : '',
-        input.classNames?.button,
-        toSizeClasses(size),
-        input.class,
-      ),
+      style: {
+        ...theme({
+          position: 'relative',
+          flexDirection: 'col',
+          alignItems: 'center',
+          gap: 0.5,
+          fontWeight: 'normal',
+        }),
+        ...colorStyles,
+        ...input.style,
+        ...(input.hidden ? { display: 'none' } : {}),
+        ...(isDisabled ? { cursor: 'not-allowed', opacity: 0.5 } : {}),
+        ...toSizeStyles(size),
+      },
     },
     [
       h(
         Box,
         {
-          class: cn(
-            'flex h-full w-full flex-col items-center justify-center gap-0.5 truncate',
-            input.loading ? 'opacity-0' : 'opacity-100',
-          ),
+          style: {
+            ...theme({
+              flexDirection: 'col',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 'full',
+              width: 'full',
+              gap: 0.5,
+            }),
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            opacity: input.loading ? 0 : 1,
+          },
         },
         [
-          input.icon({
-            class: cn(toIconSizeClasses(size), colorClasses),
-            fill: 'currentColor',
-            stroke: 'currentColor',
+          input.renderIcon({
+            style: {
+              ...toIconSizeStyles(size),
+              ...colorStyles,
+            },
           }),
           h(Typography, {
             variant: 'label',
             text: input.label,
-            class: cn(input.classNames?.label, colorClasses),
-            colorClassName: colorClasses,
+            style: colorStyles,
           }),
         ],
       ),
@@ -58,12 +72,19 @@ export const ScreenActionButton = (input: ScreenAction & { class?: string; style
         h(
           Box,
           {
-            class: 'absolute inset-0 flex flex-row h-full w-full items-center justify-center',
+            style: theme({
+              position: 'absolute',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 'full',
+              width: 'full',
+              inset: 0,
+            }),
           },
           [
             h(Spinner, {
-              class: toIconSizeClasses(size),
-              iconClass: toIconSizeClasses(size),
+              style: toIconSizeStyles(size),
             }),
           ],
         ),
@@ -71,35 +92,35 @@ export const ScreenActionButton = (input: ScreenAction & { class?: string; style
   )
 }
 
-const toColorClasses = (input: ScreenAction): string => {
+const toColorStyles = (input: ScreenAction): Record<string, unknown> => {
   switch (input.color) {
     case 'danger':
-      return 'text-red-500 fill-red-500 stroke-red-500'
+      return theme({ textColor: 'red-500' })
     case 'success':
-      return 'text-green-500 fill-green-500 stroke-green-500'
+      return theme({ textColor: 'green-500' })
     case 'selected':
-      return 'text-blue-500 fill-blue-500 stroke-blue-500'
+      return theme({ textColor: 'blue-500' })
     default:
-      return 'text-white fill-white stroke-white'
+      return theme({ textColor: 'white' })
   }
 }
 
-const toSizeClasses = (size: ScreenAction['size']): string => {
+const toSizeStyles = (size: ScreenAction['size']): Record<string, unknown> => {
   switch (size) {
     case 'sm':
-      return 'text-xs h-10'
+      return theme({ textSize: 'xs' })
     case 'md':
     default:
-      return 'text-sm h-12'
+      return theme({ textSize: 'sm' })
   }
 }
 
-const toIconSizeClasses = (size: ScreenAction['size']): string => {
+const toIconSizeStyles = (size: ScreenAction['size']): Record<string, unknown> => {
   switch (size) {
     case 'sm':
-      return 'w-5 h-5'
+      return theme({ size: 6 })
     case 'md':
     default:
-      return 'w-8 h-8'
+      return theme({ size: 8 })
   }
 }

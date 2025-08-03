@@ -2,31 +2,31 @@ import { h } from '~/@/vdom/h'
 import { Circle } from '../vdom/primitives/svg/circle'
 import { Path } from '../vdom/primitives/svg/path'
 import { Svg } from '../vdom/primitives/svg/svg'
-import { cn } from './cn'
 
 export type Props = {
   class?: string
   fill?: string
   stroke?: string
+  style?: Record<string, unknown>
   [key: string]: any
 }
 
-export const IconArrowRightCircle = (input: Props) => {
-  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 512 512', ...input }, [
+export const IconArrowRightCircle = (props: Props) => {
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 512 512', fill: 'currentColor', ...props }, [
     h(Path, {
       d: 'M0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM281 385c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l71-71L136 280c-13.3 0-24-10.7-24-24s10.7-24 24-24l182.1 0-71-71c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0L393 239c9.4 9.4 9.4 24.6 0 33.9L281 385z',
     }),
   ])
 }
 
-export const IconArrowDownShortWide = (input: Props) => {
+export const IconArrowDownShortWide = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 576 512',
       fill: 'currentColor',
-      ...input,
+      ...props,
     },
     [
       h(Path, {
@@ -36,13 +36,14 @@ export const IconArrowDownShortWide = (input: Props) => {
   )
 }
 
-export const IconArrowLeft = (input: Props) => {
+export const IconArrowLeft = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 448 512',
-      ...input,
+      fill: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -53,49 +54,73 @@ export const IconArrowLeft = (input: Props) => {
 }
 /**
  * 
- * @param input   <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='currentColor' {...input}>
+ * @param props   <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='currentColor' {...props}>
       <path d='M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 192 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l210.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128zM160 96c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 32C43 32 0 75 0 128L0 384c0 53 43 96 96 96l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l64 0z' />
     </svg>
  * @returns 
  */
-export const IconArrowRightOnRect = (input: Props) => {
-  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 512 512', ...input }, [
-    h(Path, {
-      d: 'M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 192 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l210.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128zM160 96c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 32C43 32 0 75 0 128L0 384c0 53 43 96 96 96l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l64 0z',
-    }),
-  ])
+export const IconArrowRightOnRect = (props: Props) => {
+  return h(
+    Svg,
+    {
+      xmlns: 'http://www.w3.org/2000/svg',
+      viewBox: '0 0 512 512',
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
+    },
+    [
+      h(Path, {
+        d: 'M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 192 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l210.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128zM160 96c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 32C43 32 0 75 0 128L0 384c0 53 43 96 96 96l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l64 0z',
+      }),
+    ],
+  )
 }
 
-export const IconArrowLeftOnRect = (input: Props) => {
-  return h(IconArrowRightOnRect, { ...input, class: cn(input.class, 'origin-center rotate-180deg') })
+export const IconArrowLeftOnRect = (props: Props) => {
+  return h(
+    Svg,
+    {
+      xmlns: 'http://www.w3.org/2000/svg',
+      viewBox: '0 0 512 512',
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
+    },
+    [
+      h(Path, {
+        d: 'M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 288 320 288c17.7 0 32-14.3 32-32s-14.3-32-32-32H109.3l73.4-73.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-128 128zM352 416c-17.7 0-32 14.3-32 32s14.3 32 32 32h64c53 0 96-43 96-96V128c0-53-43-96-96-96h-64c-17.7 0-32 14.3-32 32s14.3 32 32 32h64c17.7 0 32 14.3 32 32v256c0 17.7-14.3 32-32 32h-64z',
+      }),
+    ],
+  )
 }
 
-export const IconArrowRight = (input: Props) => {
-  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 448 512', ...input }, [
+export const IconArrowRight = (props: Props) => {
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 448 512', fill: 'currentColor', ...props }, [
     h(Path, {
       d: 'M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z',
     }),
   ])
 }
 
-export const IconArrowRotateLeft = (input: Props) => {
-  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 512 512', ...input }, [
+export const IconArrowRotateLeft = (props: Props) => {
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 512 512', fill: 'currentColor', ...props }, [
     h(Path, {
       d: 'M125.7 160H176c17.7 0 32 14.3 32 32s-14.3 32-32 32H48c-17.7 0-32-14.3-32-32V64c0-17.7 14.3-32 32-32s32 14.3 32 32v51.2L97.6 97.6c87.5-87.5 229.3-87.5 316.8 0s87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3s-163.8-62.5-226.3 0L125.7 160z',
     }),
   ])
 }
 
-export const IconArrowRotateRight = (input: Props) => {
-  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 512 512', ...input }, [
+export const IconArrowRotateRight = (props: Props) => {
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 512 512', fill: 'currentColor', ...props }, [
     h(Path, {
       d: 'M463.5 224H472c13.3 0 24-10.7 24-24V72c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L413.4 96.6c-87.6-86.5-228.7-86.2-315.8 1c-87.5 87.5-87.5 229.3 0 316.8s229.3 87.5 316.8 0c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0c-62.5 62.5-163.8 62.5-226.3 0s-62.5-163.8 0-226.3c62.2-62.2 162.7-62.5 225.3-1L327 183c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8H463.5z',
     }),
   ])
 }
 
-export const IconBars3 = (input: Props) => {
-  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 24 24', ...input }, [
+export const IconBars3 = (props: Props) => {
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 24 24', fill: 'currentColor', ...props }, [
     h(Path, {
       'stroke-linecap': 'round',
       'stroke-linejoin': 'round',
@@ -104,22 +129,22 @@ export const IconBars3 = (input: Props) => {
   ])
 }
 
-export const IconBox = (input: Props) => {
-  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 448 512', ...input }, [
+export const IconBox = (props: Props) => {
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 448 512', fill: 'currentColor', ...props }, [
     h(Path, {
       d: 'M50.7 58.5L0 160H208V32H93.7C75.5 32 58.9 42.3 50.7 58.5zM240 160H448L397.3 58.5C389.1 42.3 372.5 32 354.3 32H240V160zm208 32H0V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V192z',
     }),
   ])
 }
 
-export const IconCheckmarkCircle = (input: Props) => {
+export const IconCheckmarkCircle = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
       fill: 'currentColor',
-      ...input,
+      ...props,
       stroke: 'none',
     },
     [
@@ -132,14 +157,14 @@ export const IconCheckmarkCircle = (input: Props) => {
   )
 }
 
-export const IconCheckmark = (input: Props) => {
+export const IconCheckmark = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 448 512',
       fill: 'currentColor',
-      ...input,
+      ...props,
     },
     [
       h(Path, {
@@ -149,13 +174,14 @@ export const IconCheckmark = (input: Props) => {
   )
 }
 
-export const IconChevronDown = (input: Props) => {
+export const IconChevronDown = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
-      ...input,
+      fill: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -165,14 +191,15 @@ export const IconChevronDown = (input: Props) => {
   )
 }
 
-export const IconChevronLeft = (input: Props) => {
+export const IconChevronLeft = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       height: '1em',
       viewBox: '0 0 320 512',
-      ...input,
+      fill: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -182,14 +209,15 @@ export const IconChevronLeft = (input: Props) => {
   )
 }
 
-export const IconChevronRight = (input: Props) => {
+export const IconChevronRight = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       height: '1em',
       viewBox: '0 0 320 512',
-      ...input,
+      fill: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -199,13 +227,14 @@ export const IconChevronRight = (input: Props) => {
   )
 }
 
-export const IconClock = (input: Props) => {
+export const IconClock = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
-      ...input,
+      fill: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -215,13 +244,14 @@ export const IconClock = (input: Props) => {
   )
 }
 
-export const IconCopy = (input: Props) => {
+export const IconCopy = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 448 512',
-      ...input,
+      fill: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -231,7 +261,7 @@ export const IconCopy = (input: Props) => {
   )
 }
 
-export const IconCrown = (input: Props) => {
+export const IconCrown = (props: Props) => {
   return h(
     Svg,
     {
@@ -240,7 +270,7 @@ export const IconCrown = (input: Props) => {
       viewBox: '0 0 576 512',
       fill: 'currentColor',
       stroke: 'none',
-      ...input,
+      ...props,
     },
     [
       h(Path, {
@@ -250,13 +280,14 @@ export const IconCrown = (input: Props) => {
   )
 }
 
-export const IconDeleteForever = (input: Props) => {
+export const IconDeleteForever = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-      ...input,
+      fill: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -266,13 +297,14 @@ export const IconDeleteForever = (input: Props) => {
   )
 }
 
-export const IconDoorOpen = (input: Props) => {
+export const IconDoorOpen = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 576 512',
-      ...input,
+      fill: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -282,13 +314,14 @@ export const IconDoorOpen = (input: Props) => {
   )
 }
 
-export const IconEllipsisVertical = (input: Props) => {
+export const IconEllipsisVertical = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 128 512',
-      ...input,
+      fill: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -298,14 +331,14 @@ export const IconEllipsisVertical = (input: Props) => {
   )
 }
 
-export const IconEnvelope = (input: Props) => {
+export const IconEnvelope = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-
-      ...input,
+      fill: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -318,14 +351,14 @@ export const IconEnvelope = (input: Props) => {
   )
 }
 
-export const IconExpand = (input: Props) => {
+export const IconExpand = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 448 512',
-
-      ...input,
+      fill: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -335,14 +368,14 @@ export const IconExpand = (input: Props) => {
   )
 }
 
-export const IconFlag = (input: Props) => {
+export const IconFlag = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 448 512',
-
-      ...input,
+      fill: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -352,14 +385,14 @@ export const IconFlag = (input: Props) => {
   )
 }
 
-export const IconFloppyDisk = (input: Props) => {
+export const IconFloppyDisk = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 448 512',
-
-      ...input,
+      fill: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -369,7 +402,7 @@ export const IconFloppyDisk = (input: Props) => {
   )
 }
 
-export const IconGamepad = (input: Props) => {
+export const IconGamepad = (props: Props) => {
   return h(
     Svg,
     {
@@ -377,7 +410,7 @@ export const IconGamepad = (input: Props) => {
       viewBox: '0 0 640 512',
       fill: 'currentColor',
       stroke: 'currentColor',
-      ...input,
+      ...props,
     },
     [
       h(Path, {
@@ -387,13 +420,15 @@ export const IconGamepad = (input: Props) => {
   )
 }
 
-export const IconGear = (input: Props) => {
+export const IconGear = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
-      ...input,
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -403,7 +438,7 @@ export const IconGear = (input: Props) => {
   )
 }
 
-export const IconGoogle = (input: Props) => {
+export const IconGoogle = (props: Props) => {
   return h(
     Svg,
     {
@@ -412,7 +447,7 @@ export const IconGoogle = (input: Props) => {
       version: '1.1',
       viewBox: '0 0 210 210',
       xmlSpace: 'preserve',
-      ...input,
+      ...props,
     },
     [
       h(Path, {
@@ -422,14 +457,14 @@ export const IconGoogle = (input: Props) => {
   )
 }
 
-export const IconHome = (input: Props) => {
+export const IconHome = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 576 512',
 
-      ...input,
+      ...props,
     },
     [
       h(Path, {
@@ -439,14 +474,14 @@ export const IconHome = (input: Props) => {
   )
 }
 
-export const IconInfoCircle = (input: Props) => {
+export const IconInfoCircle = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
 
-      ...input,
+      ...props,
     },
     [
       h(Path, {
@@ -458,14 +493,14 @@ export const IconInfoCircle = (input: Props) => {
   )
 }
 
-export const IconLanguage = (input: Props) => {
+export const IconLanguage = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 640 512',
-
-      ...input,
+      fill: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -475,14 +510,15 @@ export const IconLanguage = (input: Props) => {
   )
 }
 
-export const IconLightbulb = (input: Props) => {
+export const IconLightbulb = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 384 512',
-
-      ...input,
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -492,14 +528,15 @@ export const IconLightbulb = (input: Props) => {
   )
 }
 
-export const IconMagnifyingGlass = (input: Props) => {
+export const IconMagnifyingGlass = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-
-      ...input,
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -511,14 +548,15 @@ export const IconMagnifyingGlass = (input: Props) => {
   )
 }
 
-export const IconMobilePhone = (input: Props) => {
+export const IconMobilePhone = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-
-      ...input,
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
     },
     [
       h(Path, { d: 'M10.5 18.75a.75.75 0 000 1.5h3a.75.75 0 000-1.5h-3z' }),
@@ -531,14 +569,15 @@ export const IconMobilePhone = (input: Props) => {
   )
 }
 
-export const IconPenToSquare = (input: Props) => {
+export const IconPenToSquare = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-
-      ...input,
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -551,14 +590,15 @@ export const IconPenToSquare = (input: Props) => {
   )
 }
 
-export const IconPen = (input: Props) => {
+export const IconPen = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
-
-      ...input,
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -568,14 +608,15 @@ export const IconPen = (input: Props) => {
   )
 }
 
-export const IconPhone = (input: Props) => {
+export const IconPhone = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-
-      ...input,
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -587,14 +628,15 @@ export const IconPhone = (input: Props) => {
   )
 }
 
-export const IconPlay = (input: Props) => {
+export const IconPlay = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-
-      ...input,
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -606,14 +648,16 @@ export const IconPlay = (input: Props) => {
   )
 }
 
-export const IconPlus = (input: Props) => {
+export const IconPlus = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
       'stroke-width': '1.5',
-      ...input,
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -625,14 +669,15 @@ export const IconPlus = (input: Props) => {
   )
 }
 
-export const IconPowerOff = (input: Props) => {
+export const IconPowerOff = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
-
-      ...input,
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -642,7 +687,7 @@ export const IconPowerOff = (input: Props) => {
   )
 }
 
-export const IconPuzzlePiece = (input: Props) => {
+export const IconPuzzlePiece = (props: Props) => {
   return h(
     Svg,
     {
@@ -650,7 +695,7 @@ export const IconPuzzlePiece = (input: Props) => {
       viewBox: '0 0 24 24',
       fill: 'currentColor',
       stroke: 'currentColor',
-      ...input,
+      ...props,
     },
     [
       h(Path, {
@@ -660,15 +705,16 @@ export const IconPuzzlePiece = (input: Props) => {
   )
 }
 
-export const IconQuestionMark = (input: Props) => {
+export const IconQuestionMark = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       height: '1em',
       viewBox: '0 0 320 512',
-
-      ...input,
+      stroke: 'currentColor',
+      fill: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -678,15 +724,16 @@ export const IconQuestionMark = (input: Props) => {
   )
 }
 
-export const IconRightLeft = (input: Props) => {
+export const IconRightLeft = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
       class: 'size-6 fill-current',
-
-      ...input,
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -696,14 +743,15 @@ export const IconRightLeft = (input: Props) => {
   )
 }
 
-export const IconRobot = (input: Props) => {
+export const IconRobot = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 640 512',
-
-      ...input,
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -713,7 +761,7 @@ export const IconRobot = (input: Props) => {
   )
 }
 
-export const IconScrewdriverWrench = (input: Props) => {
+export const IconScrewdriverWrench = (props: Props) => {
   return h(
     Svg,
     {
@@ -721,7 +769,7 @@ export const IconScrewdriverWrench = (input: Props) => {
       viewBox: '0 0 512 512',
       fill: 'currentColor',
       stroke: 'currentColor',
-      ...input,
+      ...props,
     },
     [
       h(Path, {
@@ -731,34 +779,55 @@ export const IconScrewdriverWrench = (input: Props) => {
   )
 }
 
-export const IconUserCircle = (input: Props) => {
-  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 24 24', fill: 'currentColor', ...input }, [
-    h(Path, {
-      'fill-rule': 'evenodd',
-      d: 'M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z',
-      'clip-rule': 'evenodd',
-    }),
-  ])
+export const IconUserCircle = (props: Props) => {
+  return h(
+    Svg,
+    {
+      xmlns: 'http://www.w3.org/2000/svg',
+      viewBox: '0 0 24 24',
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
+    },
+    [
+      h(Path, {
+        'fill-rule': 'evenodd',
+        d: 'M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z',
+        'clip-rule': 'evenodd',
+      }),
+    ],
+  )
 }
 
-export const IconUser = (input: Props) => {
-  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 24 24', ...input }, [
-    h(Path, {
-      'fill-rule': 'evenodd',
-      d: 'M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z',
-      'clip-rule': 'evenodd',
-    }),
-  ])
+export const IconUser = (props: Props) => {
+  return h(
+    Svg,
+    {
+      xmlns: 'http://www.w3.org/2000/svg',
+      viewBox: '0 0 24 24',
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
+    },
+    [
+      h(Path, {
+        'fill-rule': 'evenodd',
+        d: 'M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z',
+        'clip-rule': 'evenodd',
+      }),
+    ],
+  )
 }
 
-export const IconUserGroup = (input: Props) => {
+export const IconUserGroup = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 640 512',
-
-      ...input,
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -768,14 +837,15 @@ export const IconUserGroup = (input: Props) => {
   )
 }
 
-export const IconUserPen = (input: Props) => {
+export const IconUserPen = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 640 512',
-
-      ...input,
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -785,14 +855,15 @@ export const IconUserPen = (input: Props) => {
   )
 }
 
-export const IconUsers = (input: Props) => {
+export const IconUsers = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-
-      ...input,
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -802,7 +873,7 @@ export const IconUsers = (input: Props) => {
   )
 }
 
-export const IconVolumeHigh = (input: Props) => {
+export const IconVolumeHigh = (props: Props) => {
   return h(
     Svg,
     {
@@ -810,7 +881,7 @@ export const IconVolumeHigh = (input: Props) => {
       viewBox: '0 0 640 512',
       fill: 'currentColor',
       stroke: 'currentColor',
-      ...input,
+      ...props,
     },
     [
       h(Path, {
@@ -820,7 +891,7 @@ export const IconVolumeHigh = (input: Props) => {
   )
 }
 
-export const IconVolumeXMark = (input: Props) => {
+export const IconVolumeXMark = (props: Props) => {
   return h(
     Svg,
     {
@@ -828,7 +899,7 @@ export const IconVolumeXMark = (input: Props) => {
       viewBox: '0 0 576 512',
       fill: 'currentColor',
       stroke: 'currentColor',
-      ...input,
+      ...props,
     },
 
     [
@@ -839,7 +910,7 @@ export const IconVolumeXMark = (input: Props) => {
   )
 }
 
-export const IconXMark = (input: Props) => {
+export const IconXMark = (props: Props) => {
   return h(
     Svg,
     {
@@ -847,7 +918,7 @@ export const IconXMark = (input: Props) => {
       viewBox: '0 0 384 512',
       fill: 'currentColor',
       stroke: 'currentColor',
-      ...input,
+      ...props,
     },
 
     [
@@ -858,14 +929,15 @@ export const IconXMark = (input: Props) => {
   )
 }
 
-export const IconExclamationCircle = (input: Props) => {
+export const IconExclamationCircle = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
-
-      ...input,
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -877,14 +949,15 @@ export const IconExclamationCircle = (input: Props) => {
   )
 }
 
-export const IconCode = (input: Props) => {
+export const IconCode = (props: Props) => {
   return h(
     Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 640 512',
-
-      ...input,
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      ...props,
     },
     [
       h(Path, {
@@ -894,14 +967,16 @@ export const IconCode = (input: Props) => {
   )
 }
 
-export const IconCircle = (input: Props) => {
+export const IconCircle = (props: Props) => {
   return h(
     Svg,
     {
       viewBox: '0 0 24 24',
+      fill: 'currentColor',
+      stroke: 'currentColor',
       'stroke-width': '2',
       'stroke-linecap': 'round',
-      ...input,
+      ...props,
     },
     [
       h(Circle, {

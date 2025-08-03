@@ -1,4 +1,8 @@
-import { ALL_SAFE_AREA_BOX_EDGES, SafeAreaBoxEdge } from '../primitives/safe-area-box'
+import { h } from '~/@/vdom/h'
+import { PrimitiveProps } from '../../primitive-props'
+import { ALL_SAFE_AREA_BOX_EDGES, SafeAreaBoxEdge } from '../../primitives/safe-area-box'
+import { BOX_TAG } from '../../tags'
+import { VDom } from '../../vdom'
 
 const safeAreaEdgeToStyle = (edge: SafeAreaBoxEdge | unknown) => {
   switch (edge) {
@@ -15,7 +19,7 @@ const safeAreaEdgeToStyle = (edge: SafeAreaBoxEdge | unknown) => {
   }
 }
 
-export const updateSafeAreaProps = (props: any) => {
+const updateSafeAreaProps = (props: any) => {
   if (Array.isArray(props.edges)) {
     props.style = {
       ...props.style,
@@ -27,18 +31,7 @@ export const updateSafeAreaProps = (props: any) => {
   }
 }
 
-export const updateScrollBoxProps = (props: any) => {
-  props.style = { ...props.style, overflowY: 'scroll' }
-}
-
-export const normalizeStylesInPlace = (styles: Record<string, string | number | null>) => {
-  const keys = Object.keys(styles)
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i]!
-    if (styles[key] === null) {
-      delete styles[key]
-    } else if (typeof styles[key] === 'number') {
-      styles[key] = `${styles[key]}px`
-    }
-  }
+export const WebSafeAreaBox = (props: PrimitiveProps): VDom => {
+  updateSafeAreaProps(props)
+  return h(BOX_TAG, props, props.children)
 }

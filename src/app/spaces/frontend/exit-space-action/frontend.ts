@@ -21,7 +21,7 @@ const update: SpaceFrontendModule['update'] = ({ msg, model }) => {
 const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction => {
   return {
     id: input.ctx.t('app.exit'),
-    icon: (inputIcon) => h(IconDoorOpen, inputIcon),
+    renderIcon: (iconProps) => h(IconDoorOpen, iconProps),
     label: input.ctx.t('app.exit'),
     onPress: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
   }

@@ -87,7 +87,7 @@ export const viewButtonAction = ({
 
   return {
     id: ctx.t('app.copy'),
-    icon: (input) => h(IconCopy, input),
+    renderIcon: (input) => h(IconCopy, input),
     label: ctx.t('app.copy'),
     onPress: () =>
       dispatch({

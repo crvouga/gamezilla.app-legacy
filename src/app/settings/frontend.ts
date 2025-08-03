@@ -6,6 +6,7 @@ import { cn } from '~/@/ui/cn'
 import { Gutter } from '~/@/ui/gutter'
 import { IconCode, IconGear, IconLanguage, IconPowerOff } from '~/@/ui/icon'
 import { MenuItem } from '~/@/ui/menu-item'
+import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -130,7 +131,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 
 const ViewLangMenuItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
   return h(MenuItem, {
-    renderIcon: (inputIcon) => h(IconLanguage, inputIcon),
+    renderIcon: (iconProps) => h(IconLanguage, iconProps),
     primary: ctx.t('l18n.language'),
     renderEnd: () => h(Text, { text: ctx.t(model.lang) }),
     onPress: () => {
@@ -220,7 +221,7 @@ const ViewLogoutMenuItem: FrontendModule['View'] = (input) => {
 }
 
 const ViewTopBar: FrontendModule['View'] = (props) => {
-  const iconSize = props.ctx.screenSize === 'mobile' ? 'size-4' : 'size-5'
+  const iconSize: Record<string, unknown> = props.ctx.screenSize === 'mobile' ? theme({ size: 4 }) : theme({ size: 5 })
   return h(SurfaceLayout, {
     ctx: props.ctx,
     ariaLabel: props.ctx.t('status-bar.status-bar'),
@@ -250,19 +251,15 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
             [
               h(BackendConnectionStatus.ViewDot, {
                 model: props.ctx.backendConnectionStatus,
-                class: iconSize,
+                style: iconSize,
                 ctx: props.ctx,
               }),
               h(SoundFrontend.ViewIcon, {
                 model: props.model.sound,
-                class: cn(iconSize, 'text-white'),
-                fill: '#fff',
-                stroke: '#fff',
+                style: { ...iconSize, ...theme({ textColor: 'white' }) },
               }),
               h(IconGear, {
-                class: cn(iconSize, 'text-white'),
-                fill: '#fff',
-                stroke: '#fff',
+                style: { ...iconSize, ...theme({ textColor: 'white' }) },
               }),
             ],
           ),

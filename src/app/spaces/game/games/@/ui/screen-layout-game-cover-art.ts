@@ -23,8 +23,8 @@ export const ScreenLayoutGameCoverArt = (
           style: theme({
             width: 'full',
             flexDirection: 'col',
-            items: 'center',
-            justify: 'flex-start',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
             gap: 6,
             py: 4,
           }),
@@ -50,8 +50,8 @@ const renderDefaultCoverArt = (input: { style: Record<string, unknown> }) => {
       style: {
         ...theme({
           flexDirection: 'row',
-          items: 'center',
-          justify: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
           overflow: 'hidden',
           rounded: 'lg',
           p: 4,

@@ -7,8 +7,8 @@ export type Theme = {
   flex?: number | null
   flexGrow?: number | null
   flexShrink?: number | null
-  items?: 'center' | 'flex-start' | 'flex-end' | 'stretch' | 'baseline' | null
-  justify?: 'center' | 'flex-start' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly' | null
+  alignItems?: 'center' | 'flex-start' | 'flex-end' | 'stretch' | 'baseline' | null
+  justifyContent?: 'center' | 'flex-start' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly' | null
   p?: number | null
   px?: number | null
   py?: number | null
@@ -32,6 +32,7 @@ export type Theme = {
   gap?: number | null
   inset?: number | null
   minWidth?: ThemeSize | null
+  aspectRatio?: number | null
 }
 
 export const theme = (config: Theme): Record<string, string | number | null> => {
@@ -39,8 +40,8 @@ export const theme = (config: Theme): Record<string, string | number | null> => 
   applyMinWidth(styles, config.minWidth)
   applyPosition(styles, config.position)
   applyFlex(styles, config)
-  applyItems(styles, config.items)
-  applyJustify(styles, config.justify)
+  applyItems(styles, config.alignItems)
+  applyJustify(styles, config.justifyContent)
   applyPadding(styles, config)
   applyBorderRadius(styles, config.rounded)
   applyFontWeight(styles, config.fontWeight)
@@ -55,6 +56,7 @@ export const theme = (config: Theme): Record<string, string | number | null> => 
   applyInset(styles, config.inset)
   applyPointerEvents(styles, config.pointerEvents)
   applyOverflow(styles, config.overflow)
+  applyAspectRatio(styles, config.aspectRatio)
   return styles
 }
 
@@ -119,20 +121,21 @@ const applyFlex = (styles: Record<string, string | number | null>, config: Theme
   if (config.flex) {
     styles.flex = config.flex
   }
-  if (config.flexGrow) {
+  if (typeof config.flexGrow === 'number') {
     styles.flexGrow = config.flexGrow
   }
-  if (config.flexShrink) {
+
+  if (typeof config.flexShrink === 'number') {
     styles.flexShrink = config.flexShrink
   }
 }
 
-const applyItems = (styles: Record<string, string | number | null>, items: Theme['items']) => {
+const applyItems = (styles: Record<string, string | number | null>, items: Theme['alignItems']) => {
   if (!items) return
   styles.alignItems = items
 }
 
-const applyJustify = (styles: Record<string, string | number | null>, justify: Theme['justify']) => {
+const applyJustify = (styles: Record<string, string | number | null>, justify: Theme['justifyContent']) => {
   if (!justify) return
   styles.justifyContent = justify
 }
@@ -268,26 +271,10 @@ const applyOverflow = (styles: Record<string, string | number | null>, overflow:
   }
 }
 
-const normalizeToWebStandard = (
-  styles: Record<string, string | number | null>,
-): Record<string, string | number | null> => {
-  for (const key in styles) {
-    if (styles[key] === null) {
-      delete styles[key]
-    } else if (typeof styles[key] === 'number') {
-      styles[key] = `${styles[key]}px`
-    }
+const applyAspectRatio = (styles: Record<string, string | number | null>, aspectRatio: Theme['aspectRatio']) => {
+  if (aspectRatio != null) {
+    styles.aspectRatio = aspectRatio
   }
-  return styles
 }
 
-const normalizeToReactNativeStandard = (
-  styles: Record<string, string | number | null>,
-): Record<string, string | number | null> => {
-  return styles
-}
-
-export const Theme = {
-  normalizeToWebStandard,
-  normalizeToReactNativeStandard,
-}
+export const Theme = {}

@@ -17,8 +17,8 @@ export const Checkbox = (input: { state: CheckboxState; onChange?: (checkedNew: 
       // ),
       style: theme({
         flexDirection: 'row',
-        items: 'center',
-        justify: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
         width: 6,
         height: 6,
         rounded: 'md',

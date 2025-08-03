@@ -22,50 +22,50 @@ const toQuery = (spaceId: SpaceId): SpaceDbQuery => {
   return { where: { spaceId: { '=': spaceId } } }
 }
 
-const View = (input: {
+const View = (props: {
   model: ModelFrontend
   ctx: FrontendCtxModule
   dispatch: (m: MsgFrontend) => void
   spaceId: SpaceId
 }) => {
-  const space = SpaceDbQueryCache.entity(input.ctx, input.spaceId)
+  const space = SpaceDbQueryCache.entity(props.ctx, props.spaceId)
   const spaceProjection = Space.toSpaceProjection(space)
   switch (spaceProjection.type) {
     case 'initial': {
-      const query = toQuery(input.spaceId)
+      const query = toQuery(props.spaceId)
 
-      const isLoading = SpaceDbQueryCache.isLoading(input.ctx, query)
+      const isLoading = SpaceDbQueryCache.isLoading(props.ctx, query)
 
-      if (isLoading) return h(ViewSpaceLoading, input)
+      if (isLoading) return h(ViewSpaceLoading, props)
 
-      return h(ViewSpaceNotFound, input)
+      return h(ViewSpaceNotFound, props)
     }
 
     case 'ended': {
-      return h(EndSpaceFrontend.ViewSpaceEnded, input)
+      return h(EndSpaceFrontend.ViewSpaceEnded, props)
     }
 
     case 'started': {
-      const currentUser = input.ctx.currentUser
+      const currentUser = props.ctx.currentUser
 
       if (!currentUser) return null
 
-      const spaceCtx: SpaceFrontendCtx & FrontendCtxModule = { ...input.ctx, currentUser, space: spaceProjection }
+      const spaceCtx: SpaceFrontendCtx & FrontendCtxModule = { ...props.ctx, currentUser, space: spaceProjection }
 
       const isJoined = currentUser.userId in spaceProjection.users
 
       if (!isJoined) {
-        return h(JoinSpaceFrontend.view, { ...input, ctx: spaceCtx })
+        return h(JoinSpaceFrontend.view, { ...props, ctx: spaceCtx })
       }
 
-      const inputNew = { ...input, ctx: spaceCtx }
+      const inputNew = { ...props, ctx: spaceCtx }
 
       const isHost = inputNew.ctx.space.hostId === inputNew.ctx.currentUser.userId
 
       const spaceCtxFinal: FrontendCtxModule & SpaceFrontendCtx = {
         ...spaceCtx,
-        topic: input.ctx.topic,
-        rpc: input.ctx.rpc,
+        topic: props.ctx.topic,
+        rpc: props.ctx.rpc,
         parentScreen: {
           dataTestId: TEST_ID_SPACE_SCREEN,
           id: 'space-screen',
@@ -76,8 +76,8 @@ const View = (input: {
             size: 'sm',
             variant: {
               t: 'space-between',
-              start: [ExitSpaceAction.viewAction(input), PeopleActionFrontend.view(input)],
-              end: [isHost ? EndSpaceFrontend.viewAction(input) : LeaveSpaceFrontend.viewAction(input)],
+              start: [ExitSpaceAction.viewAction(props), PeopleActionFrontend.view(props)],
+              end: [isHost ? EndSpaceFrontend.viewAction(props) : LeaveSpaceFrontend.viewAction(props)],
             },
           },
         },

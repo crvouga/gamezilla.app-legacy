@@ -4,6 +4,8 @@ import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
 import { IconArrowLeft, IconArrowRotateLeft, IconCheckmarkCircle, IconFlag, IconXMark } from '~/@/ui/icon'
 import { Paper } from '~/@/ui/paper'
+import { Spinner } from '~/@/ui/spinner'
+import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -30,7 +32,6 @@ import {
   type StateGameOver,
   toPlayerType,
 } from './vs-user.types'
-import { Spinner } from '~/@/ui/spinner'
 
 //
 //
@@ -288,7 +289,7 @@ const View: Module['View'] = (input) => {
               input.modelSpace.type === 'game'
                 ? {
                     id: input.ctx.t('app.resign'),
-                    icon: (props) => h(IconFlag, props),
+                    renderIcon: (props) => h(IconFlag, props),
                     label: input.ctx.t('app.resign'),
                     onPress: () => {
                       input.dispatch({
@@ -301,7 +302,7 @@ const View: Module['View'] = (input) => {
               input.modelSpace.type === 'game-over' && input.ctx.currentUser.userId === input.ctx.space.hostId
                 ? {
                     id: input.ctx.t('app.exit'),
-                    icon: (props) => h(IconArrowLeft, props),
+                    renderIcon: (props) => h(IconArrowLeft, props),
                     label: input.ctx.t('app.exit'),
                     onPress: () => {
                       input.dispatch({
@@ -314,7 +315,7 @@ const View: Module['View'] = (input) => {
               input.modelSpace.type === 'game-over' && input.ctx.currentUser.userId === input.ctx.space.hostId
                 ? {
                     id: input.ctx.t('game.rematch'),
-                    icon: (props) => h(IconArrowRotateLeft, props),
+                    renderIcon: (props) => h(IconArrowRotateLeft, props),
                     label: input.ctx.t('game.rematch'),
                     onPress: () => {
                       input.dispatch({
@@ -346,7 +347,7 @@ const ViewGameOverMessage = ({
   if (modelSpace.rematch.type === 'Asking' && modelSpace.rematch.asker === currentPlayerType) {
     return h(Box, {}, [
       h(Box, { class: 'mb-4 text-center text-xl' }, [h(Text, { text: 'Waiting for response' })]),
-      h(Spinner, { class: 'mb-4 h-8 w-8', iconClass: 'h-8 w-8' }),
+      h(Spinner, { style: { ...theme({ size: 8 }) } }),
       h(Button, {
         variant: 'contained',
         width: 'full',

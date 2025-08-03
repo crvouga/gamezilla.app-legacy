@@ -84,7 +84,7 @@ const View: FrontendModule['View'] = (input) => {
         actions: [
           {
             id: input.ctx.t('app.edit-name'),
-            icon: (input) => h(IconPen, input),
+            renderIcon: (input) => h(IconPen, input),
             label: input.ctx.t('app.edit-name'),
             onPress: () => {
               input.dispatch({

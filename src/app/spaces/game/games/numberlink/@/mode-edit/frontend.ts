@@ -49,28 +49,28 @@ const View = (input: {
         actions: [
           {
             id: input.ctx.t('app.undo'),
-            icon: (input) => h(IconArrowRotateLeft, input),
+            renderIcon: (input) => h(IconArrowRotateLeft, input),
             label: input.ctx.t('app.undo'),
             onPress: () => input.dispatch({ t: 'clicked-undo' }),
             disabled: !History.canUndo(input.model.form),
           },
           {
             id: input.ctx.t('app.redo'),
-            icon: (input) => h(IconArrowRotateRight, input),
+            renderIcon: (input) => h(IconArrowRotateRight, input),
             label: input.ctx.t('app.redo'),
             disabled: !History.canRedo(input.model.form),
             onPress: () => input.dispatch({ t: 'clicked-redo' }),
           },
           {
             id: input.ctx.t('app.clear'),
-            icon: (input) => h(IconXMark, input),
+            renderIcon: (input) => h(IconXMark, input),
             label: input.ctx.t('app.clear'),
             disabled: !ModeEdit.canClear(input.model),
             onPress: () => input.dispatch({ t: 'clicked-clear' }),
           },
           {
             id: input.ctx.t('app.dimensions'),
-            icon: (input) => h(IconExpand, input),
+            renderIcon: (input) => h(IconExpand, input),
             label: input.ctx.t('app.dimensions'),
             onPress: () => input.dispatch({ t: 'dimensions-form.clicked-open' }),
             renderSurface: ({ dropDown }) =>

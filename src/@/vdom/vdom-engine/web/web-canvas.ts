@@ -2,14 +2,14 @@ import { Sub } from '~/@/sub'
 import { h } from '../impl'
 import { tag } from '../interface'
 
-type CanvasWebComponentProps = {
+export type WebCanvasProps = {
   id: string
   onContextCreate?: (gl: WebGLRenderingContext) => void
   msaaSamples?: number
   style?: Record<string, unknown>
 }
 
-const propsSub = Sub.init<CanvasWebComponentProps>()
+const propsSub = Sub.init<WebCanvasProps>()
 
 const CANVAS_WEB_COMPONENT_TAG = tag('canvas-web-component')
 
@@ -60,7 +60,7 @@ if (typeof window !== 'undefined') {
   window.customElements.define(CANVAS_WEB_COMPONENT_TAG, CanvasWebComponentElement)
 }
 
-export const CanvasWebComponent = (props: CanvasWebComponentProps) => {
+export const WebCanvas = (props: WebCanvasProps) => {
   propsSub.pub(props)
   return h(CANVAS_WEB_COMPONENT_TAG, props, [])
 }

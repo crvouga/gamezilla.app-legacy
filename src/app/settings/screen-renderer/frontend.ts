@@ -1,5 +1,6 @@
 import { MenuItem } from '~/@/ui/menu-item'
 import { RadioInputIcon } from '~/@/ui/radio-input'
+import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { VDomImplWeb } from '~/@/vdom/vdom-impl-web'
@@ -77,7 +78,10 @@ const View: FrontendModule['View'] = (input) => {
             secondary: isDefault && false ? input.ctx.t('l18n.default') : undefined,
             onPress: () => input.dispatch({ t: 'renderer.clicked-renderer', vDomImpl }),
             renderEnd: () =>
-              h(RadioInputIcon, { class: 'size-7 text-white', status: isSelected ? 'selected' : 'unselected' }),
+              h(RadioInputIcon, {
+                style: { ...theme({ size: 7, textColor: 'white' }) },
+                status: isSelected ? 'selected' : 'unselected',
+              }),
             selected: isSelected,
           })
         }),

@@ -22,7 +22,7 @@ export const Chip = (input: ChipProps) => {
       tagName: typeof input.onPress === 'function' ? 'button' : 'div',
       style: theme({
         flexDirection: 'row',
-        items: 'center',
+        alignItems: 'center',
         gap: 1,
         borderWidth: 1,
         borderColor: 'white/30',

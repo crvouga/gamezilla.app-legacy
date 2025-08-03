@@ -2,15 +2,13 @@ import { h } from '~/@/vdom/h'
 import { Box } from '../vdom/primitives/box'
 import { Path } from '../vdom/primitives/svg/path'
 import { Svg } from '../vdom/primitives/svg/svg'
-import { cn } from './cn'
+import { theme } from './theme/theme'
 
-export const Spinner = (props: { class?: string; iconClass?: string; style?: Record<string, unknown> }) => {
-  return h(Box, { class: cn(props.class, 'animate-spin'), style: props.style }, [
-    h(IconSpinner, { class: cn(props.iconClass) }),
-  ])
+export const Spinner = (props: { style?: Record<string, unknown> }) => {
+  return h(Box, { class: 'animate-spin', style: props.style }, [h(IconSpinner, { style: { ...theme({ size: 8 }) } })])
 }
 
-const IconSpinner = (input: { class: string }) => {
+const IconSpinner = (input: { style?: Record<string, unknown> }) => {
   return h(
     Svg,
     {

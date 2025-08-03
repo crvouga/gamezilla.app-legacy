@@ -1,18 +1,12 @@
-import {
-  Attrs,
-  On,
-  attributesModule,
-  eventListenersModule,
-  fragment,
-  h,
-  init,
-  propsModule,
-  styleModule,
-} from 'snabbdom'
-import { PrimitiveProps } from '../primitive-props'
+import { attributesModule, eventListenersModule, fragment, init, propsModule, styleModule } from 'snabbdom'
+import { inPlaceFlatTruthyArray } from '~/@/array/in-place-flat-truthy-array'
 import { CANVAS_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
-import { updateSafeAreaProps, updateScrollBoxProps } from './web'
+import { createElement } from './snabbdom/snabbdom-create-element'
+import { inPlaceMapPropsToWebProps } from './web/map-props-to-web-props'
+import { WebCanvas } from './web/web-canvas'
+import { WebSafeAreaBox } from './web/web-safe-area-box'
+import { WebScrollBox } from './web/web-scroll-box'
 
 export type ImplSnabbdom = {
   t: 'snabbdom'
@@ -41,112 +35,31 @@ const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
     },
     createElement: (tag: any, props: any, children: any) => {
       try {
-        props = PrimitiveProps.intoWebStandard(props)
-
-        children = processChildren(children ?? props?.children)
-
+        inPlaceMapPropsToWebProps(props)
+        children = inPlaceFlatTruthyArray(children ?? props?.children)
+        if (typeof tag === 'function') {
+          props.children = children
+          return tag(props)
+        }
         switch (tag) {
           case FRAGMENT_TAG:
             return fragment(children)
           case SAFE_AREA_BOX_TAG:
-            updateSafeAreaProps(props)
-            return createPrimitiveElement('div', props, children)
+            return createElement(WebSafeAreaBox as any, props, children) as any
           case SCROLL_BOX_TAG:
-            updateScrollBoxProps(props)
-            return createPrimitiveElement('div', props, children)
+            return createElement(WebScrollBox as any, props, children) as any
           case CANVAS_TAG:
-            // @ts-expect-error
-            return createElement(CanvasWebComponent, props, children) as any
+            return createElement(WebCanvas as any, props, children) as any
           default:
-            if (typeof tag === 'function') return tag({ ...props, key: props?.key, children })
-            return createPrimitiveElement(tag, props, children)
+            return createElement(tag, props, children)
         }
       } catch (e) {
-        // console.error(e)
         return null
       }
     },
   }
 }
 
-const createPrimitiveElement = (tag: string, props: any, children: any) => {
-  // Reusable objects to reduce allocations
-  let reusableAttrs: Attrs = {}
-  let reusableOn: On = {}
-  let hasAttrs = false
-  let hasEvents = false
-
-  // Single pass through props with early optimizations
-  if (props) {
-    const propKeys = Object.keys(props)
-    for (let i = 0; i < propKeys.length; i++) {
-      const propKey = propKeys[i]!
-      const propValue = props[propKey]
-
-      // Skip undefined/null values
-      if (propValue == null || propValue === undefined) continue
-
-      if (propKey.startsWith('on')) {
-        reusableOn[getEventName(propKey)] = propValue
-        hasEvents = true
-      } else if (propKey !== 'children' && propKey !== 'key' && propKey !== 'style') {
-        reusableAttrs[propKey] = propValue
-        hasAttrs = true
-      }
-    }
-  }
-
-  const vDomProps: any = {}
-  if (hasAttrs) vDomProps.attrs = reusableAttrs
-  if (hasEvents) vDomProps.on = reusableOn
-  if (props?.key !== undefined) vDomProps.key = props.key
-  if (props?.style !== undefined) vDomProps.style = props.style
-
-  return h(tag, vDomProps, children)
-}
-
 export const ImplSnabbdom = {
   init: init_,
-}
-
-// Cache for event name transformations to avoid repeated string operations
-const eventNameCache = new Map<string, string>()
-const getEventName = (propKey: string): string => {
-  let eventName = eventNameCache.get(propKey)
-  if (eventName === undefined) {
-    eventName = propKey.slice(2).toLowerCase()
-    eventNameCache.set(propKey, eventName)
-  }
-  return eventName
-}
-
-const processChildren = (children: any): any[] => {
-  if (!children) return []
-  if (!Array.isArray(children)) return [children]
-
-  // Check if flattening is needed
-  let needsFlattening = false
-  for (let i = 0; i < children.length; i++) {
-    if (Array.isArray(children[i])) {
-      needsFlattening = true
-      break
-    }
-  }
-
-  let processedChildren = needsFlattening ? children.flat(Infinity) : children
-
-  // Only filter if there are falsy values
-  let hasFalsyValues = false
-  for (let i = 0; i < processedChildren.length; i++) {
-    if (!processedChildren[i]) {
-      hasFalsyValues = true
-      break
-    }
-  }
-
-  if (hasFalsyValues) {
-    return processedChildren.filter(Boolean)
-  }
-
-  return processedChildren
 }

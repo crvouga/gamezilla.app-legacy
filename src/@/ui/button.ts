@@ -39,8 +39,8 @@ export const Button = (input: ButtonInput) => {
 
   const buttonStyle = theme({
     flexDirection: 'row',
-    items: 'center',
-    justify: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
     rounded: 'md',
     ...toButtonStyle(combo),
     ...toSizeStyle(size),
@@ -48,8 +48,8 @@ export const Button = (input: ButtonInput) => {
 
   const contentStyle = theme({
     flexDirection: 'row',
-    items: 'center',
-    justify: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
     height: 'full',
   })
 
@@ -106,10 +106,10 @@ export const Button = (input: ButtonInput) => {
             position: 'absolute',
             inset: 0,
             flexDirection: 'row',
-            items: 'center',
-            justify: 'center',
+            alignItems: 'center',
+            justifyContent: 'center',
+            size: 12,
           }),
-          iconClass: 'h-12 w-12 text-white',
         }),
     ],
   )

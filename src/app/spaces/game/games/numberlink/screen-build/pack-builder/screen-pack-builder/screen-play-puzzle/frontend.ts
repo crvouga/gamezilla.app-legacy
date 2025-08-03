@@ -189,7 +189,7 @@ const toParentScreenProps = (input: Parameters<FrontendModule['View']>[0]): Pare
         actions: [
           {
             id: input.ctx.t('app.prev'),
-            icon: (input) => h(IconChevronLeft, input),
+            renderIcon: (input) => h(IconChevronLeft, input),
             label: input.ctx.t('app.prev'),
             disabled: !canGoPrevious,
             onPress: () => {
@@ -205,14 +205,14 @@ const toParentScreenProps = (input: Parameters<FrontendModule['View']>[0]): Pare
           },
           {
             id: input.ctx.t('app.next'),
-            icon: (input) => h(IconChevronRight, input),
+            renderIcon: (input) => h(IconChevronRight, input),
             label: input.ctx.t('app.next'),
             disabled: !canGoNext,
             onPress: onNextPuzzle,
           },
           {
             id: input.ctx.t('app.remove'),
-            icon: (input) => h(IconDeleteForever, input),
+            renderIcon: (input) => h(IconDeleteForever, input),
             label: input.ctx.t('app.remove'),
             color: 'danger',
             onPress: () =>

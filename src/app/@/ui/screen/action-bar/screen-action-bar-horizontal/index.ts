@@ -38,8 +38,8 @@ const toDropDownConfig = (reference: { render: () => VDom }): DropDownConfig => 
 
 const BASE_STYLE = theme({
   flexDirection: 'row',
-  items: 'center',
-  justify: 'center',
+  alignItems: 'center',
+  justifyContent: 'center',
   width: 'full',
   px: 6,
 })
@@ -85,7 +85,7 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
             render: () =>
               h(ScreenActionButton, {
                 id: input.ctx.t('app.more'),
-                icon: (input) => h(IconEllipsisVertical, input),
+                renderIcon: (iconProps) => h(IconEllipsisVertical, iconProps),
                 label: input.ctx.t('app.more'),
                 size: input.size,
                 onPress: input.limit?.onToggle ?? (() => {}),
@@ -105,7 +105,7 @@ const SurfaceMoreContent = (input: { actions: (ScreenAction | null)[] }) => {
       if (action.hidden) return null
       const listItemButton = h(MenuItem, {
         key: action.id,
-        renderIcon: action.icon,
+        renderIcon: action.renderIcon,
         primary: action.label,
         onPress: action.onPress,
         color: action.color,
@@ -129,8 +129,8 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
       {
         style: theme({
           flexDirection: 'row',
-          items: 'center',
-          justify: 'flex-start',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
           flex: 1,
         }),
       },
@@ -140,7 +140,10 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
         const button = h(ScreenActionButton, {
           ...action,
           size: input.size,
-          style: theme({ width: 20 }),
+          style: theme({
+            width: 20,
+            justifyContent: 'flex-start',
+          }),
         })
 
         if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
@@ -159,8 +162,8 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
       {
         style: theme({
           flexDirection: 'row',
-          items: 'center',
-          justify: 'flex-end',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
           flex: 1,
         }),
       },
@@ -170,7 +173,10 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
         const button = h(ScreenActionButton, {
           ...action,
           size: input.size,
-          style: theme({ width: 20 }),
+          style: theme({
+            width: 20,
+            justifyContent: 'flex-end',
+          }),
         })
 
         if (!action.renderSurface) return h(Frag, { key: action.id }, [button])

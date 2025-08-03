@@ -1,11 +1,14 @@
 import { createElement, Fragment, StrictMode } from 'react'
-import { createPortal } from 'react-dom'
 import { createRoot } from 'react-dom/client'
-import { PrimitiveProps } from '../primitive-props'
-import { BOX_TAG, CANVAS_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
+import { ensureArray } from '~/@/array/ensure-array'
+import { CANVAS_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
-import { normalizeChildren, normalizePropsInPlace } from './react'
-import { updateSafeAreaProps, updateScrollBoxProps } from './web'
+
+import { inPlaceMapPropsToReactProps } from './react/map-props-to-react-props'
+import { inPlaceMapPropsToWebProps } from './web/map-props-to-web-props'
+import { WebCanvas } from './web/web-canvas'
+import { WebSafeAreaBox } from './web/web-safe-area-box'
+import { WebScrollBox } from './web/web-scroll-box'
 
 export type ImplReact = {
   t: 'react'
@@ -18,28 +21,19 @@ const init = (_config: ImplReact): IVirtualDomEngine => {
       reactRoot ??= createRoot(node)
       reactRoot.render(createElement(StrictMode, {}, vDom as any))
     },
-    // @ts-ignore
-    createPortal: (vDom, container) => {
-      const portal = createPortal(vDom as any, container)
-      return portal
-    },
     createElement: (tag: any, props: any, children: any) => {
-      props = PrimitiveProps.intoWebStandard(props)
-      normalizePropsInPlace(props, tag)
-      children = normalizeChildren(children)
-
+      inPlaceMapPropsToWebProps(props)
+      inPlaceMapPropsToReactProps(props, tag)
+      children = ensureArray(children)
       switch (tag) {
         case FRAGMENT_TAG:
           return createElement(Fragment, props, ...children) as any
         case SCROLL_BOX_TAG:
-          updateScrollBoxProps(props)
-          return createElement(BOX_TAG, props, children) as any
+          return createElement(WebScrollBox as any, props, ...children) as any
         case SAFE_AREA_BOX_TAG:
-          updateSafeAreaProps(props)
-          return createElement(BOX_TAG, props, children) as any
+          return createElement(WebSafeAreaBox as any, props, ...children) as any
         case CANVAS_TAG:
-          // @ts-expect-error
-          return createElement(CanvasWebComponent, props, children) as any
+          return createElement(WebCanvas as any, props, ...children) as any
         default:
           return createElement(tag, props, ...children) as any
       }

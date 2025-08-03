@@ -46,6 +46,7 @@ import {
 import { Line } from '~/@/vdom/primitives/svg/line'
 import { Circle } from '~/@/vdom/primitives/svg/circle'
 import { Text } from '~/@/vdom/primitives/text'
+import { theme } from '~/@/ui/theme/theme'
 
 //
 //
@@ -323,10 +324,7 @@ export const View = ({
         }),
         model.t === 'loading' &&
           h(Box, { class: 'absolute top-0 left-0 z-20 grid h-full w-full place-items-center bg-black/50' }, [
-            h(Spinner, {
-              class: 'h-12 w-12',
-              iconClass: 'h-12 w-12',
-            }),
+            h(Spinner, { style: { ...theme({ size: 12 }) } }),
           ]),
       ]),
 
@@ -374,14 +372,14 @@ export const BottomBarActions = ({
 }): ScreenAction[] => {
   const exit: ScreenAction = {
     id: ctx.t('app.exit'),
-    icon: (input) => h(IconArrowLeft, input),
+    renderIcon: (input) => h(IconArrowLeft, input),
     label: ctx.t('app.exit'),
     onPress: onClose,
   }
 
   const hint: ScreenAction = {
     id: ctx.t('game.hint'),
-    icon: (input) => h(IconLightbulb, input),
+    renderIcon: (input) => h(IconLightbulb, input),
     label: ctx.t('game.hint'),
     disabled: isNoMoreHints(model) || model.t === 'loading',
     onPress: () =>
@@ -392,7 +390,7 @@ export const BottomBarActions = ({
 
   const retry: ScreenAction = {
     id: ctx.t('app.retry'),
-    icon: (input) => h(IconArrowRotateLeft, input),
+    renderIcon: (input) => h(IconArrowRotateLeft, input),
     label: ctx.t('app.retry'),
     onPress: () =>
       dispatch({
@@ -403,7 +401,7 @@ export const BottomBarActions = ({
 
   const skip: ScreenAction = {
     id: ctx.t('app.skip'),
-    icon: (input) => h(IconArrowRight, input),
+    renderIcon: (input) => h(IconArrowRight, input),
     label: ctx.t('app.skip'),
     onPress: () =>
       dispatch({
@@ -413,7 +411,7 @@ export const BottomBarActions = ({
 
   const next: ScreenAction = {
     id: ctx.t('app.next'),
-    icon: (input) => h(IconArrowRightCircle, input),
+    renderIcon: (input) => h(IconArrowRightCircle, input),
     label: ctx.t('app.next'),
     color: 'success',
     onPress: () => dispatch({ t: 'next' }),

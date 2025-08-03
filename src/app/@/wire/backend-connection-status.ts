@@ -1,28 +1,28 @@
 import { Translator } from '~/@/l18n/generated'
-import { Box } from '~/@/vdom/primitives/box'
 import { TimeSpan } from '~/@/time/time-span'
-import { cn } from '~/@/ui/cn'
 import { MenuItem } from '~/@/ui/menu-item'
+import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 
 export type BackendConnectionStatus =
   | { t: 'connected'; averagePing: TimeSpan; latestPing: TimeSpan }
   | { t: 'disconnected' }
   | { t: 'connecting' }
 
-const ViewDot = (input: { model: BackendConnectionStatus; ctx: { t: Translator }; class: string }) => {
+const ViewDot = (input: { model: BackendConnectionStatus; ctx: { t: Translator }; style: Record<string, unknown> }) => {
   switch (input.model.t) {
     case 'connected': {
-      return Dot({ class: input.class, colorClassName: 'bg-green-500' })
+      return Dot({ style: { ...theme({ textColor: 'green-500' }), ...input.style } })
     }
 
     case 'connecting': {
-      return Dot({ class: input.class, colorClassName: 'animate-pulse bg-orange-500' })
+      return Dot({ style: { ...theme({ textColor: 'orange-500' }), ...input.style } })
     }
 
     case 'disconnected': {
-      return Dot({ class: input.class, colorClassName: 'bg-red-500' })
+      return Dot({ style: { ...theme({ textColor: 'red-500' }), ...input.style } })
     }
   }
 }
@@ -32,7 +32,8 @@ const ViewMenuItem = (input: { model: BackendConnectionStatus; ctx: { t: Transla
   switch (model.t) {
     case 'connected': {
       return h(MenuItem, {
-        renderIcon: (inputIcon) => h(Dot, { class: inputIcon.class, colorClassName: 'bg-green-500' }),
+        renderIcon: (iconProps) =>
+          h(Dot, { ...iconProps, style: { ...iconProps, ...theme({ textColor: 'green-500' }) } }),
         color: 'green',
         primary: ctx.t('wire.online'),
         renderEnd: () => h(Typography, { text: TimeSpan.format(model.latestPing) }),
@@ -42,7 +43,8 @@ const ViewMenuItem = (input: { model: BackendConnectionStatus; ctx: { t: Transla
 
     case 'connecting': {
       return h(MenuItem, {
-        renderIcon: (input) => h(Dot, { class: input.class, colorClassName: 'bg-orange-500' }),
+        renderIcon: (iconProps) =>
+          h(Dot, { ...iconProps, style: { ...iconProps.style, ...theme({ textColor: 'orange-500' }) } }),
         color: 'warning',
         primary: ctx.t('wire.connecting...'),
         onPress: input.onPress,
@@ -51,7 +53,8 @@ const ViewMenuItem = (input: { model: BackendConnectionStatus; ctx: { t: Transla
 
     case 'disconnected': {
       return h(MenuItem, {
-        renderIcon: (input) => h(Dot, { class: input.class, colorClassName: 'bg-red-500' }),
+        renderIcon: (iconProps) =>
+          h(Dot, { ...iconProps, style: { ...iconProps.style, ...theme({ textColor: 'red-500' }) } }),
         color: 'danger',
         primary: ctx.t('wire.offline'),
         onPress: input.onPress,
@@ -60,9 +63,11 @@ const ViewMenuItem = (input: { model: BackendConnectionStatus; ctx: { t: Transla
   }
 }
 
-const Dot = (input: { class: string; colorClassName: string }) => {
-  return h(Box, { class: cn(input.class, 'aspect-square shrink-0 p-[1px]') }, [
-    h(Box, { class: cn(input.colorClassName, 'h-full w-full shrink-0 rounded-full') }),
+const Dot = (input: { style: Record<string, unknown> }) => {
+  return h(Box, { style: { ...theme({ position: 'relative', p: 1 }), ...input.style } }, [
+    h(Box, {
+      style: { ...theme({ position: 'absolute', height: 'full', width: 'full', rounded: 'full' }) },
+    }),
   ])
 }
 

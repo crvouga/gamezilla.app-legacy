@@ -1,4 +1,6 @@
-import { kebabObjectToCamelObject, StylesObjectKebab } from '../style'
+import { inPlaceMapKeys } from '~/@/object/in-place-map-keys'
+import { isObject } from '~/@/object/is-object'
+import { kebabToCamel } from '~/@/string/kebab-to-camel'
 
 export const REACT_JS_PROP_MAP = new Map<string, string>()
 REACT_JS_PROP_MAP.set('class', 'className')
@@ -10,10 +12,10 @@ REACT_JS_PROP_MAP.set('clip-rule', 'clipRule')
 REACT_JS_PROP_MAP.set('fill-rule', 'fillRule')
 export const REACT_JS_PROP_MAP_KEYS = Array.from(REACT_JS_PROP_MAP.keys())
 
-export const normalizePropsInPlace = (props: Record<string, unknown>, tag: unknown) => {
+export const inPlaceMapPropsToReactProps = (props: Record<string, unknown>, tag: unknown) => {
   try {
-    if (props?.style) {
-      props.style = kebabObjectToCamelObject(props?.style as StylesObjectKebab)
+    if (isObject(props?.style)) {
+      inPlaceMapKeys(props?.style, (key) => kebabToCamel(key))
     }
 
     if (typeof tag === 'string') {
@@ -27,8 +29,4 @@ export const normalizePropsInPlace = (props: Record<string, unknown>, tag: unkno
   } catch (e) {
     // pass
   }
-}
-
-export const normalizeChildren = (children: unknown) => {
-  return Array.isArray(children) ? children : children ? [children] : []
 }

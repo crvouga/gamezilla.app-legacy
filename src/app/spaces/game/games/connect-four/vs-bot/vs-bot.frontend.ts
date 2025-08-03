@@ -446,19 +446,19 @@ const View: Module['View'] = (input) => {
               actions: [
                 {
                   id: input.ctx.t('app.exit'),
-                  icon: (props) => h(IconArrowLeft, props),
+                  renderIcon: (props) => h(IconArrowLeft, props),
                   label: input.ctx.t('app.exit'),
                   onPress: () => input.dispatch({ t: 'user-stopped-game', userId: input.ctx.currentUser.userId }),
                 },
                 {
                   id: input.ctx.t('game.swap-sides'),
-                  icon: (props) => h(IconRightLeft, props),
+                  renderIcon: (props) => h(IconRightLeft, props),
                   label: input.ctx.t('game.swap-sides'),
                   onPress: () => input.dispatch({ t: 'user-swapped-sides', userId: input.ctx.currentUser.userId }),
                 },
                 {
                   id: input.ctx.t('app.restart'),
-                  icon: (props) => h(IconArrowRotateLeft, props),
+                  renderIcon: (props) => h(IconArrowRotateLeft, props),
                   label: input.ctx.t('app.restart'),
                   onPress: () => input.dispatch({ t: 'user-restarted-game', userId: input.ctx.currentUser.userId }),
                 },

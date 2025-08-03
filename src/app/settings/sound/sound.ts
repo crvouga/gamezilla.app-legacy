@@ -133,15 +133,12 @@ const updateFromCmd: Module['update'] = (input) => {
   return { model: input.model }
 }
 
-export const ViewIcon = (input: { model: Model; class: string; fill?: string; stroke?: string }) => {
-  if (input.model.muted) {
-    return h(IconVolumeXMark, { class: input.class, fill: input.fill, stroke: input.stroke })
-  }
-
-  return h(IconVolumeHigh, { class: input.class, fill: input.fill, stroke: input.stroke })
+export const ViewIcon = (input: { model: Model; style: Record<string, unknown> }) => {
+  if (input.model.muted) return h(IconVolumeXMark, { style: input.style })
+  return h(IconVolumeHigh, { style: input.style })
 }
 
-export const ViewSoundMenuItem = (input: {
+export const ViewSoundMenuItem = (props: {
   model: Model
   dispatch: (m: Msg) => void
   ctx: {
@@ -150,16 +147,16 @@ export const ViewSoundMenuItem = (input: {
 }) => {
   return h(MenuItem, {
     onPress: () =>
-      input.dispatch({
+      props.dispatch({
         t: 'sound.toggle-mute',
       }),
-    renderIcon: (inputIcon) => (input.model.muted ? h(IconVolumeXMark, inputIcon) : h(IconVolumeHigh, inputIcon)),
-    primary: input.model.muted ? input.ctx.t('sound.sound-off') : input.ctx.t('sound.sound-on'),
+    renderIcon: (iconProps) => (props.model.muted ? h(IconVolumeXMark, iconProps) : h(IconVolumeHigh, iconProps)),
+    primary: props.model.muted ? props.ctx.t('sound.sound-off') : props.ctx.t('sound.sound-on'),
     renderEnd: () =>
       h(SwitchButton, {
         label: 'toggle sound',
-        checked: !input.model.muted,
-        onToggle: () => input.dispatch({ t: 'sound.toggle-mute' }),
+        checked: !props.model.muted,
+        onToggle: () => props.dispatch({ t: 'sound.toggle-mute' }),
       }),
   })
 }

@@ -259,7 +259,7 @@ export const View = (input: {
         actions: [
           {
             id: input.ctx.t('app.exit'),
-            icon: (props) => h(IconArrowLeft, props),
+            renderIcon: (props) => h(IconArrowLeft, props),
             label: input.ctx.t('app.exit'),
             onPress: () =>
               input.dispatch({
@@ -268,7 +268,7 @@ export const View = (input: {
           },
           {
             id: input.ctx.t('game.swap-sides'),
-            icon: (props) => h(IconRightLeft, props),
+            renderIcon: (props) => h(IconRightLeft, props),
             label: input.ctx.t('game.swap-sides'),
             onPress: () =>
               input.dispatch({
@@ -277,7 +277,7 @@ export const View = (input: {
           },
           {
             id: input.ctx.t('app.restart'),
-            icon: (props) => h(IconArrowRotateLeft, props),
+            renderIcon: (props) => h(IconArrowRotateLeft, props),
             label: input.ctx.t('app.restart'),
             onPress: () =>
               input.dispatch({

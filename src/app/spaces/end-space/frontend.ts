@@ -147,7 +147,7 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
 
   return {
     id: input.ctx.t('spaces.end'),
-    icon: (inputIcon) => h(IconArrowLeftOnRect, { ...inputIcon }),
+    renderIcon: (iconProps) => h(IconArrowLeftOnRect, iconProps),
     label: input.ctx.t('spaces.end'),
     onPress: () => input.dispatch({ t: 'end-space.clicked-end-space-button', spaceId: currentUserSpaceId }),
     color: 'danger',

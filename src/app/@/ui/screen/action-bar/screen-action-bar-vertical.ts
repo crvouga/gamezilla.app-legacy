@@ -1,10 +1,11 @@
 import { ClickableTransparent } from '~/@/ui/clickable'
-import { Box } from '~/@/vdom/primitives/box'
 import { cn } from '~/@/ui/cn'
-import { Frag } from '~/@/vdom/primitives/frag'
 import { Spinner } from '~/@/ui/spinner'
+import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Frag } from '~/@/vdom/primitives/frag'
 import { VDom } from '~/@/vdom/vdom'
 import { ScreenNavBarTabletRoot } from '../layout/screen-layout-tablet/screen-nav-bar-tablet'
 import { ScreenAction, ScreenActionBarProps } from './screen-action-bar-props'
@@ -96,7 +97,7 @@ const ScreenActionButton = (input: ScreenAction) => {
           ),
         },
         [
-          input.icon({ class: toIconSizeClasses(size), width: 24, height: 24, fill: '#fff', stroke: '#fff' }),
+          input.renderIcon({ style: { ...toIconSizeStyle(size), ...theme({ textColor: 'white' }) } }),
           h(Typography, {
             text: input.label,
             class: cn('truncate text-center xl:text-left xl:text-xl', 'text-inherit', input.classNames?.label),
@@ -106,7 +107,7 @@ const ScreenActionButton = (input: ScreenAction) => {
 
       input.loading &&
         h(Box, { class: 'absolute inset-0 flex flex-row h-full w-full items-center justify-center' }, [
-          h(Spinner, { class: toIconSizeClasses(size), iconClass: toIconSizeClasses(size) }),
+          h(Spinner, { style: toIconSizeStyle(size) }),
         ]),
     ],
   )
@@ -135,12 +136,12 @@ const toSizeClasses = (size: ScreenAction['size']): string => {
   }
 }
 
-const toIconSizeClasses = (size: ScreenAction['size']): string => {
+const toIconSizeStyle = (size: ScreenAction['size']): Record<string, unknown> => {
   switch (size) {
     case 'sm':
-      return 'size-8'
+      return theme({ size: 8 })
     case 'md':
     default:
-      return 'size-8'
+      return theme({ size: 8 })
   }
 }
