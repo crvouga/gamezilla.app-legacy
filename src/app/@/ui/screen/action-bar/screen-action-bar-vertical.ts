@@ -128,8 +128,8 @@ const ScreenActionButton = (props: ScreenActionProps & { ctx: ScreenLayoutProps[
           padding: 4,
         }),
         ...toColorStyle(props),
-        ...props.styles?.button,
         ...toSizeStyle(size),
+        ...props.styles?.button,
         display: props.hidden ? 'none' : 'flex',
       },
     },
@@ -158,7 +158,7 @@ const ScreenActionButton = (props: ScreenActionProps & { ctx: ScreenLayoutProps[
           props.renderIcon({
             style: {
               ...toIconSizeStyle(size),
-              ...theme({ textColor: 'white' }),
+              ...theme({ textColor: 'white', flexShrink: 0 }),
             },
           }),
           h(Typography, {

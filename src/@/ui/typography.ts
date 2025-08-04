@@ -91,7 +91,7 @@ export const Typography = (input: TypographyProps) => {
   const variant = input.variant ?? 'body'
   const color = input.color ?? 'text-primary'
 
-  const styles = {
+  const style: Record<string, unknown> = {
     ...toSizeStyle(variant),
     ...(input.skeleton ? SKELETON_STYLE : toColorStyle(color)),
     ...toTextAlignStyle(input.align),
@@ -99,7 +99,7 @@ export const Typography = (input: TypographyProps) => {
   }
 
   return h(Text, {
-    style: styles,
+    style: style,
     role: input.role,
     'aria-busy': input.skeleton,
     'aria-level': toAriaLevel(input),

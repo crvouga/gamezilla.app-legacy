@@ -33,19 +33,17 @@ const ViewMenuItem = (input: { model: BackendConnectionStatus; ctx: { t: Transla
   switch (model.t) {
     case 'connected': {
       return h(MenuItem, {
-        renderIcon: (iconProps) =>
-          h(Dot, { ...iconProps, style: { ...iconProps, ...theme({ textColor: 'green-500' }) } }),
-        color: 'green',
+        renderIcon: (iconProps) => h(Dot, iconProps),
+        color: 'success',
         primary: ctx.t('wire.online'),
-        renderEnd: () => h(Typography, { text: TimeSpan.format(model.latestPing) }),
+        renderEnd: (endProps) => h(Typography, { text: TimeSpan.format(model.latestPing), ...endProps }),
         onPress: input.onPress,
       })
     }
 
     case 'connecting': {
       return h(MenuItem, {
-        renderIcon: (iconProps) =>
-          h(Dot, { ...iconProps, style: { ...iconProps.style, ...theme({ textColor: 'orange-500' }) } }),
+        renderIcon: (iconProps) => h(Dot, iconProps),
         color: 'warning',
         primary: ctx.t('wire.connecting...'),
         onPress: input.onPress,
@@ -54,8 +52,7 @@ const ViewMenuItem = (input: { model: BackendConnectionStatus; ctx: { t: Transla
 
     case 'disconnected': {
       return h(MenuItem, {
-        renderIcon: (iconProps) =>
-          h(Dot, { ...iconProps, style: { ...iconProps.style, ...theme({ textColor: 'red-500' }) } }),
+        renderIcon: (iconProps) => h(Dot, iconProps),
         color: 'danger',
         primary: ctx.t('wire.offline'),
         onPress: input.onPress,

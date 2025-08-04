@@ -5,7 +5,6 @@ import { Box } from '~/@/vdom/primitives/box'
 import { Pressable } from '~/@/vdom/primitives/pressable'
 import { SafeAreaBox } from '~/@/vdom/primitives/safe-area-box'
 import type { VDom } from '~/@/vdom/vdom'
-import { Gutter } from '../gutter'
 import { SURFACE_STYLE } from '../surface'
 import { theme } from '../theme/theme'
 import type { DrawerProps, DrawerPropsPrivate } from './drawer-shared'
@@ -19,7 +18,7 @@ export type DrawerInput = DrawerPropsPrivate & {
   testId?: string
 }
 
-const DrawerContent = (props: { position: 'top' | 'bottom'; open: boolean; children: VDom | VDom[] }) => {
+const DrawerContent = (props: { position: 'top' | 'bottom'; open: boolean; children: VDom[] }) => {
   const isTop = props.position === 'top'
   return h(
     SafeAreaBox,
@@ -35,11 +34,7 @@ const DrawerContent = (props: { position: 'top' | 'bottom'; open: boolean; child
         }),
       },
     },
-    [
-      ...(isTop ? [h(Gutter, { variant: 'drawer' })] : []),
-      ...(Array.isArray(props.children) ? props.children : [props.children]),
-      ...(!isTop ? [h(Gutter, { variant: 'drawer' })] : []),
-    ],
+    props.children,
   )
 }
 

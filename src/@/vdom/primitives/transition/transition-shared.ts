@@ -1,6 +1,6 @@
 import { Sub } from '~/@/sub'
 
-export type TransitionInput = {
+export type TransitionProps = {
   id: string
   onEnter: (node: HTMLElement) => Promise<void>
   onExit: (node: HTMLElement) => Promise<void>
@@ -9,7 +9,7 @@ export type TransitionInput = {
   appear?: boolean
 }
 
-export type TransitionEvent = TransitionInput & {
+export type TransitionEvent = TransitionProps & {
   type: 'input'
 }
 

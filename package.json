@@ -40,7 +40,7 @@
     "e2e:ui": "IS_PLAYWRIGHT_TEST=true pnpm exec playwright test --ui",
     "env:ci": "cp .env.ci .env",
     "env:local": "cp .env.local .env",
-    "expo": "expo start",
+    "expo": "expo start --clear",
     "format": "pnpm exec sort-package-json && pnpm exec prettier --write .",
     "frontend": "pnpm exec vite --open",
     "frontend:build": "pnpm exec vite build",

@@ -1,6 +1,5 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import { Frag } from '~/@/vdom/primitives/frag'
 import { Pressable } from '~/@/vdom/primitives/pressable'
 import { VDom } from '~/@/vdom/vdom'
 import { theme } from '../theme/theme'
@@ -27,9 +26,9 @@ export const DropDown = (props: {
     }
   }
 
-  return h(Frag, {}, [
+  return h(Box, { style: props.style }, [
     h(Backdrop, { open: props.open, onPress: onClose }),
-    h(Box, { style: theme({ position: 'relative', zIndex: 50 }) }, [
+    h(Box, { style: theme({ position: 'relative' }) }, [
       props.renderReference(),
       props.open &&
         h(
@@ -37,8 +36,14 @@ export const DropDown = (props: {
           {
             id: props.id,
             style: {
-              ...toPositionStyles(position, alignment),
-              ...theme({ position: 'relative', zIndex: props.open ? 50 : undefined, flexDirection: 'col' }),
+              ...theme({
+                position: 'absolute',
+                zIndex: props.open ? 50 : undefined,
+                flexDirection: 'col',
+              }),
+              zIndex: 50,
+              ...toPositionStyle(position),
+              ...toAlignmentStyle(position, alignment),
               ...props.style,
             },
 
@@ -57,17 +62,6 @@ const Backdrop = (props: { open: boolean; onPress: () => void }) => {
     style: theme({ position: 'absolute', inset: 0, backgroundColor: 'black/50' }),
     onPress: props.onPress,
   })
-}
-
-const toPositionStyles = (position: DropDownPosition, alignment: DropDownAlignment) => {
-  return {
-    ...theme({
-      position: 'absolute',
-    }),
-    zIndex: 50,
-    ...toPositionStyle(position),
-    ...toAlignmentStyle(position, alignment),
-  }
 }
 
 const toPositionStyle = (position: DropDownPosition): Record<string, unknown> => {

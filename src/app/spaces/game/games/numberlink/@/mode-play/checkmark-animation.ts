@@ -32,6 +32,7 @@ export const CheckmarkAnimation = (input: { open: boolean; duration?: TimeSpan |
               alignItems: 'center',
               justifyContent: 'center',
               opacity: 0,
+              pointerEvents: 'none',
             }),
           },
           [h(IconCheckmark, { style: theme({ aspectRatio: 1, width: 'full', opacity: 0.5, textColor: 'white' }) })],

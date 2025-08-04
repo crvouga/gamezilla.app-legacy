@@ -15,6 +15,6 @@ export const ReactNativeCanvas = (props: ReactNativeCanvasProps) => {
         props.onCreateContext(g)
       },
     },
-    props.children,
+    [],
   )
 }

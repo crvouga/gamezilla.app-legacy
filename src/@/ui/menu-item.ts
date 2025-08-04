@@ -2,7 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { Box } from '../vdom/primitives/box'
-import { ClickableTransparent } from './clickable'
+import { Clickable } from './clickable'
 import { theme } from './theme/theme'
 import { Typography } from './typography'
 
@@ -18,66 +18,46 @@ export type MenuItemProps = {
 }
 
 export const MenuItem = (props: MenuItemProps) => {
-  const baseStyle = theme({
-    flexDirection: 'row',
-    width: 'full',
-    alignItems: 'center',
-    overflow: 'hidden',
-    height: 16,
-    paddingX: 4,
-    fontSize: 'xl',
-    fontWeight: 'bold',
-  })
-
   const colorStyle = toColorStyle(props)
 
   return h(
-    ClickableTransparent,
+    Clickable,
     {
       role: 'menuitem',
       'aria-label': props.primary,
       style: {
-        ...baseStyle,
         ...colorStyle,
+        ...theme({
+          flexDirection: 'row',
+          width: 'full',
+          alignItems: 'center',
+          overflow: 'hidden',
+          height: 16,
+          paddingX: 4,
+          fontSize: 'xl',
+          fontWeight: 'bold',
+        }),
       },
       'aria-selected': props.selected,
       onPress: props.onPress,
     },
     [
-      h(MenuItemContent, {
-        primary: props.primary,
-        renderIcon: props.renderIcon,
-        secondary: props.secondary,
+      h(MenuItemContent, props),
+      props.renderEnd?.({
+        style: {
+          ...colorStyle,
+          ...theme({
+            fontSize: 'lg',
+          }),
+        },
       }),
-      props.renderEnd &&
-        h(
-          Box,
-          {
-            style: theme({
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 2,
-            }),
-          },
-          [
-            props.renderEnd({
-              style: theme({
-                textColor: 'white',
-                fontSize: 'lg',
-              }),
-            }),
-          ],
-        ),
     ],
   )
 }
 
-const MenuItemContent = (input: {
-  primary: TranslatedText
-  renderIcon?: (input: { style: Record<string, unknown> }) => VDom
-  end?: () => VDom
-  secondary?: TranslatedText
-}) => {
+const MenuItemContent = (props: MenuItemProps) => {
+  const colorStyle = toColorStyle(props)
+
   return h(
     Box,
     {
@@ -91,26 +71,32 @@ const MenuItemContent = (input: {
       }),
     },
     [
-      input.renderIcon?.({
-        style: theme({ size: 8, textColor: 'white' }),
+      props.renderIcon?.({
+        style: {
+          ...colorStyle,
+          ...theme({ size: 8 }),
+        },
       }),
       h(Box, { style: theme({ flexDirection: 'col', gap: 1 }) }, [
         h(Typography, {
           variant: 'body',
-          style: theme({
-            textColor: 'white',
-            fontSize: 'lg',
-          }),
-          text: input.primary,
+          style: {
+            ...colorStyle,
+            ...theme({ fontSize: 'lg' }),
+          },
+          text: props.primary,
         }),
-        input.secondary &&
+        props.secondary &&
           h(Typography, {
-            style: theme({
-              textAlign: 'left',
-              fontSize: 'xs',
-              textColor: 'neutral-300',
-            }),
-            text: input.secondary,
+            style: {
+              ...colorStyle,
+              ...theme({
+                textAlign: 'left',
+                fontSize: 'xs',
+                textColor: 'neutral-300',
+              }),
+            },
+            text: props.secondary,
           }),
       ]),
     ],
@@ -119,22 +105,25 @@ const MenuItemContent = (input: {
 
 type Color = 'default' | 'danger' | 'warning' | 'success' | 'inherit' | 'selected' | 'green' | 'orange'
 
-const toColorStyle = (input: MenuItemProps) => {
+const toColorStyle = (input: { color?: Color }): Record<string, unknown> => {
   switch (input.color ?? 'default') {
-    case 'warning': {
+    case 'warning':
       return theme({ textColor: 'orange-500' })
-    }
-    case 'danger': {
+    case 'danger':
       return theme({ textColor: 'red-500' })
-    }
-    case 'green': {
+    case 'green':
       return theme({ textColor: 'green-500' })
-    }
-    case 'orange': {
+    case 'orange':
       return theme({ textColor: 'orange-500' })
-    }
-    default: {
-      return {}
-    }
+    case 'success':
+      return theme({ textColor: 'green-500' })
+    case 'selected':
+      return theme({ textColor: 'blue-500' })
+    case 'inherit':
+      return theme({ textColor: 'white' })
+    case 'default':
+      return theme({ textColor: 'white' })
+    default:
+      return theme({ textColor: 'white' })
   }
 }

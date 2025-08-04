@@ -282,30 +282,37 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
     },
     body: {
       render: () =>
-        h(Box, { 'data-testid': TEST_ID_TOP_BAR_SURFACE, style: theme({ width: 'full', flexDirection: 'col' }) }, [
-          h(BackendConnectionStatus.ViewMenuItem, {
-            ctx: props.ctx,
-            model: props.ctx.backendConnectionStatus,
-            onPress: () => {},
-          }),
+        h(
+          Box,
+          {
+            'data-testid': TEST_ID_TOP_BAR_SURFACE,
+            style: theme({ width: 'full', flexDirection: 'col' }),
+          },
+          [
+            h(BackendConnectionStatus.ViewMenuItem, {
+              ctx: props.ctx,
+              model: props.ctx.backendConnectionStatus,
+              onPress: () => {},
+            }),
 
-          h(SoundFrontend.ViewSoundMenuItem, {
-            ctx: props.ctx,
-            model: props.model.sound,
-            dispatch: (c) => props.dispatch({ t: 'sound', c }),
-          }),
+            h(SoundFrontend.ViewSoundMenuItem, {
+              ctx: props.ctx,
+              model: props.model.sound,
+              dispatch: (c) => props.dispatch({ t: 'sound', c }),
+            }),
 
-          h(ViewLangMenuItem, props),
+            h(ViewLangMenuItem, props),
 
-          h(MenuItem, {
-            renderIcon: (inputIcon) => h(IconGear, inputIcon),
-            primary: props.ctx.t('l18n.settings'),
-            link: true,
-            onPress: () => {
-              props.dispatch({ t: 'settings.clicked-open-settings' })
-            },
-          }),
-        ]),
+            h(MenuItem, {
+              renderIcon: (inputIcon) => h(IconGear, inputIcon),
+              primary: props.ctx.t('l18n.settings'),
+              link: true,
+              onPress: () => {
+                props.dispatch({ t: 'settings.clicked-open-settings' })
+              },
+            }),
+          ],
+        ),
     },
   })
 }

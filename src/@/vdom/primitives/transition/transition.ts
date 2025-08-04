@@ -2,7 +2,7 @@ import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { TRANSITION_ELEMENT_TAG } from '../../tags'
 import './transition-element'
-import { type TransitionInput, transitionSub } from './transition-shared'
+import { type TransitionProps, transitionSub } from './transition-shared'
 
 export const Transition = ({
   id,
@@ -10,9 +10,8 @@ export const Transition = ({
   onExit,
   onAppear,
   children,
-
   mode,
-}: TransitionInput & {
+}: TransitionProps & {
   children?: VDom
 }) => {
   transitionSub.pub({
