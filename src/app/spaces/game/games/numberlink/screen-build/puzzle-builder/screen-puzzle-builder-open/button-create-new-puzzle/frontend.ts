@@ -8,7 +8,6 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
 import { ShowOkSmall } from '~/app/@/frontend/show-ok-small'
 import { ActionCreateProps } from '~/app/@/ui/screen/layout/screen-layout-props'
-import { AddPuzzlesCmd } from '../../../../@/frontend/add-puzzles-cmd.$msg'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { IPuzzleDb } from '../../../../@/puzzle/puzzle-db'
 import { NumberlinkVariant } from '../../../../@/variant'
@@ -65,14 +64,9 @@ const update: FrontendModule['update'] = (input) => {
         }
       }
 
-      const puzzleNew = input.msgSpace.created.value
-
       return {
         model: input.model,
-        msgOut: [
-          ShowOkSmall.init(input.ctx.t('game.numberlink.puzzle-created')),
-          AddPuzzlesCmd.init({ [puzzleNew.id]: puzzleNew }, input),
-        ],
+        msgOut: [ShowOkSmall.init(input.ctx.t('game.numberlink.puzzle-created'))],
       }
     }
 
