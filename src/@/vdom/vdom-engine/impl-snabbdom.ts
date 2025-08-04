@@ -1,5 +1,7 @@
 import { attributesModule, eventListenersModule, fragment, init, propsModule, styleModule } from 'snabbdom'
-import { flatTruthyArray } from '~/@/array/flat-truthy-array'
+import { inPlaceFlatTruthyArray } from '~/@/array/in-place-flat-truthy-array'
+import { inPlaceMapKeys } from '~/@/object/in-place-map-keys'
+import { kebabToCamel } from '~/@/string/kebab-to-camel'
 import { CANVAS_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { createPrimitiveElement } from './snabbdom/snabbdom-create-element'
@@ -25,8 +27,9 @@ const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
         props.children = children
         return tag(props)
       }
-      children = flatTruthyArray(children ?? props?.children)
+      children = inPlaceFlatTruthyArray(children ?? props?.children)
       inPlaceMapPropsToWebProps(props)
+      inPlaceMapKeys(props.style, kebabToCamel)
       switch (tag) {
         case FRAGMENT_TAG:
           return fragment(children)

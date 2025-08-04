@@ -1,10 +1,10 @@
 import { createElement, Fragment, StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ensureArray } from '~/@/array/ensure-array'
+import { inPlaceMapKeys } from '~/@/object/in-place-map-keys'
+import { kebabToCamel } from '~/@/string/kebab-to-camel'
 import { CANVAS_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
-
-import { inPlaceMapPropsToReactProps } from './react/map-props-to-react-props'
 import { inPlaceMapPropsToWebProps } from './web/map-props-to-web-props'
 import { WebCanvas } from './web/web-canvas'
 import { WebSafeAreaBox } from './web/web-safe-area-box'
@@ -22,8 +22,8 @@ const init = (_config: ImplReact): IVirtualDomEngine => {
       reactRoot.render(createElement(StrictMode, {}, vDom as any))
     },
     createElement: (tag: any, props: any, children: any) => {
+      inPlaceMapKeys(props?.style, kebabToCamel)
       inPlaceMapPropsToWebProps(props)
-      inPlaceMapPropsToReactProps(props, tag)
 
       children = ensureArray(children)
       switch (tag) {

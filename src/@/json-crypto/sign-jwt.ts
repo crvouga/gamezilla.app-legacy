@@ -147,7 +147,6 @@ export const sign = async (state: JWTState, key: KeyLike): Promise<string> => {
 const base64UrlEncode = (str: string): string => {
   return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 }
-
 const signHS256 = async (data: string, key: KeyLike): Promise<string> => {
   let cryptoKey: CryptoKey
 
@@ -155,7 +154,7 @@ const signHS256 = async (data: string, key: KeyLike): Promise<string> => {
     const encoder = new TextEncoder()
     const keyData = encoder.encode(key)
     cryptoKey = await crypto.subtle.importKey('raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'])
-  } else if (key instanceof Uint8Array) {
+  } else if (key instanceof ArrayBuffer) {
     cryptoKey = await crypto.subtle.importKey('raw', key, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'])
   } else if ('kty' in key) {
     // Handle JsonWebKey

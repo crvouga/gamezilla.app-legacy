@@ -48,7 +48,12 @@ export const ScreenNavBarTablet = (input: {
       input.title &&
         h(Typography, {
           role: 'heading',
-          style: theme({ overflow: 'hidden', padding: 2, fontSize: '3xl', fontWeight: 'bold' }),
+          style: theme({
+            overflow: 'hidden',
+            padding: 2,
+            fontSize: '2xl',
+            fontWeight: 'bold',
+          }),
           variant: 'title',
           text: input.title,
         }),

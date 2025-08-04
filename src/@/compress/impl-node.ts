@@ -42,7 +42,7 @@ export const Compress = (_config: Config): ICompress => {
     async gzipResponse(response) {
       const buf = await response.arrayBuffer()
       const compressed = gzipSync(Buffer.from(buf))
-      const responseNew = new Response(compressed)
+      const responseNew = new Response(compressed.slice())
       for (const [key, value] of response.headers.entries()) {
         responseNew.headers.set(key, value)
       }

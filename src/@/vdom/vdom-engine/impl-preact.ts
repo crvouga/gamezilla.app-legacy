@@ -20,8 +20,8 @@ const init = (_config: ImplPreact): IVirtualDomEngine => {
       render(vDom as any, node)
     },
     createElement: (tag: any, props: any, children: any) => {
-      inPlaceMapPropsToWebProps(props)
       inPlaceMapKeys(props.style, camelToKebab)
+      inPlaceMapPropsToWebProps(props)
       children = ensureArray(children)
       switch (tag) {
         case FRAGMENT_TAG:

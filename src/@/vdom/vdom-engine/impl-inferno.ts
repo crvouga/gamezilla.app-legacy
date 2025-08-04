@@ -19,8 +19,8 @@ const init = (_config: ImplInferno): IVirtualDomEngine => {
       render(vDom, node)
     },
     createElement: (tag: any, props: any, children: any) => {
-      inPlaceMapPropsToWebProps(props)
       inPlaceMapKeys(props.style, camelToKebab)
+      inPlaceMapPropsToWebProps(props)
 
       switch (tag) {
         case FRAGMENT_TAG:

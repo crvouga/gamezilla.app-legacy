@@ -5,6 +5,11 @@
     border-width: 0;
     border-style: solid;
     border-color: currentColor;
+    margin: 0;
+    padding: 0;
+    touch-action: manipulation;
+    user-select: none;
+
 }
 
 html {
@@ -13,6 +18,8 @@ html {
     -moz-tab-size: 4;
     tab-size: 4;
     font-family: ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -43,6 +50,7 @@ h6 {
 a {
     color: inherit;
     text-decoration: inherit;
+    cursor: pointer;
 }
 
 b,
@@ -110,6 +118,28 @@ button,
     appearance: button;
     background-color: transparent;
     background-image: none;
+    cursor: pointer;
+}
+
+[disabled] {
+    cursor: default;
+}
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+    display: block;
+    max-width: 100%;
+}
+
+img,
+video {
+    height: auto;
 }
 
 :-moz-focusring {
@@ -141,4 +171,42 @@ button,
 * {
     scrollbar-width: thin;
     scrollbar-color: #555 black;
+}
+
+/* Remove list styles */
+ol,
+ul,
+menu {
+    list-style: none;
+}
+
+/* Quote reset */
+blockquote,
+q {
+    quotes: none;
+}
+
+/* Form element fixes */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="search"] {
+    appearance: textfield;
+    outline-offset: -2px;
+}
+
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* Hidden attribute */
+[hidden] {
+    display: none;
 }

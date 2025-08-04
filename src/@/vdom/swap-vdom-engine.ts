@@ -10,20 +10,7 @@ const init = async (config: { vdomImplStorage: IVdomImplWebStorage }) => {
   const vdomImpl = await config.vdomImplStorage.get()
   const vdomEngine = await ImplWeb.init({ t: vdomImpl })
   VDomEngine.set(vdomEngine)
-  let root = document.createElement('div')
-  root.style.height = '100dvh'
-  root.style.width = '100dvw'
-  root.style.display = 'flex'
-  root.style.alignItems = 'center'
-  root.style.justifyContent = 'center'
-  root.style.margin = '0'
-  root.style.padding = '0'
-  root.style.overflow = 'hidden'
-  root.style.fontSize = '64px'
-  root.style.backgroundColor = 'black'
-  root.style.color = 'white'
-  root.style.fontFamily = 'ui-sans-serif, system-ui, sans-serif'
-  root.style.lineHeight = '1.5'
+  let root = createRoot()
   document.body.innerHTML = ''
   document.body.appendChild(root)
 
@@ -32,20 +19,7 @@ const init = async (config: { vdomImplStorage: IVdomImplWebStorage }) => {
     const vdomEngine = await ImplWeb.init({ t: vdomImpl })
     VDomEngine.set(vdomEngine)
     document.body.innerHTML = ''
-    root = document.createElement('div')
-    root.style.height = '100dvh'
-    root.style.width = '100dvw'
-    root.style.display = 'flex'
-    root.style.alignItems = 'center'
-    root.style.justifyContent = 'center'
-    root.style.margin = '0'
-    root.style.padding = '0'
-    root.style.overflow = 'hidden'
-    root.style.fontSize = '64px'
-    root.style.backgroundColor = 'black'
-    root.style.color = 'white'
-    root.style.fontFamily = 'ui-sans-serif, system-ui, sans-serif'
-    root.style.lineHeight = '1.5'
+    root = createRoot()
     document.body.appendChild(root)
     swapped.pub(true)
   })
@@ -54,6 +28,21 @@ const init = async (config: { vdomImplStorage: IVdomImplWebStorage }) => {
     swapped,
     getRoot: () => root,
   }
+}
+
+const createRoot = () => {
+  const root = document.createElement('div')
+  root.style.height = '100dvh'
+  root.style.width = '100dvw'
+  root.style.display = 'flex'
+  root.style.margin = '0'
+  root.style.padding = '0'
+  root.style.overflow = 'hidden'
+  root.style.backgroundColor = 'black'
+  root.style.color = 'white'
+  root.style.fontFamily = 'ui-sans-serif, system-ui, sans-serif'
+  root.style.lineHeight = '1.5'
+  return root
 }
 
 export const SwapVDomEngine = {

@@ -6,7 +6,7 @@ import { GameName } from './@/game-name'
 import * as ConnectFour from './connect-four/connect-four-cover-art'
 import * as Numberlink from './numberlink/cover-art'
 
-export const GameCoverArt = (input: {
+export const GameCoverArt = (props: {
   style?: Record<string, unknown>
   rounded?: boolean
   gameName: GameName
@@ -14,24 +14,30 @@ export const GameCoverArt = (input: {
 }) => {
   return h(GameCoverArtSwitch, {
     style: {
-      ...theme({ aspectRatio: 1, overflow: 'hidden', rounded: 'lg', borderWidth: 1, borderColor: 'neutral-700' }),
-      ...input.style,
+      ...theme({
+        aspectRatio: 1,
+        overflow: 'hidden',
+        rounded: 'lg',
+        borderWidth: 1,
+        borderColor: 'neutral-700',
+      }),
+      ...props.style,
     },
-    gameName: input.gameName,
-    platform: input.platform,
+    gameName: props.gameName,
+    platform: props.platform,
   })
 }
 
-const GameCoverArtSwitch = (input: {
+const GameCoverArtSwitch = (props: {
   style?: Record<string, unknown>
   gameName: GameName
   platform: IPlatform
 }): VDom => {
-  switch (input.gameName) {
+  switch (props.gameName) {
     case 'connect-four':
-      return h(ConnectFour.CoverArt, input)
+      return h(ConnectFour.CoverArt, props)
     case 'numberlink':
-      return h(Numberlink.CoverArt, input)
+      return h(Numberlink.CoverArt, props)
     case 'chess':
     case 'gomoku':
     case 'tic-tac-toe':

@@ -55,11 +55,14 @@ const View = (props: BoardProps<VariantGrid>) => {
   return h(
     Svg,
     {
-      style: theme({
-        pointerEvents: props.disabled ? 'none' : undefined,
-        width: 'full',
-        overflow: 'hidden',
-      }),
+      style: {
+        ...theme({
+          pointerEvents: props.disabled ? 'none' : undefined,
+          width: 'full',
+          overflow: 'hidden',
+        }),
+        ...props.style,
+      },
       viewBox: `${0} ${0} ${props.model.width} ${props.model.height}`,
       onPointerMove: (e: any) => {
         if (props.disabled || !props.isDragging) return

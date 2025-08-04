@@ -16,6 +16,8 @@ import Svg, {
   Text as SvgText,
 } from 'react-native-svg'
 import { ensureArray } from '~/@/array/ensure-array'
+import { inPlaceMapKeys } from '~/@/object/in-place-map-keys'
+import { kebabToCamel } from '~/@/string/kebab-to-camel'
 import {
   BOX_TAG,
   CANVAS_TAG,
@@ -46,7 +48,6 @@ import { IVirtualDomEngine } from './interface'
 import { inPlaceMapPropsToReactNativeProps } from './react-native/map-props-to-react-native-props'
 import { ReactNativeCanvas } from './react-native/react-native-canvas'
 import { ReactNativeSafeAreaBox } from './react-native/react-native-safe-area-box'
-import { inPlaceMapPropsToReactProps } from './react/map-props-to-react-props'
 
 const ALLOWED_PROPS = new Set([
   'style',
@@ -145,7 +146,7 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
     },
     createElement: (tag: any, props: any, children: any) => {
       inPlaceMapPropsToReactNativeProps(props)
-      inPlaceMapPropsToReactProps(props, tag)
+      inPlaceMapKeys(props?.style, kebabToCamel)
 
       switch (tag) {
         case PRESSABLE_TAG:

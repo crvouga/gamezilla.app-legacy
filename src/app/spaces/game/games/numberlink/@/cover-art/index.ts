@@ -2,7 +2,6 @@ import { pipe } from '~/@/function/pipe'
 import { IPlatform } from '~/@/platform/platform'
 import { theme } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
-import { Box } from '~/@/vdom/primitives/box'
 import { VariantGridBoard } from '../variant/grid/grid-board'
 import { VariantGridShorthand } from '../variant/grid/grid-shorthand'
 
@@ -40,15 +39,13 @@ const GRIDS = [
 const GRID = GRIDS[3]
 
 export const CoverArt = (input: { style?: Record<string, unknown>; platform: IPlatform }) => {
-  return h(Box, { style: input.style }, [
-    h(VariantGridBoard.View, {
-      model: GRID,
-      disabled: true,
-      borderless: true,
-      disableHighlight: true,
-      style: theme({ aspectRatio: 1, backgroundColor: 'black' }),
-      impl: { t: 'svg' },
-      platform: input.platform,
-    }),
-  ])
+  return h(VariantGridBoard.View, {
+    model: GRID,
+    disabled: true,
+    borderless: true,
+    disableHighlight: true,
+    style: { ...theme({ aspectRatio: 1, backgroundColor: 'black' }), ...input.style },
+    impl: { t: 'svg' },
+    platform: input.platform,
+  })
 }

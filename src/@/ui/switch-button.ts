@@ -41,7 +41,6 @@ export const SwitchButton = ({
             borderColor: checked ? 'white' : 'neutral-300',
           }),
           transform: checked ? 'translateX(22px)' : 'translateX(2px)',
-          transition: 'all',
         },
       }),
     ],

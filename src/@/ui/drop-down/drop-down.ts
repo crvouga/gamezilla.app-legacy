@@ -35,34 +35,25 @@ export const DropDown = (props: {
 
   return h(Frag, {}, [
     h(Backdrop, { open: props.open, onPress: onClose, onKeyDown }),
-    h(
-      Box,
-      {
-        id: props.id,
-        style: {
-          ...theme({
-            position: 'relative',
-
-            zIndex: props.open ? 50 : undefined,
-          }),
-          ...props.style,
+    props.renderReference(),
+    props.open &&
+      h(
+        Box,
+        {
+          id: props.id,
+          style: {
+            ...toPositionStyles(position, alignment),
+            ...theme({
+              position: 'relative',
+              zIndex: props.open ? 50 : undefined,
+            }),
+            ...props.style,
+          },
+          onKeyDown,
+          'data-testid': props.testId,
         },
-        onKeyDown,
-      },
-      [
-        props.renderReference(),
-        props.open &&
-          h(
-            Box,
-            {
-              id: props.id,
-              style: toPositionStyles(position, alignment),
-              'data-testid': props.testId,
-            },
-            [props.renderFloating()],
-          ),
-      ],
-    ),
+        [props.renderFloating()],
+      ),
   ])
 }
 
