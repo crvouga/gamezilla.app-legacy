@@ -17,6 +17,7 @@ import { ImplReactNative } from './@/vdom/vdom-engine/impl-react-native'
 import { ViewportImplReactNative } from './@/viewport/impl-react-native'
 import { SplashScreen } from './app/@/ui/logo/splash-screen'
 import { AppFrontend } from './app/frontend'
+import './frontend.css'
 
 const logger = Logger.init({
   t: 'console',

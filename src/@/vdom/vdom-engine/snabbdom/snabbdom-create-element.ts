@@ -12,7 +12,7 @@ const isSpecialKey = (key: string): boolean => {
   }
 }
 
-export const createElement = (tag: string, props: any, children: any) => {
+export const createPrimitiveElement = (tag: string, props: any, children: any) => {
   const attrs: Attrs = {}
   const on: On = {}
   let hasAttrs = false

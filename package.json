@@ -92,7 +92,7 @@
     "preact": "^10.27.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-native": "0.80.2",
+    "react-native": "0.79.2",
     "react-native-svg": "15.11.2",
     "react-native-web": "^0.21.0",
     "snabbdom": "^3.6.2",

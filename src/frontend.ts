@@ -16,6 +16,7 @@ import { h, render } from './@/vdom'
 import { SwapVDomEngine } from './@/vdom/swap-vdom-engine'
 import { VdomImplWebStorage } from './@/vdom/vdom-impl-web-storage'
 import { Viewport } from './@/viewport/impl'
+import './frontend.css'
 
 const main = async () => {
   const logger = Logger.init({ t: 'console', namespace: ['frontend'], newLinePerMsg: false, maxLogLevel: 'debug' })
