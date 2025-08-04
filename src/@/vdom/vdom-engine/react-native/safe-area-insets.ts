@@ -10,6 +10,15 @@ export type SafeAreaInsets = {
 }
 
 const get = (): SafeAreaInsets => {
+  if (Platform.OS === 'web' && width > 1024) {
+    return {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+    }
+  }
+
   const isIPhoneWithNotch = Platform.OS === 'ios' && (height >= 812 || width >= 812)
 
   return {

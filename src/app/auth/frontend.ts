@@ -236,45 +236,58 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
       center: true,
     },
     [
-      h(Box, { style: theme({ flexDirection: 'col', width: 'full', gap: 8 }) }, [
-        h(AuthScreenHeaderCta, { ctx: input.ctx }),
-
-        h(Box, { style: theme({ flexDirection: 'col', width: 'full' }) }, [
-          h(Button, {
-            onPress: () => input.dispatch({ t: 'clicked-login-with-phone' }),
-            size: 'lg',
+      h(
+        Box,
+        {
+          style: theme({
+            flexDirection: 'col',
             width: 'full',
-            renderIconStart: (iconInput) => h(IconMobilePhone, iconInput),
-            text: input.ctx.t('auth.continue-with-phone'),
+            gap: 8,
           }),
+        },
+        [
+          h(AuthScreenHeaderCta, { ctx: input.ctx }),
 
-          h(
-            Box,
-            {
-              style: theme({
-                flexDirection: 'row',
-                width: 'full',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: 4,
-              }),
-            },
-            [
-              h(Typography, {
-                variant: 'body',
-                style: theme({ fontSize: 'sm', fontWeight: 'bold' }),
-                text: input.ctx.t('auth.or'),
-              }),
-            ],
-          ),
+          h(Box, { style: theme({ flexDirection: 'col', width: 'full' }) }, [
+            h(Button, {
+              onPress: () => input.dispatch({ t: 'clicked-login-with-phone' }),
+              size: 'lg',
+              width: 'full',
+              renderIconStart: (iconInput) => h(IconMobilePhone, iconInput),
+              text: input.ctx.t('auth.continue-with-phone'),
+            }),
 
-          h(ContinueAsGuestFrontend.ViewButton, {
-            ctx: input.ctx,
-            dispatch: (c) => input.dispatch({ t: 'got-login-as-guest-msg', c }),
-            model: input.model.continueAsGuest,
-          }),
-        ]),
-      ]),
+            h(
+              Box,
+              {
+                style: theme({
+                  flexDirection: 'row',
+                  width: 'full',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 4,
+                }),
+              },
+              [
+                h(Typography, {
+                  variant: 'body',
+                  style: theme({
+                    fontSize: 'sm',
+                    fontWeight: 'bold',
+                  }),
+                  text: input.ctx.t('auth.or'),
+                }),
+              ],
+            ),
+
+            h(ContinueAsGuestFrontend.ViewButton, {
+              ctx: input.ctx,
+              dispatch: (c) => input.dispatch({ t: 'got-login-as-guest-msg', c }),
+              model: input.model.continueAsGuest,
+            }),
+          ]),
+        ],
+      ),
     ],
   )
 }

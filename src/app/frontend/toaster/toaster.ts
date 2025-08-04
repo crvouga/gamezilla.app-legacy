@@ -196,6 +196,8 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
                   overflow: 'hidden',
                   rounded: 'lg',
                   borderWidth: 1,
+                  padding: 4,
+                  fontSize: 'lg',
                 }),
                 ...(input.toast.variant === 'info' && PAPER_STYLE),
                 ...(input.toast.variant === 'success' && PAPER_STYLE),

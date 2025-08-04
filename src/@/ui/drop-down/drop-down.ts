@@ -1,8 +1,8 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
+import { Frag } from '~/@/vdom/primitives/frag'
 import { Pressable } from '~/@/vdom/primitives/pressable'
 import { VDom } from '~/@/vdom/vdom'
-import { Transition } from '../../vdom/primitives/transition'
 import { theme } from '../theme/theme'
 import { DropDownAlignment } from './drop-down-alignment'
 import { DropDownPosition } from './drop-down-position'
@@ -33,7 +33,7 @@ export const DropDown = (props: {
     }
   }
 
-  return h(Box, {}, [
+  return h(Frag, {}, [
     h(Backdrop, { open: props.open, onPress: onClose, onKeyDown }),
     h(
       Box,
@@ -42,26 +42,25 @@ export const DropDown = (props: {
         style: {
           ...theme({
             position: 'relative',
+
+            zIndex: props.open ? 50 : undefined,
           }),
-          zIndex: props.open ? 50 : undefined,
           ...props.style,
         },
         onKeyDown,
       },
       [
         props.renderReference(),
-        h(Transition, { id: `${props.id}-transition`, mode: 'in-out', onEnter, onExit }, [
-          props.open &&
-            h(
-              Box,
-              {
-                id: props.id,
-                style: toPositionStyles(position, alignment),
-                'data-testid': props.testId,
-              },
-              [props.renderFloating()],
-            ),
-        ]),
+        props.open &&
+          h(
+            Box,
+            {
+              id: props.id,
+              style: toPositionStyles(position, alignment),
+              'data-testid': props.testId,
+            },
+            [props.renderFloating()],
+          ),
       ],
     ),
   ])
@@ -69,43 +68,12 @@ export const DropDown = (props: {
 
 const Backdrop = (props: { open: boolean; onPress: () => void; onKeyDown: (e: unknown) => void }) => {
   if (!props.open) return null
+
   return h(Pressable, {
-    style: theme({
-      position: 'absolute',
-      inset: 0,
-      backgroundColor: 'black/50',
-    }),
+    style: theme({ position: 'absolute', inset: 0, backgroundColor: 'black/50' }),
     onPress: props.onPress,
     onKeyDown: props.onKeyDown,
   })
-}
-
-const onEnter = async (node: HTMLElement) => {
-  await node?.animate(
-    [
-      { opacity: 0, transform: 'translateY(-8px)' },
-      { opacity: 1, transform: 'translateY(0)' },
-    ],
-    {
-      duration: 150,
-      easing: 'ease-in-out',
-      fill: 'both',
-    },
-  ).finished
-}
-
-const onExit = async (node: HTMLElement) => {
-  await node?.animate(
-    [
-      { opacity: 1, transform: 'translateY(0)' },
-      { opacity: 0, transform: 'translateY(-8px)' },
-    ],
-    {
-      duration: 150,
-      easing: 'ease-in-out',
-      fill: 'both',
-    },
-  ).finished
 }
 
 const toPositionStyles = (position: DropDownPosition, alignment: DropDownAlignment) => {

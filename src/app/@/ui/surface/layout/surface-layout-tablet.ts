@@ -1,9 +1,9 @@
 import { DropDown } from '~/@/ui/drop-down/drop-down'
-import { Box } from '~/@/vdom/primitives/box'
 import { DropDownSurface } from '~/@/ui/drop-down/drop-down-surface'
 import { Dialog } from '~/@/ui/surface-dialog/dialog'
 import { DialogSurface } from '~/@/ui/surface-dialog/dialog-surface'
 import { h } from '~/@/vdom/h'
+import { Frag } from '~/@/vdom/primitives/frag'
 import { SurfaceContent } from './surface-content'
 import { SurfaceLayoutProps } from './surface-layout-props'
 
@@ -21,7 +21,7 @@ export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
     })
   }
 
-  return h(Box, {}, [
+  return h(Frag, {}, [
     props.dropDown?.reference?.render?.(),
     h(Dialog, { open: props.open, onClose: props.onClose, testId: props.testId }, [
       h(DialogSurface, {}, [h(SurfaceContent, props)]),

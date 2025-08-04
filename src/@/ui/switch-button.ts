@@ -34,8 +34,7 @@ export const SwitchButton = ({
           ...theme({
             position: 'absolute',
             top: 0.5,
-            height: 5,
-            width: 5,
+            size: 5,
             rounded: 'full',
             borderWidth: 1,
             backgroundColor: 'white',

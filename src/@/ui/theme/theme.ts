@@ -106,34 +106,34 @@ const applyMaxWidth = (styles: Record<string, string | number | null>, maxWidth:
       styles.maxWidth = '50%'
       break
     case 'sm':
-      styles.maxWidth = 160 // 40rem
+      styles.maxWidth = 384 // 24rem
       break
     case 'md':
-      styles.maxWidth = 192 // 48rem
+      styles.maxWidth = 448 // 28rem
       break
     case 'lg':
-      styles.maxWidth = 224 // 56rem
+      styles.maxWidth = 512 // 32rem
       break
     case 'xl':
-      styles.maxWidth = 288 // 72rem
+      styles.maxWidth = 576 // 36rem
       break
     case '2xl':
-      styles.maxWidth = 336 // 84rem
+      styles.maxWidth = 672 // 42rem
       break
     case '3xl':
-      styles.maxWidth = 384 // 96rem
+      styles.maxWidth = 768 // 48rem
       break
     case '4xl':
-      styles.maxWidth = 448 // 112rem
+      styles.maxWidth = 896 // 56rem
       break
     case '5xl':
-      styles.maxWidth = 512 // 128rem
+      styles.maxWidth = 1024 // 64rem
       break
     case '6xl':
-      styles.maxWidth = 576 // 144rem
+      styles.maxWidth = 1152 // 72rem
       break
     case '7xl':
-      styles.maxWidth = 640 // 160rem
+      styles.maxWidth = 1280 // 80rem
       break
   }
   if (typeof maxWidth === 'number') {

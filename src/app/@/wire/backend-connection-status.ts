@@ -4,7 +4,8 @@ import { MenuItem } from '~/@/ui/menu-item'
 import { theme } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
-import { Box } from '~/@/vdom/primitives/box'
+import { Circle } from '~/@/vdom/primitives/svg/circle'
+import { Svg } from '~/@/vdom/primitives/svg/svg'
 
 export type BackendConnectionStatus =
   | { t: 'connected'; averagePing: TimeSpan; latestPing: TimeSpan }
@@ -14,15 +15,15 @@ export type BackendConnectionStatus =
 const ViewDot = (input: { model: BackendConnectionStatus; ctx: { t: Translator }; style: Record<string, unknown> }) => {
   switch (input.model.t) {
     case 'connected': {
-      return Dot({ style: { ...theme({ textColor: 'green-500' }), ...input.style } })
+      return h(Dot, { style: { ...theme({ textColor: 'green-500' }), ...input.style } })
     }
 
     case 'connecting': {
-      return Dot({ style: { ...theme({ textColor: 'orange-500' }), ...input.style } })
+      return h(Dot, { style: { ...theme({ textColor: 'orange-500' }), ...input.style } })
     }
 
     case 'disconnected': {
-      return Dot({ style: { ...theme({ textColor: 'red-500' }), ...input.style } })
+      return h(Dot, { style: { ...theme({ textColor: 'red-500' }), ...input.style } })
     }
   }
 }
@@ -64,10 +65,8 @@ const ViewMenuItem = (input: { model: BackendConnectionStatus; ctx: { t: Transla
 }
 
 const Dot = (input: { style: Record<string, unknown> }) => {
-  return h(Box, { style: { ...theme({ position: 'relative', padding: 1 }), ...input.style } }, [
-    h(Box, {
-      style: { ...theme({ position: 'absolute', height: 'full', width: 'full', rounded: 'full' }) },
-    }),
+  return h(Svg, { viewBox: '0 0 16 16', style: input.style, fill: 'currentColor' }, [
+    h(Circle, { cx: '8', cy: '8', r: '6', fill: 'currentColor' }),
   ])
 }
 
