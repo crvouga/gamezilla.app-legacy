@@ -7,7 +7,8 @@ import { Box } from '~/@/vdom/primitives/box'
 import { Frag } from '~/@/vdom/primitives/frag'
 import { VDom } from '~/@/vdom/vdom'
 import { ScreenNavBarTabletRoot } from '../layout/screen-layout-tablet/screen-nav-bar-tablet'
-import { ScreenAction, ScreenActionBarProps } from './screen-action-bar-props'
+import { ScreenAction as ScreenActionProps, ScreenActionBarProps } from './screen-action-bar-props'
+import { ScreenLayoutProps } from '../layout/screen-layout-props'
 
 const SIZE = 'md' as 'md' | 'sm'
 
@@ -23,7 +24,7 @@ export const VerticalActionBar = (
       style: {
         ...theme({
           height: 'full',
-          maxWidth: 'md',
+          maxWidth: 'xs',
           flex: 1,
           flexShrink: 0,
           flexDirection: 'col',
@@ -36,21 +37,25 @@ export const VerticalActionBar = (
       h(ScreenNavBarTabletRoot, {}, [input.renderNavBar?.()]),
 
       input.variant.t === 'uniform'
-        ? h(VerticalUniform, { actions: input.variant.actions })
-        : h(VerticalSpaceBetween, { start: input.variant.start, end: input.variant.end }),
+        ? h(VerticalUniform, { actions: input.variant.actions, ctx: input.ctx })
+        : h(VerticalSpaceBetween, { start: input.variant.start, end: input.variant.end, ctx: input.ctx }),
     ],
   )
 }
 
-const VerticalUniform = (input: { actions: (ScreenAction | null)[] }) => {
-  return h(Toolbar, {}, [h(ActionButtonList, { actions: input.actions })])
+const VerticalUniform = (props: { actions: (ScreenActionProps | null)[]; ctx: ScreenLayoutProps['ctx'] }) => {
+  return h(Toolbar, {}, [h(ActionButtonList, props)])
 }
 
-const VerticalSpaceBetween = (input: { start: (ScreenAction | null)[]; end: (ScreenAction | null)[] }) => {
+const VerticalSpaceBetween = (input: {
+  start: (ScreenActionProps | null)[]
+  end: (ScreenActionProps | null)[]
+  ctx: ScreenLayoutProps['ctx']
+}) => {
   return h(Toolbar, {}, [
-    h(ActionButtonList, { actions: input.start }),
+    h(ActionButtonList, { actions: input.start, ctx: input.ctx }),
     h(Box, { style: theme({ flex: 1 }) }),
-    h(ActionButtonList, { actions: input.end }),
+    h(ActionButtonList, { actions: input.end, ctx: input.ctx }),
     h(Box, { style: theme({ width: 'full', paddingBottom: 6 }) }),
   ])
 }
@@ -71,7 +76,7 @@ const Toolbar = (input: { children: VDom }) => {
   )
 }
 
-const ActionButtonList = (input: { actions: (ScreenAction | null)[] }) => {
+const ActionButtonList = (props: { actions: (ScreenActionProps | null)[]; ctx: ScreenLayoutProps['ctx'] }) => {
   return h(
     Box,
     {
@@ -82,10 +87,10 @@ const ActionButtonList = (input: { actions: (ScreenAction | null)[] }) => {
         gap: 2,
       }),
     },
-    input.actions.map((action) => {
+    props.actions.map((action) => {
       if (!action) return null
 
-      const button = h(ScreenActionButton, { ...action, size: SIZE })
+      const button = h(ScreenActionButton, { ...action, size: SIZE, ctx: props.ctx })
 
       if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
 
@@ -99,20 +104,20 @@ const ActionButtonList = (input: { actions: (ScreenAction | null)[] }) => {
   )
 }
 
-const ScreenActionButton = (input: ScreenAction) => {
-  const isDisabled = input.disabled || input.loading
-  const size = input.size ?? 'md'
-  if (input.hidden) return null
+const ScreenActionButton = (props: ScreenActionProps & { ctx: ScreenLayoutProps['ctx'] }) => {
+  const isDisabled = props.disabled || props.loading
+  const size = props.size ?? 'md'
+  if (props.hidden) return null
   return h(
     ClickableTransparent,
     {
-      'data-testid': input.testId,
+      'data-testid': props.testId,
       role: 'button',
       disabled: isDisabled,
       'aria-disabled': isDisabled,
-      'aria-label': input.label,
-      'aria-hidden': input.hidden,
-      onPress: input.onPress,
+      'aria-label': props.label,
+      'aria-hidden': props.hidden,
+      onPress: props.onPress,
       style: {
         ...theme({
           position: 'relative',
@@ -122,30 +127,43 @@ const ScreenActionButton = (input: ScreenAction) => {
           rounded: 'lg',
           padding: 4,
         }),
-        ...toColorStyle(input),
-        ...input.styles?.button,
+        ...toColorStyle(props),
+        ...props.styles?.button,
         ...toSizeStyle(size),
-        display: input.hidden ? 'none' : 'flex',
+        display: props.hidden ? 'none' : 'flex',
       },
     },
     [
       h(
         Box,
         {
-          style: {
-            ...theme({
-              flexDirection: 'col',
-              alignItems: 'center',
-              gap: 1,
-            }),
-            opacity: input.loading ? 0 : 1,
-          },
+          style:
+            props.ctx.screenSize === 'desktop'
+              ? theme({
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'flex-start',
+                  width: 'full',
+                  gap: 3,
+                  opacity: props.loading ? 0 : 1,
+                })
+              : theme({
+                  flexDirection: 'col',
+                  alignItems: 'center',
+                  gap: 1,
+                  opacity: props.loading ? 0 : 1,
+                }),
         },
         [
-          input.renderIcon({ style: { ...toIconSizeStyle(size), ...theme({ textColor: 'white' }) } }),
+          props.renderIcon({
+            style: {
+              ...toIconSizeStyle(size),
+              ...theme({ textColor: 'white' }),
+            },
+          }),
           h(Typography, {
-            text: input.label,
-            ...input.styles?.label,
+            text: props.label,
+            ...props.styles?.label,
             style: {
               ...theme({
                 overflow: 'hidden',
@@ -157,7 +175,7 @@ const ScreenActionButton = (input: ScreenAction) => {
         ],
       ),
 
-      input.loading &&
+      props.loading &&
         h(
           Box,
           {
@@ -177,7 +195,7 @@ const ScreenActionButton = (input: ScreenAction) => {
   )
 }
 
-const toColorStyle = (input: ScreenAction): Record<string, unknown> => {
+const toColorStyle = (input: ScreenActionProps): Record<string, unknown> => {
   switch (input.color) {
     case 'danger':
       return theme({ textColor: 'red-500' })
@@ -190,7 +208,7 @@ const toColorStyle = (input: ScreenAction): Record<string, unknown> => {
   }
 }
 
-const toSizeStyle = (size: ScreenAction['size']): Record<string, unknown> => {
+const toSizeStyle = (size: ScreenActionProps['size']): Record<string, unknown> => {
   switch (size) {
     case 'sm':
       return theme({ fontSize: 'lg' })
@@ -200,7 +218,7 @@ const toSizeStyle = (size: ScreenAction['size']): Record<string, unknown> => {
   }
 }
 
-const toIconSizeStyle = (size: ScreenAction['size']): Record<string, unknown> => {
+const toIconSizeStyle = (size: ScreenActionProps['size']): Record<string, unknown> => {
   switch (size) {
     case 'sm':
       return theme({ size: 8 })

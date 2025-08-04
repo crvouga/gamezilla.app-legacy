@@ -1,28 +1,41 @@
 import { h } from '~/@/vdom/h'
-import { ALL_SAFE_AREA_BOX_EDGES, SafeAreaBoxEdge, SafeAreaBoxProps } from '../../primitives/safe-area-box'
+import { SafeAreaBoxEdge, SafeAreaBoxProps } from '../../primitives/safe-area-box'
 import { BOX_TAG } from '../../tags'
 import { VDom } from '../../vdom'
 
-const safeAreaEdgeToStyle = (edge: SafeAreaBoxEdge | unknown) => {
-  switch (edge) {
-    case 'top':
-      return 'env(safe-area-inset-top)'
-    case 'bottom':
-      return 'env(safe-area-inset-bottom)'
-    case 'left':
-      return 'env(safe-area-inset-left)'
-    case 'right':
-      return 'env(safe-area-inset-right)'
-    default:
-      return '0'
-  }
-}
-
 const addSafeArea = (edges: SafeAreaBoxEdge[], styles: Record<string, unknown> = {}): Record<string, unknown> => {
-  styles.padding = ALL_SAFE_AREA_BOX_EDGES.map((edge) => (edges.includes(edge) ? safeAreaEdgeToStyle(edge) : '0')).join(
-    ' ',
-  )
-
+  for (const edge of edges) {
+    switch (edge) {
+      case 'top':
+        if (styles.paddingTop == null) {
+          styles.paddingTop = 'env(safe-area-inset-top)'
+        } else {
+          styles.paddingTop = `calc(${styles.paddingTop} + env(safe-area-inset-top))`
+        }
+        break
+      case 'bottom':
+        if (styles.paddingBottom == null) {
+          styles.paddingBottom = 'env(safe-area-inset-bottom)'
+        } else {
+          styles.paddingBottom = `calc(${styles.paddingBottom} + env(safe-area-inset-bottom))`
+        }
+        break
+      case 'left':
+        if (styles.paddingLeft == null) {
+          styles.paddingLeft = 'env(safe-area-inset-left)'
+        } else {
+          styles.paddingLeft = `calc(${styles.paddingLeft} + env(safe-area-inset-left))`
+        }
+        break
+      case 'right':
+        if (styles.paddingRight == null) {
+          styles.paddingRight = 'env(safe-area-inset-right)'
+        } else {
+          styles.paddingRight = `calc(${styles.paddingRight} + env(safe-area-inset-right))`
+        }
+        break
+    }
+  }
   return styles
 }
 

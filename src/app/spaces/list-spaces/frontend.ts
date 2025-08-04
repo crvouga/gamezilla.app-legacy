@@ -59,15 +59,13 @@ const View: SpaceFrontendModule['View'] = (input) => {
     },
     actionCreate: StartSpaceFrontend.viewStartSpaceButton(input),
     renderBody: () => {
-      if (isLoading) {
-        return h(SpinnerBlock, {})
-      }
-      if (spaces.length === 0) {
+      if (isLoading) return h(SpinnerBlock, {})
+
+      if (spaces.length === 0)
         return h(EmptyState, {
           renderIcon: (input) => h(IconGamepad, input),
           label: input.ctx.t('spaces.no-spaces'),
         })
-      }
 
       return h(
         ScrollBox,

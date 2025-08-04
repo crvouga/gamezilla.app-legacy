@@ -256,7 +256,7 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
                       position: 'absolute',
                       top: 0,
                       right: 0,
-                      zIndex: 2000,
+                      zIndex: 100,
                     }),
               'aria-label': props.ctx.t('app.open-settings'),
               onPress: () => {
@@ -281,8 +281,8 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
       },
     },
     body: {
-      render: () => {
-        return h(Box, { 'data-testid': TEST_ID_TOP_BAR_SURFACE }, [
+      render: () =>
+        h(Box, { 'data-testid': TEST_ID_TOP_BAR_SURFACE, style: theme({ width: 'full', flexDirection: 'col' }) }, [
           h(BackendConnectionStatus.ViewMenuItem, {
             ctx: props.ctx,
             model: props.ctx.backendConnectionStatus,
@@ -305,8 +305,7 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
               props.dispatch({ t: 'settings.clicked-open-settings' })
             },
           }),
-        ])
-      },
+        ]),
     },
   })
 }

@@ -101,7 +101,14 @@ const ViewMainMenuButton = (props: MainMenuButton) => {
   return h(
     ClickablePaper,
     {
-      style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 4, rounded: 'md', padding: 6 }),
+      style: theme({
+        flexDirection: 'row',
+        width: 'full',
+        alignItems: 'center',
+        gap: 4,
+        rounded: 'md',
+        padding: 6,
+      }),
       onPress: props.onPress,
       role: 'menuitem',
       'aria-label': props.title,

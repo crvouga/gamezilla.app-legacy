@@ -150,7 +150,7 @@ const ViewToast: Module['View'] = (input) => {
 const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) => {
   const errorMsg = input.toast.errorMsg
   return h(
-    Box,
+    SafeAreaBox,
     {
       key: input.toast.toastId,
       id: String(input.toast.toastId),
@@ -169,63 +169,56 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
         alignItems: 'center',
         justifyContent: 'center',
         overflow: 'hidden',
-        padding: 4,
+        paddingTop: 4,
       }),
+      edges: ['top'],
       onPress: () => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast }),
       onPressOut: () => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast }),
     },
     [
       h(
-        SafeAreaBox,
+        Box,
         {
-          edges: ['top'],
-          style: theme({ width: 'full', maxWidth: input.ctx.screenSize === 'mobile' ? undefined : 'sm' }),
+          style: {
+            ...theme({
+              pointerEvents: 'auto',
+              zIndex: 40,
+              flexDirection: 'row',
+              width: 'full',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              overflow: 'hidden',
+              rounded: 'lg',
+              borderWidth: 1,
+              padding: 4,
+              fontSize: 'lg',
+              maxWidth: 'md',
+            }),
+            ...(input.toast.variant === 'info' && PAPER_STYLE),
+            ...(input.toast.variant === 'success' && PAPER_STYLE),
+            ...(input.toast.variant === 'error' && { borderColor: 'red-400', backgroundColor: 'red-500' }),
+          },
         },
         [
-          h(
-            Box,
-            {
-              style: {
-                ...theme({
-                  pointerEvents: 'auto',
-                  zIndex: 40,
-                  flexDirection: 'row',
-                  width: 'full',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  overflow: 'hidden',
-                  rounded: 'lg',
-                  borderWidth: 1,
-                  padding: 4,
-                  fontSize: 'lg',
-                }),
-                ...(input.toast.variant === 'info' && PAPER_STYLE),
-                ...(input.toast.variant === 'success' && PAPER_STYLE),
-                ...(input.toast.variant === 'error' && { borderColor: 'red-400', backgroundColor: 'red-500' }),
+          h(Text, { text: input.toast.text, style: theme({ textColor: 'white' }) }),
+          typeof errorMsg === 'string' &&
+            h(
+              Pressable,
+              {
+                style: theme({ fontWeight: 'bold' }),
+                onPress: () =>
+                  input.dispatch({ t: 'clicked-see-error', errorMsg: errorMsg, toastId: input.toast.toastId }),
               },
+              [h(Text, { text: 'See Error', style: theme({ textColor: 'white' }) })],
+            ),
+          h(
+            Pressable,
+            {
+              role: 'button',
+              'aria-label': input.ctx.t('app.dismiss'),
+              onPress: () => input.dispatch({ t: 'clicked-dismiss-button', toastId: input.toast.toastId }),
             },
-            [
-              h(Text, { text: input.toast.text, style: theme({ textColor: 'white' }) }),
-              typeof errorMsg === 'string' &&
-                h(
-                  Pressable,
-                  {
-                    style: theme({ fontWeight: 'bold' }),
-                    onPress: () =>
-                      input.dispatch({ t: 'clicked-see-error', errorMsg: errorMsg, toastId: input.toast.toastId }),
-                  },
-                  [h(Text, { text: 'See Error', style: theme({ textColor: 'white' }) })],
-                ),
-              h(
-                Pressable,
-                {
-                  role: 'button',
-                  'aria-label': input.ctx.t('app.dismiss'),
-                  onPress: () => input.dispatch({ t: 'clicked-dismiss-button', toastId: input.toast.toastId }),
-                },
-                [h(IconXMark, { style: theme({ size: 5, textColor: 'white' }) })],
-              ),
-            ],
+            [h(IconXMark, { style: theme({ size: 5, textColor: 'white' }) })],
           ),
         ],
       ),

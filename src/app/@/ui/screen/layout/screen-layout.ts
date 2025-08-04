@@ -17,6 +17,7 @@ const ScreenLayoutVariant = (input: ScreenLayoutProps) => {
     case 'mobile':
       return h(ScreenLayoutMobile, input)
     case 'tablet':
+    case 'desktop':
       return h(ScreenLayoutTablet, input)
   }
 }

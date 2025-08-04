@@ -27,43 +27,35 @@ export const DropDown = (props: {
     }
   }
 
-  const onKeyDown = (e: unknown) => {
-    if (typeof e === 'object' && e && 'key' in e && e.key === 'Escape') {
-      onClose()
-    }
-  }
-
   return h(Frag, {}, [
-    h(Backdrop, { open: props.open, onPress: onClose, onKeyDown }),
-    props.renderReference(),
-    props.open &&
-      h(
-        Box,
-        {
-          id: props.id,
-          style: {
-            ...toPositionStyles(position, alignment),
-            ...theme({
-              position: 'relative',
-              zIndex: props.open ? 50 : undefined,
-            }),
-            ...props.style,
+    h(Backdrop, { open: props.open, onPress: onClose }),
+    h(Box, { style: theme({ position: 'relative', zIndex: 50 }) }, [
+      props.renderReference(),
+      props.open &&
+        h(
+          Box,
+          {
+            id: props.id,
+            style: {
+              ...toPositionStyles(position, alignment),
+              ...theme({ position: 'relative', zIndex: props.open ? 50 : undefined, flexDirection: 'col' }),
+              ...props.style,
+            },
+
+            'data-testid': props.testId,
           },
-          onKeyDown,
-          'data-testid': props.testId,
-        },
-        [props.renderFloating()],
-      ),
+          [props.renderFloating()],
+        ),
+    ]),
   ])
 }
 
-const Backdrop = (props: { open: boolean; onPress: () => void; onKeyDown: (e: unknown) => void }) => {
+const Backdrop = (props: { open: boolean; onPress: () => void }) => {
   if (!props.open) return null
 
   return h(Pressable, {
     style: theme({ position: 'absolute', inset: 0, backgroundColor: 'black/50' }),
     onPress: props.onPress,
-    onKeyDown: props.onKeyDown,
   })
 }
 

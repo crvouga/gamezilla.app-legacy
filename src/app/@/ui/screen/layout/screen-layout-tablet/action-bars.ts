@@ -5,8 +5,8 @@ import { VDom } from '~/@/vdom/vdom'
 import { VerticalActionBar } from '../../action-bar/screen-action-bar-vertical'
 import { ParentScreenProps, ScreenLayoutProps } from '../screen-layout-props'
 
-export const ActionBars = (props: { position: 'start' | 'end'; input: ScreenLayoutProps }) => {
-  const actionBars = renderActionBars(props.input.ctx, props.input, props.position)
+export const ActionBars = (props: ScreenLayoutProps & { position: 'start' | 'end' }) => {
+  const actionBars = renderActionBars(props.ctx, props, props.position)
 
   return h(
     Box,
@@ -43,9 +43,9 @@ const renderActionBars = (
       bars.push(
         h(VerticalActionBar, {
           ...screen.actionBar,
-          id: id,
-          ctx: ctx,
           key: id,
+          id,
+          ctx,
         }),
       )
     }

@@ -30,10 +30,29 @@ export type Theme = {
   textAlign?: 'left' | 'center' | 'right' | null
   borderColor?: ThemeColor | null
   width?: 'full' | '1/2' | number | null
-  maxWidth?: 'full' | '1/2' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | number | null
+  maxWidth?:
+    | 'full'
+    | '1/2'
+    | '3xs'
+    | '2xs'
+    | 'xs'
+    | 'sm'
+    | 'md'
+    | 'lg'
+    | 'xl'
+    | '2xl'
+    | '3xl'
+    | '4xl'
+    | '5xl'
+    | '6xl'
+    | '7xl'
+    | number
+    | null
   height?: 'full' | '1/2' | number | null
   size?: number | null
   borderWidth?: number | null
+  borderXWidth?: number | null
+  borderYWidth?: number | null
   gap?: number | null
   inset?: number | null
   minWidth?: ThemeSize | null
@@ -62,7 +81,7 @@ export const theme = (config: Theme): Record<string, string | number | null> => 
   applySize(styles, config.size)
   applyWidth(styles, config.width)
   applyHeight(styles, config.height)
-  applyBorderWidth(styles, config.borderWidth)
+  applyBorderWidth(styles, config)
   applyGap(styles, config.gap)
   applyInset(styles, config.inset)
   applyPointerEvents(styles, config.pointerEvents)
@@ -105,6 +124,15 @@ const applyMaxWidth = (styles: Record<string, string | number | null>, maxWidth:
     case '1/2':
       styles.maxWidth = '50%'
       break
+    case '3xs':
+      styles.maxWidth = 256 // 16rem
+      break
+    case '2xs':
+      styles.maxWidth = 288 // 18rem
+      break
+    case 'xs':
+      styles.maxWidth = 320 // 20rem
+      break
     case 'sm':
       styles.maxWidth = 384 // 24rem
       break
@@ -144,34 +172,49 @@ const applyMaxWidth = (styles: Record<string, string | number | null>, maxWidth:
 const applyMinWidth = (styles: Record<string, string | number | null>, minWidth: Theme['minWidth']) => {
   if (!minWidth) return
   switch (minWidth) {
+    case '3xs':
+      styles.minWidth = 256 // 16rem
+      break
+    case '2xs':
+      styles.minWidth = 288 // 18rem
+      break
     case 'xs':
-      styles.minWidth = 16
+      styles.minWidth = 320 // 20rem
       break
     case 'sm':
-      styles.minWidth = 24
+      styles.minWidth = 384 // 24rem
       break
     case 'md':
-      styles.minWidth = 32
+      styles.minWidth = 448 // 28rem
       break
     case 'lg':
-      styles.minWidth = 40
+      styles.minWidth = 512 // 32rem
       break
     case 'xl':
-      styles.minWidth = 48
+      styles.minWidth = 576 // 36rem
       break
     case '2xl':
-      styles.minWidth = 56
+      styles.minWidth = 672 // 42rem
       break
     case '3xl':
-      styles.minWidth = 64
+      styles.minWidth = 768 // 48rem
       break
     case '4xl':
-      styles.minWidth = 72
+      styles.minWidth = 896 // 56rem
       break
     case '5xl':
-      styles.minWidth = 80
+      styles.minWidth = 1024 // 64rem
+      break
+    case '6xl':
+      styles.minWidth = 1152 // 72rem
+      break
+    case '7xl':
+      styles.minWidth = 1280 // 80rem
       break
     default:
+      if (typeof minWidth === 'number') {
+        styles.minWidth = minWidth * 4
+      }
       break
   }
 }
@@ -182,8 +225,8 @@ const applyPosition = (styles: Record<string, string | number | null>, position:
 }
 
 const applyFlex = (styles: Record<string, string | number | null>, config: Theme) => {
-  styles.display = 'flex'
   if (config.flexDirection) {
+    styles.display = 'flex'
     styles.flexDirection = config.flexDirection === 'row' ? 'row' : 'column'
   }
   if (config.flex) {
@@ -209,39 +252,36 @@ const applyJustify = (styles: Record<string, string | number | null>, justify: T
 }
 
 const applyPadding = (styles: Record<string, string | number | null>, config: Theme) => {
-  const {
-    padding: p,
-    paddingX: px,
-    paddingY: py,
-    paddingTop: pt,
-    paddingBottom: pb,
-    paddingLeft: pl,
-    paddingRight: pr,
-  } = config
+  const { padding, paddingX, paddingY, paddingTop, paddingBottom, paddingLeft, paddingRight } = config
 
-  if (p != null) {
-    styles.padding = p * 4
+  if (padding != null) {
+    styles.padding = padding * 4
   }
 
-  if (px != null) {
-    styles.paddingLeft = px * 4
-    styles.paddingRight = px * 4
+  if (paddingX != null) {
+    styles.paddingLeft = paddingX * 4
+    styles.paddingRight = paddingX * 4
   }
-  if (py != null) {
-    styles.paddingTop = py * 4
-    styles.paddingBottom = py * 4
+
+  if (paddingY != null) {
+    styles.paddingTop = paddingY * 4
+    styles.paddingBottom = paddingY * 4
   }
-  if (pt != null) {
-    styles.paddingTop = pt * 4
+
+  if (paddingTop != null) {
+    styles.paddingTop = paddingTop * 4
   }
-  if (pb != null) {
-    styles.paddingBottom = pb * 4
+
+  if (paddingBottom != null) {
+    styles.paddingBottom = paddingBottom * 4
   }
-  if (pl != null) {
-    styles.paddingLeft = pl * 4
+
+  if (paddingLeft != null) {
+    styles.paddingLeft = paddingLeft * 4
   }
-  if (pr != null) {
-    styles.paddingRight = pr * 4
+
+  if (paddingRight != null) {
+    styles.paddingRight = paddingRight * 4
   }
 }
 
@@ -274,6 +314,8 @@ const applyFontWeight = (styles: Record<string, string | number | null>, weight:
 }
 
 const SIZE_MAP = {
+  '3xs': 10,
+  '2xs': 11,
   xs: 12,
   sm: 14,
   md: 16,
@@ -283,6 +325,8 @@ const SIZE_MAP = {
   '3xl': 30,
   '4xl': 36,
   '5xl': 48,
+  '6xl': 60,
+  '7xl': 72,
 }
 const applyFontSize = (styles: Record<string, string | number | null>, size: Theme['fontSize']) => {
   if (!size) return
@@ -344,9 +388,18 @@ const applyHeight = (
   }
 }
 
-const applyBorderWidth = (styles: Record<string, string | number | null>, borderWidth: number | null | undefined) => {
+const applyBorderWidth = (styles: Record<string, string | number | null>, config: Theme) => {
+  const { borderWidth, borderXWidth, borderYWidth } = config
   if (borderWidth != null) {
     styles.borderWidth = borderWidth * 1
+  }
+  if (borderXWidth != null) {
+    styles.borderLeftWidth = borderXWidth * 1
+    styles.borderRightWidth = borderXWidth * 1
+  }
+  if (borderYWidth != null) {
+    styles.borderTopWidth = borderYWidth * 1
+    styles.borderBottomWidth = borderYWidth * 1
   }
 }
 

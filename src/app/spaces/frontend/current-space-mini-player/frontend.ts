@@ -136,7 +136,7 @@ const ViewRoot = (input: { children: VDom[] }) => {
         flexDirection: 'row',
         overflow: 'hidden',
         rounded: 'lg',
-        minWidth: '5xl',
+        minWidth: '2xs',
         width: 'full',
         backgroundColor: 'blue-600',
       }),

@@ -8,6 +8,7 @@ export const SurfaceLayout = (props: SurfaceLayoutProps) => {
     case 'mobile':
       return h(SurfaceLayoutMobile, props)
     case 'tablet':
+    case 'desktop':
       return h(SurfaceLayoutTablet, props)
   }
 }

@@ -9,7 +9,6 @@ import { Gutter } from '../gutter'
 import { SURFACE_STYLE } from '../surface'
 import { theme } from '../theme/theme'
 import type { DrawerProps, DrawerPropsPrivate } from './drawer-shared'
-import { preventConsoleErrorWhenClosingDrawer } from './drawer-shared'
 
 export type DrawerInput = DrawerPropsPrivate & {
   children: VDom[]
@@ -28,17 +27,12 @@ const DrawerContent = (props: { position: 'top' | 'bottom'; open: boolean; child
       edges: isTop ? ['top'] : ['bottom'],
       style: {
         ...SURFACE_STYLE,
-        width: 'full',
         transform: props.open ? 'translateY(0)' : isTop ? 'translateY(-100%)' : 'translateY(100%)',
-        transitionProperty: 'transform',
-        transitionDuration: '200ms',
-        ...(isTop
-          ? theme({
-              rounded: 'lg',
-            })
-          : theme({
-              rounded: 'lg',
-            })),
+        ...theme({
+          width: 'full',
+          rounded: 'lg',
+          flexDirection: 'col',
+        }),
       },
     },
     [
@@ -64,8 +58,6 @@ export const Drawer = (props: DrawerProps) => {
         zIndex: 50,
         flexDirection: 'col',
         backgroundColor: 'black/80',
-        // transitionProperty: 'opacity',
-        // transitionDuration: '200ms',
         opacity: props.open ? 100 : 0,
         pointerEvents: props.open ? 'auto' : 'none',
       }),
@@ -79,10 +71,7 @@ export const Drawer = (props: DrawerProps) => {
           zIndex: 50,
         }),
         'aria-label': props.ctx.t('drawer.close'),
-        onPress: (event: unknown) => {
-          preventConsoleErrorWhenClosingDrawer(event)
-          props.onClose()
-        },
+        onPress: props.onClose,
       }),
       props.position === 'bottom' && h(DrawerContent, { position: 'bottom', open: props.open }, props.children),
     ],

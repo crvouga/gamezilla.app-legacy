@@ -6,34 +6,48 @@ import { ActionBars } from './action-bars'
 import { renderNavBars } from './nav-bars'
 import { theme } from '~/@/ui/theme/theme'
 
-export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
+export const ScreenLayoutTablet = (props: ScreenLayoutProps) => {
   return h(
     Box,
     {
       style: theme({
         position: 'relative',
         flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
         width: 'full',
         flex: 1,
         overflow: 'hidden',
       }),
     },
     [
-      h(ActionBars, { position: 'start', input: input }),
+      h(ActionBars, { ...props, position: 'start' }),
 
-      h(Box, { style: theme({ flex: 4, borderWidth: 1 }) }, [
-        ...renderNavBars(input.ctx, input),
+      h(
+        Box,
+        {
+          style: theme({
+            flex: 4,
+            borderXWidth: 1,
+            borderColor: 'neutral-500',
+            maxWidth: '5xl',
+            height: 'full',
+          }),
+        },
+        [
+          ...renderNavBars(props.ctx, props),
 
-        h(Box, { style: theme({ flex: 1, overflow: 'hidden' }) }, [
-          input.renderBody(),
-          (input.renderMiniPlayer || input.parentScreen?.renderMiniPlayer) &&
-            h(Box, { style: theme({ position: 'absolute', right: 8, bottom: 8, backgroundColor: 'black' }) }, [
-              ...renderMiniPlayers(input),
-            ]),
-        ]),
-      ]),
+          h(Box, { style: theme({ flex: 1, overflow: 'hidden' }) }, [
+            props.renderBody(),
+            (props.renderMiniPlayer || props.parentScreen?.renderMiniPlayer) &&
+              h(Box, { style: theme({ position: 'absolute', right: 8, bottom: 8, backgroundColor: 'black' }) }, [
+                ...renderMiniPlayers(props),
+              ]),
+          ]),
+        ],
+      ),
 
-      h(ActionBars, { position: 'end', input: input }),
+      h(ActionBars, { ...props, position: 'end' }),
     ],
   )
 }

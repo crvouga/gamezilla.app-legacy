@@ -12,5 +12,5 @@ export const ClickableTransparent = (props: PrimitiveProps) => {
 }
 
 export const ClickablePaper = (props: PrimitiveProps) => {
-  return h(Clickable, { ...props, style: { ...props.style, ...PAPER_STYLE } }, props.children ?? [])
+  return h(Clickable, { ...props, style: { ...PAPER_STYLE, ...props.style } }, props.children ?? [])
 }

@@ -12,8 +12,5 @@ export const inPlaceMapKeys = (obj: Record<string, unknown>, fn: (key: string) =
   for (const oldKey in obj) {
     const newKey = fn(oldKey)
     obj[newKey] = obj[oldKey]
-    if (newKey !== oldKey) {
-      delete obj[oldKey]
-    }
   }
 }
