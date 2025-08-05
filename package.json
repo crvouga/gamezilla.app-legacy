@@ -5,6 +5,7 @@
   "type": "module",
   "main": "./src/frontend.native.ts",
   "scripts": {
+    "android": "expo run:android",
     "app": "pnpm exec concurrently \"pnpm run frontend\" \"pnpm run topic\" \"pnpm run backend\"",
     "backend": "pnpm exec tsx watch ./src/backend.ts",
     "cg": "pnpm cg:l18n && pnpm cg:screens && pnpm cg:events && pnpm cg:msg-shared",
@@ -56,6 +57,7 @@
     "infra:local:down": "PROFILE=local pnpm infra:base:down",
     "infra:local:up": "PROFILE=local pnpm infra:base:up",
     "int": "pnpm vitest:int",
+    "ios": "expo run:ios",
     "local": "pnpm env:local && pnpm infra:e2e:down && pnpm infra:local:up",
     "tc": "pnpm exec tsc --noEmit",
     "topic": "pnpm exec tsx watch ./src/topic.ts",
@@ -65,9 +67,7 @@
     "vitest:e2e": "IS_VITEST_TEST=true NODE_ENV=test vitest run .e2e.ts",
     "vitest:int": "IS_INTEGRATION_TEST=true IS_VITEST_TEST=true NODE_ENV=test vitest run",
     "vitest:int:coverage": "IS_INTEGRATION_TEST=true IS_VITEST_TEST=true NODE_ENV=test vitest run --coverage",
-    "viz-bundle": "pnpm exec vite-bundle-visualizer",
-    "android": "expo run:android",
-    "ios": "expo run:ios"
+    "viz-bundle": "pnpm exec vite-bundle-visualizer"
   },
   "prettier": {
     "jsxSingleQuote": true,
