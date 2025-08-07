@@ -87,6 +87,7 @@ export const translations: Text = {
   'app.load': 'लोड करें',
   login: 'जोड़ें',
   'app.open-settings': 'सेटिंग्स खोलें',
+  'app.settings': 'सेटिंग्स',
   'status-bar.status-bar': 'स्थिति बार',
   'app.submit': 'जमा करें',
   'unsaved-changes.unsaved-changes-warning':

@@ -86,6 +86,7 @@ export const translations: Text = {
   'app.load': 'Load',
   login: 'Login',
   'app.open-settings': 'Open settings',
+  'app.settings': 'Settings',
   'status-bar.status-bar': 'Status Bar',
   'app.submit': 'Submit',
   'unsaved-changes.unsaved-changes-warning': "Your changes will be lost if you don't save them before exiting.",

@@ -86,6 +86,7 @@ export const translations: Text = {
   'app.load': '加载',
   login: '添加',
   'app.open-settings': '打开设置',
+  'app.settings': '设置',
   'status-bar.status-bar': '状态栏',
   'app.submit': '提交',
   'unsaved-changes.unsaved-changes-warning': '如果在退出之前不保存更改，您的更改将丢失。',

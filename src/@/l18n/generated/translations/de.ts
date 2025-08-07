@@ -86,6 +86,7 @@ export const translations: Text = {
   'app.load': 'Laden',
   login: 'Hinzufügen',
   'app.open-settings': 'Einstellungen öffnen',
+  'app.settings': 'Einstellungen',
   'status-bar.status-bar': 'Statusleiste',
   'app.submit': 'Absenden',
   'unsaved-changes.unsaved-changes-warning':

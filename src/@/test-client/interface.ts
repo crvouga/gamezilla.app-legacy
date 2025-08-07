@@ -39,7 +39,7 @@ export const findByRole = async (
   label?: string,
   config?: FindConfig,
 ): Promise<ITestNode | null> => {
-  const css = `[role="${role}"]${label ? `[aria-label="${label}" i]` : ''}`
+  const css = `[role="${role}" i]${label ? `[aria-label*="${label}" i]` : ''}`
   const [found] = await node.find(css, config)
   return found ?? null
 }

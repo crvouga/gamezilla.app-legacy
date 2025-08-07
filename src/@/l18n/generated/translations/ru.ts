@@ -87,6 +87,7 @@ export const translations: Text = {
   'app.load': 'Загрузить',
   login: 'Добавить',
   'app.open-settings': 'Открыть настройки',
+  'app.settings': 'Настройки',
   'status-bar.status-bar': 'Панель состояния',
   'app.submit': 'Отправить',
   'unsaved-changes.unsaved-changes-warning': 'Ваши изменения будут потеряны, если вы не сохраните их перед выходом.',

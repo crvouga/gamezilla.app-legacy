@@ -86,6 +86,7 @@ export const translations: Text = {
   'app.load': 'Charger',
   login: 'Ajouter',
   'app.open-settings': 'Ouvrir les paramètres',
+  'app.settings': 'Paramètres',
   'status-bar.status-bar': "Barre d'état",
   'app.submit': 'Soumettre',
   'unsaved-changes.unsaved-changes-warning':

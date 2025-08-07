@@ -86,6 +86,7 @@ export const translations: Text = {
   'app.load': '読み込み',
   login: '追加',
   'app.open-settings': '設定を開く',
+  'app.settings': '設定',
   'status-bar.status-bar': 'ステータスバー',
   'app.submit': '送信',
   'unsaved-changes.unsaved-changes-warning': '終了する前に保存しないと、変更が失われます。',

@@ -86,6 +86,7 @@ export const translations: Text = {
   'app.load': '불러오기',
   login: '추가',
   'app.open-settings': '설정 열기',
+  'app.settings': '설정',
   'status-bar.status-bar': '상태 표시줄',
   'app.submit': '제출',
   'unsaved-changes.unsaved-changes-warning': '저장하지 않으면 종료하기 전에 변경 사항이 손실됩니다.',

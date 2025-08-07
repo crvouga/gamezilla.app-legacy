@@ -10,9 +10,6 @@ import { BackendConnectionStatus } from '../@/wire/backend-connection-status'
 import { SoundFrontend } from './sound'
 import type { FrontendModule } from './types'
 
-export const TEST_ID_TOP_BAR_SURFACE_OPEN_BUTTON = 'top-bar/surface-open-button'
-export const TEST_ID_TOP_BAR_SURFACE = 'top-bar/surface'
-
 const View: FrontendModule['View'] = (props) => {
   const iconSize: Record<string, unknown> = props.ctx.screenSize === 'mobile' ? theme({ size: 4 }) : theme({ size: 5 })
   return h(SurfaceLayout, {
@@ -30,7 +27,6 @@ const View: FrontendModule['View'] = (props) => {
           h(
             Clickable,
             {
-              'data-testid': TEST_ID_TOP_BAR_SURFACE_OPEN_BUTTON,
               role: 'button',
               style:
                 props.ctx.screenSize === 'mobile'
@@ -80,8 +76,9 @@ const View: FrontendModule['View'] = (props) => {
         h(
           Box,
           {
-            'data-testid': TEST_ID_TOP_BAR_SURFACE,
             style: theme({ width: 'full', flexDirection: 'col' }),
+            role: 'menu',
+            'aria-label': props.ctx.t('app.settings'),
           },
           [
             h(BackendConnectionStatus.ViewMenuItem, {

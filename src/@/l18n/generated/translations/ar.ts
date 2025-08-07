@@ -88,6 +88,7 @@ export const translations: Text = {
   'app.load': 'تحميل',
   login: 'إضافة',
   'app.open-settings': 'فتح الإعدادات',
+  'app.settings': 'الإعدادات',
   'status-bar.status-bar': 'شريط الحالة',
   'app.submit': 'إرسال',
   'unsaved-changes.unsaved-changes-warning': 'سيتم فقدان تغييراتك إذا لم تقم بحفظها قبل الخروج.',
