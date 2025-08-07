@@ -153,6 +153,7 @@ export const TestFrontend = async (config: {
   return {
     ...client,
     ...program,
+    ctx,
     cleanUp,
   }
 }

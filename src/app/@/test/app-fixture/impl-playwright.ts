@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test'
 import { TestClient } from '~/@/test-client'
 import { IFixtureApp } from './interface'
 import { MAX_WAIT, POLL } from './test-max-wait'
+import { Translator } from '~/@/l18n/generated'
 
 export const FixtureAppPlaywrightE2E = async (config: { getPage: () => Page }): Promise<IFixtureApp> => {
   const client = await TestClient.init({
@@ -17,6 +18,7 @@ export const FixtureAppPlaywrightE2E = async (config: { getPage: () => Page }): 
 
   return {
     frontend: client,
+    t: Translator('en'),
     [Symbol.asyncDispose]: cleanUp,
   }
 }

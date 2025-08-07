@@ -37,6 +37,7 @@ export const FixtureAppUnitTestE2E = async (): Promise<IFixtureApp> => {
 
   return {
     frontend,
+    t: frontend.ctx.t,
     [Symbol.asyncDispose]: cleanUp,
   }
 }
