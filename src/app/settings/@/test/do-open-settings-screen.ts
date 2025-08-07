@@ -1,6 +1,7 @@
 import { expect } from '~/@/test-runner'
 import { IFixtureApp } from '~/app/@/test/app-fixture/interface'
-import { TEST_ID_SETTINGS_SCREEN, TEST_ID_TOP_BAR_SURFACE, TEST_ID_TOP_BAR_SURFACE_OPEN_BUTTON } from '../../frontend'
+import { TEST_ID_SETTINGS_SCREEN } from '../../frontend'
+import { TEST_ID_TOP_BAR_SURFACE, TEST_ID_TOP_BAR_SURFACE_OPEN_BUTTON } from '../../settings-top-bar'
 
 export const doOpenSettingsScreen = async (f: IFixtureApp) => {
   const topBarOpenButton = await f.frontend.findByTestId(TEST_ID_TOP_BAR_SURFACE_OPEN_BUTTON)

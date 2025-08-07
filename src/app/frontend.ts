@@ -21,10 +21,12 @@ import { UnixMs } from '~/@/time/unix-ms'
 import { TopicClient } from '~/@/topic/topic-client/topic-client'
 import { Button } from '~/@/ui/button'
 import { IconGamepad, IconUser } from '~/@/ui/icon'
+import { theme } from '~/@/ui/theme/theme'
 import { Url } from '~/@/url/url'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
+import { VdomImplWebStorage } from '~/@/vdom/vdom-impl-web-storage'
 import { IViewport } from '~/@/viewport'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { ILogger } from '../@/logger'
@@ -42,12 +44,11 @@ import { QueryCache } from './frontend/query-cache/query-cache'
 import { ToasterFrontend } from './frontend/toaster'
 import { ProfileFrontend } from './profile/frontend'
 import { SettingsFrontend } from './settings/frontend'
+import { SettingsTopBar } from './settings/settings-top-bar'
 import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract, topicContract } from './types'
 import { toBackendConnectionStatus } from './wire/backend-connection/backend-connection-status'
 import { WireFrontend } from './wire/frontend'
-import { VdomImplWebStorage } from '~/@/vdom/vdom-impl-web-storage'
-import { theme } from '~/@/ui/theme/theme'
 
 const initCtx = async (config: {
   backendUrl: Url
@@ -353,7 +354,7 @@ const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
   const frontendCtx = toCtx(input)
 
   return h(AppRoot, {}, [
-    h(SettingsFrontend.ViewTopBar, {
+    h(SettingsTopBar.View, {
       model: input.model.settings,
       dispatch: (c) => input.dispatch({ t: 'settings', c }),
       ctx: frontendCtx,
