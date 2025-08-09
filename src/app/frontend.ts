@@ -19,13 +19,11 @@ import { SyncEngineClient } from '~/@/sync-engine/sync-engine-client'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { TopicClient } from '~/@/topic/topic-client/topic-client'
-import { Button } from '~/@/ui/button'
 import { IconGamepad, IconUser } from '~/@/ui/icon'
 import { theme } from '~/@/ui/theme/theme'
 import { Url } from '~/@/url/url'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import { Text } from '~/@/vdom/primitives/text'
 import { VdomImplWebStorage } from '~/@/vdom/vdom-impl-web-storage'
 import { IViewport } from '~/@/viewport'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
@@ -36,6 +34,7 @@ import { PreloadSoundsCmd } from './@/frontend/preload-sounds-cmd.$msg'
 import { topicMsgCodec } from './@/topic-msg-codec'
 import { AppRoot } from './@/ui/app-root/app-root'
 import { SplashScreen } from './@/ui/logo/splash-screen'
+import { RedirectScreen } from './@/ui/redirect-screen'
 import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
 import { toCurrentUserState } from './auth/current-user/frontend'
 import { AuthFrontend } from './auth/frontend'
@@ -350,34 +349,34 @@ const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }):
   ])
 }
 
-const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
-  const frontendCtx = toCtx(input)
+const View = (props: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
+  const frontendCtx = toCtx(props)
 
   return h(AppRoot, {}, [
     h(SettingsTopBar.View, {
-      model: input.model.settings,
-      dispatch: (c) => input.dispatch({ t: 'settings', c }),
+      model: props.model.settings,
+      dispatch: (c) => props.dispatch({ t: 'settings', c }),
       ctx: frontendCtx,
     }),
 
     h(Box, { style: theme({ flexDirection: 'col', width: 'full', flex: 1, overflow: 'hidden' }) }, [
       h(ViewScreen, {
-        model: input.model,
-        dispatch: input.dispatch,
+        model: props.model,
+        dispatch: props.dispatch,
         ctx: frontendCtx,
       }),
     ]),
 
     h(AuthFrontend.ViewModals, {
       ctx: frontendCtx,
-      dispatch: (c) => input.dispatch({ t: 'auth', c }),
-      model: input.model.auth,
+      dispatch: (c) => props.dispatch({ t: 'auth', c }),
+      model: props.model.auth,
     }),
 
     h(ToasterFrontend.View, {
       ctx: frontendCtx,
-      model: input.model.frontend.toast,
-      dispatch: (c) => input.dispatch({ t: 'frontend', c: { t: 'toast', c } }),
+      model: props.model.frontend.toast,
+      dispatch: (c) => props.dispatch({ t: 'frontend', c: { t: 'toast', c } }),
     }),
   ])
 }
@@ -413,113 +412,70 @@ const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
         dispatch: (c) => input.dispatch({ t: 'auth', c }),
       })
     default:
-      return h(
-        Box,
-        {
-          style: theme({
-            flexDirection: 'col',
-            width: 'full',
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
+      return h(RedirectScreen, {
+        onPress: () =>
+          input.dispatch({
+            t: 'frontend',
+            c: { t: 'current-screen', c: { t: 'clicked-link', screen: { t: 'login', n: 'auth' } } },
           }),
-        },
-        [
-          h(Text, { text: 'Logged out', style: theme({ textColor: 'white' }) }),
-          h(
-            Button,
-            {
-              variant: 'contained',
-              color: 'primary',
-              onPress: () =>
-                input.dispatch({
-                  t: 'frontend',
-                  c: { t: 'current-screen', c: { t: 'clicked-link', screen: { t: 'login', n: 'auth' } } },
-                }),
-              text: input.ctx.t('login'),
-            },
-            [h(Text, { text: 'Login' })],
-          ),
-        ],
-      )
+        buttonText: input.ctx.t('login'),
+        text: input.ctx.t('login'),
+      })
   }
 }
 
-const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
-  switch (input.ctx.currentScreen.n) {
+const ViewScreenLoggedIn: typeof ViewScreen = (props) => {
+  const ctx = { ...props.ctx, parentScreen: toScreenLayoutProps(props) }
+
+  switch (props.ctx.currentScreen.n) {
     case 'profile':
       return h(ProfileFrontend.View, {
-        dispatch: (m) => input.dispatch({ t: 'profile', c: m }),
-        model: input.model.profile,
-        ctx: { ...input.ctx, parentScreen: toScreenLayoutProps(input) },
+        dispatch: (m) => props.dispatch({ t: 'profile', c: m }),
+        model: props.model.profile,
+        ctx,
       })
 
     case 'spaces':
       return h(SpacesFrontend.View, {
-        dispatch: (m) => input.dispatch({ t: 'spaces', c: m }),
-        model: input.model.spaces,
-        ctx: {
-          ...input.ctx,
-          parentScreen: toScreenLayoutProps(input),
-        },
+        dispatch: (m) => props.dispatch({ t: 'spaces', c: m }),
+        model: props.model.spaces,
+        ctx,
       })
 
     case 'settings':
     case 'auth':
-      return h(
-        Box,
-        {
-          style: theme({
-            flexDirection: 'col',
-            width: 'full',
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
+      return h(RedirectScreen, {
+        onPress: () =>
+          props.dispatch({
+            t: 'frontend',
+            c: { t: 'current-screen', c: { t: 'clicked-link', screen: { t: 'space-list', n: 'spaces' } } },
           }),
-        },
-        [
-          h(Text, { text: 'Logged in', style: theme({ textColor: 'white' }) }),
-          h(
-            Button,
-            {
-              variant: 'contained',
-              color: 'primary',
-              onPress: () =>
-                input.dispatch({
-                  t: 'frontend',
-                  c: { t: 'current-screen', c: { t: 'clicked-link', screen: { t: 'space-list', n: 'spaces' } } },
-                }),
-              text: input.ctx.t('spaces.spaces'),
-            },
-            [],
-          ),
-        ],
-      )
+        buttonText: props.ctx.t('spaces.spaces'),
+        text: props.ctx.t('spaces.spaces'),
+      })
   }
 }
 
-const toScreenLayoutProps = (input: {
+const toScreenLayoutProps = (props: {
   ctx: AppFrontendCtx | AppFrontendCtxBase
   model: ModelFrontend
   dispatch: (m: MsgFrontend) => void
 }): ParentScreenProps | null => {
-  const { ctx } = input
+  const { ctx } = props
   if (!isAppFrontendCtx(ctx)) return null
-
   const screenSpace: Screen = { n: 'spaces', t: 'space-list' }
   const screenProfile: Screen = { n: 'profile', t: 'profile', userId: ctx.currentUser.userId }
   const pushSpaceList = () =>
-    input.dispatch({ t: 'frontend', c: { t: 'current-screen', c: { t: 'clicked-link', screen: screenSpace } } })
+    props.dispatch({ t: 'frontend', c: { t: 'current-screen', c: { t: 'clicked-link', screen: screenSpace } } })
   return {
     id: 'app-screen-layout',
     parentScreen: null,
-    renderMiniPlayer: (props) => {
-      if (!isAppFrontendCtx(input.ctx)) return null
+    renderMiniPlayer: (propsMiniPlayer) => {
       return h(SpacesFrontend.ViewCurrentSpaceMiniPlayer, {
-        key: props.key,
-        ctx: input.ctx,
-        model: input.model.spaces,
-        dispatch: (c) => input.dispatch({ t: 'spaces', c }),
+        ctx,
+        key: propsMiniPlayer.key,
+        model: props.model.spaces,
+        dispatch: (c) => props.dispatch({ t: 'spaces', c }),
       })
     },
     actionBar: {
@@ -529,16 +485,16 @@ const toScreenLayoutProps = (input: {
           {
             label: ctx.t('spaces.spaces'),
             renderIcon: (iconProps) => h(IconGamepad, iconProps),
-            color: input.model.frontend.currentScreen.currentScreen.n === 'spaces' ? 'selected' : 'inherit',
+            color: props.model.frontend.currentScreen.currentScreen.n === 'spaces' ? 'selected' : 'inherit',
             onPress: pushSpaceList,
             id: ctx.t('spaces.spaces'),
           },
           {
             label: ctx.t('profile.profile'),
             renderIcon: (iconProps) => h(IconUser, iconProps),
-            color: input.model.frontend.currentScreen.currentScreen.n === 'profile' ? 'selected' : 'inherit',
+            color: props.model.frontend.currentScreen.currentScreen.n === 'profile' ? 'selected' : 'inherit',
             onPress() {
-              input.dispatch({
+              props.dispatch({
                 t: 'frontend',
                 c: { t: 'current-screen', c: { t: 'clicked-link', screen: screenProfile } },
               })
