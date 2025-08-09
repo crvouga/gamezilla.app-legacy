@@ -30,24 +30,6 @@ export type Theme = {
   textAlign?: 'left' | 'center' | 'right' | null
   borderColor?: ThemeColor | null
   width?: 'full' | '1/2' | number | null
-  maxWidth?:
-    | 'full'
-    | '1/2'
-    | '3xs'
-    | '2xs'
-    | 'xs'
-    | 'sm'
-    | 'md'
-    | 'lg'
-    | 'xl'
-    | '2xl'
-    | '3xl'
-    | '4xl'
-    | '5xl'
-    | '6xl'
-    | '7xl'
-    | number
-    | null
   height?: 'full' | '1/2' | number | null
   size?: number | null
   borderWidth?: number | null
@@ -55,6 +37,7 @@ export type Theme = {
   borderYWidth?: number | null
   gap?: number | null
   inset?: number | null
+  maxWidth?: 'full' | '1/2' | ThemeSize | number | null
   minWidth?: ThemeSize | null
   aspectRatio?: number | null
   zIndex?: number | null
@@ -125,43 +108,19 @@ const applyMaxWidth = (styles: Record<string, string | number | null>, maxWidth:
       styles.maxWidth = '50%'
       break
     case '3xs':
-      styles.maxWidth = 256 // 16rem
-      break
     case '2xs':
-      styles.maxWidth = 288 // 18rem
-      break
     case 'xs':
-      styles.maxWidth = 320 // 20rem
-      break
     case 'sm':
-      styles.maxWidth = 384 // 24rem
-      break
     case 'md':
-      styles.maxWidth = 448 // 28rem
-      break
     case 'lg':
-      styles.maxWidth = 512 // 32rem
-      break
     case 'xl':
-      styles.maxWidth = 576 // 36rem
-      break
     case '2xl':
-      styles.maxWidth = 672 // 42rem
-      break
     case '3xl':
-      styles.maxWidth = 768 // 48rem
-      break
     case '4xl':
-      styles.maxWidth = 896 // 56rem
-      break
     case '5xl':
-      styles.maxWidth = 1024 // 64rem
-      break
     case '6xl':
-      styles.maxWidth = 1152 // 72rem
-      break
     case '7xl':
-      styles.maxWidth = 1280 // 80rem
+      styles.minWidth = ThemeSize.toWidthPixel(maxWidth)
       break
   }
   if (typeof maxWidth === 'number') {
@@ -173,43 +132,19 @@ const applyMinWidth = (styles: Record<string, string | number | null>, minWidth:
   if (!minWidth) return
   switch (minWidth) {
     case '3xs':
-      styles.minWidth = 256 // 16rem
-      break
     case '2xs':
-      styles.minWidth = 288 // 18rem
-      break
     case 'xs':
-      styles.minWidth = 320 // 20rem
-      break
     case 'sm':
-      styles.minWidth = 384 // 24rem
-      break
     case 'md':
-      styles.minWidth = 448 // 28rem
-      break
     case 'lg':
-      styles.minWidth = 512 // 32rem
-      break
     case 'xl':
-      styles.minWidth = 576 // 36rem
-      break
     case '2xl':
-      styles.minWidth = 672 // 42rem
-      break
     case '3xl':
-      styles.minWidth = 768 // 48rem
-      break
     case '4xl':
-      styles.minWidth = 896 // 56rem
-      break
     case '5xl':
-      styles.minWidth = 1024 // 64rem
-      break
     case '6xl':
-      styles.minWidth = 1152 // 72rem
-      break
     case '7xl':
-      styles.minWidth = 1280 // 80rem
+      styles.minWidth = ThemeSize.toWidthPixel(minWidth)
       break
     default:
       if (typeof minWidth === 'number') {

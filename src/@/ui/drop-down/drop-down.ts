@@ -1,5 +1,6 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
+import { Frag } from '~/@/vdom/primitives/frag'
 import { Pressable } from '~/@/vdom/primitives/pressable'
 import { VDom } from '~/@/vdom/vdom'
 import { theme } from '../theme/theme'
@@ -26,9 +27,9 @@ export const DropDown = (props: {
     }
   }
 
-  return h(Box, { style: props.style }, [
+  return h(Frag, {}, [
     h(Backdrop, { open: props.open, onPress: onClose }),
-    h(Box, { style: theme({ position: 'relative' }) }, [
+    h(Box, { style: { ...props.style, ...theme({ position: 'relative' }) } }, [
       props.renderReference(),
       props.open &&
         h(

@@ -24,7 +24,7 @@ export const VerticalActionBar = (
       style: {
         ...theme({
           height: 'full',
-          maxWidth: 'xs',
+          maxWidth: '3xs',
           flex: 1,
           flexShrink: 0,
           flexDirection: 'col',
