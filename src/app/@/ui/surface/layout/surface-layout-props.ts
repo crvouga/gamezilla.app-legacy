@@ -24,7 +24,7 @@ export type SurfaceLayoutProps = {
   body?: {
     render?: () => VDom
   }
-  testId?: string
+  style?: Record<string, unknown>
   form?: {
     variant?: 'danger' | 'default'
     onSubmit: () => void

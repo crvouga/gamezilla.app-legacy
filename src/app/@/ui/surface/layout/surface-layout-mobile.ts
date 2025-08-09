@@ -1,6 +1,6 @@
-import { Frag } from '~/@/vdom/primitives/frag'
 import { Drawer } from '~/@/ui/surface-drawer/drawer'
 import { h } from '~/@/vdom/h'
+import { Frag } from '~/@/vdom/primitives/frag'
 import { SurfaceContent } from './surface-content'
 import { SurfaceLayoutProps } from './surface-layout-props'
 
@@ -16,7 +16,6 @@ export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
         position: props.drawer?.position ?? 'bottom',
         ctx: props.ctx,
         ariaLabel: props.ariaLabel,
-        testId: props.testId,
       },
       [h(SurfaceContent, props)],
     ),

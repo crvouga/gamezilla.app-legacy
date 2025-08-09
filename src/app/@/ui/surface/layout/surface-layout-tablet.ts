@@ -10,8 +10,8 @@ import { SurfaceLayoutProps } from './surface-layout-props'
 export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
   if (props.dropDown?.reference) {
     return h(DropDown, {
+      ...props,
       id: `${props.id}-drop-down`,
-      testId: props.testId,
       open: props.open,
       onClose: props.onClose,
       renderReference: () => props.dropDown?.reference?.render?.(),
@@ -23,8 +23,14 @@ export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
 
   return h(Frag, {}, [
     props.dropDown?.reference?.render?.(),
-    h(Dialog, { open: props.open, onClose: props.onClose, testId: props.testId }, [
-      h(DialogSurface, {}, [h(SurfaceContent, props)]),
-    ]),
+    h(
+      Dialog,
+      {
+        ...props,
+        open: props.open,
+        onClose: props.onClose,
+      },
+      [h(DialogSurface, {}, [h(SurfaceContent, props)])],
+    ),
   ])
 }

@@ -15,6 +15,7 @@ const View: FrontendModule['View'] = (props) => {
   return h(SurfaceLayout, {
     ctx: props.ctx,
     ariaLabel: props.ctx.t('status-bar.status-bar'),
+    style: toStyle(props),
     drawer: {
       position: 'top',
     },
@@ -28,27 +29,7 @@ const View: FrontendModule['View'] = (props) => {
             Clickable,
             {
               role: 'button',
-              style:
-                props.ctx.screenSize === 'mobile'
-                  ? theme({
-                      flexDirection: 'row',
-                      width: 'full',
-                      alignItems: 'center',
-                      justifyContent: 'flex-end',
-                      gap: 3,
-                      padding: 3,
-                    })
-                  : theme({
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      gap: 4,
-                      padding: 2,
-                      paddingLeft: 8,
-                      position: 'absolute',
-                      top: 0,
-                      right: 0,
-                      zIndex: 100,
-                    }),
+              style: toStyleClickable(props),
               'aria-label': props.ctx.t('app.open-settings'),
               onPress: () => {
                 props.dispatch({ t: 'settings.clicked-top-bar' })
@@ -90,10 +71,19 @@ const View: FrontendModule['View'] = (props) => {
             h(SoundFrontend.ViewSoundMenuItem, {
               ctx: props.ctx,
               model: props.model.sound,
-              dispatch: (c) => props.dispatch({ t: 'sound', c }),
+              dispatch: (c) => {
+                props.dispatch({ t: 'sound', c })
+              },
             }),
 
-            h(ViewLangMenuItem, props),
+            h(MenuItem, {
+              renderIcon: (iconProps) => h(IconLanguage, iconProps),
+              primary: props.ctx.t('l18n.language'),
+              renderEnd: () => h(Text, { text: props.ctx.t(props.model.lang) }),
+              onPress: () => {
+                props.dispatch({ t: 'settings.clicked-open-lang' })
+              },
+            }),
 
             h(MenuItem, {
               renderIcon: (inputIcon) => h(IconGear, inputIcon),
@@ -109,15 +99,35 @@ const View: FrontendModule['View'] = (props) => {
   })
 }
 
-const ViewLangMenuItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
-  return h(MenuItem, {
-    renderIcon: (iconProps) => h(IconLanguage, iconProps),
-    primary: ctx.t('l18n.language'),
-    renderEnd: () => h(Text, { text: ctx.t(model.lang) }),
-    onPress: () => {
-      dispatch({ t: 'settings.clicked-open-lang' })
-    },
-  })
+const toStyleClickable = (props: Parameters<FrontendModule['View']>[0]): Record<string, unknown> => {
+  switch (props.ctx.screenSize) {
+    case 'mobile':
+      return theme({
+        flexDirection: 'row',
+        width: 'full',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        gap: 3,
+        padding: 3,
+      })
+    default:
+      return theme({
+        flexDirection: 'row',
+        justifyContent: 'center',
+        gap: 4,
+        padding: 2,
+        paddingLeft: 8,
+      })
+  }
+}
+
+const toStyle = (props: Parameters<FrontendModule['View']>[0]): Record<string, unknown> => {
+  switch (props.ctx.screenSize) {
+    case 'mobile':
+      return theme({ width: 'full' })
+    default:
+      return theme({ position: 'absolute', top: 0, right: 0, zIndex: 100 })
+  }
 }
 
 export const SettingsTopBar = {

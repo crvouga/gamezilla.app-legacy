@@ -1,6 +1,5 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import { Frag } from '~/@/vdom/primitives/frag'
 import { Pressable } from '~/@/vdom/primitives/pressable'
 import { VDom } from '~/@/vdom/vdom'
 import { theme } from '../theme/theme'
@@ -27,9 +26,9 @@ export const DropDown = (props: {
     }
   }
 
-  return h(Frag, {}, [
+  return h(Box, { style: { ...props.style } }, [
     h(Backdrop, { open: props.open, onPress: onClose }),
-    h(Box, { style: { ...props.style, ...theme({ position: 'relative' }) } }, [
+    h(Box, { style: theme({ position: 'relative' }) }, [
       props.renderReference(),
       props.open &&
         h(
@@ -37,12 +36,7 @@ export const DropDown = (props: {
           {
             id: props.id,
             style: {
-              ...theme({
-                position: 'absolute',
-                zIndex: props.open ? 50 : undefined,
-                flexDirection: 'col',
-              }),
-              zIndex: 50,
+              ...theme({ position: 'absolute', zIndex: props.open ? 50 : undefined, flexDirection: 'col' }),
               ...toPositionStyle(position),
               ...toAlignmentStyle(position, alignment),
               ...props.style,
@@ -60,7 +54,7 @@ const Backdrop = (props: { open: boolean; onPress: () => void }) => {
   if (!props.open) return null
 
   return h(Pressable, {
-    style: theme({ position: 'absolute', inset: 0, backgroundColor: 'black/50' }),
+    style: theme({ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, backgroundColor: 'black/50' }),
     onPress: props.onPress,
   })
 }
