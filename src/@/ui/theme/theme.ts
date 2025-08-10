@@ -122,7 +122,7 @@ const applyMaxWidth = (styles: Record<string, string | number | null>, maxWidth:
     case '5xl':
     case '6xl':
     case '7xl':
-      styles.minWidth = ThemeSize.toWidthPixel(maxWidth)
+      styles.maxWidth = ThemeSize.toWidthPixel(maxWidth)
       break
   }
   if (typeof maxWidth === 'number') {
@@ -250,28 +250,13 @@ const applyFontWeight = (styles: Record<string, string | number | null>, weight:
   styles.fontWeight = FONT_WEIGHT_MAP[weight] ?? 400
 }
 
-const SIZE_MAP = {
-  '3xs': 10,
-  '2xs': 11,
-  xs: 12,
-  sm: 14,
-  md: 16,
-  lg: 18,
-  xl: 20,
-  '2xl': 24,
-  '3xl': 30,
-  '4xl': 36,
-  '5xl': 48,
-  '6xl': 60,
-  '7xl': 72,
-}
 const applyFontSize = (styles: Record<string, string | number | null>, size: Theme['fontSize']) => {
   if (!size) return
   if (typeof size === 'number') {
     styles.fontSize = size
     return
   }
-  styles.fontSize = SIZE_MAP[size] ?? 16
+  styles.fontSize = ThemeSize.toFontPixel(size)
 }
 
 const applyTextAlign = (styles: Record<string, string | number | null>, textAlign: Theme['textAlign']) => {

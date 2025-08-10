@@ -21,7 +21,7 @@ export const AuthScreenLayout = (input: {
       style: sx({
         flexDirection: 'col',
         width: 'full',
-        maxWidth: '7xl',
+        maxWidth: 'xl',
         alignItems: 'center',
         justifyContent: input.center ? 'center' : 'flex-start',
       }),

@@ -31,6 +31,40 @@ const toWidthPixel = (size: ThemeSize): number => {
   }
 }
 
+const toFontPixel = (size: ThemeSize): number => {
+  switch (size) {
+    case '3xs':
+      return 10
+    case '2xs':
+      return 11
+    case 'xs':
+      return 12
+    case 'sm':
+      return 14
+    case 'md':
+      return 16
+    case 'lg':
+      return 18
+    case 'xl':
+      return 20
+    case '2xl':
+      return 24
+    case '3xl':
+      return 30
+    case '4xl':
+      return 36
+    case '5xl':
+      return 48
+    case '6xl':
+      return 60
+    case '7xl':
+      return 72
+    default:
+      return 16
+  }
+}
+
 export const ThemeSize = {
   toWidthPixel,
+  toFontPixel,
 }
