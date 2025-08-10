@@ -68,12 +68,6 @@ export const propKeyToEventName = (propKey: string): string => {
       return 'touchend'
     case 'onTouchCancel':
       return 'touchcancel'
-    case 'onTouchMove':
-      return 'touchmove'
-    case 'onTouchEnd':
-      return 'touchend'
-    case 'onTouchCancel':
-      return 'touchcancel'
     default:
       return propKey.slice(2).toLowerCase()
   }
