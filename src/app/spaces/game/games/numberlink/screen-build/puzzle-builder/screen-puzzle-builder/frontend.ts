@@ -173,6 +173,7 @@ const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View
     actionBar: {
       id: 'puzzle-builder-actions',
       variant: {
+        t: 'uniform',
         limit: {
           max: Infinity,
           onToggle: () => {
@@ -184,7 +185,6 @@ const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View
           },
           open: input.model.puzzleBuilderOpened === 'more',
         },
-        t: 'uniform',
         actions: [
           ...viewToggleModeAction(puzzleBuilder.mode.t, input),
           ...SaveChangesFrontend.viewActions(input),
