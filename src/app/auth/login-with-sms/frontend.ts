@@ -18,7 +18,7 @@ import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { AuthScreenFormLayout } from '../@/frontend/ui/auth-screen-form-layout'
 import { FrontendModule, ModelFrontend, toSendErrorMessage, toVerifyErrorMessage } from './types'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 
 const init: ModelFrontend = {
   code: '',
@@ -235,13 +235,13 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
     onSubmit: () => input.dispatch({ t: 'user-clicked-send-code-button' }),
     renderInputs: () =>
       h(Frag, {}, [
-        h(Text, { style: theme({ textColor: 'white' }), text: input.model.phone }),
+        h(Text, { style: sx({ textColor: 'white' }), text: input.model.phone }),
         h(TextField, {
           id: 'phoneNumberInput',
           testId: 'phone-number-input',
           label: input.ctx.t('auth-sms.phone-number'),
           type: 'tel',
-          startIcon: h(IconMobilePhone, { style: theme({ size: 5 }) }),
+          startIcon: h(IconMobilePhone, { style: sx({ size: 5 }) }),
           error: typeof input.model.phoneError === 'string',
           value: input.model.phone,
           helperText: input.model.phoneError,
@@ -279,7 +279,7 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
       h(Frag, {}, [
         h(Typography, {
           role: 'status',
-          style: theme({ fontSize: 'lg' }),
+          style: sx({ fontSize: 'lg' }),
           variant: 'body',
           text: input.ctx.t('auth-sms.enter-code-sent-to', PhoneNumber.format(phoneNumber)),
         }),

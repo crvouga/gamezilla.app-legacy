@@ -1,4 +1,4 @@
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { VDom } from '~/@/vdom/vdom'
@@ -11,7 +11,7 @@ export const ActionBars = (props: ScreenLayoutProps & { position: 'start' | 'end
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         height: 'full',
         flex: 1,

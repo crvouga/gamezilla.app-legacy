@@ -1,7 +1,7 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import type { VDom } from '~/@/vdom/vdom'
-import { theme } from '../theme/theme'
+import { sx } from '../theme/theme'
 
 const Container = (input: {
   id: string
@@ -15,7 +15,7 @@ const Container = (input: {
     {
       style: {
         ...input.style,
-        ...theme({
+        ...sx({
           flexDirection: 'row',
           height: 'full',
           width: 'full',
@@ -34,7 +34,7 @@ const Slide = (input: { children?: VDom; style?: Record<string, unknown> }) => {
     {
       style: {
         ...input.style,
-        ...theme({
+        ...sx({
           flexDirection: 'col',
           height: 'full',
           width: 'full',

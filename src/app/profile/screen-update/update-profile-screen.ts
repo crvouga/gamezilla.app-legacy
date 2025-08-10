@@ -3,7 +3,7 @@ import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
 import { Clickable } from '~/@/ui/clickable'
 import { IconChevronRight } from '~/@/ui/icon'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -30,11 +30,11 @@ export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFronten
       },
     },
     renderBody: () =>
-      h(Box, { style: theme({ flexDirection: 'col', width: 'full', flex: 1, alignItems: 'center', gap: 4 }) }, [
+      h(Box, { style: sx({ flexDirection: 'col', width: 'full', flex: 1, alignItems: 'center', gap: 4 }) }, [
         h(
           Box,
           {
-            style: theme({
+            style: sx({
               flexDirection: 'col',
               width: 'full',
               alignItems: 'center',
@@ -45,7 +45,7 @@ export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFronten
           [
             h(Avatar, {
               src: UserProfile.toAvatarUrl(profile),
-              style: theme({ size: 16 }),
+              style: sx({ size: 16 }),
               //   alt: input.ctx.t('avatar-title'),
               // onPress: () => input.dispatch({ t: 'clicked-avatar' }),
             }),
@@ -74,7 +74,7 @@ const ViewField = (input: { label: TranslatedText; value: TranslatedText; onPres
     Clickable,
     {
       onPress: input.onPress,
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         width: 'full',
         alignItems: 'center',
@@ -83,12 +83,12 @@ const ViewField = (input: { label: TranslatedText; value: TranslatedText; onPres
       }),
     },
     [
-      h(Box, { style: theme({ flexDirection: 'col', flex: 1, alignItems: 'flex-start' }) }, [
+      h(Box, { style: sx({ flexDirection: 'col', flex: 1, alignItems: 'flex-start' }) }, [
         h(Typography, { variant: 'label', text: input.label }),
         input.value && h(Typography, { variant: 'body', text: input.value }),
       ]),
 
-      h(IconChevronRight, { style: theme({ size: 6 }) }),
+      h(IconChevronRight, { style: sx({ size: 6 }) }),
     ],
   )
 }

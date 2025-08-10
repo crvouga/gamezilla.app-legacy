@@ -3,7 +3,7 @@ import { Box } from '../vdom/primitives/box'
 import { Image } from '../vdom/primitives/image'
 import { Path } from '../vdom/primitives/svg/path'
 import { Svg } from '../vdom/primitives/svg/svg'
-import { theme } from './theme/theme'
+import { sx } from './theme/theme'
 
 type AvatarProps = {
   src?: string | null | undefined
@@ -25,7 +25,7 @@ export const Avatar = (props: AvatarProps) => {
       src: props.src ?? '',
       alt: props.alt ?? 'user avatar',
       style: {
-        ...theme({
+        ...sx({
           aspectRatio: 1,
           flexShrink: 0,
           overflow: 'hidden',
@@ -42,7 +42,7 @@ export const Avatar = (props: AvatarProps) => {
     {
       onPress: props.onPress,
       style: {
-        ...theme({
+        ...sx({
           aspectRatio: 1,
           flexShrink: 0,
           overflow: 'hidden',
@@ -56,7 +56,7 @@ export const Avatar = (props: AvatarProps) => {
       h(
         Svg,
         {
-          style: theme({ width: 'full', height: 'full', textColor: 'neutral-300' }),
+          style: sx({ width: 'full', height: 'full', textColor: 'neutral-300' }),
           fill: '#ffffffcc',
           viewBox: '0 0 24 24',
         },

@@ -4,16 +4,16 @@ import { VDom } from '~/@/vdom/vdom'
 import { sleep } from '../promise/sleep'
 import { TimeSpan } from '../time/time-span'
 import { Transition } from '../vdom/primitives/transition'
-import { theme } from './theme/theme'
+import { sx } from './theme/theme'
 
 export const Badge = (input: { badgeContent: VDom; id: string; children: VDom[] }) => {
-  return h(Box, { style: theme({ position: 'relative' }) }, [
+  return h(Box, { style: sx({ position: 'relative' }) }, [
     h(Transition, { onEnter: onEnterGrow, id: input.id, mode: 'in-out', onExit: onExitShrink }, [
       input.badgeContent &&
         h(
           Box,
           {
-            style: theme({
+            style: sx({
               position: 'absolute',
               top: 0.5,
               right: 0.5,

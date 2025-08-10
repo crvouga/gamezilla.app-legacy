@@ -9,7 +9,7 @@ import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { ScreenSize } from '../../screen/screen-size'
 import { SurfaceLayout } from '../layout/surface-layout'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 
 export type SurfaceUnsavedChangesProps = {
   ctx: {
@@ -52,14 +52,14 @@ export const SurfaceUnsavedChanges = (input: SurfaceUnsavedChangesProps) => {
         h(Frag, {}, [
           h(Typography, {
             color: 'text-secondary',
-            style: theme({ padding: 4, paddingLeft: 6 }),
+            style: sx({ padding: 4, paddingLeft: 6 }),
             variant: 'body',
             text: input.body,
           }),
           h(
             Box,
             {
-              style: theme({
+              style: sx({
                 flexDirection: 'col',
                 width: 'full',
                 gap: 4,
@@ -78,7 +78,7 @@ export const SurfaceUnsavedChanges = (input: SurfaceUnsavedChangesProps) => {
                 onPress: input.onSave,
               }),
               h(Button, { width: 'full', text: input.discardText, onPress: input.onDiscard }),
-              h(Box, { style: theme({ width: 'full' }) }),
+              h(Box, { style: sx({ width: 'full' }) }),
               h(Button, { width: 'full', text: input.cancelText, onPress: input.onCancel }),
             ],
           ),

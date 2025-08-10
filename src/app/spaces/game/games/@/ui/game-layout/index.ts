@@ -1,5 +1,5 @@
 import { Translator } from '~/@/l18n/generated'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
@@ -24,13 +24,13 @@ export const LayoutGame = ({
     {
       ...props,
       style: {
-        ...theme({
+        ...sx({
           flexDirection: 'col',
           width: 'full',
           flex: 1,
         }),
         ...(isSpectating
-          ? theme({
+          ? sx({
               borderWidth: 8,
               borderColor: 'blue-500',
             })
@@ -43,7 +43,7 @@ export const LayoutGame = ({
         h(
           Box,
           {
-            style: theme({
+            style: sx({
               flexDirection: 'row',
               width: 'full',
               alignItems: 'center',
@@ -54,7 +54,7 @@ export const LayoutGame = ({
           [
             h(Text, {
               text: ctx.t('game.you-are-spectating'),
-              style: theme({ fontSize: 'sm', fontWeight: 'bold', textColor: 'white', padding: 1 }),
+              style: sx({ fontSize: 'sm', fontWeight: 'bold', textColor: 'white', padding: 1 }),
             }),
           ],
         ),

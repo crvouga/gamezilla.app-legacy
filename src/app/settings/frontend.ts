@@ -4,7 +4,7 @@ import { Sub } from '~/@/sub'
 import { Gutter } from '~/@/ui/gutter'
 import { IconCode, IconLanguage, IconPowerOff } from '~/@/ui/icon'
 import { MenuItem } from '~/@/ui/menu-item'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -158,7 +158,7 @@ const ViewMain: FrontendModule['View'] = (props) => {
       },
     },
     renderBody: () =>
-      h(ScrollBox, { style: theme({ flexDirection: 'col', flex: 1 }) }, [
+      h(ScrollBox, { style: sx({ flexDirection: 'col', flex: 1 }) }, [
         h(MenuItem, {
           primary: props.ctx.t('l18n.language'),
           renderEnd: (endProps) => h(Text, { ...endProps, text: props.ctx.t(props.model.lang) }),

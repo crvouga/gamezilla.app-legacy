@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import { Button, ButtonInput } from '~/@/ui/button'
 import { preventConsoleErrorWhenClosingDrawer } from '~/@/ui/surface-drawer/drawer-shared'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 
@@ -19,7 +19,7 @@ export const CancelSubmitButtons = (input: {
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -32,7 +32,7 @@ export const CancelSubmitButtons = (input: {
     },
     [
       h(Button, {
-        style: theme({
+        style: sx({
           flex: 1,
         }),
         size: input.size,
@@ -44,7 +44,7 @@ export const CancelSubmitButtons = (input: {
         disabled: input.cancelDisabled,
       }),
       h(Button, {
-        style: theme({
+        style: sx({
           flex: 1,
         }),
         size: input.size,

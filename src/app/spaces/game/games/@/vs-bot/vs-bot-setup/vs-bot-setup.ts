@@ -15,7 +15,7 @@ import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ScreenLayoutGameCoverArt } from '../../ui/screen-layout-game-cover-art'
 import type { PlayerType, VsBotInput } from '../vs-bot'
 import { Text } from '~/@/vdom/primitives/text'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 
 //
 //
@@ -149,7 +149,7 @@ export const View = ({
           renderBotIcon: bot.renderIcon,
         }
 
-  return h(Box, { style: theme({ flexDirection: 'col', width: 'full', flex: 1 }) }, [
+  return h(Box, { style: sx({ flexDirection: 'col', width: 'full', flex: 1 }) }, [
     h(ScreenLayoutGameCoverArt, {
       id: 'vs-bot-setup',
       parentScreen: ctx.parentScreen,
@@ -162,36 +162,32 @@ export const View = ({
       },
       renderCoverArt,
       renderBody: () =>
-        h(Box, { style: theme({ flexDirection: 'col', width: 'full', gap: 2, padding: 4 }) }, [
-          h(Box, { style: theme({ flexDirection: 'row', width: 'full', justifyContent: 'space-between' }) }, [
+        h(Box, { style: sx({ flexDirection: 'col', width: 'full', gap: 2, padding: 4 }) }, [
+          h(Box, { style: sx({ flexDirection: 'row', width: 'full', justifyContent: 'space-between' }) }, [
             h(PlayerIcons, { player: playerOneProp, ctx }),
-            h(
-              Box,
-              { style: theme({ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }) },
-              [
-                h(Typography, {
-                  style: theme({
-                    flexDirection: 'col',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '3xl',
-                    fontWeight: 'black',
-                  }),
-                  variant: 'title',
-                  text: ctx.t('game.vs'),
+            h(Box, { style: sx({ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }) }, [
+              h(Typography, {
+                style: sx({
+                  flexDirection: 'col',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '3xl',
+                  fontWeight: 'black',
                 }),
-              ],
-            ),
+                variant: 'title',
+                text: ctx.t('game.vs'),
+              }),
+            ]),
             h(PlayerIcons, { player: playerTwoProp, ctx }),
           ]),
 
-          h(Box, { style: theme({ flexDirection: 'row', width: 'full', justifyContent: 'space-between' }) }, [
+          h(Box, { style: sx({ flexDirection: 'row', width: 'full', justifyContent: 'space-between' }) }, [
             h(PlayerLabels, { player: playerOneProp, ctx }),
-            h(Box, { style: theme({ flex: 1 }) }),
+            h(Box, { style: sx({ flex: 1 }) }),
             h(PlayerLabels, { player: playerTwoProp, ctx }),
           ]),
 
-          h(Box, { style: theme({ flexDirection: 'row', width: 'full', justifyContent: 'space-between' }) }, [
+          h(Box, { style: sx({ flexDirection: 'row', width: 'full', justifyContent: 'space-between' }) }, [
             h(PlayerButtons, {
               onSwapSides,
               dispatch,
@@ -199,7 +195,7 @@ export const View = ({
               player: playerOneProp,
               ctx,
             }),
-            h(Box, { style: theme({ flex: 1 }) }),
+            h(Box, { style: sx({ flex: 1 }) }),
             h(PlayerButtons, {
               onSwapSides,
               dispatch,
@@ -212,7 +208,7 @@ export const View = ({
     }),
 
     ctx.currentUser.userId === ctx.space.hostId &&
-      h(Box, { style: theme({ flexDirection: 'row', alignItems: 'center', gap: 4, padding: 4 }) }, [
+      h(Box, { style: sx({ flexDirection: 'row', alignItems: 'center', gap: 4, padding: 4 }) }, [
         h(Button, {
           disabled: !canStartGame,
           variant: 'contained',
@@ -259,7 +255,7 @@ export const View = ({
                 Clickable,
                 {
                   key: botLevel.label,
-                  style: theme({
+                  style: sx({
                     flexDirection: 'row',
                     width: 'full',
                     alignItems: 'center',
@@ -273,7 +269,7 @@ export const View = ({
                 },
                 [
                   botLevel.renderIcon({
-                    style: theme({ width: 10, height: 10 }),
+                    style: sx({ width: 10, height: 10 }),
                   }),
                   h(Text, { text: botLevel.label }),
                 ],
@@ -286,21 +282,21 @@ export const View = ({
 }
 
 const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
-  return h(Box, { style: theme({ flex: 1, flexDirection: 'row', justifyContent: 'center', gap: 2 }) }, [
+  return h(Box, { style: sx({ flex: 1, flexDirection: 'row', justifyContent: 'center', gap: 2 }) }, [
     player.t === 'bot'
       ? player.renderBotIcon({
-          style: theme({ height: 14, width: 14 }),
+          style: sx({ height: 14, width: 14 }),
         })
       : player.userId
         ? h(Avatar, {
-            style: theme({ height: 14, width: 14 }),
+            style: sx({ height: 14, width: 14 }),
             src: UserProfile.toAvatarUrl(ctx.profilesByUserId[player.userId]),
           })
         : h(
             ClickablePaper,
             {
               role: 'button',
-              style: theme({
+              style: sx({
                 flexDirection: 'row',
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -311,21 +307,21 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
               }),
               onPress: player.onStartPlaying,
             },
-            [h(IconQuestionMark, { style: theme({ height: 10, width: 10, textColor: 'neutral-500' }) })],
+            [h(IconQuestionMark, { style: sx({ height: 10, width: 10, textColor: 'neutral-500' }) })],
           ),
     player.renderIcon({
-      style: theme({ width: 14, height: 14 }),
+      style: sx({ width: 14, height: 14 }),
     }),
   ])
 }
 
 const PlayerLabels = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
   const profile = player.t === 'user' && player.userId ? ctx.profilesByUserId[player.userId] : null
-  return h(Box, { style: theme({ flex: 1, flexDirection: 'row', justifyContent: 'center', gap: 2 }) }, [
+  return h(Box, { style: sx({ flex: 1, flexDirection: 'row', justifyContent: 'center', gap: 2 }) }, [
     h(Typography, {
       variant: 'label',
       color: 'text-secondary',
-      style: theme({
+      style: sx({
         width: 'full',
         overflow: 'hidden',
         textAlign: 'center',
@@ -336,7 +332,7 @@ const PlayerLabels = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPr
     h(Typography, {
       color: 'text-secondary',
       variant: 'label',
-      style: theme({ textAlign: 'center', fontSize: 'sm' }),
+      style: sx({ textAlign: 'center', fontSize: 'sm' }),
       text: player.playerLabel,
     }),
   ])
@@ -355,7 +351,7 @@ const PlayerButtons = ({
   player: PlayerProp
   dispatch: (m: Msg) => void
 }) => {
-  return h(Box, { style: theme({ flex: 1, flexDirection: 'col', gap: 2 }) }, [
+  return h(Box, { style: sx({ flex: 1, flexDirection: 'col', gap: 2 }) }, [
     !human.userId &&
       h(Button, {
         onPress: player.onStartPlaying,

@@ -6,7 +6,7 @@ import { IconXMark } from '~/@/ui/icon'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 
 const schema = s.obj({
   t: s.l('grid'),
@@ -31,16 +31,16 @@ const ViewForm = (input: {
     t: Translator
   }
 }) => {
-  return h(Box, { style: theme({ flexDirection: 'col', gap: 4, padding: 6 }) }, [
-    h(Box, { style: theme({ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 1 }) }, [
+  return h(Box, { style: sx({ flexDirection: 'col', gap: 4, padding: 6 }) }, [
+    h(Box, { style: sx({ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 1 }) }, [
       h(Box, {}, [h(Text, { text: `${input.form.width}w` })]),
 
-      h(IconXMark, { style: theme({ size: 6 }) }),
+      h(IconXMark, { style: sx({ size: 6 }) }),
 
       h(Box, {}, [h(Text, { text: `${input.form.height}h` })]),
     ]),
 
-    h(Box, { style: theme({ flexDirection: 'col', gap: 3 }) }, [
+    h(Box, { style: sx({ flexDirection: 'col', gap: 3 }) }, [
       h(ChipSelection<number>, {
         label: input.ctx.t('app.width'),
         options: Array.from({ length: 13 }, (_, i) => ({

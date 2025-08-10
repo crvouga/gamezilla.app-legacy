@@ -1,4 +1,4 @@
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { SafeAreaBox } from '~/@/vdom/primitives/safe-area-box'
 import { VDom } from '~/@/vdom/vdom'
@@ -8,7 +8,7 @@ export const AppRoot = (input: { children: VDom[] }) => {
     SafeAreaBox,
     {
       edges: ['top', 'bottom', 'left', 'right'],
-      style: theme({
+      style: sx({
         flex: 1,
         width: 'full',
         flexDirection: 'col',

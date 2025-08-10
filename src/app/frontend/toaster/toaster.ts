@@ -6,7 +6,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { IconXMark } from '~/@/ui/icon'
 import { PAPER_STYLE } from '~/@/ui/paper'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Pressable } from '~/@/vdom/primitives/pressable'
@@ -158,7 +158,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
       'data-error': input.toast.variant === 'error',
       'data-info': input.toast.variant === 'info',
       'data-success': input.toast.variant === 'success',
-      style: theme({
+      style: sx({
         pointerEvents: 'none',
         position: 'absolute',
         top: 0,
@@ -180,7 +180,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
         Box,
         {
           style: {
-            ...theme({
+            ...sx({
               pointerEvents: 'auto',
               zIndex: 40,
               flexDirection: 'row',
@@ -200,16 +200,16 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
           },
         },
         [
-          h(Text, { text: input.toast.text, style: theme({ textColor: 'white' }) }),
+          h(Text, { text: input.toast.text, style: sx({ textColor: 'white' }) }),
           typeof errorMsg === 'string' &&
             h(
               Pressable,
               {
-                style: theme({ fontWeight: 'bold' }),
+                style: sx({ fontWeight: 'bold' }),
                 onPress: () =>
                   input.dispatch({ t: 'clicked-see-error', errorMsg: errorMsg, toastId: input.toast.toastId }),
               },
-              [h(Text, { text: 'See Error', style: theme({ textColor: 'white' }) })],
+              [h(Text, { text: 'See Error', style: sx({ textColor: 'white' }) })],
             ),
           h(
             Pressable,
@@ -218,7 +218,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
               'aria-label': input.ctx.t('app.dismiss'),
               onPress: () => input.dispatch({ t: 'clicked-dismiss-button', toastId: input.toast.toastId }),
             },
-            [h(IconXMark, { style: theme({ size: 5, textColor: 'white' }) })],
+            [h(IconXMark, { style: sx({ size: 5, textColor: 'white' }) })],
           ),
         ],
       ),

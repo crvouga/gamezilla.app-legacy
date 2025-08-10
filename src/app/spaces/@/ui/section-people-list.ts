@@ -1,6 +1,6 @@
 import { Avatar } from '~/@/ui/avatar'
 import { Clickable } from '~/@/ui/clickable'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Frag } from '~/@/vdom/primitives/frag'
@@ -23,11 +23,11 @@ export const SectionPeopleList = (input: {
 
   const renderItem = input.renderItem ?? ((_profile, vDom) => vDom)
 
-  return h(Box, { style: theme({ flexDirection: 'col', width: 'full', gap: 3, padding: 6 }) }, [
+  return h(Box, { style: sx({ flexDirection: 'col', width: 'full', gap: 3, padding: 6 }) }, [
     h(SectionTitle, { text: input.ctx.t('app.people') }),
     h(
       Box,
-      { style: theme({ flexDirection: 'row', width: 'full' }) },
+      { style: sx({ flexDirection: 'row', width: 'full' }) },
       profiles.map((profile) =>
         h(Frag, { key: profile.id }, [
           renderItem(
@@ -56,7 +56,7 @@ const PersonMenuItem = (input: {
     {
       key: input.key,
       onPress: input.onPress,
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         width: 'full',
         alignItems: 'center',
@@ -66,7 +66,7 @@ const PersonMenuItem = (input: {
       }),
     },
     [
-      h(Avatar, { style: theme({ size: 12 }), src: UserProfile.toAvatarUrl(input.profile) }),
+      h(Avatar, { style: sx({ size: 12 }), src: UserProfile.toAvatarUrl(input.profile) }),
       h(Box, {}, [h(Text, { text: input.profile.username })]),
       input.profile.userId === input.ctx.space.hostId && h(ViewHostChip, { ctx: input.ctx }),
       input.profile.userId === input.ctx.currentUser.userId && h(ViewYouChip, { ctx: input.ctx }),

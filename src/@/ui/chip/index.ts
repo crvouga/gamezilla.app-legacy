@@ -4,7 +4,7 @@ import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
 import { VDom } from '~/@/vdom/vdom'
 import { Clickable } from '../clickable'
-import { Theme, theme } from '../theme/theme'
+import { Theme, sx } from '../theme/theme'
 
 export type ChipSize = 'sm' | 'lg'
 
@@ -20,7 +20,7 @@ export const Chip = (input: ChipProps) => {
     Tag,
     {
       tagName: typeof input.onPress === 'function' ? 'button' : 'div',
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 1,
@@ -37,7 +37,7 @@ export const Chip = (input: ChipProps) => {
       }),
       h(Text, {
         text: input.label,
-        style: theme({
+        style: sx({
           textColor: 'white',
         }),
       }),
@@ -85,8 +85,8 @@ const toSizeStyles = (input: ChipProps): Theme => {
 const toIconSizeStyles = (props: ChipProps): Record<string, unknown> => {
   switch (props.size) {
     case 'sm':
-      return theme({ size: 4 })
+      return sx({ size: 4 })
     case 'lg':
-      return theme({ size: 5 })
+      return sx({ size: 5 })
   }
 }

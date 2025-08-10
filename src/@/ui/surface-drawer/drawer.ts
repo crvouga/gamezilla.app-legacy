@@ -6,7 +6,7 @@ import { Pressable } from '~/@/vdom/primitives/pressable'
 import { SafeAreaBox } from '~/@/vdom/primitives/safe-area-box'
 import type { VDom } from '~/@/vdom/vdom'
 import { SURFACE_STYLE } from '../surface'
-import { theme } from '../theme/theme'
+import { sx } from '../theme/theme'
 import type { DrawerProps, DrawerPropsPrivate } from './drawer-shared'
 
 export type DrawerInput = DrawerPropsPrivate & {
@@ -27,7 +27,7 @@ const DrawerContent = (props: { position: 'top' | 'bottom'; open: boolean; child
       style: {
         ...SURFACE_STYLE,
         transform: props.open ? 'translateY(0)' : isTop ? 'translateY(-100%)' : 'translateY(100%)',
-        ...theme({
+        ...sx({
           width: 'full',
           rounded: 'lg',
           flexDirection: 'col',
@@ -47,7 +47,7 @@ export const Drawer = (props: DrawerProps) => {
       'data-testid': props.testId,
       role: 'dialog',
       'aria-label': props.ariaLabel,
-      style: theme({
+      style: sx({
         position: 'absolute',
         inset: 0,
         zIndex: 50,
@@ -60,7 +60,7 @@ export const Drawer = (props: DrawerProps) => {
     [
       props.position === 'top' && h(DrawerContent, { position: 'top', open: props.open }, props.children),
       h(Pressable, {
-        style: theme({
+        style: sx({
           width: 'full',
           flex: 1,
           zIndex: 50,

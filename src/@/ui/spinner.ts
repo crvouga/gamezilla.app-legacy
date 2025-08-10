@@ -2,18 +2,18 @@ import { h } from '~/@/vdom/h'
 import { Box } from '../vdom/primitives/box'
 import { Path } from '../vdom/primitives/svg/path'
 import { Svg } from '../vdom/primitives/svg/svg'
-import { theme } from './theme/theme'
+import { sx } from './theme/theme'
 
 export const Spinner = (props: { style?: Record<string, unknown> }) => {
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         // animation: 'spin'
       }),
       ...props.style,
     },
-    [h(IconSpinner, { style: { ...theme({ size: 8 }) } })],
+    [h(IconSpinner, { style: { ...sx({ size: 8 }) } })],
   )
 }
 

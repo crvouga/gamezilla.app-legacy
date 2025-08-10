@@ -1,6 +1,6 @@
 import { RequestResponse } from '~/@/request-response/request-response'
 import { TextField } from '~/@/ui/text-field'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
@@ -69,7 +69,7 @@ const View: FrontendModule['View'] = (input) => {
       cancelDisabled: false,
     },
     renderBody: () =>
-      h(Box, { style: theme({ flexDirection: 'col', width: 'full', gap: 4, padding: 4 }) }, [
+      h(Box, { style: sx({ flexDirection: 'col', width: 'full', gap: 4, padding: 4 }) }, [
         h(TextField, {
           id: 'username',
           label: input.ctx.t('username.username-label'),

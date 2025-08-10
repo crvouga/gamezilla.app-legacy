@@ -1,7 +1,7 @@
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconEllipsisVertical } from '~/@/ui/icon'
 import { MenuItem } from '~/@/ui/menu-item'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Frag } from '~/@/vdom/primitives/frag'
@@ -36,7 +36,7 @@ const toDropDownConfig = (reference: { render: () => VDom }): DropDownConfig => 
   }
 }
 
-const BASE_STYLE = theme({
+const BASE_STYLE = sx({
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'center',
@@ -57,7 +57,7 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
       const button = h(ScreenActionButton, {
         ...action,
         size: input.size,
-        style: theme({ flex: 1 }),
+        style: sx({ flex: 1 }),
       })
 
       if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
@@ -127,7 +127,7 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
     h(
       Box,
       {
-        style: theme({
+        style: sx({
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'flex-start',
@@ -140,7 +140,7 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
         const button = h(ScreenActionButton, {
           ...action,
           size: input.size,
-          style: theme({
+          style: sx({
             width: 20,
             justifyContent: 'flex-start',
           }),
@@ -160,7 +160,7 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
     h(
       Box,
       {
-        style: theme({
+        style: sx({
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'flex-end',
@@ -173,7 +173,7 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
         const button = h(ScreenActionButton, {
           ...action,
           size: input.size,
-          style: theme({
+          style: sx({
             width: 20,
             justifyContent: 'flex-end',
           }),
@@ -195,10 +195,10 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
 const toHeightStyle = (size: ScreenAction['size']): Record<string, unknown> => {
   switch (size) {
     case 'sm':
-      return theme({ height: 12 })
+      return sx({ height: 12 })
     case 'md':
-      return theme({ height: 16 })
+      return sx({ height: 16 })
     default:
-      return theme({ height: 16 })
+      return sx({ height: 16 })
   }
 }

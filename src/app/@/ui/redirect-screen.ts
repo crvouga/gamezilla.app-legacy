@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { Button } from '~/@/ui/button'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -9,7 +9,7 @@ export const RedirectScreen = (props: { onPress: () => void; buttonText: Transla
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'col',
         width: 'full',
         flex: 1,

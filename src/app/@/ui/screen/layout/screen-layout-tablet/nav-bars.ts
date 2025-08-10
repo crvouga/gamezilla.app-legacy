@@ -5,7 +5,7 @@ import { VDom } from '~/@/vdom/vdom'
 import { CancelSubmitButtons } from '../../../form/cancel-submit-buttons'
 import { ScreenNavBarTablet } from './screen-nav-bar-tablet'
 import { ParentScreenProps, ScreenLayoutProps } from '../screen-layout-props'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 
 export const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps | null): VDom[] => {
   if (!screen) return []
@@ -20,12 +20,12 @@ export const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScree
         subtitle: screen.navBar.subtitle,
         renderEnd: () =>
           (screen.actionEdit || screen.actionCreate) &&
-          h(Box, { style: theme({ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }) }, [
+          h(Box, { style: sx({ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }) }, [
             screen.actionEdit &&
               h(
                 Box,
                 {
-                  style: theme({
+                  style: sx({
                     flexDirection: 'row',
                     minWidth: '4xl',
                     alignItems: 'center',

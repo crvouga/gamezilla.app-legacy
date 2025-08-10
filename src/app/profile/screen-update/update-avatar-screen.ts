@@ -1,6 +1,6 @@
 import { Avatar } from '~/@/ui/avatar'
 import { TextField } from '~/@/ui/text-field'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { AppFrontendCtx, AppFrontendCtxBase } from '~/app/@/frontend/ctx'
@@ -23,9 +23,9 @@ const View = (input: {
       },
     },
     renderBody: () =>
-      h(Box, { style: theme({ flexDirection: 'col', width: 'full', flex: 1, gap: 8, padding: 4 }) }, [
-        h(Avatar, { src: undefined, style: theme({ size: 28 }) }),
-        h(Box, { style: theme({ flexDirection: 'col', width: 'full', gap: 4 }) }, [
+      h(Box, { style: sx({ flexDirection: 'col', width: 'full', flex: 1, gap: 8, padding: 4 }) }, [
+        h(Avatar, { src: undefined, style: sx({ size: 28 }) }),
+        h(Box, { style: sx({ flexDirection: 'col', width: 'full', gap: 4 }) }, [
           h(TextField, {
             label: input.ctx.t('profile-avatar.seed'),
             // value: input.model.draft?.avatarSeed ?? '',

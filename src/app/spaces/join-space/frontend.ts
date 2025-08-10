@@ -2,7 +2,7 @@ import { withEventId } from '~/@/event-sourced/event'
 import { Translator } from '~/@/l18n/generated'
 import { IPlatform } from '~/@/platform/platform'
 import { IconArrowRightOnRect } from '~/@/ui/icon'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -152,7 +152,7 @@ const view: SpaceFrontendModule['View'] = (input) => {
       h(
         Box,
         {
-          style: theme({
+          style: sx({
             flexDirection: 'col',
             width: 'full',
             gap: 6,
@@ -207,7 +207,7 @@ const SectionGame = (props: {
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'col',
         width: 'full',
         gap: 6,
@@ -220,7 +220,7 @@ const SectionGame = (props: {
       h(
         Box,
         {
-          style: theme({
+          style: sx({
             flexDirection: 'row',
             alignItems: 'center',
             gap: 4,
@@ -231,7 +231,7 @@ const SectionGame = (props: {
         [
           h(GameCoverArt, {
             rounded: true,
-            style: theme({ size: 20 }),
+            style: sx({ size: 20 }),
             gameName: props.gameName,
             platform: props.ctx.platform,
           }),
@@ -239,7 +239,7 @@ const SectionGame = (props: {
           h(Typography, {
             variant: 'label',
             text: props.ctx.t(props.gameName),
-            style: theme({ fontSize: 'lg' }),
+            style: sx({ fontSize: 'lg' }),
           }),
         ],
       ),

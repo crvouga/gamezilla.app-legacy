@@ -5,7 +5,7 @@ import type { VDom } from '~/@/vdom/vdom'
 import { Text } from '../vdom/primitives/text'
 import { Clickable } from './clickable'
 import { Spinner } from './spinner'
-import { theme, Theme } from './theme/theme'
+import { sx, Theme } from './theme/theme'
 
 export type ButtonVariant = 'contained' | 'outlined' | 'text' | 'soft'
 
@@ -36,7 +36,7 @@ export const Button = (input: ButtonInput) => {
   const color = input.color ?? 'primary'
   const combo: Combo = `${variant}-${color}`
 
-  const buttonStyle = theme({
+  const buttonStyle = sx({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -45,14 +45,14 @@ export const Button = (input: ButtonInput) => {
     ...toSizeStyle(size),
   })
 
-  const contentStyle = theme({
+  const contentStyle = sx({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     height: 'full',
   })
 
-  const textStyle = theme({
+  const textStyle = sx({
     ...toTextStyle(combo),
     ...toTextSizeStyle(size),
     fontWeight: 'bold',
@@ -99,7 +99,7 @@ export const Button = (input: ButtonInput) => {
       ),
       input.loading &&
         h(Spinner, {
-          style: theme({
+          style: sx({
             position: 'absolute',
             inset: 0,
             flexDirection: 'row',

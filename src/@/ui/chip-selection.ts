@@ -3,7 +3,7 @@ import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Pressable } from '../vdom/primitives/pressable'
 import { Text } from '../vdom/primitives/text'
-import { theme } from './theme/theme'
+import { sx } from './theme/theme'
 import { Typography } from './typography'
 
 export type ChipSelectionOption<T = string> = {
@@ -29,7 +29,7 @@ export const ChipSelection = <T>({
     h(
       Box,
       {
-        style: theme({
+        style: sx({
           flexDirection: 'row',
           gap: 3,
         }),
@@ -43,7 +43,7 @@ export const ChipSelection = <T>({
             'aria-selected': value === option.value,
             role: 'button',
             style: {
-              ...theme({
+              ...sx({
                 paddingX: 5,
                 paddingY: 2,
                 rounded: 'full',

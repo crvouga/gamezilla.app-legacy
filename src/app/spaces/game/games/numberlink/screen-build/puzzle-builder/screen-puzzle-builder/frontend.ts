@@ -1,6 +1,6 @@
 import { Sub } from '~/@/sub'
 import { IconPen, IconPlay } from '~/@/ui/icon'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
@@ -207,7 +207,7 @@ const viewToggleModeAction = (
           id: input.ctx.t('game.numberlink.play-mode'),
           renderIcon: (input) => h(IconPlay, input),
           label: input.ctx.t('game.numberlink.play-mode'),
-          styles: { button: theme({ textColor: 'blue-500' }) },
+          styles: { button: sx({ textColor: 'blue-500' }) },
           onPress: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
         },
       ]
@@ -218,7 +218,7 @@ const viewToggleModeAction = (
           id: input.ctx.t('game.numberlink.edit-mode'),
           renderIcon: (input) => h(IconPen, input),
           label: input.ctx.t('game.numberlink.edit-mode'),
-          styles: { button: theme({ textColor: 'amber-500' }) },
+          styles: { button: sx({ textColor: 'amber-500' }) },
           onPress: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
         },
       ]
@@ -265,7 +265,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
         h(
           Box,
           {
-            style: theme({
+            style: sx({
               flexDirection: 'row',
               width: 'full',
               alignItems: 'center',
@@ -315,7 +315,7 @@ const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
     },
     renderBody: () =>
       h(LayoutGame, { ctx: input.ctx, isSpectating: true }, [
-        h(Box, { style: theme({ flexDirection: 'col', width: 'full', flex: 1 }) }, [
+        h(Box, { style: sx({ flexDirection: 'col', width: 'full', flex: 1 }) }, [
           h(ProfileMenuItem, {
             ctx: input.ctx,
             profile: input.ctx.profilesByUserId[input.ctx.space.hostId],

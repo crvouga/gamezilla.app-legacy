@@ -2,10 +2,10 @@ import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
 import { SurfaceLayoutProps } from './surface-layout-props'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 
 export const SurfaceContent = (props: SurfaceLayoutProps) => {
-  return h(Box, { 'aria-label': props.ariaLabel, style: theme({ flexDirection: 'col', width: 'full' }) }, [
+  return h(Box, { 'aria-label': props.ariaLabel, style: sx({ flexDirection: 'col', width: 'full' }) }, [
     props.header?.render?.(),
     props.body?.render?.(),
     props.form &&

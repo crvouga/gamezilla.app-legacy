@@ -3,7 +3,7 @@ import { Eff } from '~/@/eff'
 import { ClickableTransparent } from '~/@/ui/clickable'
 import { IconMagnifyingGlass, IconXMark } from '~/@/ui/icon'
 import { Paper } from '~/@/ui/paper'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Pressable } from '~/@/vdom/primitives/pressable'
@@ -118,13 +118,13 @@ export const View = ({
   const results = matchSort(Object.values(model.searchResults), (item) => item.username, model.searchText)
 
   return h(Box, {}, [
-    h(Box, { style: theme({ flexDirection: 'row', height: 'full', width: 'full' }) }, [
+    h(Box, { style: sx({ flexDirection: 'row', height: 'full', width: 'full' }) }, [
       // input
-      h(Box, { style: theme({ width: 'full', padding: 4 }) }, [
+      h(Box, { style: sx({ width: 'full', padding: 4 }) }, [
         h(
           Paper,
           {
-            style: theme({
+            style: sx({
               flexDirection: 'row',
               width: 'full',
               alignItems: 'center',
@@ -134,10 +134,10 @@ export const View = ({
             }),
           },
           [
-            h(IconMagnifyingGlass, { style: theme({ size: 6 }) }),
+            h(IconMagnifyingGlass, { style: sx({ size: 6 }) }),
             h(TextInput, {
               id: searchInputId,
-              style: theme({ flex: 1, fontSize: 'lg' }),
+              style: sx({ flex: 1, fontSize: 'lg' }),
               placeholder: 'Search',
               defaultValue: model.searchText,
               onChangeText: (e: unknown) =>
@@ -155,7 +155,7 @@ export const View = ({
                     t: 'clicked-clear',
                   }),
               },
-              [h(IconXMark, { style: theme({ size: 6 }) })],
+              [h(IconXMark, { style: sx({ size: 6 }) })],
             ),
           ],
         ),
@@ -169,7 +169,7 @@ export const View = ({
             h(
               ClickableTransparent,
               {
-                style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 4, padding: 4 }),
+                style: sx({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 4, padding: 4 }),
                 onPress: () =>
                   dispatch({
                     t: 'clicked-result',

@@ -26,7 +26,7 @@ import { ContinueAsGuestFrontend } from './login-as-guest/frontend'
 import { LoginWithSMSFrontend } from './login-with-sms/frontend'
 import { LogoutFrontend } from './logout/frontend'
 import { FrontendCtxModule, FrontendModule, ModelFrontend, MsgFrontend, rpcContract } from './types'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 
 //
 //
@@ -239,7 +239,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
       h(
         Box,
         {
-          style: theme({
+          style: sx({
             flexDirection: 'col',
             width: 'full',
             gap: 8,
@@ -248,7 +248,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
         [
           h(AuthScreenHeaderCta, { ctx: input.ctx }),
 
-          h(Box, { style: theme({ flexDirection: 'col', width: 'full' }) }, [
+          h(Box, { style: sx({ flexDirection: 'col', width: 'full' }) }, [
             h(Button, {
               onPress: () => input.dispatch({ t: 'clicked-login-with-phone' }),
               size: 'lg',
@@ -260,7 +260,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
             h(
               Box,
               {
-                style: theme({
+                style: sx({
                   flexDirection: 'row',
                   width: 'full',
                   alignItems: 'center',
@@ -271,7 +271,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
               [
                 h(Typography, {
                   variant: 'body',
-                  style: theme({
+                  style: sx({
                     fontSize: 'sm',
                     fontWeight: 'bold',
                   }),

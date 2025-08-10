@@ -1,5 +1,5 @@
 import { Translator } from '~/@/l18n/generated'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -8,14 +8,14 @@ import { Text } from '~/@/vdom/primitives/text'
 export const AuthScreenHeaderCta = (input: { ctx: { t: Translator } }) => {
   return h(
     Box,
-    { style: theme({ flexDirection: 'col', width: 'full', alignItems: 'flex-start', justifyContent: 'center' }) },
+    { style: sx({ flexDirection: 'col', width: 'full', alignItems: 'flex-start', justifyContent: 'center' }) },
     [
       h(Typography, {
         text: input.ctx.t('auth.sign-in-to'),
         variant: 'title',
       }),
       h(Text, {
-        style: theme({ textColor: 'blue-500', paddingBottom: 2, fontSize: '5xl', fontWeight: 'black' }),
+        style: sx({ textColor: 'blue-500', paddingBottom: 2, fontSize: '5xl', fontWeight: 'black' }),
         text: input.ctx.t('app.gamezilla-app'),
       }),
     ],

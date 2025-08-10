@@ -2,7 +2,7 @@ import { Avatar } from '~/@/ui/avatar'
 import { Clickable } from '~/@/ui/clickable'
 import { IconXMark } from '~/@/ui/icon'
 import { IconButton } from '~/@/ui/icon-button'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -49,7 +49,7 @@ const ViewSpaceInfo = (props: { hostProfile: UserProfile | undefined; userCount:
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'col',
         flex: 1,
         gap: 2,
@@ -61,7 +61,7 @@ const ViewSpaceInfo = (props: { hostProfile: UserProfile | undefined; userCount:
     [
       h(Typography, {
         variant: 'body',
-        style: theme({
+        style: sx({
           textAlign: 'left',
           fontSize: 'lg',
           fontWeight: 'normal',
@@ -74,7 +74,7 @@ const ViewSpaceInfo = (props: { hostProfile: UserProfile | undefined; userCount:
       }),
       h(Typography, {
         variant: 'subtitle',
-        style: theme({
+        style: sx({
           textAlign: 'left',
           fontSize: 'sm',
           fontWeight: 'normal',
@@ -94,12 +94,12 @@ const ViewSpaceImage = (props: {
     return h(Avatar, {
       src: props.hostProfile ? UserProfile.toAvatarUrl(props.hostProfile) : '',
       alt: 'Host Avatar',
-      style: theme({ size: 16 }),
+      style: sx({ size: 16 }),
     })
 
   return h(GameCoverArt, {
     rounded: true,
-    style: theme({ size: 16 }),
+    style: sx({ size: 16 }),
     gameName: props.space.game.t,
     platform: props.ctx.platform,
   })
@@ -111,7 +111,7 @@ const ViewActionButton = (props: {
   ctx: AppFrontendCtx
   dispatch: (msg: MsgFrontend) => void
 }) => {
-  return h(Box, { style: theme({ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }) }, [
+  return h(Box, { style: sx({ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }) }, [
     props.isCurrentUserHost
       ? h(IconButton, {
           renderIcon: (iconInput) => h(IconXMark, iconInput),
@@ -132,7 +132,7 @@ const ViewRoot = (input: { children: VDom[] }) => {
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         overflow: 'hidden',
         rounded: 'lg',
@@ -164,7 +164,7 @@ const View = (input: {
       Clickable,
       {
         role: 'button',
-        style: theme({
+        style: sx({
           flexDirection: 'row',
           flex: 1,
           overflow: 'hidden',

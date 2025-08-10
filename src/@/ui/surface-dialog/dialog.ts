@@ -1,7 +1,7 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import type { VDom } from '~/@/vdom/vdom'
-import { theme } from '../theme/theme'
+import { sx } from '../theme/theme'
 
 export const Dialog = (input: {
   children?: VDom[]
@@ -15,7 +15,7 @@ export const Dialog = (input: {
     {
       role: 'dialog',
       style: {
-        ...theme({
+        ...sx({
           position: 'absolute',
           top: 0,
           left: 0,

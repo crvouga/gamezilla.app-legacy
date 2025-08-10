@@ -3,7 +3,7 @@ import { ensureLength } from '~/@/array/ensure-length'
 import { Box } from '~/@/vdom/primitives/box'
 import { VDom } from '~/@/vdom/vdom'
 import { h } from '~/@/vdom/vdom-engine/impl'
-import { theme } from '../theme/theme'
+import { sx } from '../theme/theme'
 
 export const Grid = (input: {
   columnCount: number
@@ -17,7 +17,7 @@ export const Grid = (input: {
     Box,
     {
       style: {
-        ...theme({
+        ...sx({
           flex: 1,
           flexDirection: 'col',
         }),
@@ -29,7 +29,7 @@ export const Grid = (input: {
         Box,
         {
           style: {
-            ...theme({ flex: 1, flexDirection: 'row' }),
+            ...sx({ flex: 1, flexDirection: 'row' }),
             ...input.rowStyle,
           },
         },
@@ -38,7 +38,7 @@ export const Grid = (input: {
             Box,
             {
               style: {
-                ...theme({ flex: 1, flexDirection: 'col' }),
+                ...sx({ flex: 1, flexDirection: 'col' }),
                 ...input.itemStyle,
               },
             },

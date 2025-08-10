@@ -1,5 +1,5 @@
 import { IPlatform } from '~/@/platform/platform'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
 import { GameName } from './@/game-name'
@@ -14,7 +14,7 @@ export const GameCoverArt = (props: {
 }) => {
   return h(GameCoverArtSwitch, {
     style: {
-      ...theme({
+      ...sx({
         aspectRatio: 1,
         overflow: 'hidden',
         rounded: 'lg',

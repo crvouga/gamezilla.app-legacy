@@ -1,7 +1,7 @@
 import { Clickable } from '~/@/ui/clickable'
 import { IconGear, IconLanguage } from '~/@/ui/icon'
 import { MenuItem } from '~/@/ui/menu-item'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
@@ -11,17 +11,17 @@ import { SoundFrontend } from './sound'
 import type { FrontendModule } from './types'
 
 const View: FrontendModule['View'] = (props) => {
-  const iconSize: Record<string, unknown> = props.ctx.screenSize === 'mobile' ? theme({ size: 4 }) : theme({ size: 5 })
+  const iconSize = toStyleIconSize(props)
   return h(SurfaceLayout, {
     ctx: props.ctx,
     ariaLabel: props.ctx.t('status-bar.status-bar'),
-    style: toStyle(props),
     drawer: {
       position: 'top',
     },
     id: 'status-bar-drawer',
     open: props.model.isTopBarSurfaceOpen,
     onClose: () => props.dispatch({ t: 'settings.closed-top-bar-surface' }),
+    style: toStyle(props),
     dropDown: {
       reference: {
         render: () =>
@@ -43,10 +43,10 @@ const View: FrontendModule['View'] = (props) => {
               }),
               h(SoundFrontend.ViewIcon, {
                 model: props.model.sound,
-                style: { ...iconSize, ...theme({ textColor: 'white' }) },
+                style: { ...iconSize, ...sx({ textColor: 'white' }) },
               }),
               h(IconGear, {
-                style: { ...iconSize, ...theme({ textColor: 'white' }) },
+                style: { ...iconSize, ...sx({ textColor: 'white' }) },
               }),
             ],
           ),
@@ -57,7 +57,7 @@ const View: FrontendModule['View'] = (props) => {
         h(
           Box,
           {
-            style: theme({ width: 'full', flexDirection: 'col' }),
+            style: sx({ width: 'full', flexDirection: 'col' }),
             role: 'menu',
             'aria-label': props.ctx.t('app.settings'),
           },
@@ -99,10 +99,19 @@ const View: FrontendModule['View'] = (props) => {
   })
 }
 
+const toStyleIconSize = (props: Parameters<FrontendModule['View']>[0]): Record<string, unknown> => {
+  switch (props.ctx.screenSize) {
+    case 'mobile':
+      return sx({ size: 4 })
+    default:
+      return sx({ size: 5 })
+  }
+}
+
 const toStyleClickable = (props: Parameters<FrontendModule['View']>[0]): Record<string, unknown> => {
   switch (props.ctx.screenSize) {
     case 'mobile':
-      return theme({
+      return sx({
         flexDirection: 'row',
         width: 'full',
         alignItems: 'center',
@@ -111,7 +120,7 @@ const toStyleClickable = (props: Parameters<FrontendModule['View']>[0]): Record<
         padding: 3,
       })
     default:
-      return theme({
+      return sx({
         flexDirection: 'row',
         justifyContent: 'center',
         gap: 4,
@@ -124,9 +133,9 @@ const toStyleClickable = (props: Parameters<FrontendModule['View']>[0]): Record<
 const toStyle = (props: Parameters<FrontendModule['View']>[0]): Record<string, unknown> => {
   switch (props.ctx.screenSize) {
     case 'mobile':
-      return theme({ width: 'full' })
+      return sx({ width: 'full' })
     default:
-      return theme({ position: 'absolute', top: 0, right: 0, zIndex: 100 })
+      return sx({ position: 'absolute', top: 0, right: 0, zIndex: 100 })
   }
 }
 

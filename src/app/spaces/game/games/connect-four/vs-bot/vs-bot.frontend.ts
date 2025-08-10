@@ -25,7 +25,7 @@ import {
   type MsgToFrontend,
   updateSpace,
 } from './vs-bot.types'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 
 //
 //
@@ -409,7 +409,7 @@ const View: Module['View'] = (input) => {
         h(
           Box,
           {
-            style: theme({
+            style: sx({
               flexDirection: 'col',
               width: 'full',
               flex: 1,
@@ -426,7 +426,7 @@ const View: Module['View'] = (input) => {
             h(
               Box,
               {
-                style: theme({
+                style: sx({
                   position: 'relative',
                   flexDirection: 'col',
                   width: 'full',

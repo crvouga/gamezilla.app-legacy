@@ -1,5 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
@@ -8,7 +8,7 @@ export const SplashScreen = (_props: { reason?: TranslatedText }) => {
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
@@ -18,7 +18,7 @@ export const SplashScreen = (_props: { reason?: TranslatedText }) => {
     [
       h(Text, {
         text: '🦕',
-        style: theme({ fontSize: 64, textColor: 'white' }),
+        style: sx({ fontSize: 64, textColor: 'white' }),
       }),
     ],
   )

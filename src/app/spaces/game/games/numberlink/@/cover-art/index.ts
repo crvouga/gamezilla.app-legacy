@@ -1,6 +1,6 @@
 import { pipe } from '~/@/function/pipe'
 import { IPlatform } from '~/@/platform/platform'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { VariantGridBoard } from '../variant/grid/grid-board'
 import { VariantGridShorthand } from '../variant/grid/grid-shorthand'
@@ -44,7 +44,7 @@ export const CoverArt = (input: { style?: Record<string, unknown>; platform: IPl
     disabled: true,
     borderless: true,
     disableHighlight: true,
-    style: { ...theme({ aspectRatio: 1, backgroundColor: 'black' }), ...input.style },
+    style: { ...sx({ aspectRatio: 1, backgroundColor: 'black' }), ...input.style },
     impl: { t: 'svg' },
     platform: input.platform,
   })

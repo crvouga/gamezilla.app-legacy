@@ -3,7 +3,7 @@ import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { ClickableTransparent } from './clickable'
-import { theme } from './theme/theme'
+import { sx } from './theme/theme'
 
 type IconButtonSize = 'xs' | 'sm' | 'md' | 'lg'
 
@@ -20,7 +20,7 @@ export const IconButton = (input: {
     ClickableTransparent,
     {
       style: {
-        ...theme({
+        ...sx({
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
@@ -37,7 +37,7 @@ export const IconButton = (input: {
     },
     [
       input.renderIcon({
-        style: theme({
+        style: sx({
           width: 'full',
           height: 'full',
         }),
@@ -55,25 +55,25 @@ export const IconButtonEmpty = (input: { size?: IconButtonSize }) => {
 const toSizeStyle = (size: IconButtonSize): Record<string, unknown> => {
   switch (size) {
     case 'xs':
-      return theme({
+      return sx({
         width: 7,
         height: 7,
         padding: 1,
       })
     case 'sm':
-      return theme({
+      return sx({
         width: 8,
         height: 8,
         padding: 1.5,
       })
     case 'md':
-      return theme({
+      return sx({
         width: 10,
         height: 10,
         padding: 2,
       })
     case 'lg':
-      return theme({
+      return sx({
         width: 12,
         height: 12,
         padding: 2.5,

@@ -45,9 +45,10 @@ export type Theme = {
   right?: number | null
   bottom?: number | null
   left?: number | null
+  display?: 'flex' | 'none' | null
 }
 
-export const theme = (config: Theme): Record<string, string | number | null> => {
+export const sx = (config: Theme): Record<string, string | number | null> => {
   const styles: Record<string, string | number | null> = {}
   applyMinWidth(styles, config.minWidth)
   applyMaxWidth(styles, config.maxWidth)
@@ -76,6 +77,7 @@ export const theme = (config: Theme): Record<string, string | number | null> => 
   applyRight(styles, config.right)
   applyBottom(styles, config.bottom)
   applyLeft(styles, config.left)
+  applyDisplay(styles, config.display)
   return styles
 }
 
@@ -389,6 +391,12 @@ const applyBottom = (styles: Record<string, string | number | null>, bottom: The
 const applyLeft = (styles: Record<string, string | number | null>, left: Theme['left']) => {
   if (left != null) {
     styles.left = left * 4
+  }
+}
+
+const applyDisplay = (styles: Record<string, string | number | null>, display: Theme['display']) => {
+  if (display != null) {
+    styles.display = display
   }
 }
 

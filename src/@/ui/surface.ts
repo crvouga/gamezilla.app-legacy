@@ -2,9 +2,9 @@ import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { VDom } from '~/@/vdom/vdom'
 import { AriaRole } from '../html/aria-role'
-import { theme } from './theme/theme'
+import { sx } from './theme/theme'
 
-export const SURFACE_STYLE = theme({
+export const SURFACE_STYLE = sx({
   backgroundColor: 'black',
   borderWidth: 1,
   borderColor: 'neutral-700',

@@ -4,7 +4,7 @@ import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
 import { Gutter } from '~/@/ui/gutter'
 import { IconUserPen } from '~/@/ui/icon'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -70,8 +70,8 @@ const ViewBody: typeof View = (input) => {
 
   const isCurrentUserProfile = input.ctx.currentUser?.userId === userId
 
-  return h(Box, { style: theme({ flexDirection: 'col', width: 'full', alignItems: 'center', gap: 4, padding: 6 }) }, [
-    h(Avatar, { style: theme({ size: 28 }), src: UserProfile.toAvatarUrl(profile), alt: 'profile avatar' }),
+  return h(Box, { style: sx({ flexDirection: 'col', width: 'full', alignItems: 'center', gap: 4, padding: 6 }) }, [
+    h(Avatar, { style: sx({ size: 28 }), src: UserProfile.toAvatarUrl(profile), alt: 'profile avatar' }),
     h(Typography, {
       variant: 'title',
       text: profile ? input.ctx.t('username', profile.username) : TranslatedText.ellipsis,
@@ -81,7 +81,7 @@ const ViewBody: typeof View = (input) => {
       ? h(
           Box,
           {
-            style: theme({
+            style: sx({
               flexDirection: 'row',
               width: 'full',
               alignItems: 'center',
@@ -94,7 +94,7 @@ const ViewBody: typeof View = (input) => {
             h(Button, {
               onPress: () =>
                 input.dispatch({ t: 'got-msg-out', c: PushScreenCmd.init({ t: 'profile-edit', n: 'profile' }) }),
-              style: theme({ maxWidth: 64, flex: 1 }),
+              style: sx({ maxWidth: 64, flex: 1 }),
               renderIconStart: (iconInput) => h(IconUserPen, iconInput),
               text: input.ctx.t('profile.edit-profile'),
               size: 'sm',

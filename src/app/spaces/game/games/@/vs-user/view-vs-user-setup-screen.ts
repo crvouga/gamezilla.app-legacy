@@ -11,7 +11,7 @@ import type { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ScreenLayoutGameCoverArt } from '../ui/screen-layout-game-cover-art'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 
 type IconProps = { style: Record<string, unknown> }
 
@@ -32,15 +32,15 @@ const VersusSection = ({
   playerTwo: PlayerProp
   ctx: SpaceFrontendCtx
 }) => {
-  return h(Box, { style: theme({ flexDirection: 'col', width: 'full', gap: 2, padding: 4 }) }, [
-    h(Box, { style: theme({ width: 'full', gap: 2 }) }, [
-      h(Box, { style: theme({ flex: 3 }) }, [h(PlayerIcons, { player: playerOne, ctx })]),
+  return h(Box, { style: sx({ flexDirection: 'col', width: 'full', gap: 2, padding: 4 }) }, [
+    h(Box, { style: sx({ width: 'full', gap: 2 }) }, [
+      h(Box, { style: sx({ flex: 3 }) }, [h(PlayerIcons, { player: playerOne, ctx })]),
 
-      h(Box, { style: theme({ flex: 1 }) }, [
+      h(Box, { style: sx({ flex: 1 }) }, [
         h(Typography, {
           text: ctx.t('game.vs'),
           variant: 'title',
-          style: theme({
+          style: sx({
             height: 'full',
             flex: 1,
             flexDirection: 'col',
@@ -52,23 +52,23 @@ const VersusSection = ({
         }),
       ]),
 
-      h(Box, { style: theme({ flex: 3 }) }, [h(PlayerIcons, { player: playerTwo, ctx })]),
+      h(Box, { style: sx({ flex: 3 }) }, [h(PlayerIcons, { player: playerTwo, ctx })]),
     ]),
 
-    h(Box, { style: theme({ width: 'full', gap: 2 }) }, [
-      h(Box, { style: theme({ flex: 3 }) }, [h(PlayerLabels, { player: playerOne, ctx })]),
+    h(Box, { style: sx({ width: 'full', gap: 2 }) }, [
+      h(Box, { style: sx({ flex: 3 }) }, [h(PlayerLabels, { player: playerOne, ctx })]),
 
-      h(Box, { style: theme({ flex: 1 }) }),
+      h(Box, { style: sx({ flex: 1 }) }),
 
-      h(Box, { style: theme({ flex: 3 }) }, [h(PlayerLabels, { player: playerTwo, ctx })]),
+      h(Box, { style: sx({ flex: 3 }) }, [h(PlayerLabels, { player: playerTwo, ctx })]),
     ]),
 
-    h(Box, { style: theme({ paddingTop: 2, width: 'full', gap: 2 }) }, [
-      h(Box, { style: theme({ flex: 3 }) }, [h(PlayerButtons, { player: playerOne, ctx })]),
+    h(Box, { style: sx({ paddingTop: 2, width: 'full', gap: 2 }) }, [
+      h(Box, { style: sx({ flex: 3 }) }, [h(PlayerButtons, { player: playerOne, ctx })]),
 
-      h(Box, { style: theme({ flex: 1 }) }),
+      h(Box, { style: sx({ flex: 1 }) }),
 
-      h(Box, { style: theme({ flex: 3 }) }, [h(PlayerButtons, { player: playerTwo, ctx })]),
+      h(Box, { style: sx({ flex: 3 }) }, [h(PlayerButtons, { player: playerTwo, ctx })]),
     ]),
   ])
 }
@@ -78,7 +78,7 @@ export const VsUserSetup = {
 }
 
 const PlayerButtons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
-  return h(Box, { style: theme({ width: 'full' }) }, [
+  return h(Box, { style: sx({ width: 'full' }) }, [
     player.userId &&
       player.userId === ctx.currentUser.userId &&
       h(Button, {
@@ -104,7 +104,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         width: 'full',
         justifyContent: 'center',
         gap: 2,
@@ -115,7 +115,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
     [
       player.userId
         ? h(Avatar, {
-            style: theme({ height: 14, width: 14 }),
+            style: sx({ height: 14, width: 14 }),
             src: UserProfile.toAvatarUrl(ctx.profilesByUserId[player.userId]),
             alt: '',
           })
@@ -123,7 +123,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
             ClickablePaper,
             {
               role: 'button',
-              style: theme({
+              style: sx({
                 height: 14,
                 width: 14,
                 alignItems: 'center',
@@ -133,11 +133,11 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
               }),
               onPress: player.onStartPlaying,
             },
-            [h(IconQuestionMark, { style: theme({ textColor: 'neutral-500', height: 10, width: 10 }) })],
+            [h(IconQuestionMark, { style: sx({ textColor: 'neutral-500', height: 10, width: 10 }) })],
           ),
 
       player.renderIcon({
-        style: theme({ height: 14, width: 14 }),
+        style: sx({ height: 14, width: 14 }),
       }),
     ],
   )
@@ -147,7 +147,7 @@ const PlayerLabels = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPr
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         width: 'full',
         justifyContent: 'center',
         gap: 2,
@@ -157,7 +157,7 @@ const PlayerLabels = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPr
     },
     [
       h(Typography, {
-        style: theme({
+        style: sx({
           flex: 1,
           overflow: 'hidden',
           textAlign: 'center',
@@ -169,7 +169,7 @@ const PlayerLabels = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPr
 
       h(Typography, {
         color: 'text-secondary',
-        style: theme({
+        style: sx({
           flex: 1,
           overflow: 'hidden',
           textAlign: 'center',
@@ -203,7 +203,7 @@ export const VsUserSetupScreen = ({
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         height: 'full',
         width: 'full',
         flex: 1,
@@ -230,7 +230,7 @@ export const VsUserSetupScreen = ({
         h(
           Box,
           {
-            style: theme({
+            style: sx({
               flexDirection: 'row',
               width: 'full',
               alignItems: 'center',
@@ -244,7 +244,7 @@ export const VsUserSetupScreen = ({
               disabled: !canStartGame,
               variant: 'contained',
               color: 'primary',
-              style: theme({ flex: 1 }),
+              style: sx({ flex: 1 }),
               onPress: onStartGame,
               text: ctx.t('game.start-game'),
             }),

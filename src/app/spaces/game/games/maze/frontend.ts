@@ -24,7 +24,7 @@ import {
   initShared,
 } from './types'
 import { Text } from '~/@/vdom/primitives/text'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 
 //
 //
@@ -280,7 +280,7 @@ const ViewJoystick = ({
       {
         width: '100%',
         viewBox: '-1 -1 2 2',
-        style: theme({ pointerEvents: 'none', overflow: 'hidden' }),
+        style: sx({ pointerEvents: 'none', overflow: 'hidden' }),
       },
       [
         h(Defs, {}, [h(ClipPath, { id: 'cut-off-bottom' }, [h(Circle, { x: '0', y: '0', r: 1 })])]),

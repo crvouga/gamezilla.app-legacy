@@ -5,7 +5,7 @@ import { Button } from '~/@/ui/button'
 import { IconArrowLeft, IconArrowRotateLeft, IconCheckmarkCircle, IconFlag, IconXMark } from '~/@/ui/icon'
 import { Paper } from '~/@/ui/paper'
 import { Spinner } from '~/@/ui/spinner'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -220,7 +220,7 @@ const View: Module['View'] = (input) => {
             LayoutGame,
             {
               isSpectating,
-              style: theme({
+              style: sx({
                 flexDirection: 'col',
                 width: 'full',
                 flex: 1,
@@ -231,18 +231,14 @@ const View: Module['View'] = (input) => {
               ctx: input.ctx,
             },
             [
-              h(
-                Box,
-                { style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 2, padding: 2 }) },
-                [
-                  h(PlayerSlot, { playerType: 'player-one', modelSpace, ctx: input.ctx }),
-                  h(PlayerSlot, { playerType: 'player-two', modelSpace, ctx: input.ctx }),
-                ],
-              ),
+              h(Box, { style: sx({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 2, padding: 2 }) }, [
+                h(PlayerSlot, { playerType: 'player-one', modelSpace, ctx: input.ctx }),
+                h(PlayerSlot, { playerType: 'player-two', modelSpace, ctx: input.ctx }),
+              ]),
 
               h(Feedback, { ctx: input.ctx, modelSpace }),
 
-              h(Box, { style: theme({ position: 'relative', width: 'full' }) }, [
+              h(Box, { style: sx({ position: 'relative', width: 'full' }) }, [
                 h(ViewColumns, {
                   columns: modelSpace.columns,
                   gameId: modelSpace.gameId,
@@ -263,7 +259,7 @@ const View: Module['View'] = (input) => {
                   h(
                     Box,
                     {
-                      style: theme({
+                      style: sx({
                         position: 'absolute',
                         inset: 0,
                         flexDirection: 'row',
@@ -365,10 +361,10 @@ const ViewGameOverMessage = ({
 
   if (modelSpace.rematch.type === 'Asking' && modelSpace.rematch.asker === currentPlayerType) {
     return h(Box, {}, [
-      h(Box, { style: theme({ paddingBottom: 4, textAlign: 'center', fontSize: 'xl' }) }, [
+      h(Box, { style: sx({ paddingBottom: 4, textAlign: 'center', fontSize: 'xl' }) }, [
         h(Text, { text: 'Waiting for response' }),
       ]),
-      h(Spinner, { style: { ...theme({ size: 8 }) } }),
+      h(Spinner, { style: { ...sx({ size: 8 }) } }),
       h(Button, {
         variant: 'contained',
         width: 'full',
@@ -392,7 +388,7 @@ const ViewGameOverMessage = ({
       h(
         Box,
         {
-          style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', justifyContent: 'center', gap: 4 }),
+          style: sx({ flexDirection: 'row', width: 'full', alignItems: 'center', justifyContent: 'center', gap: 4 }),
         },
         [
           h(Button, {
@@ -425,7 +421,7 @@ const ViewGameOverMessage = ({
   }
 
   if (modelSpace.gameOver.type === 'Draw') {
-    return h(Box, { style: theme({ fontSize: 'xl' }) }, [h(Text, { text: 'Tie' })])
+    return h(Box, { style: sx({ fontSize: 'xl' }) }, [h(Text, { text: 'Tie' })])
   }
 
   if (modelSpace.gameOver.type === 'resignation') {
@@ -438,7 +434,7 @@ const ViewGameOverMessage = ({
         h(
           Box,
           {
-            style: theme({
+            style: sx({
               flexDirection: 'row',
               width: 'full',
               alignItems: 'center',
@@ -449,7 +445,7 @@ const ViewGameOverMessage = ({
           [
             h(PlayerIcon, { playerType: winner }),
             h(Avatar, {
-              style: theme({ size: 12 }),
+              style: sx({ size: 12 }),
               alt: '',
               src: UserProfile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[winner]]),
             }),
@@ -472,13 +468,13 @@ const ViewGameOverMessage = ({
       return h(
         Box,
         {
-          style: theme({ flexDirection: 'col', width: 'full', alignItems: 'center', justifyContent: 'center', gap: 2 }),
+          style: sx({ flexDirection: 'col', width: 'full', alignItems: 'center', justifyContent: 'center', gap: 2 }),
         },
         [
           h(
             Box,
             {
-              style: theme({
+              style: sx({
                 flexDirection: 'row',
                 width: 'full',
                 alignItems: 'center',
@@ -487,9 +483,9 @@ const ViewGameOverMessage = ({
               }),
             },
             [
-              h(PlayerIcon, { playerType: winner, style: theme({ size: 20 }) }),
+              h(PlayerIcon, { playerType: winner, style: sx({ size: 20 }) }),
               h(Avatar, {
-                style: theme({ size: 20 }),
+                style: sx({ size: 20 }),
                 src: UserProfile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[winner]]),
               }),
             ],
@@ -510,7 +506,7 @@ const Feedback = ({ ctx, modelSpace }: { ctx: SpaceFrontendCtx; modelSpace: Stat
     return h(Typography, {
       text: TranslatedText.of('Game Over'),
       color: 'text-secondary',
-      style: theme({ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }),
+      style: sx({ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }),
     })
   }
 
@@ -522,7 +518,7 @@ const Feedback = ({ ctx, modelSpace }: { ctx: SpaceFrontendCtx; modelSpace: Stat
     return h(
       Box,
       {
-        style: theme({
+        style: sx({
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
@@ -531,7 +527,7 @@ const Feedback = ({ ctx, modelSpace }: { ctx: SpaceFrontendCtx; modelSpace: Stat
         }),
       },
       [
-        h(PlayerIcon, { style: theme({ width: 4, height: 4 }), playerType: turn }),
+        h(PlayerIcon, { style: sx({ width: 4, height: 4 }), playerType: turn }),
         h(Typography, { text: TranslatedText.of('Turn'), color: 'text-secondary' }),
       ],
     )
@@ -540,7 +536,7 @@ const Feedback = ({ ctx, modelSpace }: { ctx: SpaceFrontendCtx; modelSpace: Stat
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -548,7 +544,7 @@ const Feedback = ({ ctx, modelSpace }: { ctx: SpaceFrontendCtx; modelSpace: Stat
         textAlign: 'center',
       }),
     },
-    [h(PlayerIcon, { style: theme({ width: 4, height: 4 }), playerType: turn }), h(Text, { text: 'Your Turn' })],
+    [h(PlayerIcon, { style: sx({ width: 4, height: 4 }), playerType: turn }), h(Text, { text: 'Your Turn' })],
   )
 }
 
@@ -564,7 +560,7 @@ const PlayerSlot = ({
   return h(
     Paper,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         flex: 1,
         alignItems: 'center',
@@ -575,9 +571,9 @@ const PlayerSlot = ({
       }),
     },
     [
-      h(PlayerIcon, { style: theme({ width: 8, height: 8 }), playerType }),
+      h(PlayerIcon, { style: sx({ width: 8, height: 8 }), playerType }),
       h(Avatar, {
-        style: theme({ width: 8, height: 8 }),
+        style: sx({ width: 8, height: 8 }),
         alt: '',
         src: UserProfile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[playerType]]),
       }),

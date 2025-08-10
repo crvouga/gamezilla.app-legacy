@@ -1,7 +1,7 @@
 import { History } from '~/@/history'
 import { IconArrowRotateLeft, IconArrowRotateRight, IconExpand, IconXMark } from '~/@/ui/icon'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -125,7 +125,7 @@ const ViewStatus: typeof View = (input) => {
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         width: 'full',
         alignItems: 'center',
@@ -141,7 +141,7 @@ const ViewStatus: typeof View = (input) => {
       }),
       h(ViewTerminal, {
         groupId: ModeEdit.toCurrentPlacingGroupId(input.model),
-        style: theme({ size: 6 }),
+        style: sx({ size: 6 }),
       }),
     ],
   )

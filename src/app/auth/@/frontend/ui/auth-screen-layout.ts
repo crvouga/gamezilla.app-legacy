@@ -1,5 +1,5 @@
 import { Translator } from '~/@/l18n/generated'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { VDom } from '~/@/vdom/vdom'
@@ -18,7 +18,7 @@ export const AuthScreenLayout = (input: {
     Box,
     {
       'data-testid': input.testId,
-      style: theme({
+      style: sx({
         flexDirection: 'col',
         width: 'full',
         maxWidth: '7xl',
@@ -30,7 +30,7 @@ export const AuthScreenLayout = (input: {
       h(
         Box,
         {
-          style: theme({
+          style: sx({
             flexDirection: 'col',
             width: 'full',
             alignItems: 'center',

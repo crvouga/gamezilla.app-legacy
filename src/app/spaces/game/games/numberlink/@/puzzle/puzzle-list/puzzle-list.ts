@@ -9,7 +9,7 @@ import { EmptyState } from '~/@/ui/empty-state'
 import { Gutter } from '~/@/ui/gutter'
 import { IconPuzzlePiece } from '~/@/ui/icon'
 import { Spinner } from '~/@/ui/spinner'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -38,14 +38,14 @@ const View = (input: {
   const totalCount = puzzles.length
   const selectedCount = Math.min(input.selected?.length ?? 0, totalCount)
 
-  return h(Box, { style: theme({ flexDirection: 'col', width: 'full', flex: 1, overflow: 'hidden' }) }, [
+  return h(Box, { style: sx({ flexDirection: 'col', width: 'full', flex: 1, overflow: 'hidden' }) }, [
     h(PuzzleListQueryForm.View, { ctx: input.ctx, query: input.query, onChange: input.onQueryChanged }),
 
     input.selectable &&
       h(
         Clickable,
         {
-          style: theme({ flexDirection: 'row', alignItems: 'center', gap: 4, padding: 2 }),
+          style: sx({ flexDirection: 'row', alignItems: 'center', gap: 4, padding: 2 }),
           onPress: () => input.onHeaderCheckboxClick?.(puzzles.map((p) => p.id)),
         },
         [
@@ -53,7 +53,7 @@ const View = (input: {
           h(Typography, {
             variant: 'body',
             color: 'text-secondary',
-            style: theme({ fontSize: 'lg' }),
+            style: sx({ fontSize: 'lg' }),
             text: input.ctx.t('game.numberlink.puzzles-selected', {
               totalCount: puzzles.length,
               selectedCount: input.selected?.length ?? 0,
@@ -65,7 +65,7 @@ const View = (input: {
     h(
       ScrollBox,
       {
-        style: theme({ flex: 1 }),
+        style: sx({ flex: 1 }),
         contentContainerStyle: {
           rowGap: 0,
         },
@@ -89,7 +89,7 @@ const View = (input: {
             label: input.ctx.t('game.numberlink.no-puzzles'),
           }),
 
-        isLoading && h(Spinner, { style: { ...theme({ size: 12 }) } }),
+        isLoading && h(Spinner, { style: { ...sx({ size: 12 }) } }),
 
         h(Gutter, { variant: 'screen' }),
       ],
@@ -119,7 +119,7 @@ const ViewMenuItem = (input: {
     Pressable,
     {
       key: input.puzzle.id,
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         alignItems: 'center',
         textAlign: 'left',
@@ -129,12 +129,12 @@ const ViewMenuItem = (input: {
     },
     [
       input.selectable &&
-        h(Box, { style: theme({ padding: 4 }) }, [h(Checkbox, { state: input.selected ? 'checked' : 'unchecked' })]),
+        h(Box, { style: sx({ padding: 4 }) }, [h(Checkbox, { state: input.selected ? 'checked' : 'unchecked' })]),
 
       h(
         Box,
         {
-          style: theme({
+          style: sx({
             flexDirection: 'row',
             aspectRatio: 1,
             size: 24,
@@ -154,7 +154,7 @@ const ViewMenuItem = (input: {
         ],
       ),
 
-      h(Box, { style: theme({ flexDirection: 'col', gap: 1, overflow: 'hidden', padding: 4 }) }, [
+      h(Box, { style: sx({ flexDirection: 'col', gap: 1, overflow: 'hidden', padding: 4 }) }, [
         h(Typography, {
           variant: 'body',
           color: 'text-primary',

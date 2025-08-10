@@ -4,7 +4,7 @@ import { Sub } from '~/@/sub'
 import { Gutter } from '~/@/ui/gutter'
 import { MenuItem } from '~/@/ui/menu-item'
 import { RadioInputIcon } from '~/@/ui/radio-input'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { Text } from '~/@/vdom/primitives/text'
@@ -76,7 +76,7 @@ const View: FrontendModule['View'] = (input) => {
       back: { onPress: () => input.dispatch({ t: 'lang.clicked-back-button' }) },
     },
     renderBody: () =>
-      h(ScrollBox, { style: theme({ flexDirection: 'col', flex: 1 }) }, [
+      h(ScrollBox, { style: sx({ flexDirection: 'col', flex: 1 }) }, [
         ...LanguageCodeISO_639_1.ALL.map((langCode) =>
           h(ViewChooseLangMenuItem, {
             key: langCode,
@@ -101,8 +101,7 @@ const ViewChooseLangMenuItem = (input: {
   return h(MenuItem, {
     link: true,
     primary: TranslatedText.of(primary),
-    renderEnd: () =>
-      h(Text, { style: theme({ textColor: 'white', fontSize: 'lg' }), text: input.ctx.t(input.langCode) }),
+    renderEnd: () => h(Text, { style: sx({ textColor: 'white', fontSize: 'lg' }), text: input.ctx.t(input.langCode) }),
     onPress: () => input.dispatch({ t: 'lang.clicked-lang', lang: input.langCode }),
     renderIcon: (iconProps) => h(RadioInputIcon, { ...iconProps, status: toStatus(input) }),
   })

@@ -6,7 +6,7 @@ import { preventConsoleErrorWhenClosingDrawer } from '~/@/ui/surface-drawer/draw
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import { theme } from '../theme/theme'
+import { sx } from '../theme/theme'
 
 export const SurfaceHeader = (input: {
   ctx: { t: Translator }
@@ -18,7 +18,7 @@ export const SurfaceHeader = (input: {
     Box,
     {
       'data-testid': input.testId,
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         width: 'full',
         alignItems: 'center',
@@ -29,8 +29,8 @@ export const SurfaceHeader = (input: {
       }),
     },
     [
-      h(Box, { style: theme({ flex: 1 }) }, [
-        input.title && h(Typography, { text: input.title, variant: 'title', style: theme({ fontSize: '2xl' }) }),
+      h(Box, { style: sx({ flex: 1 }) }, [
+        input.title && h(Typography, { text: input.title, variant: 'title', style: sx({ fontSize: '2xl' }) }),
       ]),
       input.onClose &&
         h(IconButton, {

@@ -1,6 +1,6 @@
 import { MenuItem } from '~/@/ui/menu-item'
 import { RadioInputIcon } from '~/@/ui/radio-input'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { VDomImplWeb } from '~/@/vdom/vdom-impl-web'
@@ -68,7 +68,7 @@ const View: FrontendModule['View'] = (input) => {
     renderBody: () =>
       h(
         ScrollBox,
-        { style: theme({ flexDirection: 'col', flex: 1 }) },
+        { style: sx({ flexDirection: 'col', flex: 1 }) },
         VDomImplWeb.VISIBLE.map((vDomImpl) => {
           const isSelected = vDomImpl === input.model.renderVDomImpl
           const isDefault = vDomImpl === input.model.renderVDomImplInitial
@@ -79,7 +79,7 @@ const View: FrontendModule['View'] = (input) => {
             onPress: () => input.dispatch({ t: 'renderer.clicked-renderer', vDomImpl }),
             renderEnd: () =>
               h(RadioInputIcon, {
-                style: theme({ size: 7, textColor: 'white' }),
+                style: sx({ size: 7, textColor: 'white' }),
                 status: isSelected ? 'selected' : 'unselected',
               }),
             selected: isSelected,

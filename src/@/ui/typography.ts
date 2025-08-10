@@ -2,22 +2,22 @@ import { AriaRole } from '~/@/html/aria-role'
 import type { TranslatedText } from '~/@/l18n'
 import { h } from '~/@/vdom/h'
 import { Text } from '../vdom/primitives/text'
-import { theme } from './theme/theme'
+import { sx } from './theme/theme'
 
 export type TypographyVariant = 'title' | 'body' | 'label' | 'subtitle' | 'caption'
 
 const toSizeStyle = (variant: TypographyVariant) => {
   switch (variant) {
     case 'title':
-      return theme({ fontSize: '3xl' })
+      return sx({ fontSize: '3xl' })
     case 'body':
-      return theme({ fontSize: 'md' })
+      return sx({ fontSize: 'md' })
     case 'label':
-      return theme({ fontSize: 'xs' })
+      return sx({ fontSize: 'xs' })
     case 'subtitle':
-      return theme({ fontSize: 'sm' })
+      return sx({ fontSize: 'sm' })
     case 'caption':
-      return theme({ fontSize: 'xs' })
+      return sx({ fontSize: 'xs' })
   }
 }
 
@@ -26,11 +26,11 @@ export type TypographyColor = 'inherit' | 'text-primary' | 'text-secondary'
 const toColorStyle = (color: TypographyColor) => {
   switch (color) {
     case 'text-secondary':
-      return theme({ textColor: 'neutral-300' })
+      return sx({ textColor: 'neutral-300' })
     case 'text-primary':
-      return theme({ textColor: 'white' })
+      return sx({ textColor: 'white' })
     case 'inherit':
-      return theme({ textColor: 'white' })
+      return sx({ textColor: 'white' })
   }
 }
 
@@ -69,7 +69,7 @@ const toAriaLevel = (input: TypographyProps): number | undefined => {
   }
 }
 
-const SKELETON_STYLE = theme({
+const SKELETON_STYLE = sx({
   backgroundColor: 'neutral-500',
   pointerEvents: 'none',
 })
@@ -77,13 +77,13 @@ const SKELETON_STYLE = theme({
 const toTextAlignStyle = (align?: 'left' | 'center' | 'right') => {
   switch (align) {
     case 'left':
-      return theme({ textAlign: 'left' })
+      return sx({ textAlign: 'left' })
     case 'center':
-      return theme({ textAlign: 'center' })
+      return sx({ textAlign: 'center' })
     case 'right':
-      return theme({ textAlign: 'right' })
+      return sx({ textAlign: 'right' })
     default:
-      return theme({ textAlign: 'left' })
+      return sx({ textAlign: 'left' })
   }
 }
 

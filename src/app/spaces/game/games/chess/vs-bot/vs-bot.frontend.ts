@@ -27,7 +27,7 @@ import {
   updateSpace,
 } from './vs-bot.types'
 import { Text } from '~/@/vdom/primitives/text'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 
 //
 //
@@ -384,25 +384,25 @@ export const View = ({
 
   const botSlot = h(
     Box,
-    { style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 3, padding: 3 }) },
+    { style: sx({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 3, padding: 3 }) },
     [
-      h(IconRobot, { style: theme({ width: 10, height: 10 }) }),
-      h(Box, { style: theme({ flex: 1, fontSize: 'lg' }) }, [
+      h(IconRobot, { style: sx({ width: 10, height: 10 }) }),
+      h(Box, { style: sx({ flex: 1, fontSize: 'lg' }) }, [
         h(Text, { text: ChessBotLevel.toString(model.spaceModel.botLevel) }),
       ]),
-      isBotTurn(model.spaceModel) && h(Spinner, { style: theme({ size: 10 }) }),
+      isBotTurn(model.spaceModel) && h(Spinner, { style: sx({ size: 10 }) }),
     ],
   )
 
   const userSlot = h(
     Box,
-    { style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 3, padding: 3 }) },
+    { style: sx({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 3, padding: 3 }) },
     [
       h(Avatar, {
-        style: theme({ width: 10, height: 10 }),
+        style: sx({ width: 10, height: 10 }),
         src: UserProfile.toAvatarUrl(ctx.profilesByUserId[model.spaceModel.userId]),
       }),
-      h(Box, { style: theme({ flex: 1, fontSize: 'lg' }) }, [
+      h(Box, { style: sx({ flex: 1, fontSize: 'lg' }) }, [
         h(Text, { text: ctx.profilesByUserId[model.spaceModel.userId]?.username ?? '' }),
       ]),
     ],
@@ -425,7 +425,7 @@ export const View = ({
         h(
           Box,
           {
-            style: theme({
+            style: sx({
               flexDirection: 'col',
               width: 'full',
               flex: 1,

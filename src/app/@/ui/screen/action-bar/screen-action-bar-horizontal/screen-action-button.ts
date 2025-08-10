@@ -1,5 +1,5 @@
 import { Spinner } from '~/@/ui/spinner'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -21,7 +21,7 @@ export const ScreenActionButton = (input: ScreenAction & { style?: Record<string
       'aria-hidden': input.hidden,
       onPress: input.onPress,
       style: {
-        ...theme({
+        ...sx({
           position: 'relative',
           flexDirection: 'col',
           alignItems: 'center',
@@ -40,7 +40,7 @@ export const ScreenActionButton = (input: ScreenAction & { style?: Record<string
         Box,
         {
           style: {
-            ...theme({
+            ...sx({
               flexDirection: 'col',
               alignItems: 'center',
               justifyContent: 'center',
@@ -72,7 +72,7 @@ export const ScreenActionButton = (input: ScreenAction & { style?: Record<string
         h(
           Box,
           {
-            style: theme({
+            style: sx({
               position: 'absolute',
               flexDirection: 'row',
               alignItems: 'center',
@@ -95,32 +95,32 @@ export const ScreenActionButton = (input: ScreenAction & { style?: Record<string
 const toColorStyles = (input: ScreenAction): Record<string, unknown> => {
   switch (input.color) {
     case 'danger':
-      return theme({ textColor: 'red-500' })
+      return sx({ textColor: 'red-500' })
     case 'success':
-      return theme({ textColor: 'green-500' })
+      return sx({ textColor: 'green-500' })
     case 'selected':
-      return theme({ textColor: 'blue-500' })
+      return sx({ textColor: 'blue-500' })
     default:
-      return theme({ textColor: 'white' })
+      return sx({ textColor: 'white' })
   }
 }
 
 const toSizeStyles = (size: ScreenAction['size']): Record<string, unknown> => {
   switch (size) {
     case 'sm':
-      return theme({ fontSize: 'xs' })
+      return sx({ fontSize: 'xs' })
     case 'md':
     default:
-      return theme({ fontSize: 'sm' })
+      return sx({ fontSize: 'sm' })
   }
 }
 
 const toIconSizeStyles = (size: ScreenAction['size']): Record<string, unknown> => {
   switch (size) {
     case 'sm':
-      return theme({ size: 6 })
+      return sx({ size: 6 })
     case 'md':
     default:
-      return theme({ size: 8 })
+      return sx({ size: 8 })
   }
 }

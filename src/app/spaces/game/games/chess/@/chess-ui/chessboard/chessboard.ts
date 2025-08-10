@@ -1,5 +1,5 @@
 import { Chess } from 'chess.js'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Circle } from '~/@/vdom/primitives/svg/circle'
 import { G } from '~/@/vdom/primitives/svg/g'
@@ -446,7 +446,7 @@ export const Chessboard = (input: ChessboardInput) => {
             id: square ? toLegalMoveDotId(square) : undefined,
             cx: checker.x * SCALE + SCALE / 2,
             cy: checker.y * SCALE + SCALE / 2,
-            style: theme({ pointerEvents: 'none' }),
+            style: sx({ pointerEvents: 'none' }),
             r: (SCALE * 1) / 4,
             'fill-opacity': '0.5',
             fill: 'none',
@@ -464,7 +464,7 @@ export const Chessboard = (input: ChessboardInput) => {
             id: square ? toDropZoneId(square) : undefined,
             cx: checker.x * SCALE + SCALE / 2,
             cy: checker.y * SCALE + SCALE / 2,
-            style: theme({ pointerEvents: 'none' }),
+            style: sx({ pointerEvents: 'none' }),
             r: SCALE * 1.25,
             'fill-opacity': '0.2',
             fill: 'none',

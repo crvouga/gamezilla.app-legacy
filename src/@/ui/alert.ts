@@ -3,7 +3,7 @@ import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
 import type { VDom } from '~/@/vdom/vdom'
 import { IconCheckmarkCircle, IconExclamationCircle, IconInfoCircle } from './icon'
-import { theme } from './theme/theme'
+import { sx } from './theme/theme'
 
 export const AlertError = ({ text }: { text?: string }) => {
   return h(
@@ -11,7 +11,7 @@ export const AlertError = ({ text }: { text?: string }) => {
     {
       role: 'alert',
       'aria-label': text,
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         width: 'full',
         alignItems: 'center',
@@ -22,7 +22,7 @@ export const AlertError = ({ text }: { text?: string }) => {
       }),
     },
     [
-      h(Box, { style: theme({ paddingRight: 2 }) }, [h(IconExclamationCircle, { style: theme({ size: 6 }) })]),
+      h(Box, { style: sx({ paddingRight: 2 }) }, [h(IconExclamationCircle, { style: sx({ size: 6 }) })]),
       h(Text, { text: text ?? '' }),
     ],
   )
@@ -32,7 +32,7 @@ export const AlertInfo = ({ children }: { children?: VDom }) => {
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         width: 'full',
         alignItems: 'center',
@@ -42,7 +42,7 @@ export const AlertInfo = ({ children }: { children?: VDom }) => {
         textColor: 'white',
       }),
     },
-    [h(Box, { style: theme({ paddingRight: 2 }) }, [h(IconInfoCircle, { style: theme({ size: 6 }) })]), children],
+    [h(Box, { style: sx({ paddingRight: 2 }) }, [h(IconInfoCircle, { style: sx({ size: 6 }) })]), children],
   )
 }
 
@@ -50,7 +50,7 @@ export const AlertSuccess = ({ children }: { children?: VDom }) => {
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         width: 'full',
         alignItems: 'center',
@@ -60,6 +60,6 @@ export const AlertSuccess = ({ children }: { children?: VDom }) => {
         textColor: 'white',
       }),
     },
-    [h(Box, { style: theme({ paddingRight: 2 }) }, [h(IconCheckmarkCircle, { style: theme({ size: 6 }) })]), children],
+    [h(Box, { style: sx({ paddingRight: 2 }) }, [h(IconCheckmarkCircle, { style: sx({ size: 6 }) })]), children],
   )
 }

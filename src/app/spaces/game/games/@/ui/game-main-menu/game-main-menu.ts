@@ -4,7 +4,7 @@ import { isOk } from '~/@/result'
 import { s } from '~/@/schema'
 import { ClickablePaper } from '~/@/ui/clickable'
 import { IconRobot, IconUsers } from '~/@/ui/icon'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -86,7 +86,7 @@ export const View = (props: {
     navBar: { title: props.title, back: { onPress: props.onBack } },
     renderCoverArt: props.renderCoverArt,
     renderBody: () =>
-      h(Box, { style: theme({ flexDirection: 'col', width: 'full', gap: 6, padding: 6 }), role: 'menu' }, [
+      h(Box, { style: sx({ flexDirection: 'col', width: 'full', gap: 6, padding: 6 }), role: 'menu' }, [
         ...props.buttons.map((button) =>
           h(ViewMainMenuButton, {
             key: `${button.title}${button.description}`,
@@ -101,7 +101,7 @@ const ViewMainMenuButton = (props: MainMenuButton) => {
   return h(
     ClickablePaper,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         width: 'full',
         alignItems: 'center',
@@ -114,18 +114,18 @@ const ViewMainMenuButton = (props: MainMenuButton) => {
       'aria-label': props.title,
     },
     [
-      props.renderIcon({ style: theme({ aspectRatio: 1, width: 12, height: 12 }), fill: '#fff', stroke: 'none' }),
-      h(Box, { style: theme({ flexDirection: 'col', flex: 1, gap: 1, textAlign: 'left' }) }, [
+      props.renderIcon({ style: sx({ aspectRatio: 1, width: 12, height: 12 }), fill: '#fff', stroke: 'none' }),
+      h(Box, { style: sx({ flexDirection: 'col', flex: 1, gap: 1, textAlign: 'left' }) }, [
         h(Typography, {
           variant: 'title',
           text: props.title,
-          style: theme({ fontWeight: 'bold' }),
+          style: sx({ fontWeight: 'bold' }),
         }),
         props.description &&
           h(Typography, {
             variant: 'label',
             text: props.description,
-            style: theme({ textColor: 'neutral-400' }),
+            style: sx({ textColor: 'neutral-400' }),
           }),
       ]),
     ],

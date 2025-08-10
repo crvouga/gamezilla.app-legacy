@@ -1,12 +1,12 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import { theme } from '../theme/theme'
+import { sx } from '../theme/theme'
 
 export const SwiperDots = (input: { activeIndex: number; slideCount: number }) => {
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'row',
       }),
     },
@@ -14,7 +14,7 @@ export const SwiperDots = (input: { activeIndex: number; slideCount: number }) =
       h(Box, {
         key: index,
         style: {
-          ...theme({
+          ...sx({
             height: 2,
             width: 2,
             rounded: 'full',

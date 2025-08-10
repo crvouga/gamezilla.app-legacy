@@ -7,7 +7,7 @@ import type { VDom } from '~/@/vdom/vdom'
 import { Text } from '../vdom/primitives/text'
 import { IconXMark } from './icon'
 import { PAPER_STYLE } from './paper'
-import { theme } from './theme/theme'
+import { sx } from './theme/theme'
 
 export const TextField = (input: {
   startIcon?: VDom
@@ -25,11 +25,11 @@ export const TextField = (input: {
   onClear?: () => void
   onChangeText: (value: string) => void
 }) => {
-  return h(Box, { style: theme({ width: 'full', flexDirection: 'col', gap: 1 }) }, [
+  return h(Box, { style: sx({ width: 'full', flexDirection: 'col', gap: 1 }) }, [
     h(Text, {
       text: input.label,
       style: {
-        ...theme({ fontSize: 'sm' }),
+        ...sx({ fontSize: 'sm' }),
         textColor: input.error ? 'red-500' : 'white',
       },
     }),
@@ -38,7 +38,7 @@ export const TextField = (input: {
       {
         style: {
           ...PAPER_STYLE,
-          ...theme({
+          ...sx({
             flexDirection: 'row',
             height: 20,
             width: 'full',
@@ -71,7 +71,7 @@ export const TextField = (input: {
           defaultValue: input.value,
           onChangeText: input.onChangeText,
           style: {
-            ...theme({
+            ...sx({
               flexDirection: 'row',
               flex: 1,
               alignItems: 'center',
@@ -89,7 +89,7 @@ export const TextField = (input: {
             Pressable,
             {
               style: {
-                ...theme({
+                ...sx({
                   rounded: 'md',
                   paddingX: 3,
                 }),
@@ -99,7 +99,7 @@ export const TextField = (input: {
                 input.onClear?.()
               },
             },
-            [h(IconXMark, { style: theme({ size: 6, textColor: 'white' }) })],
+            [h(IconXMark, { style: sx({ size: 6, textColor: 'white' }) })],
           ),
       ],
     ),
@@ -111,7 +111,7 @@ export const TextField = (input: {
           'data-error': input.error,
           'data-info': !input.error,
           style: {
-            ...theme({ fontSize: 'sm' }),
+            ...sx({ fontSize: 'sm' }),
             textColor: input.error ? 'red-500' : 'neutral-300',
           },
         },

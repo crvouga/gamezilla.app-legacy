@@ -1,7 +1,7 @@
 import { h } from '~/@/vdom/h'
 import { Pressable } from '~/@/vdom/primitives/pressable'
 import { Text } from '~/@/vdom/primitives/text'
-import { theme } from '../theme/theme'
+import { sx } from '../theme/theme'
 
 export type CheckboxState = 'checked' | 'unchecked' | 'indeterminate'
 
@@ -11,7 +11,7 @@ export const Checkbox = (input: { state: CheckboxState; onChange?: (checkedNew: 
   return h(
     Pressable,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -37,7 +37,7 @@ export const Checkbox = (input: { state: CheckboxState; onChange?: (checkedNew: 
         }
       },
     },
-    [h(Text, { text: toCheckboxText(input.state), style: theme({ fontSize: 'lg', fontWeight: 'black' }) })],
+    [h(Text, { text: toCheckboxText(input.state), style: sx({ fontSize: 'lg', fontWeight: 'black' }) })],
   )
 }
 

@@ -2,7 +2,7 @@ import { TranslatedText } from '~/@/l18n/translations'
 import { Avatar } from '~/@/ui/avatar'
 import { IconRobot } from '~/@/ui/icon'
 import { Paper } from '~/@/ui/paper'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -129,7 +129,7 @@ export const ViewStatusBar = (input: VsBotInput & { status: Status }) => {
         Box,
         {
           key: statusToKey(input.status),
-          style: theme({
+          style: sx({
             position: 'absolute',
             inset: 0,
             flexDirection: 'row',
@@ -183,7 +183,7 @@ const ViewStatusBarContent = (input: VsBotInput & { status: Status }) => {
         case 'player-one': {
           return h(Box, {}, [
             input.playerOne.renderIcon({
-              style: theme({ size: 5 }),
+              style: sx({ size: 5 }),
             }),
             h(Typography, { text: TranslatedText.of('Turn'), color: 'text-secondary' }),
           ])
@@ -192,7 +192,7 @@ const ViewStatusBarContent = (input: VsBotInput & { status: Status }) => {
         case 'player-two': {
           return h(Box, {}, [
             input.playerTwo.renderIcon({
-              style: theme({ size: 5 }),
+              style: sx({ size: 5 }),
             }),
             h(Typography, { text: TranslatedText.of('Turn'), color: 'text-secondary' }),
           ])
@@ -228,7 +228,7 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
         h(
           Pressable,
           {
-            style: theme({
+            style: sx({
               position: 'absolute',
               inset: 0,
               flexDirection: 'col',
@@ -240,13 +240,13 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
             onPress: !input.isSpectating ? input.onPlayAgain : undefined,
           },
           [
-            h(Box, { style: theme({ flex: 1 }) }),
+            h(Box, { style: sx({ flex: 1 }) }),
             h(Winner, { ...input, winner: gameOver.winner }),
             input.onPlayAgain && !input.isSpectating
               ? h(
                   Box,
                   {
-                    style: theme({
+                    style: sx({
                       flexDirection: 'row',
                       flex: 1,
                       alignItems: 'center',
@@ -258,14 +258,14 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
                   },
                   [h(Text, { text: 'Tap to play again' })],
                 )
-              : h(Box, { style: theme({ flex: 1 }) }),
+              : h(Box, { style: sx({ flex: 1 }) }),
           ],
         ),
       gameOver?.t === 'draw' &&
         h(
           Pressable,
           {
-            style: theme({
+            style: sx({
               position: 'absolute',
               inset: 0,
               flexDirection: 'col',
@@ -277,13 +277,13 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
             onPress: !input.isSpectating ? input.onPlayAgain : undefined,
           },
           [
-            h(Box, { style: theme({ flex: 1 }) }),
+            h(Box, { style: sx({ flex: 1 }) }),
             h(Draw, input),
             input.onPlayAgain && !input.isSpectating
               ? h(
                   Box,
                   {
-                    style: theme({
+                    style: sx({
                       flexDirection: 'row',
                       flex: 1,
                       alignItems: 'center',
@@ -296,7 +296,7 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
                   },
                   [h(Text, { text: 'Tap to play again' })],
                 )
-              : h(Box, { style: theme({ flex: 1 }) }),
+              : h(Box, { style: sx({ flex: 1 }) }),
           ],
         ),
     ].filter(Boolean),
@@ -305,28 +305,28 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
 
 const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { winner: PlayerType }) => {
   const humanSlot = h(Box, {}, [
-    h(Avatar, { style: theme({ size: 16 }), src: UserProfile.toAvatarUrl(ctx.profilesByUserId[human.userId]) }),
+    h(Avatar, { style: sx({ size: 16 }), src: UserProfile.toAvatarUrl(ctx.profilesByUserId[human.userId]) }),
   ])
 
   const botSlot = h(Box, {}, [
     bot.renderIcon({
-      style: theme({ size: 16 }),
+      style: sx({ size: 16 }),
     }),
   ])
 
   const playerOneSlot = h(
     Box,
-    { style: theme({ flexDirection: 'col', alignItems: 'center', justifyContent: 'center', gap: 3 }) },
+    { style: sx({ flexDirection: 'col', alignItems: 'center', justifyContent: 'center', gap: 3 }) },
     [
-      h(Box, { style: theme({ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 3 }) }, [
+      h(Box, { style: sx({ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 3 }) }, [
         playerOne.renderIcon({
-          style: theme({ size: 16 }),
+          style: sx({ size: 16 }),
         }),
         human.player === 'player-one' ? humanSlot : botSlot,
       ]),
       h(Typography, {
         variant: 'title',
-        style: theme({ textAlign: 'center', fontSize: '4xl', fontWeight: 'black' }),
+        style: sx({ textAlign: 'center', fontSize: '4xl', fontWeight: 'black' }),
         text: winner === 'player-one' ? ctx.t('game.winner') : ctx.t('game.loser'),
       }),
     ],
@@ -334,23 +334,23 @@ const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { win
 
   const playerTwoSlot = h(
     Box,
-    { style: theme({ flexDirection: 'col', alignItems: 'center', justifyContent: 'center', gap: 3 }) },
+    { style: sx({ flexDirection: 'col', alignItems: 'center', justifyContent: 'center', gap: 3 }) },
     [
-      h(Box, { style: theme({ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 3 }) }, [
+      h(Box, { style: sx({ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 3 }) }, [
         playerTwo.renderIcon({
-          style: theme({ size: 16 }),
+          style: sx({ size: 16 }),
         }),
         human.player === 'player-two' ? humanSlot : botSlot,
       ]),
       h(Typography, {
         variant: 'title',
-        style: theme({ textAlign: 'center', fontSize: '4xl', fontWeight: 'black' }),
+        style: sx({ textAlign: 'center', fontSize: '4xl', fontWeight: 'black' }),
         text: winner === 'player-two' ? ctx.t('game.winner') : ctx.t('game.loser'),
       }),
     ],
   )
 
-  return h(Box, { style: theme({ flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'center' }) }, [
+  return h(Box, { style: sx({ flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'center' }) }, [
     playerOneSlot,
     playerTwoSlot,
   ])
@@ -361,23 +361,23 @@ const Draw = (input: Input) => {
     h(Avatar, { src: UserProfile.toAvatarUrl(input.ctx.profilesByUserId[input.ctx.currentUser.userId]) }),
   ])
 
-  const botSlot = h(Box, {}, [h(IconRobot, { style: theme({ size: 6 }) })])
+  const botSlot = h(Box, {}, [h(IconRobot, { style: sx({ size: 6 }) })])
 
   const playerOneSlot = h(Box, {}, [
     input.playerOne.renderIcon({
-      style: theme({ size: 5 }),
+      style: sx({ size: 5 }),
     }),
     input.human.player === 'player-one' ? humanSlot : botSlot,
   ])
 
   const playerTwoSlot = h(Box, {}, [
     input.playerTwo.renderIcon({
-      style: theme({ size: 5 }),
+      style: sx({ size: 5 }),
     }),
     input.human.player === 'player-two' ? humanSlot : botSlot,
   ])
 
-  return h(Box, { style: theme({ flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'center' }) }, [
+  return h(Box, { style: sx({ flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'center' }) }, [
     h(Box, {}, [playerOneSlot, playerTwoSlot]),
     h(Box, {}, [h(Text, { text: 'Tie' })]),
   ])
@@ -386,23 +386,23 @@ const Draw = (input: Input) => {
 export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn }: VsBotGameInput) => {
   const profile = ctx.profilesByUserId[human.userId]
   const humanSlot = h(Box, {}, [
-    h(Avatar, { style: theme({ size: 6 }), src: UserProfile.toAvatarUrl(profile) }),
+    h(Avatar, { style: sx({ size: 6 }), src: UserProfile.toAvatarUrl(profile) }),
     profile &&
-      h(Typography, { style: theme({ fontSize: 'sm' }), variant: 'body', text: ctx.t('username', profile.username) }),
+      h(Typography, { style: sx({ fontSize: 'sm' }), variant: 'body', text: ctx.t('username', profile.username) }),
   ])
 
   const botSlot = h(Box, {}, [
     bot.renderIcon({
-      style: theme({ size: 6, flexShrink: 0 }),
+      style: sx({ size: 6, flexShrink: 0 }),
     }),
-    h(Typography, { style: theme({ fontSize: 'sm' }), variant: 'body', text: bot.label }),
+    h(Typography, { style: sx({ fontSize: 'sm' }), variant: 'body', text: bot.label }),
   ])
 
-  return h(Box, { style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 3, padding: 3 }) }, [
+  return h(Box, { style: sx({ flexDirection: 'row', width: 'full', alignItems: 'center', gap: 3, padding: 3 }) }, [
     h(
       Box,
       {
-        style: theme({
+        style: sx({
           flexDirection: 'row',
           width: '1/2',
           alignItems: 'center',
@@ -414,7 +414,7 @@ export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn
         h(Slot, { active: turn === 'player-one' }, [
           h(Box, {}, [
             playerOne.renderIcon({
-              style: theme({ size: 6 }),
+              style: sx({ size: 6 }),
             }),
           ]),
           human.player === 'player-one' ? humanSlot : botSlot,
@@ -424,7 +424,7 @@ export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn
     h(
       Box,
       {
-        style: theme({
+        style: sx({
           flexDirection: 'row',
           width: '1/2',
           alignItems: 'center',
@@ -435,7 +435,7 @@ export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn
       [
         h(Slot, { active: turn === 'player-two' }, [
           playerTwo.renderIcon({
-            style: theme({ size: 6 }),
+            style: sx({ size: 6 }),
           }),
           human.player === 'player-two' ? humanSlot : botSlot,
         ]),
@@ -448,7 +448,7 @@ const Slot = ({ active, children }: { active: boolean; children?: VDom }) => {
   return h(
     Paper,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         width: 'full',
         flex: 1,

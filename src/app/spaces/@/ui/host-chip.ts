@@ -1,6 +1,6 @@
 import { Chip } from '~/@/ui/chip'
 import { IconCrown } from '~/@/ui/icon'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 
@@ -10,7 +10,7 @@ export const ViewHostChip = (props: { ctx: AppFrontendCtxBase }) => {
     renderStartIcon: (iconProps) =>
       h(IconCrown, {
         ...iconProps,
-        style: { ...iconProps.style, ...theme({ textColor: 'yellow-300' }) },
+        style: { ...iconProps.style, ...sx({ textColor: 'yellow-300' }) },
       }),
     label: props.ctx.t('host'),
   })

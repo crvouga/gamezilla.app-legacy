@@ -3,7 +3,7 @@ import type { Translator } from '~/@/l18n/generated'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconArrowLeft } from '~/@/ui/icon'
 import { IconButton } from '~/@/ui/icon-button'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -34,7 +34,7 @@ export const ScreenNavBarTablet = (input: {
             render: () =>
               IconButton({
                 onPress: input.back?.onPress,
-                style: theme({ paddingX: 2 }),
+                style: sx({ paddingX: 2 }),
                 size: 'lg',
                 label: input.ctx.t('app.exit'),
                 renderIcon: (inputIcon) => IconArrowLeft(inputIcon),
@@ -44,11 +44,11 @@ export const ScreenNavBarTablet = (input: {
         },
       }),
 
-    h(Box, { style: theme({ flexDirection: 'col', flex: 1, overflow: 'hidden' }) }, [
+    h(Box, { style: sx({ flexDirection: 'col', flex: 1, overflow: 'hidden' }) }, [
       input.title &&
         h(Typography, {
           role: 'heading',
-          style: theme({
+          style: sx({
             overflow: 'hidden',
             padding: 2,
             fontSize: '2xl',
@@ -59,7 +59,7 @@ export const ScreenNavBarTablet = (input: {
         }),
       input.subtitle &&
         h(Typography, {
-          style: theme({ overflow: 'hidden', padding: 2 }),
+          style: sx({ overflow: 'hidden', padding: 2 }),
           color: 'text-secondary',
           role: 'heading',
           variant: 'subtitle',
@@ -74,7 +74,7 @@ export const ScreenNavBarTabletRoot = (input: { children: VDom }) => {
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         height: 24,
         width: 'full',

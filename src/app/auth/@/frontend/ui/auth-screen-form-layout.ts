@@ -7,7 +7,7 @@ import { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { AuthScreenHeader } from './auth-screen-header'
 import { AuthScreenLayout } from './auth-screen-layout'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 
 export const AuthScreenFormLayout = (input: {
   ctx: {
@@ -36,18 +36,18 @@ export const AuthScreenFormLayout = (input: {
         title: input.title,
         onBack: input.onBack,
       }),
-      h(Box, { style: theme({ flexDirection: 'col', width: 'full', gap: 16, paddingTop: 4 }) }, [
+      h(Box, { style: sx({ flexDirection: 'col', width: 'full', gap: 16, paddingTop: 4 }) }, [
         h(
           Box,
           {
-            style: theme({ flexDirection: 'col', width: 'full', gap: 6 }),
+            style: sx({ flexDirection: 'col', width: 'full', gap: 6 }),
           },
           [input.renderInputs()],
         ),
         h(Button, {
           color: 'primary',
           size: 'lg',
-          style: theme({ width: 'full' }),
+          style: sx({ width: 'full' }),
           variant: 'contained',
           onPress: input.onSubmit,
           text: input.submitText,

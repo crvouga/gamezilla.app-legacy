@@ -1,6 +1,6 @@
 import { rescale } from '~/@/math/rescale'
 import { IconCheckmark } from '~/@/ui/icon'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Frag } from '~/@/vdom/primitives/frag'
 import { Circle } from '~/@/vdom/primitives/svg/circle'
@@ -56,7 +56,7 @@ const View = (props: BoardProps<VariantGrid>) => {
     Svg,
     {
       style: {
-        ...theme({
+        ...sx({
           pointerEvents: props.disabled ? 'none' : undefined,
           width: 'full',
           overflow: 'hidden',

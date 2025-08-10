@@ -1,6 +1,6 @@
 import { ClickableTransparent } from '~/@/ui/clickable'
 import { Spinner } from '~/@/ui/spinner'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -22,7 +22,7 @@ export const VerticalActionBar = (
     Box,
     {
       style: {
-        ...theme({
+        ...sx({
           height: 'full',
           maxWidth: '3xs',
           flex: 1,
@@ -54,9 +54,9 @@ const VerticalSpaceBetween = (input: {
 }) => {
   return h(Toolbar, {}, [
     h(ActionButtonList, { actions: input.start, ctx: input.ctx }),
-    h(Box, { style: theme({ flex: 1 }) }),
+    h(Box, { style: sx({ flex: 1 }) }),
     h(ActionButtonList, { actions: input.end, ctx: input.ctx }),
-    h(Box, { style: theme({ width: 'full', paddingBottom: 6 }) }),
+    h(Box, { style: sx({ width: 'full', paddingBottom: 6 }) }),
   ])
 }
 
@@ -64,7 +64,7 @@ const Toolbar = (input: { children: VDom }) => {
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         width: 'full',
         flex: 1,
         flexShrink: 0,
@@ -80,7 +80,7 @@ const ActionButtonList = (props: { actions: (ScreenActionProps | null)[]; ctx: S
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         width: 'full',
         flexShrink: 0,
         flexDirection: 'col',
@@ -119,7 +119,7 @@ const ScreenActionButton = (props: ScreenActionProps & { ctx: ScreenLayoutProps[
       'aria-hidden': props.hidden,
       onPress: props.onPress,
       style: {
-        ...theme({
+        ...sx({
           position: 'relative',
           width: 'full',
           flexDirection: 'col',
@@ -139,7 +139,7 @@ const ScreenActionButton = (props: ScreenActionProps & { ctx: ScreenLayoutProps[
         {
           style:
             props.ctx.screenSize === 'desktop'
-              ? theme({
+              ? sx({
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'flex-start',
@@ -147,7 +147,7 @@ const ScreenActionButton = (props: ScreenActionProps & { ctx: ScreenLayoutProps[
                   gap: 3,
                   opacity: props.loading ? 0 : 1,
                 })
-              : theme({
+              : sx({
                   flexDirection: 'col',
                   alignItems: 'center',
                   gap: 1,
@@ -158,14 +158,14 @@ const ScreenActionButton = (props: ScreenActionProps & { ctx: ScreenLayoutProps[
           props.renderIcon({
             style: {
               ...toIconSizeStyle(size),
-              ...theme({ textColor: 'white', flexShrink: 0 }),
+              ...sx({ textColor: 'white', flexShrink: 0 }),
             },
           }),
           h(Typography, {
             text: props.label,
             ...props.styles?.label,
             style: {
-              ...theme({
+              ...sx({
                 overflow: 'hidden',
                 textAlign: 'center',
                 textColor: 'white',
@@ -179,7 +179,7 @@ const ScreenActionButton = (props: ScreenActionProps & { ctx: ScreenLayoutProps[
         h(
           Box,
           {
-            style: theme({
+            style: sx({
               position: 'absolute',
               inset: 0,
               flexDirection: 'row',
@@ -198,11 +198,11 @@ const ScreenActionButton = (props: ScreenActionProps & { ctx: ScreenLayoutProps[
 const toColorStyle = (input: ScreenActionProps): Record<string, unknown> => {
   switch (input.color) {
     case 'danger':
-      return theme({ textColor: 'red-500' })
+      return sx({ textColor: 'red-500' })
     case 'success':
-      return theme({ textColor: 'green-500' })
+      return sx({ textColor: 'green-500' })
     case 'selected':
-      return { ...theme({ textColor: 'blue-500' }), fontWeight: 'bold' }
+      return { ...sx({ textColor: 'blue-500' }), fontWeight: 'bold' }
     default:
       return {}
   }
@@ -211,19 +211,19 @@ const toColorStyle = (input: ScreenActionProps): Record<string, unknown> => {
 const toSizeStyle = (size: ScreenActionProps['size']): Record<string, unknown> => {
   switch (size) {
     case 'sm':
-      return theme({ fontSize: 'lg' })
+      return sx({ fontSize: 'lg' })
     case 'md':
     default:
-      return theme({ fontSize: 'lg' })
+      return sx({ fontSize: 'lg' })
   }
 }
 
 const toIconSizeStyle = (size: ScreenActionProps['size']): Record<string, unknown> => {
   switch (size) {
     case 'sm':
-      return theme({ size: 8 })
+      return sx({ size: 8 })
     case 'md':
     default:
-      return theme({ size: 8 })
+      return sx({ size: 8 })
   }
 }

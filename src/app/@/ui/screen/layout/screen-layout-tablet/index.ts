@@ -4,13 +4,13 @@ import { VDom } from '~/@/vdom/vdom'
 import { ParentScreenProps, ScreenLayoutProps } from '../screen-layout-props'
 import { ActionBars } from './action-bars'
 import { renderNavBars } from './nav-bars'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 
 export const ScreenLayoutTablet = (props: ScreenLayoutProps) => {
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         position: 'relative',
         flexDirection: 'row',
         alignItems: 'center',
@@ -26,7 +26,7 @@ export const ScreenLayoutTablet = (props: ScreenLayoutProps) => {
       h(
         Box,
         {
-          style: theme({
+          style: sx({
             flex: 4,
             borderXWidth: 1,
             borderColor: 'neutral-500',
@@ -37,10 +37,10 @@ export const ScreenLayoutTablet = (props: ScreenLayoutProps) => {
         [
           ...renderNavBars(props.ctx, props),
 
-          h(Box, { style: theme({ flex: 1, overflow: 'hidden' }) }, [
+          h(Box, { style: sx({ flex: 1, overflow: 'hidden' }) }, [
             props.renderBody(),
             (props.renderMiniPlayer || props.parentScreen?.renderMiniPlayer) &&
-              h(Box, { style: theme({ position: 'absolute', right: 8, bottom: 8, backgroundColor: 'black' }) }, [
+              h(Box, { style: sx({ position: 'absolute', right: 8, bottom: 8, backgroundColor: 'black' }) }, [
                 ...renderMiniPlayers(props),
               ]),
           ]),

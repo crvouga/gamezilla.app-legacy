@@ -1,5 +1,5 @@
 import { Paper } from '~/@/ui/paper'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Path } from '~/@/vdom/primitives/svg/path'
@@ -20,7 +20,7 @@ export const ScreenLayoutGameCoverArt = (
       h(
         Box,
         {
-          style: theme({
+          style: sx({
             width: 'full',
             flexDirection: 'col',
             alignItems: 'center',
@@ -31,7 +31,7 @@ export const ScreenLayoutGameCoverArt = (
         },
         [
           renderCoverArt({
-            style: theme({
+            style: sx({
               size: 32,
               overflow: 'hidden',
               rounded: 'lg',
@@ -48,7 +48,7 @@ const renderDefaultCoverArt = (input: { style: Record<string, unknown> }) => {
     Paper,
     {
       style: {
-        ...theme({
+        ...sx({
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
@@ -65,7 +65,7 @@ const renderDefaultCoverArt = (input: { style: Record<string, unknown> }) => {
         {
           xmlns: 'http://www.w3.org/2000/svg',
           viewBox: '0 0 640 512',
-          style: theme({
+          style: sx({
             size: 16,
           }),
           fill: 'currentColor',

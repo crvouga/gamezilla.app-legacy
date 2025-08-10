@@ -1,4 +1,4 @@
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Circle } from '~/@/vdom/primitives/svg/circle'
 import { Defs } from '~/@/vdom/primitives/svg/defs'
@@ -121,7 +121,7 @@ const ViewWins = ({ model }: { model?: Model; columns: Columns }) => {
           stroke: 'transparent',
           fill: 'transparent',
           'stroke-width': n / 8,
-          style: theme({ pointerEvents: 'none' }),
+          style: sx({ pointerEvents: 'none' }),
         }),
       ]
     }),

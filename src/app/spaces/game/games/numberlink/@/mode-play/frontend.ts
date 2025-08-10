@@ -1,7 +1,7 @@
 import { Translator } from '~/@/l18n/generated'
 import { IPlatform } from '~/@/platform/platform'
 import { Sub } from '~/@/sub'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
@@ -33,7 +33,7 @@ const View = (input: {
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         position: 'relative',
         aspectRatio: 1,
         width: 'full',

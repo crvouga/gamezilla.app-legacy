@@ -1,5 +1,5 @@
 import { WithEventId } from '~/@/event-sourced/event'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
@@ -23,7 +23,7 @@ const View = ({
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         height: 6,
         width: 'full',

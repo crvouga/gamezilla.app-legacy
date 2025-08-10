@@ -1,7 +1,7 @@
 import { sleep } from '~/@/promise/sleep'
 import { TimeSpan } from '~/@/time/time-span'
 import { IconCheckmark } from '~/@/ui/icon'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Transition } from '~/@/vdom/primitives/transition/transition'
@@ -25,7 +25,7 @@ export const CheckmarkAnimation = (input: { open: boolean; duration?: TimeSpan |
         h(
           Box,
           {
-            style: theme({
+            style: sx({
               position: 'absolute',
               inset: 0,
               flexDirection: 'row',
@@ -35,7 +35,7 @@ export const CheckmarkAnimation = (input: { open: boolean; duration?: TimeSpan |
               pointerEvents: 'none',
             }),
           },
-          [h(IconCheckmark, { style: theme({ aspectRatio: 1, width: 'full', opacity: 0.5, textColor: 'white' }) })],
+          [h(IconCheckmark, { style: sx({ aspectRatio: 1, width: 'full', opacity: 0.5, textColor: 'white' }) })],
         ),
     ],
   )

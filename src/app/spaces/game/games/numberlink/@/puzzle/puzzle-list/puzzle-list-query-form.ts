@@ -5,7 +5,7 @@ import { h } from '~/@/vdom/h'
 import { UserId } from '~/app/@/data/user-id'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { PuzzleQuery } from '../puzzle-db/interface-query'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 
 type Model = PuzzleQuery
 
@@ -49,7 +49,7 @@ const View = (input: { query: Model; ctx: FlowFrontendCtxBase; onChange: (query:
   }
   return h(
     Box,
-    { style: theme({ flexDirection: 'row', width: 'full', gap: 2, padding: 4, paddingTop: 2 }) },
+    { style: sx({ flexDirection: 'row', width: 'full', gap: 2, padding: 4, paddingTop: 2 }) },
     [
       input.query.where.createdBy?.equals === input.ctx.currentUser.userId &&
         h(Chip, {
@@ -58,7 +58,7 @@ const View = (input: { query: Model; ctx: FlowFrontendCtxBase; onChange: (query:
           label: input.ctx.t('app.created-by-you'),
         }),
 
-      h(Box, { style: theme({ flex: 1 }) }),
+      h(Box, { style: sx({ flex: 1 }) }),
 
       typeof input.query.order.lastUpdatedAt === 'string' &&
         h(Chip, {

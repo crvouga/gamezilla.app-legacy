@@ -1,4 +1,4 @@
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { VDom } from '~/@/vdom/vdom'
@@ -7,7 +7,7 @@ export const BoardLayout = (props: { children: VDom[] }) => {
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'col',
         width: 'full',
         flex: 1,

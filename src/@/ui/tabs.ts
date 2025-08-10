@@ -3,7 +3,7 @@ import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '../vdom/primitives/text'
 import { ClickableTransparent } from './clickable'
-import { theme } from './theme/theme'
+import { sx } from './theme/theme'
 
 export const Tabs = <TTab extends string>({
   tabs,
@@ -19,7 +19,7 @@ export const Tabs = <TTab extends string>({
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         width: 'full',
         alignItems: 'center',
@@ -30,7 +30,7 @@ export const Tabs = <TTab extends string>({
         Box,
         {
           key: tab,
-          style: theme({
+          style: sx({
             flex: 1,
             flexShrink: 0,
           }),
@@ -41,7 +41,7 @@ export const Tabs = <TTab extends string>({
             {
               onPress: () => onSelect(tab),
               style: {
-                ...theme({
+                ...sx({
                   flexDirection: 'row',
                   height: 'full',
                   width: 'full',

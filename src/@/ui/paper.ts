@@ -1,9 +1,9 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import type { VDom } from '~/@/vdom/vdom'
-import { theme } from './theme/theme'
+import { sx } from './theme/theme'
 
-export const PAPER_STYLE = theme({
+export const PAPER_STYLE = sx({
   backgroundColor: 'neutral-900',
   borderColor: 'neutral-800',
   rounded: 'lg',

@@ -20,7 +20,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { TopicClient } from '~/@/topic/topic-client/topic-client'
 import { IconGamepad, IconUser } from '~/@/ui/icon'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Url } from '~/@/url/url'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -359,7 +359,7 @@ const View = (props: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
       ctx: frontendCtx,
     }),
 
-    h(Box, { style: theme({ flexDirection: 'col', width: 'full', flex: 1, overflow: 'hidden' }) }, [
+    h(Box, { style: sx({ flexDirection: 'col', width: 'full', flex: 1, overflow: 'hidden' }) }, [
       h(ViewScreen, {
         model: props.model,
         dispatch: props.dispatch,

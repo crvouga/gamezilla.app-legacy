@@ -1,13 +1,13 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { VDom } from '~/@/vdom/vdom'
-import { theme } from '../theme/theme'
+import { sx } from '../theme/theme'
 
 export const SurfaceActions = (input: { children: VDom }) => {
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         width: 'full',
         alignItems: 'center',

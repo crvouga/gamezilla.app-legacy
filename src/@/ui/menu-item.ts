@@ -3,7 +3,7 @@ import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { Box } from '../vdom/primitives/box'
 import { Clickable } from './clickable'
-import { theme } from './theme/theme'
+import { sx } from './theme/theme'
 import { Typography } from './typography'
 
 export type MenuItemProps = {
@@ -27,7 +27,7 @@ export const MenuItem = (props: MenuItemProps) => {
       'aria-label': props.primary,
       style: {
         ...colorStyle,
-        ...theme({
+        ...sx({
           flexDirection: 'row',
           width: 'full',
           alignItems: 'center',
@@ -46,7 +46,7 @@ export const MenuItem = (props: MenuItemProps) => {
       props.renderEnd?.({
         style: {
           ...colorStyle,
-          ...theme({
+          ...sx({
             fontSize: 'lg',
           }),
         },
@@ -61,7 +61,7 @@ const MenuItemContent = (props: MenuItemProps) => {
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         height: 'full',
         flexDirection: 'row',
         flex: 1,
@@ -74,15 +74,15 @@ const MenuItemContent = (props: MenuItemProps) => {
       props.renderIcon?.({
         style: {
           ...colorStyle,
-          ...theme({ size: 8 }),
+          ...sx({ size: 8 }),
         },
       }),
-      h(Box, { style: theme({ flexDirection: 'col', gap: 1 }) }, [
+      h(Box, { style: sx({ flexDirection: 'col', gap: 1 }) }, [
         h(Typography, {
           variant: 'body',
           style: {
             ...colorStyle,
-            ...theme({ fontSize: 'lg' }),
+            ...sx({ fontSize: 'lg' }),
           },
           text: props.primary,
         }),
@@ -90,7 +90,7 @@ const MenuItemContent = (props: MenuItemProps) => {
           h(Typography, {
             style: {
               ...colorStyle,
-              ...theme({
+              ...sx({
                 textAlign: 'left',
                 fontSize: 'xs',
                 textColor: 'neutral-300',
@@ -108,22 +108,22 @@ type Color = 'default' | 'danger' | 'warning' | 'success' | 'inherit' | 'selecte
 const toColorStyle = (input: { color?: Color }): Record<string, unknown> => {
   switch (input.color ?? 'default') {
     case 'warning':
-      return theme({ textColor: 'orange-500' })
+      return sx({ textColor: 'orange-500' })
     case 'danger':
-      return theme({ textColor: 'red-500' })
+      return sx({ textColor: 'red-500' })
     case 'green':
-      return theme({ textColor: 'green-500' })
+      return sx({ textColor: 'green-500' })
     case 'orange':
-      return theme({ textColor: 'orange-500' })
+      return sx({ textColor: 'orange-500' })
     case 'success':
-      return theme({ textColor: 'green-500' })
+      return sx({ textColor: 'green-500' })
     case 'selected':
-      return theme({ textColor: 'blue-500' })
+      return sx({ textColor: 'blue-500' })
     case 'inherit':
-      return theme({ textColor: 'white' })
+      return sx({ textColor: 'white' })
     case 'default':
-      return theme({ textColor: 'white' })
+      return sx({ textColor: 'white' })
     default:
-      return theme({ textColor: 'white' })
+      return sx({ textColor: 'white' })
   }
 }

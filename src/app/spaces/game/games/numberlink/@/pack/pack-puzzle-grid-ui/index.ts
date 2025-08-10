@@ -4,7 +4,7 @@ import { IconPlus } from '~/@/ui/icon'
 import { PaginationDots } from '~/@/ui/pagination-dots'
 import { Paper } from '~/@/ui/paper'
 import { Swiper } from '~/@/ui/swiper/swiper'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -31,14 +31,14 @@ const View = (input: {
   const cellCount = (puzzleIds.length ?? 0) + (input.addCell?.include ? 1 : 0)
   const slideCount = Math.ceil(cellCount / (COLUMN_COUNT * ROW_COUNT))
 
-  return h(Box, { style: theme({ flexDirection: 'col', height: 'full', width: 'full', gap: 4, padding: 6 }) }, [
+  return h(Box, { style: sx({ flexDirection: 'col', height: 'full', width: 'full', gap: 4, padding: 6 }) }, [
     h(
       Swiper.Container,
       {
         onSlideIndexChanged: (newSlideIndex: number) => input.onSlideIndexChanged?.(newSlideIndex),
         id: input.id ?? 'pack-puzzle-grid-swiper-container',
         slideIndex: input.currentSlideIndex ?? 0,
-        style: theme({
+        style: sx({
           flexDirection: 'row',
           height: 'full',
           width: 'full',
@@ -51,7 +51,7 @@ const View = (input: {
           Swiper.Slide,
           {
             key: slideIndex,
-            style: theme({
+            style: sx({
               flexDirection: 'col',
               height: 'full',
               // width: '3/4',
@@ -83,7 +83,7 @@ const ViewSlideContent = (input: {
   }
   onPressPuzzleCell?: (input: { puzzleIndex: number; puzzleId: PuzzleId }) => void
 }) => {
-  return h(Box, { style: theme({ flexDirection: 'col', alignItems: 'center', justifyContent: 'center', gap: 1 }) }, [
+  return h(Box, { style: sx({ flexDirection: 'col', alignItems: 'center', justifyContent: 'center', gap: 1 }) }, [
     h(ViewSlideHeading, { slideIndex: input.slideIndex, puzzleIds: input.puzzleIds }),
     h(ViewGrid, {
       slideIndex: input.slideIndex,
@@ -117,7 +117,7 @@ const ViewSlideHeading = (input: { slideIndex: number; puzzleIds: PuzzleId[] }) 
 
   return h(Typography, {
     text: TranslatedText.of(`${startPosition} - ${endPositionPuzzle}`),
-    style: theme({
+    style: sx({
       flexDirection: 'row',
       width: 'full',
       alignItems: 'center',
@@ -140,7 +140,7 @@ const ViewGrid = (input: {
     Box,
     {
       role: 'grid',
-      style: theme({
+      style: sx({
         // gridTemplateColumns: COLUMN_COUNT,
         // gridTemplateRows: ROW_COUNT,
       }),
@@ -173,7 +173,7 @@ const ViewGridCell = (input: {
     Box,
     {
       role: 'gridcell',
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         aspectRatio: 1,
         width: 12,
@@ -209,7 +209,7 @@ const ViewAddCell = (input: { onPress?: () => void }) => {
     ClickablePaper,
     {
       onPress: input.onPress,
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         width: 'full',
         height: 'full',
@@ -219,7 +219,7 @@ const ViewAddCell = (input: { onPress?: () => void }) => {
         rounded: 'md',
       }),
     },
-    [h(IconPlus, { style: theme({ size: 8 }) })],
+    [h(IconPlus, { style: sx({ size: 8 }) })],
   )
 }
 
@@ -228,7 +228,7 @@ const ViewPuzzleCell = ({ onPress, index }: { onPress: () => void; index: number
     ClickablePaper,
     {
       onPress: onPress,
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         width: 'full',
         height: 'full',
@@ -246,7 +246,7 @@ const ViewPuzzleCell = ({ onPress, index }: { onPress: () => void; index: number
 
 const ViewEmptyCell = () => {
   return h(Box, {
-    style: theme({
+    style: sx({
       flexDirection: 'row',
       width: 'full',
       height: 'full',
@@ -262,7 +262,7 @@ const ViewEmptyCell = () => {
 
 export const _ViewLoadingCell = () => {
   return h(Paper, {
-    style: theme({
+    style: sx({
       flexDirection: 'row',
       width: 'full',
       height: 'full',
@@ -282,7 +282,7 @@ export const _ViewErrorCell = ({ onPress, index }: { onPress: () => void; index:
     Clickable,
     {
       onPress,
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         width: 'full',
         height: 'full',

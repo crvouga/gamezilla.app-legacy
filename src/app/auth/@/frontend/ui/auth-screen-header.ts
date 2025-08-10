@@ -2,7 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { IconArrowLeft } from '~/@/ui/icon'
 import { IconButton } from '~/@/ui/icon-button'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -17,7 +17,7 @@ export const AuthScreenHeader = (input: {
   return h(
     Box,
     {
-      style: theme({ flexDirection: 'row', width: 'full', alignItems: 'center', justifyContent: 'flex-start', gap: 2 }),
+      style: sx({ flexDirection: 'row', width: 'full', alignItems: 'center', justifyContent: 'flex-start', gap: 2 }),
     },
     [
       h(IconButton, {
@@ -29,7 +29,7 @@ export const AuthScreenHeader = (input: {
       h(Typography, {
         text: input.title,
         variant: 'title',
-        style: theme({ fontWeight: 'bold' }),
+        style: sx({ fontWeight: 'bold' }),
       }),
     ],
   )

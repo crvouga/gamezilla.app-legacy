@@ -1,6 +1,6 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import { theme } from '../theme/theme'
+import { sx } from '../theme/theme'
 
 type LoadingBarInput = {
   disabled?: boolean
@@ -14,7 +14,7 @@ export const LoadingBar = (input: LoadingBarInput) => {
     Box,
     {
       style: {
-        ...theme({
+        ...sx({
           position: 'relative',
           height: 2,
           overflow: 'hidden',
@@ -25,7 +25,7 @@ export const LoadingBar = (input: LoadingBarInput) => {
     [
       !input.disabled &&
         h(Box, {
-          style: theme({
+          style: sx({
             position: 'absolute',
             height: 'full',
             // width: '1/2',

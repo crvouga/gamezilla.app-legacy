@@ -1,8 +1,9 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
+import { Frag } from '~/@/vdom/primitives/frag'
 import { Pressable } from '~/@/vdom/primitives/pressable'
 import { VDom } from '~/@/vdom/vdom'
-import { theme } from '../theme/theme'
+import { sx } from '../theme/theme'
 import { DropDownAlignment } from './drop-down-alignment'
 import { DropDownPosition } from './drop-down-position'
 
@@ -26,35 +27,51 @@ export const DropDown = (props: {
     }
   }
 
-  return h(Box, { style: { ...props.style } }, [
+  return h(Frag, {}, [
     h(Backdrop, { open: props.open, onPress: onClose }),
-    h(Box, { style: theme({ position: 'relative' }) }, [
-      props.renderReference(),
-      props.open &&
-        h(
-          Box,
-          {
-            id: props.id,
-            style: {
-              ...theme({ position: 'absolute', zIndex: props.open ? 50 : undefined, flexDirection: 'col' }),
-              ...toPositionStyle(position),
-              ...toAlignmentStyle(position, alignment),
-              ...props.style,
-            },
-
-            'data-testid': props.testId,
-          },
-          [props.renderFloating()],
-        ),
+    h(Box, { style: props.style }, [
+      h(
+        Box,
+        {
+          style: sx({
+            position: 'relative',
+            zIndex: props.open ? 50 : null,
+          }),
+        },
+        [
+          props.renderReference(),
+          props.open &&
+            h(
+              Box,
+              {
+                id: props.id,
+                style: {
+                  ...sx({ position: 'absolute', zIndex: props.open ? 50 : undefined, flexDirection: 'col' }),
+                  ...toPositionStyle(position),
+                  ...toAlignmentStyle(position, alignment),
+                  ...props.style,
+                },
+              },
+              [props.renderFloating()],
+            ),
+        ],
+      ),
     ]),
   ])
 }
 
 const Backdrop = (props: { open: boolean; onPress: () => void }) => {
-  if (!props.open) return null
-
   return h(Pressable, {
-    style: theme({ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, backgroundColor: 'black/50' }),
+    style: sx({
+      display: props.open ? 'flex' : 'none',
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      backgroundColor: 'black/50',
+      zIndex: 50,
+    }),
     onPress: props.onPress,
   })
 }

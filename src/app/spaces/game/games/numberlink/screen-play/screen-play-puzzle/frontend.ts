@@ -23,7 +23,7 @@ import type { FrontendModule, MsgFrontend } from '../types'
 import * as CopyPuzzleFrontend from './button-copy-puzzle/frontend'
 import { LastPuzzleFrontend } from './last-puzzle/frontend'
 import { ScreenPlayPuzzleSpace } from './space'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
@@ -149,7 +149,7 @@ const ViewHosting: FrontendModule['View'] = (input) => {
       h(
         Box,
         {
-          style: theme({
+          style: sx({
             flexDirection: 'row',
             width: 'full',
             flex: 1,
@@ -254,7 +254,7 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
         h(
           Box,
           {
-            style: theme({
+            style: sx({
               flexDirection: 'row',
               flex: 1,
               alignItems: 'center',

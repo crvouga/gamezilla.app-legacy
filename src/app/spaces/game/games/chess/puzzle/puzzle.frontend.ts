@@ -14,7 +14,7 @@ import {
 } from '~/@/ui/icon'
 import { Paper } from '~/@/ui/paper'
 import { Spinner } from '~/@/ui/spinner'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -244,13 +244,13 @@ export const View = ({
     h(
       Box,
       {
-        style: theme({ flexDirection: 'col', width: 'full', flex: 1, alignItems: 'center', justifyContent: 'center' }),
+        style: sx({ flexDirection: 'col', width: 'full', flex: 1, alignItems: 'center', justifyContent: 'center' }),
       },
       [
         h(
           Box,
           {
-            style: theme({
+            style: sx({
               flexDirection: 'row',
               width: 'full',
               alignItems: 'center',
@@ -262,61 +262,53 @@ export const View = ({
           [
             h(Avatar, {
               src: UserProfile.toAvatarUrl(ctx.profilesByUserId[ctx.space.hostId]),
-              style: theme({ size: 10 }),
+              style: sx({ size: 10 }),
               alt: '',
             }),
 
-            h(Box, { style: theme({ flexDirection: 'col', flex: 1, justifyContent: 'center' }) }, [
+            h(Box, { style: sx({ flexDirection: 'col', flex: 1, justifyContent: 'center' }) }, [
               h(Typography, {
                 text: TranslatedText.of('Rating'),
                 variant: 'label',
                 color: 'text-secondary',
-                style: theme({ fontSize: 'xs' }),
+                style: sx({ fontSize: 'xs' }),
               }),
-              h(Box, { style: theme({ flexDirection: 'row', alignItems: 'center', gap: 1 }) }, [
-                h(Box, { style: theme({ fontSize: 'xl', fontWeight: 'bold' }) }, [
+              h(Box, { style: sx({ flexDirection: 'row', alignItems: 'center', gap: 1 }) }, [
+                h(Box, { style: sx({ fontSize: 'xl', fontWeight: 'bold' }) }, [
                   h(Text, { text: String(model.profile?.eloRating ?? '...') }),
                 ]),
 
                 model.t === 'solved' &&
                   !model.hasLost &&
                   nextEloRating &&
-                  h(
-                    Box,
-                    { style: theme({ rounded: 'xl', fontSize: 'lg', fontWeight: 'bold', textColor: 'green-500' }) },
-                    [h(Text, { text: `+${nextEloRating - model.profile.eloRating}` })],
-                  ),
+                  h(Box, { style: sx({ rounded: 'xl', fontSize: 'lg', fontWeight: 'bold', textColor: 'green-500' }) }, [
+                    h(Text, { text: `+${nextEloRating - model.profile.eloRating}` }),
+                  ]),
 
                 model.t !== 'loading' &&
                   model.hasLost &&
                   nextEloRating &&
-                  h(
-                    Box,
-                    { style: theme({ rounded: 'xl', fontSize: 'lg', fontWeight: 'bold', textColor: 'red-500' }) },
-                    [h(Text, { text: String(nextEloRating - model.profile.eloRating) })],
-                  ),
+                  h(Box, { style: sx({ rounded: 'xl', fontSize: 'lg', fontWeight: 'bold', textColor: 'red-500' }) }, [
+                    h(Text, { text: String(nextEloRating - model.profile.eloRating) }),
+                  ]),
               ]),
             ]),
 
-            h(
-              Box,
-              { style: theme({ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 2 }) },
-              [
-                h(TickingClock, { sec: durationMs ? Math.floor(durationMs / 1_000) : 0 }),
-                h(Typography, {
-                  text: TranslatedText.of(durationMs ? formatDuration(durationMs) : '-:--'),
-                  color: 'text-secondary',
-                  style: theme({ fontWeight: 'bold', fontSize: 'lg' }),
-                }),
-              ],
-            ),
+            h(Box, { style: sx({ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 2 }) }, [
+              h(TickingClock, { sec: durationMs ? Math.floor(durationMs / 1_000) : 0 }),
+              h(Typography, {
+                text: TranslatedText.of(durationMs ? formatDuration(durationMs) : '-:--'),
+                color: 'text-secondary',
+                style: sx({ fontWeight: 'bold', fontSize: 'lg' }),
+              }),
+            ]),
           ],
         ),
 
         h(
           Paper,
           {
-            style: theme({
+            style: sx({
               position: 'relative',
               flexDirection: 'row',
               aspectRatio: 1,
@@ -366,7 +358,7 @@ export const View = ({
               h(
                 Box,
                 {
-                  style: theme({
+                  style: sx({
                     position: 'absolute',
                     top: 0,
                     left: 0,
@@ -378,16 +370,16 @@ export const View = ({
                     backgroundColor: 'black/50',
                   }),
                 },
-                [h(Spinner, { style: theme({ size: 12 }) })],
+                [h(Spinner, { style: sx({ size: 12 }) })],
               ),
           ],
         ),
 
-        h(Box, { style: theme({ width: 'full', paddingX: 2, paddingY: 1 }) }, [
+        h(Box, { style: sx({ width: 'full', paddingX: 2, paddingY: 1 }) }, [
           h(
             Box,
             {
-              style: theme({
+              style: sx({
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'flex-start',
@@ -404,7 +396,7 @@ export const View = ({
           h(
             Box,
             {
-              style: theme({
+              style: sx({
                 flexDirection: 'row',
                 flex: 1,
                 alignItems: 'center',
@@ -527,7 +519,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
     return h(
       Box,
       {
-        style: theme({
+        style: sx({
           flexDirection: 'row',
           width: 'full',
           alignItems: 'center',
@@ -535,7 +527,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
           padding: 2,
         }),
       },
-      [h(Box, { style: theme({ fontSize: 'xl' }) }, [h(Text, { text: '...' })])],
+      [h(Box, { style: sx({ fontSize: 'xl' }) }, [h(Text, { text: '...' })])],
     )
   }
 
@@ -543,7 +535,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
     return h(
       Box,
       {
-        style: theme({
+        style: sx({
           flexDirection: 'row',
           width: 'full',
           alignItems: 'center',
@@ -555,8 +547,8 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
         }),
       },
       [
-        h(IconXMark, { style: theme({ size: 6 }) }),
-        h(Box, { style: theme({ fontSize: 'xl' }) }, [h(Text, { text: 'Incorrect' })]),
+        h(IconXMark, { style: sx({ size: 6 }) }),
+        h(Box, { style: sx({ fontSize: 'xl' }) }, [h(Text, { text: 'Incorrect' })]),
       ],
     )
   }
@@ -565,7 +557,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
     return h(
       Box,
       {
-        style: theme({
+        style: sx({
           flexDirection: 'row',
           width: 'full',
           alignItems: 'center',
@@ -577,8 +569,8 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
         }),
       },
       [
-        h(IconCheckmarkCircle, { style: theme({ size: 6 }) }),
-        h(Box, { style: theme({ fontSize: 'xl' }) }, [h(Text, { text: 'Correct' })]),
+        h(IconCheckmarkCircle, { style: sx({ size: 6 }) }),
+        h(Box, { style: sx({ fontSize: 'xl' }) }, [h(Text, { text: 'Correct' })]),
       ],
     )
   }
@@ -588,7 +580,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
     return h(
       Box,
       {
-        style: theme({
+        style: sx({
           flexDirection: 'row',
           width: 'full',
           alignItems: 'center',
@@ -601,7 +593,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
       },
       [
         h(Box, {
-          style: theme({
+          style: sx({
             size: 6,
             rounded: 'full',
             borderWidth: 2,
@@ -609,9 +601,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
             backgroundColor: playerColor === 'b' ? 'black' : 'white',
           }),
         }),
-        h(Box, { style: theme({ fontSize: 'xl' }) }, [
-          h(Text, { text: `${Chess.colorToString(playerColor)} to move` }),
-        ]),
+        h(Box, { style: sx({ fontSize: 'xl' }) }, [h(Text, { text: `${Chess.colorToString(playerColor)} to move` })]),
       ],
     )
   }
@@ -620,7 +610,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
     return h(
       Paper,
       {
-        style: theme({
+        style: sx({
           flexDirection: 'row',
           width: 'full',
           alignItems: 'center',
@@ -631,8 +621,8 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
         }),
       },
       [
-        h(IconCheckmarkCircle, { style: theme({ size: 6 }) }),
-        h(Box, { style: theme({ fontSize: 'xl' }) }, [h(Text, { text: 'Solved with hint' })]),
+        h(IconCheckmarkCircle, { style: sx({ size: 6 }) }),
+        h(Box, { style: sx({ fontSize: 'xl' }) }, [h(Text, { text: 'Solved with hint' })]),
       ],
     )
   }
@@ -641,7 +631,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
 }
 
 const TickingClock = (input: { sec: number }) => {
-  return h(Svg, { style: theme({ size: 5 }), viewBox: '-1 -1 2 2', stroke: 'currentColor', 'stroke-width': '0.2' }, [
+  return h(Svg, { style: sx({ size: 5 }), viewBox: '-1 -1 2 2', stroke: 'currentColor', 'stroke-width': '0.2' }, [
     h(Circle, { cx: '0', cy: '0', r: '0.9' }),
     h(Line, {
       stroke: input.sec % 4 === 0 ? undefined : 'transparent',

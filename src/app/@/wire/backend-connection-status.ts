@@ -1,7 +1,7 @@
 import { Translator } from '~/@/l18n/generated'
 import { TimeSpan } from '~/@/time/time-span'
 import { MenuItem } from '~/@/ui/menu-item'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Circle } from '~/@/vdom/primitives/svg/circle'
@@ -15,15 +15,15 @@ export type BackendConnectionStatus =
 const ViewDot = (input: { model: BackendConnectionStatus; ctx: { t: Translator }; style: Record<string, unknown> }) => {
   switch (input.model.t) {
     case 'connected': {
-      return h(Dot, { style: { ...theme({ textColor: 'green-500' }), ...input.style } })
+      return h(Dot, { style: { ...sx({ textColor: 'green-500' }), ...input.style } })
     }
 
     case 'connecting': {
-      return h(Dot, { style: { ...theme({ textColor: 'orange-500' }), ...input.style } })
+      return h(Dot, { style: { ...sx({ textColor: 'orange-500' }), ...input.style } })
     }
 
     case 'disconnected': {
-      return h(Dot, { style: { ...theme({ textColor: 'red-500' }), ...input.style } })
+      return h(Dot, { style: { ...sx({ textColor: 'red-500' }), ...input.style } })
     }
   }
 }

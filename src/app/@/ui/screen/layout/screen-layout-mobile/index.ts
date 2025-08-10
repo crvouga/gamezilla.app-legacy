@@ -1,4 +1,4 @@
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { ScreenLayoutProps } from '../screen-layout-props'
@@ -12,7 +12,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         flex: 1,
         flexDirection: 'col',
         width: 'full',
@@ -25,7 +25,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
       h(
         Box,
         {
-          style: theme({
+          style: sx({
             flex: 1,
             flexDirection: 'col',
             overflow: 'hidden',
@@ -37,7 +37,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
           h(
             Box,
             {
-              style: theme({
+              style: sx({
                 flex: 1,
                 flexDirection: 'col',
                 overflow: 'hidden',

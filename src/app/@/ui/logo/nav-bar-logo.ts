@@ -1,4 +1,4 @@
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Pressable } from '~/@/vdom/primitives/pressable'
 import { Text } from '~/@/vdom/primitives/text'
@@ -8,7 +8,7 @@ export const NavBarLogo = (input: { onPress: () => void }) => {
   return h(
     Pressable,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         width: 'full',
         height: 'full',

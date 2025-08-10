@@ -1,7 +1,7 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Pressable } from '~/@/vdom/primitives/pressable'
-import { theme } from './theme/theme'
+import { sx } from './theme/theme'
 
 export const SwitchButton = ({
   onToggle,
@@ -19,7 +19,7 @@ export const SwitchButton = ({
       'aria-checked': checked,
       'aria-label': label,
       style: {
-        ...theme({
+        ...sx({
           position: 'relative',
           height: 6,
           width: 11,
@@ -31,7 +31,7 @@ export const SwitchButton = ({
     [
       h(Box, {
         style: {
-          ...theme({
+          ...sx({
             position: 'absolute',
             top: 0.5,
             size: 5,

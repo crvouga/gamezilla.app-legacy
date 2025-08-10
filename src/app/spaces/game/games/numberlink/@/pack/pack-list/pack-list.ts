@@ -6,7 +6,7 @@ import { UnixMs } from '~/@/time/unix-ms'
 import { EmptyState } from '~/@/ui/empty-state'
 import { IconBox } from '~/@/ui/icon'
 import { SpinnerBlock } from '~/@/ui/spinner-block'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -30,7 +30,7 @@ const View = (input: {
   return h(
     ScrollBox,
     {
-      style: theme({ flexDirection: 'col', gap: 0, overflow: 'hidden' }),
+      style: sx({ flexDirection: 'col', gap: 0, overflow: 'hidden' }),
       contentContainerStyle: {
         rowGap: 0,
       },
@@ -61,7 +61,7 @@ const ViewPackMenuItem = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pa
     Pressable,
     {
       onPress: input.onPress,
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         width: 'full',
         flexShrink: 0,
@@ -76,11 +76,11 @@ const ViewPackMenuItem = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pa
       role: 'menuitem',
     },
     [
-      false && h(IconBox, { style: theme({ flexShrink: 0, size: 9 }) }),
+      false && h(IconBox, { style: sx({ flexShrink: 0, size: 9 }) }),
       h(
         Box,
         {
-          style: theme({
+          style: sx({
             flex: 1,
             flexDirection: 'col',
             overflow: 'hidden',
@@ -102,7 +102,7 @@ const ViewPackMenuItem = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pa
         text: input.ctx.t('game.numberlink.puzzle-count', input.pack.puzzleIds.length),
         variant: 'body',
         color: 'text-secondary',
-        style: theme({ fontSize: 'xs' }),
+        style: sx({ fontSize: 'xs' }),
       }),
     ].filter(Boolean),
   )

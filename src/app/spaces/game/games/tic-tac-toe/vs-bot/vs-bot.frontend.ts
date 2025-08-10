@@ -2,7 +2,7 @@ import type { Eff } from '~/@/eff'
 import { UnixMs } from '~/@/time/unix-ms'
 import { IconArrowLeft, IconArrowRotateLeft, IconRightLeft } from '~/@/ui/icon'
 import { LoadingBar } from '~/@/ui/loading-bar'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
@@ -243,7 +243,7 @@ export const View = (input: {
       h(
         Box,
         {
-          style: theme({
+          style: sx({
             flexDirection: 'col',
             alignItems: 'center',
             justifyContent: 'center',
@@ -253,7 +253,7 @@ export const View = (input: {
           h(VsBotGame.VsBotPlayerSection, vsBotGameInput),
 
           h(LoadingBar, {
-            style: theme({ width: 'full' }),
+            style: sx({ width: 'full' }),
             disabled: input.model.userPlayerType === turn || status.type !== 'Turn',
             color: gameTheme.background,
           }),

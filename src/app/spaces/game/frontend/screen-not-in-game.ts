@@ -1,6 +1,6 @@
 import { Clickable } from '~/@/ui/clickable'
 import { Grid } from '~/@/ui/grid/grid'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
@@ -56,11 +56,11 @@ const View: SpaceFrontendModule['View'] = (input) => {
 const ViewHostGameSelection = (input: { ctx: SpaceFrontendCtx; dispatch: (msg: MsgFrontend) => void }) => {
   return h(Grid, {
     columnCount: 3,
-    rootStyle: theme({
+    rootStyle: sx({
       gap: 4,
       padding: 4,
     }),
-    rowStyle: theme({
+    rowStyle: sx({
       gap: 4,
     }),
     items: GAME_NAME_LIST.map((gameName) =>
@@ -78,7 +78,7 @@ const GameTile = (input: { gameName: GameName; ctx: SpaceFrontendCtx; dispatch: 
   return h(
     Clickable,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'col',
         gap: 4,
       }),
@@ -100,7 +100,7 @@ const GameTile = (input: { gameName: GameName; ctx: SpaceFrontendCtx; dispatch: 
         platform: input.ctx.platform,
       }),
       h(Typography, {
-        style: theme({
+        style: sx({
           width: 'full',
           fontSize: 'md',
           textAlign: 'center',

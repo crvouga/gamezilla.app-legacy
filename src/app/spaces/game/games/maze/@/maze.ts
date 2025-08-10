@@ -7,7 +7,7 @@ import { Line } from '~/@/vdom/primitives/svg/line'
 import { Rect } from '~/@/vdom/primitives/svg/rect'
 import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { Direction, Position } from './position'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 
 //
 //
@@ -190,7 +190,7 @@ const viewBox = [
 ].join(' ')
 
 export const CoverArt = () => {
-  return h(Svg, { viewBox, width: '100%', style: theme({ borderWidth: 1, borderColor: 'neutral-500' }) }, [
+  return h(Svg, { viewBox, width: '100%', style: sx({ borderWidth: 1, borderColor: 'neutral-500' }) }, [
     h(Rect, {
       x: coverArtMaze.lower.x,
       y: coverArtMaze.lower.y,

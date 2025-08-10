@@ -3,7 +3,7 @@ import type { Translator } from '~/@/l18n/generated'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconArrowLeft } from '~/@/ui/icon'
 import { IconButton, IconButtonEmpty } from '~/@/ui/icon-button'
-import { theme } from '~/@/ui/theme/theme'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -31,7 +31,7 @@ export const ScreenNavBarMobile = (input: {
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         height: 16,
         width: 'full',
         alignItems: 'center',
@@ -63,7 +63,7 @@ export const ScreenNavBarMobile = (input: {
       h(
         Box,
         {
-          style: theme({
+          style: sx({
             flex: 1,
             flexDirection: 'col',
             overflow: 'hidden',
@@ -78,7 +78,7 @@ export const ScreenNavBarMobile = (input: {
               variant: 'title',
               text: input.title,
               align: 'center',
-              style: theme({
+              style: sx({
                 fontSize: 'xl',
                 fontWeight: 'bold',
                 textAlign: 'center',
@@ -95,7 +95,7 @@ export const ScreenNavBarMobile = (input: {
               variant: 'subtitle',
               text: input.subtitle,
               align: 'center',
-              style: theme({
+              style: sx({
                 fontSize: 'xs',
                 textAlign: 'center',
                 paddingX: 2,

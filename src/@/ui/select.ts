@@ -4,7 +4,7 @@ import { Box } from '~/@/vdom/primitives/box'
 import type { VDom } from '~/@/vdom/vdom'
 import { Text } from '../vdom/primitives/text'
 import { PAPER_STYLE } from './paper'
-import { theme } from './theme/theme'
+import { sx } from './theme/theme'
 
 export const Select = <T>(props: {
   helperText?: string
@@ -23,7 +23,7 @@ export const Select = <T>(props: {
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         width: 'full',
         flexDirection: 'col',
         gap: 1,
@@ -34,7 +34,7 @@ export const Select = <T>(props: {
       h(Text, {
         id: labelId,
         style: {
-          ...theme({
+          ...sx({
             fontSize: 16,
           }),
           color: props.error ? 'rgb(239 68 68)' : undefined,
@@ -48,7 +48,7 @@ export const Select = <T>(props: {
           id: props.id,
           style: {
             ...PAPER_STYLE,
-            ...theme({
+            ...sx({
               flexDirection: 'row',
               alignItems: 'center',
               rounded: 'md',
@@ -96,7 +96,7 @@ export const Select = <T>(props: {
           Box,
           {
             style: {
-              ...theme({
+              ...sx({
                 fontSize: 'sm',
               }),
               color: props.error ? 'rgb(239 68 68)' : undefined,

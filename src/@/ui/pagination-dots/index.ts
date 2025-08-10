@@ -1,7 +1,7 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Clickable } from '../clickable'
-import { theme } from '../theme/theme'
+import { sx } from '../theme/theme'
 
 export const PAGINATION_DOTS_TEST_ID = 'pagination-dots'
 
@@ -13,7 +13,7 @@ export const PaginationDots = (input: { count: number; activeIndex: number; onPr
   return h(
     Box,
     {
-      style: theme({
+      style: sx({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -28,7 +28,7 @@ export const PaginationDots = (input: { count: number; activeIndex: number; onPr
         return h(Clickable, {
           role: 'tab',
           style: {
-            ...theme({
+            ...sx({
               size: 2,
               rounded: 'full',
             }),
@@ -41,7 +41,7 @@ export const PaginationDots = (input: { count: number; activeIndex: number; onPr
       return h(Box, {
         role: 'tab',
         style: {
-          ...theme({
+          ...sx({
             size: 2,
             rounded: 'full',
           }),
