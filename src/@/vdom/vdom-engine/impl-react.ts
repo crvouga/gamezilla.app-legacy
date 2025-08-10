@@ -5,7 +5,7 @@ import { inPlaceMapKeys } from '~/@/object/in-place-map-keys'
 import { kebabToCamel } from '~/@/string/kebab-to-camel'
 import { CANVAS_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
-import { inPlaceMapPropsToWebProps } from './web/map-props-to-web-props'
+import { mapPropsToWebProps } from './web/map-props-to-web-props'
 import { WebCanvas } from './web/web-canvas'
 import { WebSafeAreaBox } from './web/web-safe-area-box'
 import { WebScrollBox } from './web/web-scroll-box'
@@ -23,7 +23,7 @@ const init = (_config: ImplReact): IVirtualDomEngine => {
     },
     createElement: (tag: any, props: any, children: any) => {
       inPlaceMapKeys(props?.style, kebabToCamel)
-      inPlaceMapPropsToWebProps(props)
+      props = mapPropsToWebProps(props)
 
       children = ensureArray(children)
       switch (tag) {

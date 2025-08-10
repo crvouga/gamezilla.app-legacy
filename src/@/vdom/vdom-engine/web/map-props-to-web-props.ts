@@ -1,6 +1,12 @@
 import { hasPixelUnit } from '~/@/css/has-pixel-unit'
 import { isObject } from '~/@/object/is-object'
 
+export const mapPropsToWebProps = (props: Record<string, unknown>) => {
+  const propsNew = { ...props }
+  inPlaceMapPropsToWebProps(propsNew)
+  return propsNew
+}
+
 export const inPlaceMapPropsToWebProps = (props: Record<string, unknown>) => {
   if (props.onPress) {
     props.onClick = props.onPress

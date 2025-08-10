@@ -40,35 +40,51 @@ export const DropDown = (props: {
         },
         [
           props.renderReference(),
-          props.open &&
-            h(
-              Box,
-              {
-                id: props.id,
-                style: {
-                  ...sx({ position: 'absolute', zIndex: props.open ? 50 : undefined, flexDirection: 'col' }),
-                  ...toPositionStyle(position),
-                  ...toAlignmentStyle(position, alignment),
-                  ...props.style,
-                },
-              },
-              [props.renderFloating()],
-            ),
+          h(Floating, {
+            open: props.open,
+            id: props.id,
+            renderFloating: props.renderFloating,
+            position,
+            alignment,
+          }),
         ],
       ),
     ]),
   ])
 }
 
+const Floating = (props: {
+  open: boolean
+  id: string
+  renderFloating: () => VDom
+  position: DropDownPosition
+  alignment: DropDownAlignment
+}) =>
+  h(
+    Box,
+    {
+      id: props.id,
+      style: {
+        ...sx({
+          position: 'absolute',
+          zIndex: 50,
+          flexDirection: 'col',
+          display: props.open ? 'flex' : 'none',
+          minWidth: 'sm',
+        }),
+        ...toPositionStyle(props.position),
+        ...toAlignmentStyle(props.position, props.alignment),
+      },
+    },
+    [props.renderFloating()],
+  )
+
 const Backdrop = (props: { open: boolean; onPress: () => void }) => {
   return h(Pressable, {
     style: sx({
       display: props.open ? 'flex' : 'none',
       position: 'absolute',
-      top: 0,
-      right: 0,
-      bottom: 0,
-      left: 0,
+      inset: 0,
       backgroundColor: 'black/50',
       zIndex: 50,
     }),
@@ -79,13 +95,13 @@ const Backdrop = (props: { open: boolean; onPress: () => void }) => {
 const toPositionStyle = (position: DropDownPosition): Record<string, unknown> => {
   switch (position) {
     case 'bottom':
-      return { top: '100%' }
+      return sx({ top: '100%' })
     case 'top':
-      return { bottom: '100%' }
+      return sx({ bottom: '100%' })
     case 'start':
-      return { right: '100%' }
+      return sx({ right: '100%' })
     case 'end':
-      return { left: '100%' }
+      return sx({ left: '100%' })
   }
 }
 
@@ -103,11 +119,11 @@ const toAlignmentStyle = (position: DropDownPosition, alignment: DropDownAlignme
 const toVerticalAlignmentStyle = (alignment: DropDownAlignment): Record<string, unknown> => {
   switch (alignment) {
     case 'ending':
-      return { right: 0 }
+      return sx({ right: 0 })
     case 'starting':
-      return { left: 0 }
+      return sx({ left: 0 })
     case 'centered':
-      return { left: '50%', transform: 'translateX(-50%)' }
+      return sx({ left: '50%', transform: [{ translateX: '-50%' }] })
   }
 }
 

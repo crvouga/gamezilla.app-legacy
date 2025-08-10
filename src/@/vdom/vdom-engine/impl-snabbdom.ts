@@ -44,13 +44,11 @@ const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
       }
     } catch (e) {
       console.error(e)
-      debugger
       return null
     }
   }
 
   let oldVNode: any | null = null
-
   return {
     render: (vDom, node) => {
       try {
@@ -58,9 +56,7 @@ const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
       } catch (e) {
         document.body.innerHTML = ''
         document.body.appendChild(node)
-        debugger
-        oldVNode = null
-        oldVNode = patch(oldVNode ?? node, vDom as any)
+        oldVNode = patch(node, vDom as any)
         console.error(e)
       }
     },

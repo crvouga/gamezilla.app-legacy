@@ -1,6 +1,8 @@
+import { Percentage } from './percentage'
 import { ThemeColor } from './theme-color'
 import { ThemeRounded } from './theme-rounded'
 import { ThemeSize } from './theme-size'
+import { Transform } from './transform'
 
 export type Theme = {
   position?: 'absolute' | 'relative' | null
@@ -41,11 +43,12 @@ export type Theme = {
   minWidth?: ThemeSize | null
   aspectRatio?: number | null
   zIndex?: number | null
-  top?: number | null
-  right?: number | null
-  bottom?: number | null
-  left?: number | null
+  top?: Percentage | number | null
+  right?: Percentage | number | null
+  bottom?: Percentage | number | null
+  left?: Percentage | number | null
   display?: 'flex' | 'none' | null
+  transform?: Transform[] | null
 }
 
 export const sx = (config: Theme): Record<string, string | number | null> => {
@@ -78,6 +81,7 @@ export const sx = (config: Theme): Record<string, string | number | null> => {
   applyBottom(styles, config.bottom)
   applyLeft(styles, config.left)
   applyDisplay(styles, config.display)
+  applyTransform(styles, config.transform)
   return styles
 }
 
@@ -356,32 +360,50 @@ const applyZIndex = (styles: Record<string, string | number | null>, zIndex: The
 }
 
 const applyTop = (styles: Record<string, string | number | null>, top: Theme['top']) => {
-  if (top != null) {
+  if (top == null) return
+  if (typeof top === 'number') {
     styles.top = top * 4
+    return
   }
+  styles.top = top
 }
 
 const applyRight = (styles: Record<string, string | number | null>, right: Theme['right']) => {
-  if (right != null) {
+  if (right == null) return
+  if (typeof right === 'number') {
     styles.right = right * 4
+    return
   }
+  styles.right = right
 }
 
 const applyBottom = (styles: Record<string, string | number | null>, bottom: Theme['bottom']) => {
-  if (bottom != null) {
+  if (bottom == null) return
+  if (typeof bottom === 'number') {
     styles.bottom = bottom * 4
+    return
   }
+  styles.bottom = bottom
 }
 
 const applyLeft = (styles: Record<string, string | number | null>, left: Theme['left']) => {
-  if (left != null) {
+  if (left == null) return
+  if (typeof left === 'number') {
     styles.left = left * 4
+    return
   }
+  styles.left = left
 }
 
 const applyDisplay = (styles: Record<string, string | number | null>, display: Theme['display']) => {
   if (display != null) {
     styles.display = display
+  }
+}
+
+const applyTransform = (styles: Record<string, string | number | null>, transform: Theme['transform']) => {
+  if (transform != null) {
+    styles.transform = Transform.toString(transform)
   }
 }
 

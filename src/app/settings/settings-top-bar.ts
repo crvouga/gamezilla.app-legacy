@@ -23,6 +23,7 @@ const View: FrontendModule['View'] = (props) => {
     onClose: () => props.dispatch({ t: 'settings.closed-top-bar-surface' }),
     style: toStyle(props),
     dropDown: {
+      position: 'bottom',
       reference: {
         render: () =>
           h(
@@ -135,7 +136,7 @@ const toStyle = (props: Parameters<FrontendModule['View']>[0]): Record<string, u
     case 'mobile':
       return sx({ width: 'full' })
     default:
-      return sx({ position: 'absolute', top: 0, right: 0, zIndex: 100 })
+      return sx({ position: 'absolute', top: 0, right: 0, zIndex: 50 })
   }
 }
 

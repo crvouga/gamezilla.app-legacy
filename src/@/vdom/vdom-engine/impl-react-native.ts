@@ -16,7 +16,6 @@ import Svg, {
   Text as SvgText,
 } from 'react-native-svg'
 import { ensureArray } from '~/@/array/ensure-array'
-
 import { inPlaceMapKeys } from '~/@/object/in-place-map-keys'
 import { kebabToCamel } from '~/@/string/kebab-to-camel'
 import {
@@ -91,50 +90,7 @@ const ALLOWED_PROPS = new Set([
   'viewBox',
   'width',
   'height',
-  'd',
-  'points',
-  'points',
 ])
-
-const sanitizeProps = (props: Record<string, any>): Record<string, any> => {
-  const sanitized: Record<string, any> = {}
-
-  for (const [key, value] of Object.entries(props)) {
-    // Skip non-allowed props
-    if (!ALLOWED_PROPS.has(key)) continue
-
-    // Convert string booleans to actual booleans
-    if (value === 'true') {
-      sanitized[key] = true
-      continue
-    }
-    if (value === 'false') {
-      sanitized[key] = false
-      continue
-    }
-
-    // Map ARIA attributes
-    if (key.startsWith('aria-')) {
-      const ariaKey = key.replace('aria-', '')
-      if (!sanitized.accessibilityState) {
-        sanitized.accessibilityState = {}
-      }
-      sanitized.accessibilityState[ariaKey] = value
-      continue
-    }
-
-    // Map role to accessibilityRole
-    if (key === 'role') {
-      sanitized.accessibilityRole = value
-      continue
-    }
-
-    // Pass through allowed props
-    sanitized[key] = value
-  }
-
-  return sanitized
-}
 
 export type ImplReactNative = {
   t: 'react-native'
@@ -142,9 +98,7 @@ export type ImplReactNative = {
 
 const init = (_config: ImplReactNative): IVirtualDomEngine => {
   return {
-    render: (_vDom, _node) => {
-      return createElement(Text, {}, ['Not implemented'])
-    },
+    render: (_vDom, _node) => {},
     createElement: (tag: any, props: any, children: any) => {
       inPlaceMapPropsToReactNativeProps(props)
       inPlaceMapKeys(props?.style, kebabToCamel)
@@ -216,6 +170,46 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
       }
     },
   }
+}
+
+const sanitizeProps = (props: Record<string, any>): Record<string, any> => {
+  const sanitized: Record<string, any> = {}
+
+  for (const [key, value] of Object.entries(props)) {
+    // Skip non-allowed props
+    if (!ALLOWED_PROPS.has(key)) continue
+
+    // Convert string booleans to actual booleans
+    if (value === 'true') {
+      sanitized[key] = true
+      continue
+    }
+    if (value === 'false') {
+      sanitized[key] = false
+      continue
+    }
+
+    // Map ARIA attributes
+    if (key.startsWith('aria-')) {
+      const ariaKey = key.replace('aria-', '')
+      if (!sanitized.accessibilityState) {
+        sanitized.accessibilityState = {}
+      }
+      sanitized.accessibilityState[ariaKey] = value
+      continue
+    }
+
+    // Map role to accessibilityRole
+    if (key === 'role') {
+      sanitized.accessibilityRole = value
+      continue
+    }
+
+    // Pass through allowed props
+    sanitized[key] = value
+  }
+
+  return sanitized
 }
 
 export const ImplReactNative = {
