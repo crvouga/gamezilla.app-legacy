@@ -24,7 +24,7 @@ const init = (model: { width: number; height: number }): VariantGridDimensions =
   }
 }
 
-const ViewForm = (input: {
+const ViewForm = (props: {
   form: VariantGridDimensions
   onInput: (dimensions: VariantGridDimensions) => void
   ctx: {
@@ -33,31 +33,31 @@ const ViewForm = (input: {
 }) => {
   return h(Box, { style: sx({ flexDirection: 'col', gap: 4, padding: 6 }) }, [
     h(Box, { style: sx({ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 1 }) }, [
-      h(Box, {}, [h(Text, { text: `${input.form.width}w` })]),
+      h(Box, {}, [h(Text, { text: `${props.form.width}w`, style: sx({ textColor: 'white', fontSize: '3xl' }) })]),
 
       h(IconXMark, { style: sx({ size: 6 }) }),
 
-      h(Box, {}, [h(Text, { text: `${input.form.height}h` })]),
+      h(Box, {}, [h(Text, { text: `${props.form.height}h`, style: sx({ textColor: 'white', fontSize: '3xl' }) })]),
     ]),
 
-    h(Box, { style: sx({ flexDirection: 'col', gap: 3 }) }, [
+    h(Box, { style: sx({ flexDirection: 'col', gap: 6 }) }, [
       h(ChipSelection<number>, {
-        label: input.ctx.t('app.width'),
+        label: props.ctx.t('app.width'),
         options: Array.from({ length: 13 }, (_, i) => ({
           value: i + 3,
           label: TranslatedText.of(`${i + 3}`),
         })),
-        value: input.form.width,
-        onChange: (width) => input.onInput({ ...input.form, width }),
+        value: props.form.width,
+        onChange: (width) => props.onInput({ ...props.form, width }),
       }),
       h(ChipSelection<number>, {
-        label: input.ctx.t('app.height'),
+        label: props.ctx.t('app.height'),
         options: Array.from({ length: 13 }, (_, i) => ({
           value: i + 3,
           label: TranslatedText.of(`${i + 3}`),
         })),
-        value: input.form.height,
-        onChange: (height) => input.onInput({ ...input.form, height }),
+        value: props.form.height,
+        onChange: (height) => props.onInput({ ...props.form, height }),
       }),
     ]),
   ])

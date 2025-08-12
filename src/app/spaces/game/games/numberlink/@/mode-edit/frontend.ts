@@ -20,28 +20,28 @@ import { Color } from '../ui/color'
 import { NumberlinkVariantBoard } from '../variant'
 import { VariantDimensions } from '../variant/variant-dimensions'
 
-const View = (input: {
+const View = (props: {
   ctx: AppFrontendCtx
   model: ModeEdit.Model
   dispatch: (m: ModeEdit.Msg) => void
   screenLayout: Partial<ScreenLayoutProps>
 }): VDom => {
   return h(ScreenLayout, {
-    ...input.screenLayout,
-    parentScreen: input.ctx.parentScreen,
+    ...props.screenLayout,
+    parentScreen: props.ctx.parentScreen,
     id: 'mode-edit-screen',
-    ctx: input.ctx,
+    ctx: props.ctx,
     renderBody: () =>
       h(BoardLayout, {}, [
-        h(ViewStatus, input),
+        h(ViewStatus, props),
 
         h(NumberlinkVariantBoard.View, {
-          impl: BorderImpl.fromPlatform(input.ctx.platform),
-          platform: input.ctx.platform,
-          model: ModeEdit.toNumberlink(input.model),
-          onDraggedOver: (nodeId) => input.dispatch({ t: 'dragged-over', nodeId }),
-          onPressDown: (nodeId) => input.dispatch({ t: 'pressed-down-node', nodeId }),
-          onPressUp: (nodeId) => input.dispatch({ t: 'pressed-up-node', nodeId }),
+          impl: BorderImpl.fromPlatform(props.ctx.platform),
+          platform: props.ctx.platform,
+          model: ModeEdit.toNumberlink(props.model),
+          onDraggedOver: (nodeId) => props.dispatch({ t: 'dragged-over', nodeId }),
+          onPressDown: (nodeId) => props.dispatch({ t: 'pressed-down-node', nodeId }),
+          onPressUp: (nodeId) => props.dispatch({ t: 'pressed-up-node', nodeId }),
         }),
       ]),
     actionBar: {
@@ -49,38 +49,44 @@ const View = (input: {
         t: 'uniform',
         actions: [
           {
-            id: input.ctx.t('app.undo'),
+            id: props.ctx.t('app.undo'),
             renderIcon: (input) => h(IconArrowRotateLeft, input),
-            label: input.ctx.t('app.undo'),
-            onPress: () => input.dispatch({ t: 'clicked-undo' }),
-            disabled: !History.canUndo(input.model.form),
+            label: props.ctx.t('app.undo'),
+            onPress: () => props.dispatch({ t: 'clicked-undo' }),
+            disabled: !History.canUndo(props.model.form),
           },
           {
-            id: input.ctx.t('app.redo'),
+            id: props.ctx.t('app.redo'),
             renderIcon: (input) => h(IconArrowRotateRight, input),
-            label: input.ctx.t('app.redo'),
-            disabled: !History.canRedo(input.model.form),
-            onPress: () => input.dispatch({ t: 'clicked-redo' }),
+            label: props.ctx.t('app.redo'),
+            disabled: !History.canRedo(props.model.form),
+            onPress: () => props.dispatch({ t: 'clicked-redo' }),
           },
           {
-            id: input.ctx.t('app.clear'),
-            renderIcon: (input) => h(IconXMark, input),
-            label: input.ctx.t('app.clear'),
-            disabled: !ModeEdit.canClear(input.model),
-            onPress: () => input.dispatch({ t: 'clicked-clear' }),
+            id: props.ctx.t('app.clear'),
+            renderIcon: (iconProps) => h(IconXMark, iconProps),
+            label: props.ctx.t('app.clear'),
+            disabled: !ModeEdit.canClear(props.model),
+            onPress: () => {
+              props.dispatch({ t: 'clicked-clear' })
+            },
           },
           {
-            id: input.ctx.t('app.dimensions'),
-            renderIcon: (input) => h(IconExpand, input),
-            label: input.ctx.t('app.dimensions'),
-            onPress: () => input.dispatch({ t: 'dimensions-form.clicked-open' }),
+            id: props.ctx.t('app.dimensions'),
+            renderIcon: (iconProps) => h(IconExpand, iconProps),
+            label: props.ctx.t('app.dimensions'),
+            onPress: () => {
+              props.dispatch({ t: 'dimensions-form.clicked-open' })
+            },
             renderSurface: ({ dropDown }) =>
               h(SurfaceLayout, {
                 id: 'dimensions',
-                ctx: input.ctx,
-                ariaLabel: input.ctx.t('app.dimensions'),
-                open: input.model.opened?.t === 'dimensions',
-                onClose: () => input.dispatch({ t: 'dimensions-form.closed' }),
+                ctx: props.ctx,
+                ariaLabel: props.ctx.t('app.dimensions'),
+                open: props.model.opened?.t === 'dimensions',
+                onClose: () => {
+                  props.dispatch({ t: 'dimensions-form.closed' })
+                },
                 dropDown: {
                   ...dropDown,
                   position: 'start',
@@ -89,28 +95,38 @@ const View = (input: {
                 header: {
                   render: () =>
                     h(SurfaceHeader, {
-                      ctx: input.ctx,
-                      title: input.ctx.t('app.dimensions'),
-                      onClose: () => input.dispatch({ t: 'dimensions-form.closed' }),
+                      ctx: props.ctx,
+                      title: props.ctx.t('app.dimensions'),
+                      onClose: () => {
+                        props.dispatch({ t: 'dimensions-form.closed' })
+                      },
                     }),
                 },
                 form: {
-                  onSubmit: () => input.dispatch({ t: 'dimensions-form.clicked-save' }),
-                  onCancel: () => input.dispatch({ t: 'dimensions-form.clicked-cancel' }),
+                  onSubmit: () => {
+                    props.dispatch({ t: 'dimensions-form.clicked-save' })
+                  },
+                  onCancel: () => {
+                    props.dispatch({ t: 'dimensions-form.clicked-cancel' })
+                  },
                   cancelDisabled: false,
-                  cancelText: input.ctx.t('app.cancel'),
-                  submitText: input.ctx.t('app.apply'),
+                  cancelText: props.ctx.t('app.cancel'),
+                  submitText: props.ctx.t('app.apply'),
                   submitLoading: false,
-                  submitDisabled: !ModeEdit.canSubmitDimensionsForm(input.model),
+                  submitDisabled: !ModeEdit.canSubmitDimensionsForm(props.model),
                 },
                 body: {
-                  render: () =>
-                    input.model.opened?.draftDimensions &&
-                    h(VariantDimensions.ViewForm, {
-                      ctx: input.ctx,
-                      form: input.model.opened?.draftDimensions,
-                      onInput: (dimensions) => input.dispatch({ t: 'dimensions-form.inputted', dimensions }),
-                    }),
+                  render: () => {
+                    const form = props.model.opened?.draftDimensions
+                    if (!form) return null
+                    return h(Box, { style: sx({ width: 'full', maxWidth: 'xl' }) }, [
+                      h(VariantDimensions.ViewForm, {
+                        ctx: props.ctx,
+                        form,
+                        onInput: (dimensions) => props.dispatch({ t: 'dimensions-form.inputted', dimensions }),
+                      }),
+                    ])
+                  },
                 },
               }),
           },
