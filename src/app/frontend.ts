@@ -359,13 +359,26 @@ const View = (props: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
       ctx: frontendCtx,
     }),
 
-    h(Box, { style: sx({ flexDirection: 'col', width: 'full', flex: 1, overflow: 'hidden' }) }, [
-      h(ViewScreen, {
-        model: props.model,
-        dispatch: props.dispatch,
-        ctx: frontendCtx,
-      }),
-    ]),
+    h(
+      Box,
+      {
+        style: sx({
+          flexDirection: 'col',
+          width: 'full',
+          flex: 1,
+          overflow: 'hidden',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }),
+      },
+      [
+        h(ViewScreen, {
+          model: props.model,
+          dispatch: props.dispatch,
+          ctx: frontendCtx,
+        }),
+      ],
+    ),
 
     h(AuthFrontend.ViewModals, {
       ctx: frontendCtx,

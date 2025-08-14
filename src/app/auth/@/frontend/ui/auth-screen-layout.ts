@@ -23,7 +23,8 @@ export const AuthScreenLayout = (input: {
         width: 'full',
         maxWidth: 'xl',
         alignItems: 'center',
-        justifyContent: input.center ? 'center' : 'flex-start',
+        justifyContent: 'center',
+        flex: 1,
       }),
     },
     [
@@ -37,6 +38,7 @@ export const AuthScreenLayout = (input: {
             justifyContent: 'center',
             gap: 4,
             padding: 6,
+            flex: 1,
           }),
         },
         input.children,
