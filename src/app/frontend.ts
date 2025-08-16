@@ -48,6 +48,7 @@ import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract, topicContract } from './types'
 import { toBackendConnectionStatus } from './wire/backend-connection/backend-connection-status'
 import { WireFrontend } from './wire/frontend'
+import { LogoutFrontend } from './auth/logout/frontend'
 
 const initCtx = async (config: {
   backendUrl: Url
@@ -380,12 +381,6 @@ const View = (props: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
       ],
     ),
 
-    h(AuthFrontend.ViewModals, {
-      ctx: frontendCtx,
-      dispatch: (c) => props.dispatch({ t: 'auth', c }),
-      model: props.model.auth,
-    }),
-
     h(ToasterFrontend.View, {
       ctx: frontendCtx,
       model: props.model.frontend.toast,
@@ -394,45 +389,54 @@ const View = (props: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
   ])
 }
 
-const ViewScreen = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (m: MsgFrontend) => void }) => {
-  switch (input.model.frontend.currentScreen.currentScreen.n) {
+const ViewScreen = (props: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (m: MsgFrontend) => void }) => {
+  switch (props.model.frontend.currentScreen.currentScreen.n) {
     case 'settings':
       return h(SettingsFrontend.View, {
-        ctx: input.ctx,
-        dispatch: (c) => input.dispatch({ t: 'settings', c }),
-        model: input.model.settings,
+        ctx: props.ctx,
+        dispatch: (c) => props.dispatch({ t: 'settings', c }),
+        model: props.model.settings,
+        slots: {
+          menuItemsEnd() {
+            return h(LogoutFrontend.ViewMenuItem, {
+              ctx: props.ctx,
+              dispatch: (c) => props.dispatch({ t: 'auth', c: { t: 'got-logout-msg', c } }),
+              model: props.model.auth.logout,
+            })
+          },
+        },
       })
     default: {
-      const currentUser = toCurrentUserState({ model: input.model.auth.currentUser, ctx: input.ctx })
+      const currentUser = toCurrentUserState({ model: props.model.auth.currentUser, ctx: props.ctx })
       switch (currentUser.t) {
         case 'loading':
           return h(SplashScreen, {})
         case 'logged-out':
-          return h(ViewScreenLoggedOut, { model: input.model, dispatch: input.dispatch, ctx: input.ctx })
+          return h(ViewScreenLoggedOut, { model: props.model, dispatch: props.dispatch, ctx: props.ctx })
         case 'logged-in':
-          return h(ViewScreenLoggedIn, { model: input.model, dispatch: input.dispatch, ctx: input.ctx })
+          return h(ViewScreenLoggedIn, { model: props.model, dispatch: props.dispatch, ctx: props.ctx })
       }
     }
   }
 }
 
-const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
-  switch (input.ctx.currentScreen.n) {
+const ViewScreenLoggedOut: typeof ViewScreen = (props) => {
+  switch (props.ctx.currentScreen.n) {
     case 'auth':
       return h(AuthFrontend.View, {
-        model: input.model.auth,
-        ctx: input.ctx,
-        dispatch: (c) => input.dispatch({ t: 'auth', c }),
+        model: props.model.auth,
+        ctx: props.ctx,
+        dispatch: (c) => props.dispatch({ t: 'auth', c }),
       })
     default:
       return h(RedirectScreen, {
         onPress: () =>
-          input.dispatch({
+          props.dispatch({
             t: 'frontend',
             c: { t: 'current-screen', c: { t: 'clicked-link', screen: { t: 'login', n: 'auth' } } },
           }),
-        buttonText: input.ctx.t('login'),
-        text: input.ctx.t('login'),
+        buttonText: props.ctx.t('login'),
+        text: props.ctx.t('login'),
       })
   }
 }

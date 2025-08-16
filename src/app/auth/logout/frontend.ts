@@ -1,8 +1,12 @@
+import { TranslatedText } from '~/@/l18n'
 import { NotAsked } from '~/@/result'
+import { IconPowerOff } from '~/@/ui/icon'
+import { MenuItem } from '~/@/ui/menu-item'
+import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Frag } from '~/@/vdom/primitives/frag'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
-import { LogoutCmd } from '~/app/@/frontend/logout-cmd.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
 import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
@@ -14,6 +18,16 @@ const init: ModelFrontend = {
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
+    case 'clicked-logout-menu-item': {
+      return {
+        model: {
+          ...input.model,
+          opened: 'logged-out',
+        },
+        msgOut: [PlaySoundCmd.init(APP_SOUND.alertErrorSm)],
+      }
+    }
+
     case 'logout-drawer-clicked-confirm': {
       return {
         model: {
@@ -38,22 +52,16 @@ const update: FrontendModule['update'] = (input) => {
     }
   }
 
-  if (LogoutCmd.is(input.msgIn)) {
-    return {
-      model: {
-        ...input.model,
-        opened: 'logged-out',
-      },
-      msgOut: [PlaySoundCmd.init(APP_SOUND.alertErrorSm)],
-    }
-  }
-
   return { model: input.model }
 }
 
 export const TEST_ID_LOGOUT_CONFIRMATION = 'auth/logout-confirmation'
 
-const View = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
+const ViewConfirmation = (input: {
+  ctx: AppFrontendCtxBase
+  model: ModelFrontend
+  dispatch: (msg: MsgFrontend) => void
+}) => {
   return h(SurfaceConfirmation, {
     ctx: input.ctx,
     testId: TEST_ID_LOGOUT_CONFIRMATION,
@@ -71,8 +79,34 @@ const View = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: 
   })
 }
 
+const ViewMenuItem: FrontendModule['View'] = (props) => {
+  const { currentUserState } = props.ctx
+  switch (currentUserState.t) {
+    case 'loading':
+    case 'logged-out': {
+      return null
+    }
+    case 'logged-in': {
+      return h(Frag, {}, [
+        h(MenuItem, {
+          onPress: () => props.dispatch({ t: 'clicked-logout-menu-item' }),
+          renderIcon: (iconProps) => h(IconPowerOff, iconProps),
+          primary: props.ctx.t('auth.logout'),
+          renderEnd: (endProps) =>
+            h(Typography, {
+              ...endProps,
+              variant: 'caption',
+              text: TranslatedText.of(currentUserState.userProfile.username),
+            }),
+        }),
+        h(ViewConfirmation, props),
+      ])
+    }
+  }
+}
+
 export const LogoutFrontend = {
   init,
-  View,
+  ViewMenuItem,
   update,
 }

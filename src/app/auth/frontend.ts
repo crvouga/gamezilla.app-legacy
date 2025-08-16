@@ -6,6 +6,7 @@ import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
 import { IconMobilePhone, IconUserCircle } from '~/@/ui/icon'
 import { MenuItem } from '~/@/ui/menu-item'
+import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -26,7 +27,6 @@ import { ContinueAsGuestFrontend } from './login-as-guest/frontend'
 import { LoginWithSMSFrontend } from './login-with-sms/frontend'
 import { LogoutFrontend } from './logout/frontend'
 import { FrontendCtxModule, FrontendModule, ModelFrontend, MsgFrontend, rpcContract } from './types'
-import { sx } from '~/@/ui/theme/theme'
 
 //
 //
@@ -292,14 +292,6 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
   )
 }
 
-const ViewModals = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
-  return h(LogoutFrontend.View, {
-    ctx: input.ctx,
-    dispatch: (c) => input.dispatch({ t: 'got-logout-msg', c }),
-    model: input.model.logout,
-  })
-}
-
 const ViewCurrentUserMenuItem = (input: {
   model: ModelFrontend
   ctx: AppFrontendCtxBase
@@ -333,7 +325,6 @@ export const AuthFrontend = {
   update,
   subscriptions,
   View,
-  ViewModals,
   ViewCurrentUserMenuItem,
   initCtx,
 }

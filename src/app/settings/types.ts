@@ -16,7 +16,6 @@ export type MsgFrontendBase =
   | { t: 'settings.clicked-open-renderer' }
   | { t: 'settings.clicked-open-settings' }
   | { t: 'settings.clicked-back-button' }
-  | { t: 'settings.clicked-logout-menu-item' }
   | { t: 'settings.clicked-top-bar' }
   | { t: 'settings.closed-top-bar-surface' }
 
@@ -26,4 +25,7 @@ export type FrontendModule = AppFrontendModule<{
   Ctx: AppFrontendCtxBase
   Model: ModelFrontend
   Msg: MsgFrontend
+  ViewSlot: {
+    menuItemsEnd: {}
+  }
 }>

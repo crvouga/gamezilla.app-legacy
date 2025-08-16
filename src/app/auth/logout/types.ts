@@ -8,6 +8,7 @@ export type ModelFrontend = {
 }
 
 export type MsgFrontend =
+  | { t: 'clicked-logout-menu-item' }
   | { t: 'logout-drawer-closed' }
   | { t: 'logout-drawer-clicked-cancel' }
   | { t: 'logout-drawer-clicked-confirm' }

@@ -71,6 +71,7 @@ const Floating = (props: {
           flexDirection: 'col',
           display: props.open ? 'flex' : 'none',
           minWidth: 'sm',
+          overflow: 'hidden',
         }),
         ...toPositionStyle(props.position),
         ...toAlignmentStyle(props.position, props.alignment),

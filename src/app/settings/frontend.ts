@@ -1,11 +1,9 @@
 import { Eff } from '~/@/eff'
-import { TranslatedText } from '~/@/l18n'
 import { Sub } from '~/@/sub'
 import { Gutter } from '~/@/ui/gutter'
-import { IconCode, IconLanguage, IconPowerOff } from '~/@/ui/icon'
+import { IconCode, IconLanguage } from '~/@/ui/icon'
 import { MenuItem } from '~/@/ui/menu-item'
 import { sx } from '~/@/ui/theme/theme'
-import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
@@ -17,7 +15,6 @@ import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { AppFrontendModule } from '../@/architecture/app-frontend'
 import { APP_SOUND } from '../@/frontend/app-sound'
 import { BackScreenCmd } from '../@/frontend/back-screen-cmd.$msg'
-import { LogoutCmd } from '../@/frontend/logout-cmd.$msg'
 import { ScreenLangFrontend } from './screen-lang/frontend'
 import { ScreenRendererFrontend } from './screen-renderer/frontend'
 import { SoundFrontend } from './sound'
@@ -97,13 +94,6 @@ const updateBase: FrontendModule['update'] = ({ model, ctx, msg }) => {
       return { model, msgOut: [BackScreenCmd.init()] }
     }
 
-    case 'settings.clicked-logout-menu-item': {
-      return {
-        model: { ...model, isTopBarSurfaceOpen: false },
-        msgOut: [LogoutCmd.init()],
-      }
-    }
-
     case 'settings.clicked-top-bar': {
       const isOpenNew = !model.isTopBarSurfaceOpen
       return { model: { ...model, isTopBarSurfaceOpen: isOpenNew }, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
@@ -174,33 +164,10 @@ const ViewMain: FrontendModule['View'] = (props) => {
           renderIcon: (inputIcon) => IconCode(inputIcon),
           link: true,
         }),
-        h(ViewLogoutMenuItem, props),
+        props.slots?.menuItemsEnd?.({}),
         h(Gutter, { variant: 'screen' }),
       ]),
   })
-}
-
-const ViewLogoutMenuItem: FrontendModule['View'] = (input) => {
-  const { currentUserState } = input.ctx
-  switch (currentUserState.t) {
-    case 'loading':
-    case 'logged-out': {
-      return null
-    }
-    case 'logged-in': {
-      return h(MenuItem, {
-        onPress: () => input.dispatch({ t: 'settings.clicked-logout-menu-item' }),
-        renderIcon: (input) => h(IconPowerOff, input),
-        primary: input.ctx.t('auth.logout'),
-        renderEnd: (endProps) =>
-          h(Typography, {
-            ...endProps,
-            variant: 'caption',
-            text: TranslatedText.of(currentUserState.userProfile.username),
-          }),
-      })
-    }
-  }
 }
 
 export const SettingsFrontend = {
