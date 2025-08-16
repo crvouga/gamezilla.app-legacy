@@ -2,6 +2,7 @@ import { SxColor } from './color'
 import { Percentage } from './percentage'
 import { SxRounded } from './rounded'
 import { SxSize } from './size'
+import { Styles } from './styles'
 import { Transform } from './transform'
 
 export type AlignItems = 'center' | 'flex-start' | 'flex-end' | 'stretch' | 'baseline'
@@ -55,8 +56,8 @@ export type Sx = {
   transform?: Transform[] | null
 }
 
-export const sx = (config: Sx): Record<string, string | number | null> => {
-  const styles: Record<string, string | number | null> = {}
+export const sx = (config: Sx): Styles => {
+  const styles: Styles = {}
   applyMinWidth(styles, config.minWidth)
   applyMaxWidth(styles, config.maxWidth)
   applyPosition(styles, config.position)
@@ -89,26 +90,26 @@ export const sx = (config: Sx): Record<string, string | number | null> => {
   return styles
 }
 
-const applyGap = (styles: Record<string, string | number | null>, gap: number | null | undefined) => {
+const applyGap = (styles: Styles, gap: number | null | undefined) => {
   if (gap != null) {
     styles.gap = gap * 4
   }
 }
 
-const applySize = (styles: Record<string, string | number | null>, size: number | null | undefined) => {
+const applySize = (styles: Styles, size: number | null | undefined) => {
   if (size != null) {
     styles.width = size * 4
     styles.height = size * 4
   }
 }
 
-const applyOpacity = (styles: Record<string, string | number | null>, opacity: number | null | undefined) => {
+const applyOpacity = (styles: Styles, opacity: number | null | undefined) => {
   if (opacity != null) {
     styles.opacity = opacity
   }
 }
 
-const applyMaxWidth = (styles: Record<string, string | number | null>, maxWidth: Sx['maxWidth']) => {
+const applyMaxWidth = (styles: Styles, maxWidth: Sx['maxWidth']) => {
   if (!maxWidth) return
   switch (maxWidth) {
     case 'full':
@@ -138,7 +139,7 @@ const applyMaxWidth = (styles: Record<string, string | number | null>, maxWidth:
   }
 }
 
-const applyMinWidth = (styles: Record<string, string | number | null>, minWidth: Sx['minWidth']) => {
+const applyMinWidth = (styles: Styles, minWidth: Sx['minWidth']) => {
   if (!minWidth) return
   switch (minWidth) {
     case '3xs':
@@ -164,12 +165,12 @@ const applyMinWidth = (styles: Record<string, string | number | null>, minWidth:
   }
 }
 
-const applyPosition = (styles: Record<string, string | number | null>, position: Sx['position']) => {
+const applyPosition = (styles: Styles, position: Sx['position']) => {
   if (!position) return
   styles.position = position
 }
 
-const applyFlex = (styles: Record<string, string | number | null>, config: Sx) => {
+const applyFlex = (styles: Styles, config: Sx) => {
   if (config.flexDirection) {
     styles.display = 'flex'
     styles.flexDirection = config.flexDirection === 'row' ? 'row' : 'column'
@@ -186,17 +187,17 @@ const applyFlex = (styles: Record<string, string | number | null>, config: Sx) =
   }
 }
 
-const applyItems = (styles: Record<string, string | number | null>, items: Sx['alignItems']) => {
+const applyItems = (styles: Styles, items: Sx['alignItems']) => {
   if (!items) return
   styles.alignItems = items
 }
 
-const applyJustify = (styles: Record<string, string | number | null>, justify: Sx['justifyContent']) => {
+const applyJustify = (styles: Styles, justify: Sx['justifyContent']) => {
   if (!justify) return
   styles.justifyContent = justify
 }
 
-const applyPadding = (styles: Record<string, string | number | null>, config: Sx) => {
+const applyPadding = (styles: Styles, config: Sx) => {
   const { padding, paddingX, paddingY, paddingTop, paddingBottom, paddingLeft, paddingRight } = config
 
   if (padding != null) {
@@ -230,7 +231,7 @@ const applyPadding = (styles: Record<string, string | number | null>, config: Sx
   }
 }
 
-const applyBorderRadius = (styles: Record<string, string | number | null>, config: Sx) => {
+const applyBorderRadius = (styles: Styles, config: Sx) => {
   const { rounded, roundedTop, roundedBottom } = config
 
   if (rounded) {
@@ -253,12 +254,12 @@ const FONT_WEIGHT_MAP = {
   bold: 700,
   black: 900,
 }
-const applyFontWeight = (styles: Record<string, string | number | null>, weight: Sx['fontWeight']) => {
+const applyFontWeight = (styles: Styles, weight: Sx['fontWeight']) => {
   if (!weight) return
   styles.fontWeight = FONT_WEIGHT_MAP[weight] ?? 400
 }
 
-const applyFontSize = (styles: Record<string, string | number | null>, size: Sx['fontSize']) => {
+const applyFontSize = (styles: Styles, size: Sx['fontSize']) => {
   if (!size) return
   if (typeof size === 'number') {
     styles.fontSize = size
@@ -267,12 +268,12 @@ const applyFontSize = (styles: Record<string, string | number | null>, size: Sx[
   styles.fontSize = SxSize.toFontPixel(size)
 }
 
-const applyTextAlign = (styles: Record<string, string | number | null>, textAlign: Sx['textAlign']) => {
+const applyTextAlign = (styles: Styles, textAlign: Sx['textAlign']) => {
   if (!textAlign) return
   styles.textAlign = textAlign
 }
 
-const applyColors = (styles: Record<string, string | number | null>, config: Sx) => {
+const applyColors = (styles: Styles, config: Sx) => {
   if (config.textColor) {
     styles.color = SxColor.toHex(config.textColor)
   }
@@ -284,10 +285,7 @@ const applyColors = (styles: Record<string, string | number | null>, config: Sx)
   }
 }
 
-const applyWidth = (
-  styles: Record<string, string | number | null>,
-  width: 'full' | '1/2' | number | null | undefined,
-) => {
+const applyWidth = (styles: Styles, width: 'full' | '1/2' | number | null | undefined) => {
   if (width === 'full') {
     styles.width = '100%'
     return
@@ -301,10 +299,7 @@ const applyWidth = (
   }
 }
 
-const applyHeight = (
-  styles: Record<string, string | number | null>,
-  height: 'full' | '1/2' | number | null | undefined,
-) => {
+const applyHeight = (styles: Styles, height: 'full' | '1/2' | number | null | undefined) => {
   if (height === 'full') {
     styles.height = '100%'
     return
@@ -318,7 +313,7 @@ const applyHeight = (
   }
 }
 
-const applyBorderWidth = (styles: Record<string, string | number | null>, config: Sx) => {
+const applyBorderWidth = (styles: Styles, config: Sx) => {
   const { borderWidth, borderXWidth, borderYWidth } = config
   if (borderWidth != null) {
     styles.borderWidth = borderWidth * 1
@@ -333,37 +328,37 @@ const applyBorderWidth = (styles: Record<string, string | number | null>, config
   }
 }
 
-const applyInset = (styles: Record<string, string | number | null>, inset: number | null | undefined) => {
+const applyInset = (styles: Styles, inset: number | null | undefined) => {
   if (inset != null) {
     styles.inset = inset * 4
   }
 }
 
-const applyPointerEvents = (styles: Record<string, string | number | null>, pointerEvents: Sx['pointerEvents']) => {
+const applyPointerEvents = (styles: Styles, pointerEvents: Sx['pointerEvents']) => {
   if (pointerEvents != null) {
     styles.pointerEvents = pointerEvents
   }
 }
 
-const applyOverflow = (styles: Record<string, string | number | null>, overflow: Sx['overflow']) => {
+const applyOverflow = (styles: Styles, overflow: Sx['overflow']) => {
   if (overflow != null) {
     styles.overflow = overflow
   }
 }
 
-const applyAspectRatio = (styles: Record<string, string | number | null>, aspectRatio: Sx['aspectRatio']) => {
+const applyAspectRatio = (styles: Styles, aspectRatio: Sx['aspectRatio']) => {
   if (aspectRatio != null) {
     styles.aspectRatio = aspectRatio
   }
 }
 
-const applyZIndex = (styles: Record<string, string | number | null>, zIndex: Sx['zIndex']) => {
+const applyZIndex = (styles: Styles, zIndex: Sx['zIndex']) => {
   if (zIndex != null) {
     styles.zIndex = zIndex
   }
 }
 
-const applyTop = (styles: Record<string, string | number | null>, top: Sx['top']) => {
+const applyTop = (styles: Styles, top: Sx['top']) => {
   if (top == null) return
   if (typeof top === 'number') {
     styles.top = top * 4
@@ -372,7 +367,7 @@ const applyTop = (styles: Record<string, string | number | null>, top: Sx['top']
   styles.top = top
 }
 
-const applyRight = (styles: Record<string, string | number | null>, right: Sx['right']) => {
+const applyRight = (styles: Styles, right: Sx['right']) => {
   if (right == null) return
   if (typeof right === 'number') {
     styles.right = right * 4
@@ -381,7 +376,7 @@ const applyRight = (styles: Record<string, string | number | null>, right: Sx['r
   styles.right = right
 }
 
-const applyBottom = (styles: Record<string, string | number | null>, bottom: Sx['bottom']) => {
+const applyBottom = (styles: Styles, bottom: Sx['bottom']) => {
   if (bottom == null) return
   if (typeof bottom === 'number') {
     styles.bottom = bottom * 4
@@ -390,7 +385,7 @@ const applyBottom = (styles: Record<string, string | number | null>, bottom: Sx[
   styles.bottom = bottom
 }
 
-const applyLeft = (styles: Record<string, string | number | null>, left: Sx['left']) => {
+const applyLeft = (styles: Styles, left: Sx['left']) => {
   if (left == null) return
   if (typeof left === 'number') {
     styles.left = left * 4
@@ -399,13 +394,13 @@ const applyLeft = (styles: Record<string, string | number | null>, left: Sx['lef
   styles.left = left
 }
 
-const applyDisplay = (styles: Record<string, string | number | null>, display: Sx['display']) => {
+const applyDisplay = (styles: Styles, display: Sx['display']) => {
   if (display != null) {
     styles.display = display
   }
 }
 
-const applyTransform = (styles: Record<string, string | number | null>, transform: Sx['transform']) => {
+const applyTransform = (styles: Styles, transform: Sx['transform']) => {
   if (transform != null) {
     styles.transform = Transform.toString(transform)
   }
