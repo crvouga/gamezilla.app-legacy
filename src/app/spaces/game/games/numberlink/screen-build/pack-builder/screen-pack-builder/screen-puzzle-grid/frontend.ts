@@ -22,16 +22,12 @@ const update: FrontendModule['update'] = (input) => {
 }
 
 const View: FrontendModule['View'] = (input) => {
-  const packBuilder = input.modelSpace
-
-  if (!packBuilder) return null
-
   return h(ScreenLayout, {
     parentScreen: input.ctx.parentScreen,
     id: 'screen-puzzle-grid',
     ctx: input.ctx,
     navBar: {
-      title: input.ctx.t('numberlink-pack-name', packBuilder.pack.name),
+      title: input.ctx.t('numberlink-pack-name', input.modelSpace.pack.name),
       back: {
         onPress: () =>
           input.dispatch({
@@ -45,9 +41,9 @@ const View: FrontendModule['View'] = (input) => {
     },
     renderBody: () =>
       h(PackPuzzleGridUI.View, {
-        id: packBuilder.pack.id,
-        currentSlideIndex: ScreenPackBuildSpace.toSlideIndex(packBuilder),
-        puzzleIds: packBuilder.pack.puzzleIds,
+        id: input.modelSpace.pack.id,
+        currentSlideIndex: ScreenPackBuildSpace.toSlideIndex(input.modelSpace),
+        puzzleIds: input.modelSpace.pack.puzzleIds,
         onSlideIndexChanged: (newSlideIndex) => {
           input.dispatch({
             t: 'got-msg-space',

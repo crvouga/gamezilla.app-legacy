@@ -5,7 +5,7 @@ import type { VDom } from '~/@/vdom/vdom'
 import { Text } from '../vdom/primitives/text'
 import { Clickable } from './clickable'
 import { Spinner } from './spinner'
-import { sx, Theme } from './theme/theme'
+import { sx, Sx } from '../vdom/style/sx'
 
 export type ButtonVariant = 'contained' | 'outlined' | 'text' | 'soft'
 
@@ -112,7 +112,7 @@ export const Button = (input: ButtonInput) => {
   )
 }
 
-const toIconSizeStyle = (size: ButtonSize): Theme => {
+const toIconSizeStyle = (size: ButtonSize): Sx => {
   switch (size) {
     case 'lg':
       return { width: 32, height: 32 }
@@ -125,7 +125,7 @@ const toIconSizeStyle = (size: ButtonSize): Theme => {
   }
 }
 
-const toSizeStyle = (size: ButtonSize): Theme => {
+const toSizeStyle = (size: ButtonSize): Sx => {
   switch (size) {
     case 'lg':
       return { height: 14, paddingX: 6 }
@@ -138,7 +138,7 @@ const toSizeStyle = (size: ButtonSize): Theme => {
   }
 }
 
-const toTextSizeStyle = (size: ButtonSize): Theme => {
+const toTextSizeStyle = (size: ButtonSize): Sx => {
   switch (size) {
     case 'lg':
       return { fontSize: 'xl' }
@@ -151,7 +151,7 @@ const toTextSizeStyle = (size: ButtonSize): Theme => {
   }
 }
 
-const toButtonStyle = (combo: Combo): Theme => {
+const toButtonStyle = (combo: Combo): Sx => {
   switch (combo) {
     case 'contained-primary':
       return { backgroundColor: 'blue-600' }
@@ -180,7 +180,7 @@ const toButtonStyle = (combo: Combo): Theme => {
   }
 }
 
-const toTextStyle = (combo: Combo): Theme => {
+const toTextStyle = (combo: Combo): Sx => {
   switch (combo) {
     case 'contained-primary':
       return { textColor: 'white' }

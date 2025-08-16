@@ -1,5 +1,5 @@
 import { IPlatform } from '~/@/platform/platform'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
 import { GameName } from './@/game-name'

@@ -1,6 +1,6 @@
 import { MenuItem } from '~/@/ui/menu-item'
 import { RadioInputIcon } from '~/@/ui/radio-input'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { VDomImplWeb } from '~/@/vdom/vdom-impl-web'

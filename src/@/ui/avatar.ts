@@ -3,7 +3,7 @@ import { Box } from '../vdom/primitives/box'
 import { Image } from '../vdom/primitives/image'
 import { Path } from '../vdom/primitives/svg/path'
 import { Svg } from '../vdom/primitives/svg/svg'
-import { sx } from './theme/theme'
+import { sx } from '../vdom/style/sx'
 
 type AvatarProps = {
   src?: string | null | undefined

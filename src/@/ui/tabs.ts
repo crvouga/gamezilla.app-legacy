@@ -3,7 +3,7 @@ import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '../vdom/primitives/text'
 import { ClickableTransparent } from './clickable'
-import { sx } from './theme/theme'
+import { sx } from '../vdom/style/sx'
 
 export const Tabs = <TTab extends string>({
   tabs,

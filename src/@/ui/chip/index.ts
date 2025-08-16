@@ -4,7 +4,7 @@ import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
 import { VDom } from '~/@/vdom/vdom'
 import { Clickable } from '../clickable'
-import { Theme, sx } from '../theme/theme'
+import { Sx, sx } from '../../vdom/style/sx'
 
 export type ChipSize = 'sm' | 'lg'
 
@@ -63,7 +63,7 @@ const Tag = ({
   }
 }
 
-const toSizeStyles = (input: ChipProps): Theme => {
+const toSizeStyles = (input: ChipProps): Sx => {
   switch (input.size) {
     case 'sm':
       return {

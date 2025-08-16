@@ -1,6 +1,6 @@
-export type ThemeSize = '3xs' | '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl'
+export type SxSize = '3xs' | '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl'
 
-const toWidthPixel = (size: ThemeSize): number => {
+const toWidthPixel = (size: SxSize): number => {
   switch (size) {
     case '3xs':
       return 256 // 16rem
@@ -31,7 +31,7 @@ const toWidthPixel = (size: ThemeSize): number => {
   }
 }
 
-const toFontPixel = (size: ThemeSize): number => {
+const toFontPixel = (size: SxSize): number => {
   switch (size) {
     case '3xs':
       return 10
@@ -64,7 +64,7 @@ const toFontPixel = (size: ThemeSize): number => {
   }
 }
 
-export const ThemeSize = {
+export const SxSize = {
   toWidthPixel,
   toFontPixel,
 }

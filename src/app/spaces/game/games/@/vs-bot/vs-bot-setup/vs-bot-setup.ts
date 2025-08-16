@@ -15,7 +15,7 @@ import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ScreenLayoutGameCoverArt } from '../../ui/screen-layout-game-cover-art'
 import type { PlayerType, VsBotInput } from '../vs-bot'
 import { Text } from '~/@/vdom/primitives/text'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 
 //
 //

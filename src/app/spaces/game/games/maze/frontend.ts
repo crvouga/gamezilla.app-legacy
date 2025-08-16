@@ -24,7 +24,7 @@ import {
   initShared,
 } from './types'
 import { Text } from '~/@/vdom/primitives/text'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 
 //
 //

@@ -1,7 +1,7 @@
 import { Translator } from '~/@/l18n/generated'
 import { TimeSpan } from '~/@/time/time-span'
 import { MenuItem } from '~/@/ui/menu-item'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Circle } from '~/@/vdom/primitives/svg/circle'

@@ -2,7 +2,7 @@ import { h } from '~/@/vdom/h'
 import { Box } from '../vdom/primitives/box'
 import { Path } from '../vdom/primitives/svg/path'
 import { Svg } from '../vdom/primitives/svg/svg'
-import { sx } from './theme/theme'
+import { sx } from '../vdom/style/sx'
 
 export const Spinner = (props: { style?: Record<string, unknown> }) => {
   return h(

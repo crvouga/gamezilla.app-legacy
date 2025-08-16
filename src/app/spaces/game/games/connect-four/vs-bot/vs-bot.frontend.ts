@@ -25,7 +25,7 @@ import {
   type MsgToFrontend,
   updateSpace,
 } from './vs-bot.types'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 
 //
 //

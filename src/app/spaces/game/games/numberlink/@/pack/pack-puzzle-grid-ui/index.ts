@@ -1,10 +1,11 @@
 import { TranslatedText } from '~/@/l18n'
 import { Clickable, ClickablePaper } from '~/@/ui/clickable'
+import { Grid } from '~/@/ui/grid/grid'
 import { IconPlus } from '~/@/ui/icon'
 import { PaginationDots } from '~/@/ui/pagination-dots'
 import { Paper } from '~/@/ui/paper'
 import { Swiper } from '~/@/ui/swiper/swiper'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -54,7 +55,6 @@ const View = (input: {
             style: sx({
               flexDirection: 'col',
               height: 'full',
-              // width: '3/4',
               alignItems: 'center',
               justifyContent: 'center',
             }),
@@ -136,16 +136,15 @@ const ViewGrid = (input: {
 }) => {
   const indexOffset = input.slideIndex * (COLUMN_COUNT * ROW_COUNT)
 
-  return h(
-    Box,
-    {
-      role: 'grid',
-      style: sx({
-        // gridTemplateColumns: COLUMN_COUNT,
-        // gridTemplateRows: ROW_COUNT,
-      }),
-    },
-    range2d({ x: COLUMN_COUNT, y: ROW_COUNT }).map(({ x, y }) =>
+  return h(Grid, {
+    columnCount: COLUMN_COUNT,
+    rowStyle: sx({
+      gap: 1,
+    }),
+    itemStyle: sx({
+      gap: 1,
+    }),
+    items: range2d({ x: COLUMN_COUNT, y: ROW_COUNT }).map(({ x, y }) =>
       h(ViewGridCell, {
         key: `${x}-${y}`,
         x,
@@ -155,7 +154,7 @@ const ViewGrid = (input: {
         renderCell: input.renderCell,
       }),
     ),
-  )
+  })
 }
 
 const ViewGridCell = (input: {
@@ -255,7 +254,8 @@ const ViewEmptyCell = () => {
       overflow: 'hidden',
       rounded: 'md',
       borderWidth: 2,
-      backgroundColor: 'orange-500/50',
+      backgroundColor: 'neutral-900',
+      borderColor: 'neutral-800',
     }),
   })
 }

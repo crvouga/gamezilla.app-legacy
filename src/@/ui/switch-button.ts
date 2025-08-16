@@ -1,7 +1,7 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Pressable } from '~/@/vdom/primitives/pressable'
-import { sx } from './theme/theme'
+import { sx } from '../vdom/style/sx'
 
 export const SwitchButton = ({
   onToggle,

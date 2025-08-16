@@ -9,7 +9,7 @@ import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { ScreenSize } from '../../screen/screen-size'
 import { SurfaceLayout } from '../layout/surface-layout'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 
 export type SurfaceUnsavedChangesProps = {
   ctx: {

@@ -5,7 +5,7 @@ import { VDom } from '~/@/vdom/vdom'
 import { CancelSubmitButtons } from '../../../form/cancel-submit-buttons'
 import { ScreenNavBarTablet } from './screen-nav-bar-tablet'
 import { ParentScreenProps, ScreenLayoutProps } from '../screen-layout-props'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 
 export const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps | null): VDom[] => {
   if (!screen) return []

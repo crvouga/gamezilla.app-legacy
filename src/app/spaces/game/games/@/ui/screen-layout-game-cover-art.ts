@@ -1,5 +1,5 @@
 import { Paper } from '~/@/ui/paper'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Path } from '~/@/vdom/primitives/svg/path'

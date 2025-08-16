@@ -1,17 +1,21 @@
+import { SxColor } from './color'
 import { Percentage } from './percentage'
-import { ThemeColor } from './theme-color'
-import { ThemeRounded } from './theme-rounded'
-import { ThemeSize } from './theme-size'
+import { SxRounded } from './rounded'
+import { SxSize } from './size'
 import { Transform } from './transform'
 
-export type Theme = {
+export type AlignItems = 'center' | 'flex-start' | 'flex-end' | 'stretch' | 'baseline'
+
+export type JustifyContent = 'center' | 'flex-start' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly'
+
+export type Sx = {
   position?: 'absolute' | 'relative' | null
   flexDirection?: 'row' | 'col' | null
   flex?: number | null
   flexGrow?: number | null
   flexShrink?: number | null
-  alignItems?: 'center' | 'flex-start' | 'flex-end' | 'stretch' | 'baseline' | null
-  justifyContent?: 'center' | 'flex-start' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly' | null
+  alignItems?: AlignItems | null
+  justifyContent?: JustifyContent | null
   padding?: number | null
   paddingX?: number | null
   paddingY?: number | null
@@ -22,15 +26,15 @@ export type Theme = {
   overflow?: 'hidden' | null
   opacity?: number | null
   pointerEvents?: 'none' | 'auto' | null
-  rounded?: ThemeRounded | null
-  roundedTop?: ThemeRounded | null
-  roundedBottom?: ThemeRounded | null
-  textColor?: ThemeColor | null
+  rounded?: SxRounded | null
+  roundedTop?: SxRounded | null
+  roundedBottom?: SxRounded | null
+  textColor?: SxColor | null
   fontWeight?: 'normal' | 'bold' | 'black' | null
-  fontSize?: ThemeSize | number | null
-  backgroundColor?: ThemeColor | null
+  fontSize?: SxSize | number | null
+  backgroundColor?: SxColor | null
   textAlign?: 'left' | 'center' | 'right' | null
-  borderColor?: ThemeColor | null
+  borderColor?: SxColor | null
   width?: 'full' | '1/2' | number | null
   height?: 'full' | '1/2' | number | null
   size?: number | null
@@ -39,8 +43,8 @@ export type Theme = {
   borderYWidth?: number | null
   gap?: number | null
   inset?: number | null
-  maxWidth?: 'full' | '1/2' | ThemeSize | number | null
-  minWidth?: ThemeSize | null
+  maxWidth?: 'full' | '1/2' | SxSize | number | null
+  minWidth?: SxSize | null
   aspectRatio?: number | null
   zIndex?: number | null
   top?: Percentage | number | null
@@ -51,7 +55,7 @@ export type Theme = {
   transform?: Transform[] | null
 }
 
-export const sx = (config: Theme): Record<string, string | number | null> => {
+export const sx = (config: Sx): Record<string, string | number | null> => {
   const styles: Record<string, string | number | null> = {}
   applyMinWidth(styles, config.minWidth)
   applyMaxWidth(styles, config.maxWidth)
@@ -104,7 +108,7 @@ const applyOpacity = (styles: Record<string, string | number | null>, opacity: n
   }
 }
 
-const applyMaxWidth = (styles: Record<string, string | number | null>, maxWidth: Theme['maxWidth']) => {
+const applyMaxWidth = (styles: Record<string, string | number | null>, maxWidth: Sx['maxWidth']) => {
   if (!maxWidth) return
   switch (maxWidth) {
     case 'full':
@@ -126,7 +130,7 @@ const applyMaxWidth = (styles: Record<string, string | number | null>, maxWidth:
     case '5xl':
     case '6xl':
     case '7xl':
-      styles.maxWidth = ThemeSize.toWidthPixel(maxWidth)
+      styles.maxWidth = SxSize.toWidthPixel(maxWidth)
       break
   }
   if (typeof maxWidth === 'number') {
@@ -134,7 +138,7 @@ const applyMaxWidth = (styles: Record<string, string | number | null>, maxWidth:
   }
 }
 
-const applyMinWidth = (styles: Record<string, string | number | null>, minWidth: Theme['minWidth']) => {
+const applyMinWidth = (styles: Record<string, string | number | null>, minWidth: Sx['minWidth']) => {
   if (!minWidth) return
   switch (minWidth) {
     case '3xs':
@@ -150,7 +154,7 @@ const applyMinWidth = (styles: Record<string, string | number | null>, minWidth:
     case '5xl':
     case '6xl':
     case '7xl':
-      styles.minWidth = ThemeSize.toWidthPixel(minWidth)
+      styles.minWidth = SxSize.toWidthPixel(minWidth)
       break
     default:
       if (typeof minWidth === 'number') {
@@ -160,12 +164,12 @@ const applyMinWidth = (styles: Record<string, string | number | null>, minWidth:
   }
 }
 
-const applyPosition = (styles: Record<string, string | number | null>, position: Theme['position']) => {
+const applyPosition = (styles: Record<string, string | number | null>, position: Sx['position']) => {
   if (!position) return
   styles.position = position
 }
 
-const applyFlex = (styles: Record<string, string | number | null>, config: Theme) => {
+const applyFlex = (styles: Record<string, string | number | null>, config: Sx) => {
   if (config.flexDirection) {
     styles.display = 'flex'
     styles.flexDirection = config.flexDirection === 'row' ? 'row' : 'column'
@@ -182,17 +186,17 @@ const applyFlex = (styles: Record<string, string | number | null>, config: Theme
   }
 }
 
-const applyItems = (styles: Record<string, string | number | null>, items: Theme['alignItems']) => {
+const applyItems = (styles: Record<string, string | number | null>, items: Sx['alignItems']) => {
   if (!items) return
   styles.alignItems = items
 }
 
-const applyJustify = (styles: Record<string, string | number | null>, justify: Theme['justifyContent']) => {
+const applyJustify = (styles: Record<string, string | number | null>, justify: Sx['justifyContent']) => {
   if (!justify) return
   styles.justifyContent = justify
 }
 
-const applyPadding = (styles: Record<string, string | number | null>, config: Theme) => {
+const applyPadding = (styles: Record<string, string | number | null>, config: Sx) => {
   const { padding, paddingX, paddingY, paddingTop, paddingBottom, paddingLeft, paddingRight } = config
 
   if (padding != null) {
@@ -226,21 +230,21 @@ const applyPadding = (styles: Record<string, string | number | null>, config: Th
   }
 }
 
-const applyBorderRadius = (styles: Record<string, string | number | null>, config: Theme) => {
+const applyBorderRadius = (styles: Record<string, string | number | null>, config: Sx) => {
   const { rounded, roundedTop, roundedBottom } = config
 
   if (rounded) {
-    styles.borderRadius = ThemeRounded.BORDER_RADIUS_MAP[rounded] ?? 0
+    styles.borderRadius = SxRounded.BORDER_RADIUS_MAP[rounded] ?? 0
   }
 
   if (roundedTop) {
-    styles.borderTopLeftRadius = ThemeRounded.BORDER_RADIUS_MAP[roundedTop]
-    styles.borderTopRightRadius = ThemeRounded.BORDER_RADIUS_MAP[roundedTop] ?? 0
+    styles.borderTopLeftRadius = SxRounded.BORDER_RADIUS_MAP[roundedTop]
+    styles.borderTopRightRadius = SxRounded.BORDER_RADIUS_MAP[roundedTop] ?? 0
   }
 
   if (roundedBottom) {
-    styles.borderBottomLeftRadius = ThemeRounded.BORDER_RADIUS_MAP[roundedBottom] ?? 0
-    styles.borderBottomRightRadius = ThemeRounded.BORDER_RADIUS_MAP[roundedBottom] ?? 0
+    styles.borderBottomLeftRadius = SxRounded.BORDER_RADIUS_MAP[roundedBottom] ?? 0
+    styles.borderBottomRightRadius = SxRounded.BORDER_RADIUS_MAP[roundedBottom] ?? 0
   }
 }
 
@@ -249,34 +253,34 @@ const FONT_WEIGHT_MAP = {
   bold: 700,
   black: 900,
 }
-const applyFontWeight = (styles: Record<string, string | number | null>, weight: Theme['fontWeight']) => {
+const applyFontWeight = (styles: Record<string, string | number | null>, weight: Sx['fontWeight']) => {
   if (!weight) return
   styles.fontWeight = FONT_WEIGHT_MAP[weight] ?? 400
 }
 
-const applyFontSize = (styles: Record<string, string | number | null>, size: Theme['fontSize']) => {
+const applyFontSize = (styles: Record<string, string | number | null>, size: Sx['fontSize']) => {
   if (!size) return
   if (typeof size === 'number') {
     styles.fontSize = size
     return
   }
-  styles.fontSize = ThemeSize.toFontPixel(size)
+  styles.fontSize = SxSize.toFontPixel(size)
 }
 
-const applyTextAlign = (styles: Record<string, string | number | null>, textAlign: Theme['textAlign']) => {
+const applyTextAlign = (styles: Record<string, string | number | null>, textAlign: Sx['textAlign']) => {
   if (!textAlign) return
   styles.textAlign = textAlign
 }
 
-const applyColors = (styles: Record<string, string | number | null>, config: Theme) => {
+const applyColors = (styles: Record<string, string | number | null>, config: Sx) => {
   if (config.textColor) {
-    styles.color = ThemeColor.toHex(config.textColor)
+    styles.color = SxColor.toHex(config.textColor)
   }
   if (config.backgroundColor) {
-    styles.backgroundColor = ThemeColor.toHex(config.backgroundColor)
+    styles.backgroundColor = SxColor.toHex(config.backgroundColor)
   }
   if (config.borderColor) {
-    styles.borderColor = ThemeColor.toHex(config.borderColor)
+    styles.borderColor = SxColor.toHex(config.borderColor)
   }
 }
 
@@ -314,7 +318,7 @@ const applyHeight = (
   }
 }
 
-const applyBorderWidth = (styles: Record<string, string | number | null>, config: Theme) => {
+const applyBorderWidth = (styles: Record<string, string | number | null>, config: Sx) => {
   const { borderWidth, borderXWidth, borderYWidth } = config
   if (borderWidth != null) {
     styles.borderWidth = borderWidth * 1
@@ -335,31 +339,31 @@ const applyInset = (styles: Record<string, string | number | null>, inset: numbe
   }
 }
 
-const applyPointerEvents = (styles: Record<string, string | number | null>, pointerEvents: Theme['pointerEvents']) => {
+const applyPointerEvents = (styles: Record<string, string | number | null>, pointerEvents: Sx['pointerEvents']) => {
   if (pointerEvents != null) {
     styles.pointerEvents = pointerEvents
   }
 }
 
-const applyOverflow = (styles: Record<string, string | number | null>, overflow: Theme['overflow']) => {
+const applyOverflow = (styles: Record<string, string | number | null>, overflow: Sx['overflow']) => {
   if (overflow != null) {
     styles.overflow = overflow
   }
 }
 
-const applyAspectRatio = (styles: Record<string, string | number | null>, aspectRatio: Theme['aspectRatio']) => {
+const applyAspectRatio = (styles: Record<string, string | number | null>, aspectRatio: Sx['aspectRatio']) => {
   if (aspectRatio != null) {
     styles.aspectRatio = aspectRatio
   }
 }
 
-const applyZIndex = (styles: Record<string, string | number | null>, zIndex: Theme['zIndex']) => {
+const applyZIndex = (styles: Record<string, string | number | null>, zIndex: Sx['zIndex']) => {
   if (zIndex != null) {
     styles.zIndex = zIndex
   }
 }
 
-const applyTop = (styles: Record<string, string | number | null>, top: Theme['top']) => {
+const applyTop = (styles: Record<string, string | number | null>, top: Sx['top']) => {
   if (top == null) return
   if (typeof top === 'number') {
     styles.top = top * 4
@@ -368,7 +372,7 @@ const applyTop = (styles: Record<string, string | number | null>, top: Theme['to
   styles.top = top
 }
 
-const applyRight = (styles: Record<string, string | number | null>, right: Theme['right']) => {
+const applyRight = (styles: Record<string, string | number | null>, right: Sx['right']) => {
   if (right == null) return
   if (typeof right === 'number') {
     styles.right = right * 4
@@ -377,7 +381,7 @@ const applyRight = (styles: Record<string, string | number | null>, right: Theme
   styles.right = right
 }
 
-const applyBottom = (styles: Record<string, string | number | null>, bottom: Theme['bottom']) => {
+const applyBottom = (styles: Record<string, string | number | null>, bottom: Sx['bottom']) => {
   if (bottom == null) return
   if (typeof bottom === 'number') {
     styles.bottom = bottom * 4
@@ -386,7 +390,7 @@ const applyBottom = (styles: Record<string, string | number | null>, bottom: The
   styles.bottom = bottom
 }
 
-const applyLeft = (styles: Record<string, string | number | null>, left: Theme['left']) => {
+const applyLeft = (styles: Record<string, string | number | null>, left: Sx['left']) => {
   if (left == null) return
   if (typeof left === 'number') {
     styles.left = left * 4
@@ -395,16 +399,16 @@ const applyLeft = (styles: Record<string, string | number | null>, left: Theme['
   styles.left = left
 }
 
-const applyDisplay = (styles: Record<string, string | number | null>, display: Theme['display']) => {
+const applyDisplay = (styles: Record<string, string | number | null>, display: Sx['display']) => {
   if (display != null) {
     styles.display = display
   }
 }
 
-const applyTransform = (styles: Record<string, string | number | null>, transform: Theme['transform']) => {
+const applyTransform = (styles: Record<string, string | number | null>, transform: Sx['transform']) => {
   if (transform != null) {
     styles.transform = Transform.toString(transform)
   }
 }
 
-export const Theme = {}
+export const Sx = {}

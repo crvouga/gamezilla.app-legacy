@@ -3,7 +3,7 @@ import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Pressable } from '../vdom/primitives/pressable'
 import { Text } from '../vdom/primitives/text'
-import { sx } from './theme/theme'
+import { sx } from '../vdom/style/sx'
 import { Typography } from './typography'
 
 export type ChipSelectionOption<T = string> = {

@@ -1,6 +1,6 @@
 import { Clickable } from '~/@/ui/clickable'
 import { Grid } from '~/@/ui/grid/grid'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'

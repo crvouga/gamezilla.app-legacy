@@ -1,4 +1,4 @@
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { Circle } from '~/@/vdom/primitives/svg/circle'
 import { Defs } from '~/@/vdom/primitives/svg/defs'

@@ -4,7 +4,7 @@ import { Box } from '~/@/vdom/primitives/box'
 import type { VDom } from '~/@/vdom/vdom'
 import { Text } from '../vdom/primitives/text'
 import { PAPER_STYLE } from './paper'
-import { sx } from './theme/theme'
+import { sx } from '../vdom/style/sx'
 
 export const Select = <T>(props: {
   helperText?: string

@@ -1,5 +1,5 @@
 import { Button } from '~/@/ui/button'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { ScreenLayoutProps } from '../screen-layout-props'

@@ -3,7 +3,7 @@ import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
 import type { VDom } from '~/@/vdom/vdom'
 import { IconCheckmarkCircle, IconExclamationCircle, IconInfoCircle } from './icon'
-import { sx } from './theme/theme'
+import { sx } from '../vdom/style/sx'
 
 export const AlertError = ({ text }: { text?: string }) => {
   return h(

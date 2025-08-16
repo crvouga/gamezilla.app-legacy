@@ -1,7 +1,7 @@
 import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { Button } from './button'
-import { sx } from './theme/theme'
+import { sx } from '../vdom/style/sx'
 
 export const ButtonVertical = (props: { children: VDom[] }) => {
   return h(

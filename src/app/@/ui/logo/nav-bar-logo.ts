@@ -1,4 +1,4 @@
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { Pressable } from '~/@/vdom/primitives/pressable'
 import { Text } from '~/@/vdom/primitives/text'

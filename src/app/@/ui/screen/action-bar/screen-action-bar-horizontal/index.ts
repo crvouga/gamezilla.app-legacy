@@ -1,7 +1,7 @@
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconEllipsisVertical } from '~/@/ui/icon'
 import { MenuItem } from '~/@/ui/menu-item'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Frag } from '~/@/vdom/primitives/frag'

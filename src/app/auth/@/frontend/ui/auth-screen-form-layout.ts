@@ -7,7 +7,7 @@ import { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { AuthScreenHeader } from './auth-screen-header'
 import { AuthScreenLayout } from './auth-screen-layout'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 
 export const AuthScreenFormLayout = (input: {
   ctx: {

@@ -2,7 +2,7 @@ import { AriaRole } from '~/@/html/aria-role'
 import type { TranslatedText } from '~/@/l18n'
 import { h } from '~/@/vdom/h'
 import { Text } from '../vdom/primitives/text'
-import { sx } from './theme/theme'
+import { sx } from '../vdom/style/sx'
 
 export type TypographyVariant = 'title' | 'body' | 'label' | 'subtitle' | 'caption'
 

@@ -4,7 +4,7 @@ import { VDom } from '~/@/vdom/vdom'
 import { ParentScreenProps, ScreenLayoutProps } from '../screen-layout-props'
 import { ActionBars } from './action-bars'
 import { renderNavBars } from './nav-bars'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 
 export const ScreenLayoutTablet = (props: ScreenLayoutProps) => {
   return h(

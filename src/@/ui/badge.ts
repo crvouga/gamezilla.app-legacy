@@ -4,7 +4,7 @@ import { VDom } from '~/@/vdom/vdom'
 import { sleep } from '../promise/sleep'
 import { TimeSpan } from '../time/time-span'
 import { Transition } from '../vdom/primitives/transition'
-import { sx } from './theme/theme'
+import { sx } from '../vdom/style/sx'
 
 export const Badge = (input: { badgeContent: VDom; id: string; children: VDom[] }) => {
   return h(Box, { style: sx({ position: 'relative' }) }, [

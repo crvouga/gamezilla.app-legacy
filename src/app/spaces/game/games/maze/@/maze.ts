@@ -7,7 +7,7 @@ import { Line } from '~/@/vdom/primitives/svg/line'
 import { Rect } from '~/@/vdom/primitives/svg/rect'
 import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { Direction, Position } from './position'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 
 //
 //

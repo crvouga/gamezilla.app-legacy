@@ -1,6 +1,6 @@
 import { Chip } from '~/@/ui/chip'
 import { IconCrown } from '~/@/ui/icon'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 

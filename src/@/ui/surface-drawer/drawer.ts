@@ -6,7 +6,7 @@ import { Pressable } from '~/@/vdom/primitives/pressable'
 import { SafeAreaBox } from '~/@/vdom/primitives/safe-area-box'
 import type { VDom } from '~/@/vdom/vdom'
 import { SURFACE_STYLE } from '../surface'
-import { sx } from '../theme/theme'
+import { sx } from '../../vdom/style/sx'
 import type { DrawerProps, DrawerPropsPrivate } from './drawer-shared'
 
 export type DrawerInput = DrawerPropsPrivate & {

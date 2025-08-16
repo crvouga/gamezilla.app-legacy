@@ -6,7 +6,7 @@ import { preventConsoleErrorWhenClosingDrawer } from '~/@/ui/surface-drawer/draw
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import { sx } from '../theme/theme'
+import { sx } from '../../vdom/style/sx'
 
 export const SurfaceHeader = (input: {
   ctx: { t: Translator }

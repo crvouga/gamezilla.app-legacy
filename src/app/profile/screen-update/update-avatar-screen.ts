@@ -1,6 +1,6 @@
 import { Avatar } from '~/@/ui/avatar'
 import { TextField } from '~/@/ui/text-field'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { AppFrontendCtx, AppFrontendCtxBase } from '~/app/@/frontend/ctx'

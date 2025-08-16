@@ -7,7 +7,7 @@ import type { VDom } from '~/@/vdom/vdom'
 import { Text } from '../vdom/primitives/text'
 import { IconXMark } from './icon'
 import { PAPER_STYLE } from './paper'
-import { sx } from './theme/theme'
+import { sx } from '../vdom/style/sx'
 
 export const TextField = (input: {
   startIcon?: VDom

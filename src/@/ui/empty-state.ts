@@ -3,7 +3,7 @@ import { Box } from '~/@/vdom/primitives/box'
 import type { VDom } from '~/@/vdom/vdom'
 import { h } from '~/@/vdom/h'
 import { Typography } from './typography'
-import { sx } from './theme/theme'
+import { sx } from '../vdom/style/sx'
 
 export const EmptyState = (input: {
   renderIcon: (input: { style: Record<string, unknown> }) => VDom

@@ -1,7 +1,7 @@
 import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { Surface } from '../surface'
-import { sx } from '../theme/theme'
+import { sx } from '../../vdom/style/sx'
 
 export const DialogSurface = (input: { children: VDom }) => {
   return h(

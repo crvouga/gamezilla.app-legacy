@@ -1,7 +1,7 @@
 import { Clickable } from '~/@/ui/clickable'
 import { IconGear, IconLanguage } from '~/@/ui/icon'
 import { MenuItem } from '~/@/ui/menu-item'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'

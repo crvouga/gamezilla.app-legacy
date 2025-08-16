@@ -1,7 +1,7 @@
 import { h } from '~/@/vdom/h'
 import { Pressable } from '~/@/vdom/primitives/pressable'
 import { Text } from '~/@/vdom/primitives/text'
-import { sx } from '../theme/theme'
+import { sx } from '../../vdom/style/sx'
 
 export type CheckboxState = 'checked' | 'unchecked' | 'indeterminate'
 

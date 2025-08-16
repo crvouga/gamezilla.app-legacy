@@ -1,5 +1,5 @@
 import { WithEventId } from '~/@/event-sourced/event'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'

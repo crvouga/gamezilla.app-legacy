@@ -1,7 +1,7 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Spinner } from './spinner'
-import { sx } from './theme/theme'
+import { sx } from '../vdom/style/sx'
 
 export const LoadingState = (props: { style?: Record<string, unknown> }) => {
   return h(

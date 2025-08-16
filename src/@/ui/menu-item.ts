@@ -3,7 +3,7 @@ import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { Box } from '../vdom/primitives/box'
 import { Clickable } from './clickable'
-import { sx } from './theme/theme'
+import { sx } from '../vdom/style/sx'
 import { Typography } from './typography'
 
 export type MenuItemProps = {

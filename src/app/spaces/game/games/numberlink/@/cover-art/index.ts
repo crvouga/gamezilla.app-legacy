@@ -1,6 +1,6 @@
 import { pipe } from '~/@/function/pipe'
 import { IPlatform } from '~/@/platform/platform'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { VariantGridBoard } from '../variant/grid/grid-board'
 import { VariantGridShorthand } from '../variant/grid/grid-shorthand'

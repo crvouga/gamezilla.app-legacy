@@ -1,4 +1,4 @@
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { SafeAreaBox } from '~/@/vdom/primitives/safe-area-box'
 import { VDom } from '~/@/vdom/vdom'

@@ -6,7 +6,7 @@ import { IconXMark } from '~/@/ui/icon'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 
 const schema = s.obj({
   t: s.l('grid'),

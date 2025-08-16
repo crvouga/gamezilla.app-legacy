@@ -20,7 +20,7 @@ import {
   initSpace,
 } from './vs-user.types'
 import { Text } from '~/@/vdom/primitives/text'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 
 //
 //

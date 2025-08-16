@@ -3,7 +3,7 @@ import { ensureLength } from '~/@/array/ensure-length'
 import { Box } from '~/@/vdom/primitives/box'
 import { VDom } from '~/@/vdom/vdom'
 import { h } from '~/@/vdom/vdom-engine/impl'
-import { sx } from '../theme/theme'
+import { sx } from '../../vdom/style/sx'
 
 export const Grid = (input: {
   columnCount: number

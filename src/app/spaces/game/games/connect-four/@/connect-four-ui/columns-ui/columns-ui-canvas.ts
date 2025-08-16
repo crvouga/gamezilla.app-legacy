@@ -1,5 +1,5 @@
 import { rescale } from '~/@/math/rescale'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { Canvas } from '~/@/vdom/primitives/canvas'
 import { COLUMN_COUNT, type Columns, isColumnIndex, MAX_COLUMN_HEIGHT } from '../../connect-four'

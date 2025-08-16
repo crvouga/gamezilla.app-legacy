@@ -3,7 +3,7 @@ import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { ClickableTransparent } from './clickable'
-import { sx } from './theme/theme'
+import { sx } from '../vdom/style/sx'
 
 type IconButtonSize = 'xs' | 'sm' | 'md' | 'lg'
 

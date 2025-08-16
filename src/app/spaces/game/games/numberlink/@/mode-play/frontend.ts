@@ -1,7 +1,7 @@
 import { Translator } from '~/@/l18n/generated'
 import { IPlatform } from '~/@/platform/platform'
 import { Sub } from '~/@/sub'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'

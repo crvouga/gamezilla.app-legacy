@@ -1,5 +1,5 @@
 import { Chess } from 'chess.js'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { Circle } from '~/@/vdom/primitives/svg/circle'
 import { G } from '~/@/vdom/primitives/svg/g'

@@ -1,7 +1,7 @@
 import { h } from '~/@/vdom/h'
 import { TranslatedText } from '~/@/l18n'
 import { Typography } from '~/@/ui/typography'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 
 const Info = (input: { text: string }) => {
   return h(Typography, {

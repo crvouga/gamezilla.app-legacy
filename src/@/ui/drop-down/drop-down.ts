@@ -3,7 +3,7 @@ import { Box } from '~/@/vdom/primitives/box'
 import { Frag } from '~/@/vdom/primitives/frag'
 import { Pressable } from '~/@/vdom/primitives/pressable'
 import { VDom } from '~/@/vdom/vdom'
-import { sx } from '../theme/theme'
+import { sx } from '../../vdom/style/sx'
 import { DropDownAlignment } from './drop-down-alignment'
 import { DropDownPosition } from './drop-down-position'
 

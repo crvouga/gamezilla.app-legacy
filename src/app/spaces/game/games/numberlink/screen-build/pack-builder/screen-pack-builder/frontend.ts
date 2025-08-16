@@ -11,7 +11,7 @@ import { ScreenPuzzlePlay } from './screen-play-puzzle/frontend'
 import { ScreenPuzzleGrid } from './screen-puzzle-grid/frontend'
 import { EditPackNameFrontend } from './surface-edit-pack-name/frontend'
 import type { FrontendModule } from './types'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(

@@ -1,15 +1,15 @@
-export type ThemeColorBase = 'neutral' | 'red' | 'blue' | 'yellow' | 'green' | 'orange' | 'amber'
+export type SxColorBase = 'neutral' | 'red' | 'blue' | 'yellow' | 'green' | 'orange' | 'amber'
 
-export type ThemeColorLevel = '50' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900'
+export type SxColorLevel = '50' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900'
 
-export type ThemeColorOpacity = '' | '/5' | '/10' | '/20' | '/30' | '/40' | '/50' | '/60' | '/70' | '/80' | '/90'
+export type SxColorOpacity = '' | '/5' | '/10' | '/20' | '/30' | '/40' | '/50' | '/60' | '/70' | '/80' | '/90'
 
-export type ThemeColor =
-  | `${ThemeColorBase}-${ThemeColorLevel}${ThemeColorOpacity}`
-  | `white${ThemeColorOpacity}`
-  | `black${ThemeColorOpacity}`
+export type SxColor =
+  | `${SxColorBase}-${SxColorLevel}${SxColorOpacity}`
+  | `white${SxColorOpacity}`
+  | `black${SxColorOpacity}`
 
-const palette: Record<ThemeColorBase, Record<ThemeColorLevel, string>> = {
+const palette: Record<SxColorBase, Record<SxColorLevel, string>> = {
   neutral: {
     '50': '#f9fafb',
     '100': '#f5f5f5',
@@ -96,7 +96,7 @@ const palette: Record<ThemeColorBase, Record<ThemeColorLevel, string>> = {
   },
 }
 
-const toHex = (color: ThemeColor): string => {
+const toHex = (color: SxColor): string => {
   const [baseLevel, opacity] = color.split('/') as [string, string?]
 
   let hex: string
@@ -105,7 +105,7 @@ const toHex = (color: ThemeColor): string => {
   } else if (baseLevel === 'black') {
     hex = '#000000'
   } else {
-    const [base, level] = baseLevel.split('-') as [ThemeColorBase, ThemeColorLevel]
+    const [base, level] = baseLevel.split('-') as [SxColorBase, SxColorLevel]
     hex = palette[base]?.[level]
     if (!hex) {
       throw new Error(`Unknown color: ${color}`)
@@ -128,6 +128,6 @@ const toHexAlpha = (alpha: number): string => {
   return hex
 }
 
-export const ThemeColor = {
+export const SxColor = {
   toHex,
 }

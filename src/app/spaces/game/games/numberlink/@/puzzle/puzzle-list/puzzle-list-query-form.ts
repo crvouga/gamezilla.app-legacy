@@ -5,7 +5,7 @@ import { h } from '~/@/vdom/h'
 import { UserId } from '~/app/@/data/user-id'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { PuzzleQuery } from '../puzzle-db/interface-query'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 
 type Model = PuzzleQuery
 

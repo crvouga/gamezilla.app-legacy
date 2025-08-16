@@ -1,6 +1,6 @@
 import { rescale } from '~/@/math/rescale'
 import { IconCheckmark } from '~/@/ui/icon'
-import { sx } from '~/@/ui/theme/theme'
+import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { Frag } from '~/@/vdom/primitives/frag'
 import { Circle } from '~/@/vdom/primitives/svg/circle'
