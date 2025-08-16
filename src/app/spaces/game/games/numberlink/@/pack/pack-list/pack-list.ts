@@ -5,7 +5,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { EmptyState } from '~/@/ui/empty-state'
 import { IconBox } from '~/@/ui/icon'
-import { SpinnerBlock } from '~/@/ui/spinner-block'
+import { LoadingState } from '~/@/ui/spinner-block'
 import { sx } from '~/@/ui/theme/theme'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
@@ -27,32 +27,31 @@ const View = (input: {
   const isLoading = PackDbQueryCache.isLoading(input.ctx, input.query)
   const isEmpty = PackDbQueryCache.isEmpty(input.ctx, input.query)
 
+  if (isEmpty && isLoading) {
+    return h(LoadingState, {})
+  }
+
+  if (isEmpty) {
+    return h(EmptyState, {
+      label: input.ctx.t('game.numberlink.no-packs'),
+      renderIcon: (input) => h(IconBox, input),
+    })
+  }
+
   return h(
     ScrollBox,
     {
       style: sx({ flexDirection: 'col', gap: 0, overflow: 'hidden' }),
-      contentContainerStyle: {
-        rowGap: 0,
-      },
+      contentContainerStyle: { rowGap: 0 },
     },
-    [
-      isEmpty &&
-        h(EmptyState, {
-          label: input.ctx.t('game.numberlink.no-packs'),
-          renderIcon: (input) => h(IconBox, input),
-        }),
-
-      ...packs.sort(descend((pack) => UnixMs.toNumber(pack.lastUpdatedAt))).map((pack) =>
-        h(ViewPackMenuItem, {
-          ctx: input.ctx,
-          key: pack.id,
-          pack: pack,
-          onPress: () => input.onPress(pack),
-        }),
-      ),
-
-      isLoading && h(SpinnerBlock, {}),
-    ].filter(Boolean),
+    packs.sort(descend((pack) => UnixMs.toNumber(pack.lastUpdatedAt))).map((pack) =>
+      h(ViewPackMenuItem, {
+        ctx: input.ctx,
+        key: pack.id,
+        pack: pack,
+        onPress: () => input.onPress(pack),
+      }),
+    ),
   )
 }
 

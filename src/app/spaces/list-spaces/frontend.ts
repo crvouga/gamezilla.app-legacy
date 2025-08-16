@@ -1,6 +1,6 @@
 import { EmptyState } from '~/@/ui/empty-state'
 import { IconGamepad } from '~/@/ui/icon'
-import { SpinnerBlock } from '~/@/ui/spinner-block'
+import { LoadingState } from '~/@/ui/spinner-block'
 import { sx } from '~/@/ui/theme/theme'
 import { h } from '~/@/vdom/h'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
@@ -59,7 +59,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
     },
     actionCreate: StartSpaceFrontend.viewStartSpaceButton(input),
     renderBody: () => {
-      if (isLoading) return h(SpinnerBlock, {})
+      if (isLoading) return h(LoadingState, {})
 
       if (spaces.length === 0)
         return h(EmptyState, {

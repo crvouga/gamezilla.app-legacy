@@ -52,10 +52,7 @@ const ViewSpaceInfo = (props: { hostProfile: UserProfile | undefined; userCount:
       style: sx({
         flexDirection: 'col',
         flex: 1,
-        gap: 2,
         overflow: 'hidden',
-        paddingY: 3,
-        paddingRight: 3,
       }),
     },
     [
@@ -136,7 +133,7 @@ const ViewRoot = (input: { children: VDom[] }) => {
         flexDirection: 'row',
         overflow: 'hidden',
         rounded: 'lg',
-        minWidth: '2xs',
+        minWidth: 'xs',
         width: 'full',
         backgroundColor: 'blue-600',
       }),

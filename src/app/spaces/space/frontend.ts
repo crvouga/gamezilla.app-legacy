@@ -1,5 +1,5 @@
 import { Sub } from '~/@/sub'
-import { SpinnerBlock } from '~/@/ui/spinner-block'
+import { LoadingState } from '~/@/ui/spinner-block'
 import { h } from '~/@/vdom/h'
 import type { SpaceId } from '~/app/@/data/space-id'
 import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-button'
@@ -94,7 +94,7 @@ const View = (props: {
 }
 
 const ViewSpaceLoading = (_input: { ctx: FrontendCtxModule; dispatch: (m: MsgFrontend) => void }) => {
-  return h(SpinnerBlock, {})
+  return h(LoadingState, {})
 }
 
 const ViewSpaceNotFound = (input: { ctx: FrontendCtxModule; dispatch: (m: MsgFrontend) => void }) => {

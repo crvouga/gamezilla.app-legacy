@@ -5,8 +5,6 @@ import { h } from '~/@/vdom/h'
 import { Typography } from './typography'
 import { sx } from './theme/theme'
 
-export const EMPTY_STATE_TEST_ID = 'empty-state'
-
 export const EmptyState = (input: {
   renderIcon: (input: { style: Record<string, unknown> }) => VDom
   label: TranslatedText
@@ -15,50 +13,33 @@ export const EmptyState = (input: {
     Box,
     {
       style: sx({
-        height: 'full',
-        width: 'full',
-        flex: 1,
         flexDirection: 'col',
         alignItems: 'center',
         justifyContent: 'center',
         gap: 2,
-        paddingX: 6,
-        textAlign: 'center',
+        textColor: 'neutral-400',
+        flex: 1,
       }),
-      'data-testid': EMPTY_STATE_TEST_ID,
     },
     [
-      h(
-        Box,
-        {
-          style: sx({
-            flexDirection: 'col',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 2,
-            paddingBottom: 20,
-          }),
-        },
-        [
-          input.renderIcon({
-            style: sx({
-              size: 14,
-              opacity: 60,
-              textColor: 'white',
-            }),
-          }),
-          h(Typography, {
-            variant: 'body',
-            text: input.label,
-            style: sx({
-              paddingBottom: 3,
-              fontSize: 'lg',
-              fontWeight: 'bold',
-              opacity: 60,
-            }),
-          }),
-        ],
-      ),
+      input.renderIcon({
+        style: sx({
+          size: 14,
+          opacity: 60,
+          textColor: 'neutral-400',
+        }),
+      }),
+      h(Typography, {
+        variant: 'body',
+        text: input.label,
+        style: sx({
+          paddingBottom: 3,
+          fontSize: 'lg',
+          fontWeight: 'bold',
+          opacity: 60,
+          textColor: 'neutral-400',
+        }),
+      }),
     ],
   )
 }

@@ -3,7 +3,7 @@ import { Box } from '~/@/vdom/primitives/box'
 import { Spinner } from './spinner'
 import { sx } from './theme/theme'
 
-export const SpinnerBlock = (props: { style?: Record<string, unknown> }) => {
+export const LoadingState = (props: { style?: Record<string, unknown> }) => {
   return h(
     Box,
     {

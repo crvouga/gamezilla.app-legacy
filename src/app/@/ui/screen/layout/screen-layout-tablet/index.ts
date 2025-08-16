@@ -32,12 +32,14 @@ export const ScreenLayoutTablet = (props: ScreenLayoutProps) => {
             borderColor: 'neutral-500',
             maxWidth: '5xl',
             height: 'full',
+            display: 'flex',
+            flexDirection: 'col',
           }),
         },
         [
           ...renderNavBars(props.ctx, props),
 
-          h(Box, { style: sx({ flex: 1, overflow: 'hidden' }) }, [
+          h(Box, { style: sx({ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'col' }) }, [
             props.renderBody(),
             (props.renderMiniPlayer || props.parentScreen?.renderMiniPlayer) &&
               h(Box, { style: sx({ position: 'absolute', right: 8, bottom: 8, backgroundColor: 'black' }) }, [

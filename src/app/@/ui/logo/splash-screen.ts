@@ -9,6 +9,7 @@ export const SplashScreen = (_props: { reason?: TranslatedText }) => {
     Box,
     {
       style: sx({
+        display: 'flex',
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
@@ -18,7 +19,7 @@ export const SplashScreen = (_props: { reason?: TranslatedText }) => {
     [
       h(Text, {
         text: '🦕',
-        style: sx({ fontSize: 64, textColor: 'white' }),
+        style: sx({ fontSize: 64 }),
       }),
     ],
   )
