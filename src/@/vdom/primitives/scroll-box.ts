@@ -12,8 +12,8 @@ export type ScrollBoxProps = PrimitiveProps & {
 }
 
 const BASE_STYLE = {
-  alignContent: 'flex-start',
-  alignItems: 'stretch',
+  // alignContent: 'flex-start',
+  // alignItems: 'stretch',
   backgroundColor: 'rgba(0, 0, 0, 0)',
   border: '0px solid black',
   boxSizing: 'border-box',
