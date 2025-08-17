@@ -5,7 +5,6 @@ import { Box } from '~/@/vdom/primitives/box'
 import { Pressable } from '~/@/vdom/primitives/pressable'
 import { SafeAreaBox } from '~/@/vdom/primitives/safe-area-box'
 import type { VDom } from '~/@/vdom/vdom'
-import { SURFACE_STYLE } from '../surface'
 import { sx } from '../../vdom/style/sx'
 import type { DrawerProps, DrawerPropsPrivate } from './drawer-shared'
 
@@ -24,15 +23,15 @@ const DrawerContent = (props: { position: 'top' | 'bottom'; open: boolean; child
     SafeAreaBox,
     {
       edges: isTop ? ['top'] : ['bottom'],
-      style: {
-        ...SURFACE_STYLE,
-        transform: props.open ? 'translateY(0)' : isTop ? 'translateY(-100%)' : 'translateY(100%)',
-        ...sx({
-          width: 'full',
-          rounded: 'lg',
-          flexDirection: 'col',
-        }),
-      },
+      style: sx({
+        transform: [{ translateY: props.open ? 0 : isTop ? '-100%' : '100%' }],
+        width: 'full',
+        rounded: 'lg',
+        flexDirection: 'col',
+        backgroundColor: 'black',
+        borderWidth: 2,
+        borderColor: 'neutral-700',
+      }),
     },
     props.children,
   )

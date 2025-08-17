@@ -7,7 +7,7 @@ export type TextProps = PrimitiveProps & {
   text: string
 }
 
-const TEXT_STYLE_BASE = {
+const BASE_STYLE = {
   backgroundColor: 'rgba(0, 0, 0, 0)',
   border: '0px solid black',
   boxSizing: 'border-box',
@@ -25,5 +25,5 @@ const TEXT_STYLE_BASE = {
 }
 
 export const Text = ({ text, ...props }: TextProps): VDom => {
-  return h(TEXT_TAG, { ...props, style: { ...TEXT_STYLE_BASE, ...props.style } }, [text as unknown as VDom])
+  return h(TEXT_TAG, { ...props, style: { ...BASE_STYLE, ...props.style } }, [text as unknown as VDom])
 }

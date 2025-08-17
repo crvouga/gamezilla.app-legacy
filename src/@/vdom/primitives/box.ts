@@ -7,7 +7,7 @@ export type BoxProps = PrimitiveProps & {
   children?: VDom[]
 }
 
-const BOX_STYLE_BASE = {
+const BASE_STYLE = {
   alignContent: 'flex-start',
   alignItems: 'stretch',
   backgroundColor: 'rgba(0, 0, 0, 0)',
@@ -28,5 +28,5 @@ const BOX_STYLE_BASE = {
 }
 
 export const Box = ({ children, ...props }: BoxProps) => {
-  return h(BOX_TAG, { ...props, style: { ...BOX_STYLE_BASE, ...props.style } }, children)
+  return h(BOX_TAG, { ...props, style: { ...BASE_STYLE, ...props.style } }, children)
 }

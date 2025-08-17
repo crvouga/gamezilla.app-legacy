@@ -6,7 +6,7 @@ import { sx } from '../vdom/style/sx'
 
 export const SURFACE_STYLE = sx({
   backgroundColor: 'black',
-  borderWidth: 1,
+  borderWidth: 2,
   borderColor: 'neutral-700',
 })
 

@@ -7,7 +7,7 @@ export type PressableProps = PrimitiveProps & {
   children: VDom[]
 }
 
-const PRESSABLE_STYLE_BASE = {
+const BASE_STYLE = {
   alignContent: 'flex-start',
   alignItems: 'stretch',
   backgroundColor: 'rgba(0, 0, 0, 0)',
@@ -28,5 +28,5 @@ const PRESSABLE_STYLE_BASE = {
 }
 
 export const Pressable = ({ children, ...props }: PressableProps) => {
-  return h(PRESSABLE_TAG, { ...props, style: { ...PRESSABLE_STYLE_BASE, ...props.style } }, children)
+  return h(PRESSABLE_TAG, { ...props, style: { ...BASE_STYLE, ...props.style } }, children)
 }

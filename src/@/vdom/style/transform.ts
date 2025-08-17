@@ -2,7 +2,7 @@ import { Percentage } from './percentage'
 
 export type Transform = {
   translateX?: number | Percentage
-  translateY?: number
+  translateY?: number | Percentage
   rotate?: number
   scale?: number
   skewX?: number
