@@ -21,6 +21,23 @@ export type TextInputProps = PrimitiveProps & {
     | 'week'
 }
 
+const BASE_STYLE = {
+  backgroundColor: 'rgba(0, 0, 0, 0)',
+  border: '0px solid black',
+  boxSizing: 'border-box',
+  color: 'rgb(0, 0, 0)',
+  display: 'inline',
+  font: '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+  listStyle: 'none',
+  margin: 0,
+  padding: 0,
+  position: 'relative',
+  textAlign: 'start',
+  textDecoration: 'none',
+  whiteSpace: 'pre-wrap',
+  overflowWrap: 'break-word',
+}
+
 export const TextInput = (props: TextInputProps) => {
-  return h(TEXT_INPUT_TAG, props, [])
+  return h(TEXT_INPUT_TAG, { ...props, style: { ...BASE_STYLE, ...props.style } }, [])
 }
