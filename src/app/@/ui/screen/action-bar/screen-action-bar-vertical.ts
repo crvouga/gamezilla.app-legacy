@@ -107,6 +107,7 @@ const ActionButtonList = (props: { actions: (ScreenActionProps | null)[]; ctx: S
 const ScreenActionButton = (props: ScreenActionProps & { ctx: ScreenLayoutProps['ctx'] }) => {
   const isDisabled = props.disabled || props.loading
   const size = props.size ?? 'md'
+  const styleColor = toColorStyle(props)
   if (props.hidden) return null
   return h(
     ClickableTransparent,
@@ -126,11 +127,11 @@ const ScreenActionButton = (props: ScreenActionProps & { ctx: ScreenLayoutProps[
           alignItems: 'center',
           rounded: 'lg',
           padding: 4,
+          display: props.hidden ? 'none' : 'flex',
         }),
-        ...toColorStyle(props),
-        ...toSizeStyle(size),
         ...props.styles?.button,
-        display: props.hidden ? 'none' : 'flex',
+
+        ...toSizeStyle(size),
       },
     },
     [
@@ -150,7 +151,7 @@ const ScreenActionButton = (props: ScreenActionProps & { ctx: ScreenLayoutProps[
               : sx({
                   flexDirection: 'col',
                   alignItems: 'center',
-                  gap: 1,
+                  gap: 2,
                   opacity: props.loading ? 0 : 1,
                 }),
         },
@@ -158,18 +159,19 @@ const ScreenActionButton = (props: ScreenActionProps & { ctx: ScreenLayoutProps[
           props.renderIcon({
             style: {
               ...toIconSizeStyle(size),
-              ...sx({ textColor: 'white', flexShrink: 0 }),
+              ...sx({ flexShrink: 0 }),
+              ...styleColor,
             },
           }),
           h(Typography, {
             text: props.label,
-            ...props.styles?.label,
             style: {
               ...sx({
                 overflow: 'hidden',
                 textAlign: 'center',
-                textColor: 'white',
               }),
+              ...styleColor,
+              ...props.styles?.label,
             },
           }),
         ],
@@ -202,9 +204,11 @@ const toColorStyle = (input: ScreenActionProps): Record<string, unknown> => {
     case 'success':
       return sx({ textColor: 'green-500' })
     case 'selected':
-      return { ...sx({ textColor: 'blue-500' }), fontWeight: 'bold' }
+      return sx({ textColor: 'blue-500', fontWeight: 'bold' })
+    case 'inherit':
+      return sx({ textColor: 'white' })
     default:
-      return {}
+      return sx({ textColor: 'white' })
   }
 }
 
