@@ -80,7 +80,7 @@ export const ScreenNavBarTabletRoot = (input: { children: VDom }) => {
         width: 'full',
         flexShrink: 0,
         alignItems: 'center',
-        padding: 6,
+        paddingX: 3,
       }),
     },
     [input.children],

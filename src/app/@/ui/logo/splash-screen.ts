@@ -1,8 +1,8 @@
 import { TranslatedText } from '~/@/l18n'
-import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom'
 import { Box } from '~/@/vdom/primitives/box'
-import { Text } from '~/@/vdom/primitives/text'
+import { sx } from '~/@/vdom/style/sx'
+import { Logo } from './logo'
 
 export const SplashScreen = (_props: { reason?: TranslatedText }) => {
   return h(
@@ -17,9 +17,11 @@ export const SplashScreen = (_props: { reason?: TranslatedText }) => {
       }),
     },
     [
-      h(Text, {
-        text: '🦕',
-        style: sx({ fontSize: 64 }),
+      h(Logo, {
+        style: {
+          width: 120,
+          height: 120,
+        },
       }),
     ],
   )
