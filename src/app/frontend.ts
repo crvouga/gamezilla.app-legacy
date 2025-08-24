@@ -408,6 +408,7 @@ const ViewScreen = (props: { ctx: FrontendCtxModule; model: ModelFrontend; dispa
       })
     default: {
       const currentUser = toCurrentUserState({ model: props.model.auth.currentUser, ctx: props.ctx })
+      return h(SplashScreen, {})
       switch (currentUser.t) {
         case 'loading':
           return h(SplashScreen, {})

@@ -13,15 +13,11 @@ export const SplashScreen = (_props: { reason?: TranslatedText }) => {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'black',
       }),
     },
     [
       h(Logo, {
-        style: {
-          width: 120,
-          height: 120,
-        },
+        width: 120,
       }),
     ],
   )
