@@ -59,6 +59,7 @@
     "int": "pnpm vitest:int",
     "ios": "expo run:ios",
     "local": "pnpm env:local && pnpm infra:e2e:down && pnpm infra:local:up",
+    "pwa-asset-generator": "npx pwa-asset-generator ./public/logo.dark.svg ./public/pwa-assets --background black --index ./index.html --manifest ./public/manifest.json",
     "tc": "pnpm exec tsc --noEmit",
     "topic": "pnpm exec tsx watch ./src/topic.ts",
     "unit": "pnpm vitest",
