@@ -13,6 +13,7 @@ services:
       - '${FRONTEND_PORT:?FRONTEND_PORT is required}:80'
     profiles:
       - e2e
+      - all
 
   backend:
     build:
@@ -28,7 +29,7 @@ services:
       - '${BACKEND_PORT:?BACKEND_PORT is required}:${BACKEND_PORT:?BACKEND_PORT is required}'
     profiles:
       - e2e
-
+      - all
   topic:
     build:
       context: ../
@@ -51,7 +52,7 @@ services:
       - e2e
       - int
       - local
-
+      - all
   postgres:
     build:
       context: ../
@@ -75,6 +76,7 @@ services:
       - e2e
       - int
       - local
+      - all
 
 volumes:
   postgres_data:
