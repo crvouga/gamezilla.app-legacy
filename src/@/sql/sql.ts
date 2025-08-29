@@ -63,63 +63,100 @@ const removeMultipleSpaces = (str: string) => str.replace(/ +/g, ' ')
 export const clean = (str: string) => removeTabs(removeNewLines(removeMultipleSpaces(str)))
 
 const replaceParam = (query: string, variable: string, value: VarType): string => {
-  switch (typeof value) {
-    case 'number':
-    case 'bigint':
-    case 'boolean': {
-      const replaced = query.replace(new RegExp(`:${variable}`, 'g'), `${value}`)
-      return replaced
-    }
-    case 'object': {
-      switch (value?.t) {
-        case 'commas': {
-          const commasStr = value.values
-            .map((v) => {
-              switch (typeof v) {
-                case 'string': {
-                  return `'${v}'`
+  const replacement = (() => {
+    switch (typeof value) {
+      case 'number':
+      case 'bigint':
+      case 'boolean': {
+        return `${value}`
+      }
+      case 'object': {
+        switch (value?.t) {
+          case 'commas': {
+            return value.values
+              .map((v) => {
+                switch (typeof v) {
+                  case 'string': {
+                    return `'${v}'`
+                  }
+                  default: {
+                    return `${v}`
+                  }
                 }
-                default: {
-                  return `${v}`
-                }
-              }
-            })
-            .join(', ')
+              })
+              .join(', ')
+          }
 
-          const replaced = query.replace(new RegExp(`:${variable}`, 'g'), commasStr)
-
-          return replaced
-        }
-
-        case 'json': {
-          const jsonString = value.json
-          const escapedJsonString = jsonString.replace(/'/g, "''")
-
-          const replaced = query.replace(new RegExp(`:${variable}`, 'g'), `'${escapedJsonString}'`)
-
-          return replaced
-        }
-        default: {
-          const replaced = query.replace(new RegExp(`:${variable}`, 'g'), 'NULL')
-
-          return replaced
+          case 'json': {
+            const jsonString = value.json
+            const escapedJsonString = jsonString.replace(/'/g, "''")
+            return `'${escapedJsonString}'`
+          }
+          default: {
+            return 'NULL'
+          }
         }
       }
+      case 'undefined':
+        return 'NULL'
+      case 'string': {
+        const escapedValue = value.replace(/'/g, "''")
+        return `'${escapedValue}'`
+      }
+      case 'function':
+      case 'symbol': {
+        return null // Don't replace
+      }
+      default: {
+        return null // Don't replace
+      }
     }
-    case 'undefined':
-      return query.replace(new RegExp(`:${variable}`, 'g'), 'NULL')
-    case 'string': {
-      const escapedValue = value.replace(/'/g, "''")
-      return query.replace(new RegExp(`:${variable}`, 'g'), `'${escapedValue}'`)
-    }
-    case 'function':
-    case 'symbol': {
-      return query
-    }
-    default: {
-      return query
+  })()
+
+  if (replacement === null) {
+    return query
+  }
+
+  // Use a more careful replacement that doesn't replace parameters inside quoted strings
+  return replaceParamSafely(query, variable, replacement)
+}
+
+const replaceParamSafely = (query: string, variable: string, replacement: string): string => {
+  const paramPattern = `:${variable}`
+  let result = ''
+  let inSingleQuotes = false
+  let inDoubleQuotes = false
+  let i = 0
+
+  while (i < query.length) {
+    const char = query[i]
+
+    if (char === "'" && !inDoubleQuotes) {
+      // Handle single quotes - check for escaped quotes
+      if (i + 1 < query.length && query[i + 1] === "'") {
+        // This is an escaped single quote, skip both
+        result += "''"
+        i += 2
+        continue
+      }
+      inSingleQuotes = !inSingleQuotes
+      result += char
+      i++
+    } else if (char === '"' && !inSingleQuotes) {
+      inDoubleQuotes = !inDoubleQuotes
+      result += char
+      i++
+    } else if (!inSingleQuotes && !inDoubleQuotes && query.substring(i, i + paramPattern.length) === paramPattern) {
+      // We're not inside quotes and we found the parameter - replace it
+      result += replacement
+      i += paramPattern.length
+    } else {
+      result += char
+      i++
     }
   }
+
+  return result
 }
 
 export const toLog = (query: string, params: Vars): string => {

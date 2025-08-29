@@ -99,6 +99,38 @@ describe('SQL', () => {
     expect(actual).toEqual(expected)
   })
 
+  test('should handle parameter replacement bug with similar IDs', async () => {
+    const sql = `INSERT INTO user_session (id, session_id, client_session_id, user_id, created_at_unix_ms) VALUES (:id, :session_id, :client_session_id, :user_id, :created_at_unix_ms)`
+
+    const vars = {
+      id: 'user-session:abc123',
+      session_id: 'session:user-session:abc123:suffix',
+      client_session_id: 'client-session:xyz',
+      user_id: 'user:def456',
+      created_at_unix_ms: 1756504798602,
+    }
+
+    const result = Sql.to(sql, vars)
+
+    const expected = `INSERT INTO user_session (id, session_id, client_session_id, user_id, created_at_unix_ms) VALUES ('user-session:abc123', 'session:user-session:abc123:suffix', 'client-session:xyz', 'user:def456', 1756504798602)`
+    expect(result).toEqual(expected)
+  })
+
+  test('parameter replacement bug is fixed', async () => {
+    const sql = `SELECT :id, :session_id`
+
+    const vars = {
+      session_id: 'session:id:suffix',
+      id: 'REPLACED',
+    }
+
+    const result = Sql.to(sql, vars)
+
+    const expectedFixedResult = `SELECT 'REPLACED', 'session:id:suffix'`
+
+    expect(result).toEqual(expectedFixedResult)
+  })
+
   test('should handle json columns', async () => {
     expect(
       Sql.to("SELECT * FROM users WHERE meta->>'email' = :email", {
