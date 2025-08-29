@@ -74,7 +74,7 @@ jobs:
 
   integration:
     name: Integration Tests
-    needs: [e2e-fast, unit]
+    needs: [unit, e2e-fast]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -105,7 +105,7 @@ jobs:
 
   e2e:
     name: E2E Tests
-    needs: [integration]
+    needs: [unit, e2e-fast]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -142,7 +142,7 @@ jobs:
 
   deploy:
     name: Deploy
-    needs: [e2e]
+    needs: [e2e, integration]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     if: github.ref == 'refs/heads/main'

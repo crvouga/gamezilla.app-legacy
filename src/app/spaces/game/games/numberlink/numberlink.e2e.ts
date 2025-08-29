@@ -7,7 +7,7 @@ import { doOpenNumberlink } from './@/test/do-open-numberlink'
 const Fixture = FixtureAppE2E
 
 test('open game', async (e) => {
-  const f = await Fixture(e)
+  await using f = await Fixture(e)
   await doLoginWithSms(f)
   await doStartSpace(f)
   await doOpenNumberlink(f)

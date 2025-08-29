@@ -12,7 +12,7 @@ const Fixture = FixtureAppE2E
 
 describe('screen renderer', () => {
   test('back button', async (e) => {
-    const f = await Fixture(e)
+    await using f = await Fixture(e)
     await doOpenSettingsScreen(f)
     await doOpenRendererScreen(f)
     await doClickBackButton(f)
