@@ -1,5 +1,4 @@
 import path from 'path'
-import { VitePWA } from 'vite-plugin-pwa'
 import { defineConfig } from 'vite'
 import { DotEnv } from './src/@/dotenv/dotenv'
 import { FileSystem } from './src/@/file-system'
@@ -19,15 +18,6 @@ const FRONTEND_PORT = Number(process.env.FRONTEND_PORT)
 if (Number.isNaN(FRONTEND_PORT)) throw new Error('FRONTEND_PORT is not set')
 
 export default defineConfig({
-  plugins: [
-    VitePWA({
-      registerType: 'autoUpdate',
-      injectRegister: 'auto',
-      workbox: {
-        maximumFileSizeToCacheInBytes: 1024 * 1024 * 10,
-      },
-    }),
-  ],
   server: {
     port: Number(FRONTEND_PORT),
   },
