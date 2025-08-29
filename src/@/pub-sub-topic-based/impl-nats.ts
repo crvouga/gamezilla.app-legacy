@@ -9,13 +9,14 @@ export type ImplNats = {
 const init = (_config: ImplNats): ITopicBasedPubSub => {
   return {
     async pub(_topic, _msg) {
-      throw new Error('not implemented')
+      console.error('not implemented')
     },
     async sub(_topic, _callback) {
-      throw new Error('not implemented')
+      console.error('not implemented')
+      return async () => {}
     },
     async unsub(_topic) {
-      throw new Error('not implemented')
+      console.error('not implemented')
     },
   }
 }

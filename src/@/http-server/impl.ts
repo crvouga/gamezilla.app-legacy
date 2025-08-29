@@ -1,17 +1,18 @@
-import * as ImplNode from './impl-node'
-import * as ImplNoop from './impl-noop'
+import { ImplNode } from './impl-node'
+import { ImplNoop } from './impl-noop'
+import { IHttpServer } from './interface'
 
-export type Config = ImplNode.Config | ImplNoop.Config
+export type Config = ImplNode | ImplNoop
 
-const init = (config: Config) => {
-  const logger = config.logger.child(['backend'])
+const init = (config: Config): IHttpServer => {
+  const logger = config.logger.child(['http-server'])
   switch (config.t) {
     case 'node': {
-      return ImplNode.HttpServer({ ...config, logger })
+      return ImplNode.init({ ...config, logger })
     }
 
     case 'noop': {
-      return ImplNoop.HttpServer({ ...config, logger })
+      return ImplNoop.init({ ...config, logger })
     }
   }
 }

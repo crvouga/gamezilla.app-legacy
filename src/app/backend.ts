@@ -90,7 +90,7 @@ const initCtx = async (config: {
   })
 
   const topicClient = TopicClient.init({
-    t: 'for-server',
+    t: 'from-server',
     contract: AppTypes.topicContract,
     codec: topicMsgCodec,
     topicServer,

@@ -15,12 +15,12 @@ import {
 import { createRespond } from '../respond'
 import { initializeWebSocketServer, NodeWebSocketServer } from './websockets'
 
-export type Config = {
+export type ImplNode = {
   t: 'node'
   logger: ILogger
 }
 
-export const HttpServer = (config: Config): IHttpServer => {
+const init = (config: ImplNode): IHttpServer => {
   const logger = config.logger.child(['node'])
   const responds: Respond[] = []
   const middlewares: Middleware[] = []
@@ -151,4 +151,8 @@ export const HttpServer = (config: Config): IHttpServer => {
       return wsServer
     },
   }
+}
+
+export const ImplNode = {
+  init,
 }

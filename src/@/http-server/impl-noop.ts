@@ -3,13 +3,13 @@ import { Sub } from '../sub'
 import {
   HttpServerEvent,
   type IHttpServer,
-  type IWebSocketServer,
-  type WebSocketHandler,
-  type WebSocketEvent,
   type IWebSocketConnection,
+  type IWebSocketServer,
+  type WebSocketEvent,
+  type WebSocketHandler,
 } from './interface'
 
-export type Config = {
+export type ImplNoop = {
   t: 'noop'
   logger: ILogger
 }
@@ -31,7 +31,7 @@ class NoopWebSocketServer implements IWebSocketServer {
   }
 }
 
-export const HttpServer = (_config: Config): IHttpServer => {
+const init = (_config: ImplNoop): IHttpServer => {
   return {
     events: Sub.init<HttpServerEvent>(),
     registerMiddleware: () => {},
@@ -42,4 +42,8 @@ export const HttpServer = (_config: Config): IHttpServer => {
       return new NoopWebSocketServer()
     },
   }
+}
+
+export const ImplNoop = {
+  init,
 }

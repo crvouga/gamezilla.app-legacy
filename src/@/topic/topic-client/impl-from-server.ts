@@ -7,15 +7,15 @@ import { ITopicServer } from '../topic-server/topic-server'
 import { TopicName, TopicString } from '../topic-string'
 import { ITopicClient, TopicClientNode } from './types'
 
-export type ImplForServer<TContract extends TopicContractBase> = {
-  t: 'for-server'
+export type ImplFromServer<TContract extends TopicContractBase> = {
+  t: 'from-server'
   topicServer: ITopicServer<TContract>
   contract: TContract
   codec: ITopicMsgCodec
   logger: ILogger
 }
 
-const init = <TContract extends TopicContractBase>(config: ImplForServer<TContract>): ITopicClient<TContract> => {
+const init = <TContract extends TopicContractBase>(config: ImplFromServer<TContract>): ITopicClient<TContract> => {
   const { topicServer } = config
 
   const client = Object.entries(config.contract)
@@ -87,6 +87,6 @@ const init = <TContract extends TopicContractBase>(config: ImplForServer<TContra
   return client
 }
 
-export const ImplForServer = {
+export const ImplFromServer = {
   init,
 }
