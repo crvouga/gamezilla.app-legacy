@@ -42,6 +42,7 @@ jobs:
 
   unit:
     name: Unit Tests
+    needs: [cir-deps, typecheck]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -57,6 +58,7 @@ jobs:
 
   integration:
     name: Integration Tests
+    needs: [unit]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -76,6 +78,7 @@ jobs:
 
   e2e:
     name: E2E Tests
+    needs: [unit]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -101,7 +104,7 @@ jobs:
 
   deploy:
     name: Deploy
-    needs: [cir-deps, typecheck, unit, integration, e2e]
+    needs: [integration, e2e]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     if: github.ref == 'refs/heads/main'
