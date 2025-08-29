@@ -56,9 +56,9 @@ jobs:
       - run: pnpm run env:ci
       - run: pnpm unit
 
-  integration:
-    name: Integration Tests
-    needs: [unit]
+  e2e-fast:
+    name: E2E Fast Tests
+    needs: [cir-deps, typecheck]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -70,6 +70,33 @@ jobs:
           version: latest
       - run: pnpm install --frozen-lockfile
       - run: pnpm run env:ci
+      - run: pnpm e2e:fast
+
+  integration:
+    name: Integration Tests
+    needs: [e2e-fast, unit]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run env:ci
+      - name: Start Docker daemon
+        run: |
+          # Start Docker daemon in background if not running
+          if ! pgrep dockerd > /dev/null; then
+            sudo dockerd --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2376 &
+            sleep 3
+          fi
+          # Fix socket permissions
+          sudo chmod 666 /var/run/docker.sock
+          # Verify Docker is working
+          docker version
       - run: pnpm infra:int:up
       - run: sleep 3
       - name: Database Migration
@@ -78,7 +105,7 @@ jobs:
 
   e2e:
     name: E2E Tests
-    needs: [unit]
+    needs: [e2e-fast, unit]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -90,6 +117,17 @@ jobs:
           version: latest
       - run: pnpm install --frozen-lockfile
       - run: pnpm run env:ci
+      - name: Start Docker daemon
+        run: |
+          # Start Docker daemon in background if not running
+          if ! pgrep dockerd > /dev/null; then
+            sudo dockerd --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2376 &
+            sleep 3
+          fi
+          # Fix socket permissions
+          sudo chmod 666 /var/run/docker.sock
+          # Verify Docker is working
+          docker version
       - run: pnpm infra:e2e:up
       - run: sleep 3
       - run: pnpm db:up

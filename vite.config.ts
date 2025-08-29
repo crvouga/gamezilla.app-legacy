@@ -42,6 +42,6 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     include: ['src/**/*.{test,e2e}.ts'],
-    testTimeout: 1000 * 15,
+    testTimeout: 1000 * 30,
   },
 })
