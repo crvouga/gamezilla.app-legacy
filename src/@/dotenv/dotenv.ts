@@ -2,20 +2,34 @@ import { join } from 'path'
 import { IFileSystem } from '../file-system/interface'
 import { isErr } from '../result'
 
-export type DotEnvPrecedence = 'override-process-env' | 'preserve-process-env'
+export type DotEnvPrecedence = 'override' | 'preserve'
+
+export interface DotEnvConfig {
+  fs: IFileSystem
+  paths: string[]
+  precedence: DotEnvPrecedence
+  cwd: string
+  env: Record<string, string | undefined>
+}
 
 /**
  * Loads environment variables from a single .env file
  * @private
  */
-const loadOne = async (config: { fs: IFileSystem; path: string; precedence: DotEnvPrecedence }): Promise<void> => {
+const loadOne = async (config: {
+  fs: IFileSystem
+  path: string
+  precedence: DotEnvPrecedence
+  cwd: string
+  env: Record<string, string | undefined>
+}): Promise<void> => {
   // Try the path as-is first (for in-memory), then try with cwd
   let envPath = config.path
   let existsResult = await config.fs.exists(envPath)
 
   if (isErr(existsResult) || !existsResult.value) {
     // Try with full path
-    envPath = join(process.cwd(), config.path)
+    envPath = join(config.cwd, config.path)
     existsResult = await config.fs.exists(envPath)
     if (isErr(existsResult) || !existsResult.value) {
       return
@@ -70,17 +84,15 @@ const loadOne = async (config: { fs: IFileSystem; path: string; precedence: DotE
       // Remove quotes from value if present
       const cleanValue = value.replace(/^['"](.*)['"]$/, '$1')
 
-      if (typeof process !== 'undefined' && process.env) {
-        switch (config.precedence) {
-          case 'override-process-env':
-            process.env[key] = cleanValue
-            break
-          case 'preserve-process-env':
-            if (process.env[key] === undefined) {
-              process.env[key] = cleanValue
-            }
-            break
-        }
+      switch (config.precedence) {
+        case 'override':
+          config.env[key] = cleanValue
+          break
+        case 'preserve':
+          if (config.env[key] === undefined) {
+            config.env[key] = cleanValue
+          }
+          break
       }
     }
   } catch (err) {
@@ -96,7 +108,9 @@ const loadOne = async (config: { fs: IFileSystem; path: string; precedence: DotE
  * await DotEnv.load({
  *   fs: FileSystem.init({ t: 'node' }),
  *   paths: ['.env'],
- *   precedence: 'override-process-env'
+ *   precedence: 'override',
+ *   cwd: process.cwd(),
+ *   env: process.env
  * })
  *
  * @example
@@ -104,7 +118,20 @@ const loadOne = async (config: { fs: IFileSystem; path: string; precedence: DotE
  * await DotEnv.load({
  *   fs: FileSystem.init({ t: 'node' }),
  *   paths: ['.env', '.env.local'],
- *   precedence: 'preserve-process-env'
+ *   precedence: 'preserve',
+ *   cwd: process.cwd(),
+ *   env: process.env
+ * })
+ *
+ * @example
+ * // Load into a custom environment object
+ * const customEnv: Record<string, string | undefined> = {}
+ * await DotEnv.load({
+ *   fs: FileSystem.init({ t: 'in-memory' }),
+ *   paths: ['.env'],
+ *   precedence: 'override',
+ *   cwd: '/custom/path',
+ *   env: customEnv
  * })
  *
  * @example
@@ -115,7 +142,7 @@ const loadOne = async (config: { fs: IFileSystem; path: string; precedence: DotE
  * // Empty lines are ignored
  * // PORT=3000
  */
-const load = async (config: { fs: IFileSystem; paths: string[]; precedence: DotEnvPrecedence }): Promise<void> => {
+const load = async (config: DotEnvConfig): Promise<void> => {
   for (const path of config.paths) {
     await loadOne({ ...config, path })
   }

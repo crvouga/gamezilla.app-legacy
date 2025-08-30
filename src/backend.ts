@@ -16,7 +16,9 @@ const main = async () => {
   await DotEnv.load({
     fs: FileSystem.init({ t: 'node' }),
     paths: ['.env'],
-    precedence: 'preserve-process-env',
+    precedence: 'preserve',
+    cwd: process.cwd(),
+    env: process.env,
   })
   logger.info('Environment variables loaded')
 

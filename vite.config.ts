@@ -6,7 +6,9 @@ import { FileSystem } from './src/@/file-system'
 await DotEnv.load({
   fs: FileSystem.init({ t: 'node' }),
   paths: ['.env'],
-  precedence: 'preserve-process-env',
+  precedence: 'preserve',
+  cwd: process.cwd(),
+  env: process.env,
 })
 
 const BACKEND_URL = process.env.BACKEND_URL

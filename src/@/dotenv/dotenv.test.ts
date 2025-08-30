@@ -8,24 +8,32 @@ describe('DotEnv', () => {
     const envContent = 'TEST_KEY=test_value\nANOTHER_KEY="quoted value"\n'
     await fs.write('.env', envContent)
 
+    const env: Record<string, string | undefined> = {}
+
     await DotEnv.load({
       fs,
       paths: ['.env'],
-      precedence: 'override-process-env',
+      precedence: 'override',
+      cwd: '/test',
+      env,
     })
 
-    expect(process.env.TEST_KEY).toEqual('test_value')
-    expect(process.env.ANOTHER_KEY).toEqual('quoted value')
+    expect(env.TEST_KEY).toEqual('test_value')
+    expect(env.ANOTHER_KEY).toEqual('quoted value')
   })
 
   test('should handle empty files', async () => {
     const fs = FileSystem.init({ t: 'in-memory' })
     await fs.write('.env', '')
 
+    const env: Record<string, string | undefined> = {}
+
     await DotEnv.load({
       fs,
       paths: ['.env'],
-      precedence: 'override-process-env',
+      precedence: 'override',
+      cwd: '/test',
+      env,
     })
 
     // Should not throw
@@ -42,44 +50,56 @@ describe('DotEnv', () => {
     `
     await fs.write('.env', envContent)
 
+    const env: Record<string, string | undefined> = {}
+
     await DotEnv.load({
       fs,
       paths: ['.env'],
-      precedence: 'override-process-env',
+      precedence: 'override',
+      cwd: '/test',
+      env,
     })
 
-    expect(process.env.TEST_KEY).toEqual('test_value')
-    expect(process.env.ANOTHER_KEY).toEqual('another_value')
+    expect(env.TEST_KEY).toEqual('test_value')
+    expect(env.ANOTHER_KEY).toEqual('another_value')
   })
 
-  test('should respect precedence when preserving process env', async () => {
+  test('should respect precedence when preserving env', async () => {
     const fs = FileSystem.init({ t: 'in-memory' })
-    process.env.EXISTING_KEY = 'original_value'
+    const env: Record<string, string | undefined> = {
+      EXISTING_KEY: 'original_value',
+    }
 
     await fs.write('.env', 'EXISTING_KEY=new_value')
 
     await DotEnv.load({
       fs,
       paths: ['.env'],
-      precedence: 'preserve-process-env',
+      precedence: 'preserve',
+      cwd: '/test',
+      env,
     })
 
-    expect(process.env.EXISTING_KEY).toEqual('original_value')
+    expect(env.EXISTING_KEY).toEqual('original_value')
   })
 
-  test('should override process env when configured', async () => {
+  test('should override env when configured', async () => {
     const fs = FileSystem.init({ t: 'in-memory' })
-    process.env.EXISTING_KEY = 'original_value'
+    const env: Record<string, string | undefined> = {
+      EXISTING_KEY: 'original_value',
+    }
 
     await fs.write('.env', 'EXISTING_KEY=new_value')
 
     await DotEnv.load({
       fs,
       paths: ['.env'],
-      precedence: 'override-process-env',
+      precedence: 'override',
+      cwd: '/test',
+      env,
     })
 
-    expect(process.env.EXISTING_KEY).toEqual('new_value')
+    expect(env.EXISTING_KEY).toEqual('new_value')
   })
 
   test('should handle multiple env files', async () => {
@@ -87,25 +107,49 @@ describe('DotEnv', () => {
     await fs.write('.env', 'FIRST_KEY=first_value')
     await fs.write('.env.local', 'SECOND_KEY=second_value')
 
+    const env: Record<string, string | undefined> = {}
+
     await DotEnv.load({
       fs,
       paths: ['.env', '.env.local'],
-      precedence: 'override-process-env',
+      precedence: 'override',
+      cwd: '/test',
+      env,
     })
 
-    expect(process.env.FIRST_KEY).toEqual('first_value')
-    expect(process.env.SECOND_KEY).toEqual('second_value')
+    expect(env.FIRST_KEY).toEqual('first_value')
+    expect(env.SECOND_KEY).toEqual('second_value')
   })
 
   test('should handle non-existent files gracefully', async () => {
     const fs = FileSystem.init({ t: 'in-memory' })
+    const env: Record<string, string | undefined> = {}
 
     await DotEnv.load({
       fs,
       paths: ['.env'],
-      precedence: 'override-process-env',
+      precedence: 'override',
+      cwd: '/test',
+      env,
     })
 
     // Should not throw
+  })
+
+  test('should work with custom working directory', async () => {
+    const fs = FileSystem.init({ t: 'in-memory' })
+    await fs.write('/custom/path/.env', 'CUSTOM_KEY=custom_value')
+
+    const env: Record<string, string | undefined> = {}
+
+    await DotEnv.load({
+      fs,
+      paths: ['.env'],
+      precedence: 'override',
+      cwd: '/custom/path',
+      env,
+    })
+
+    expect(env.CUSTOM_KEY).toEqual('custom_value')
   })
 })

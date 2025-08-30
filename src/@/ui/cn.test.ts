@@ -10,7 +10,7 @@ const logger = SHOULD_LOG
 describe('cn performance', () => {
   test('should be fast for typical usage', () => {
     const iterations = 100000
-    const start = process.hrtime.bigint()
+    const start = Date.now()
 
     for (let i = 0; i < iterations; i++) {
       cnParams(
@@ -24,7 +24,7 @@ describe('cn performance', () => {
       )
     }
 
-    const end = process.hrtime.bigint()
+    const end = Date.now()
     const timePerOp = Number(end - start) / iterations / 1_000_000 // Convert nanoseconds to milliseconds
 
     expect(timePerOp <= 0.01).toEqual(true)
@@ -37,7 +37,7 @@ describe('cn performance', () => {
     const iterations = 100
 
     // Test cnParams()
-    const startCn = process.hrtime.bigint()
+    const startCn = Date.now()
     for (let i = 0; i < iterations; i++) {
       cnParams(
         'base-class',
@@ -49,11 +49,11 @@ describe('cn performance', () => {
         'final-class',
       )
     }
-    const endCn = process.hrtime.bigint()
+    const endCn = Date.now()
     const timePerCn = Number(endCn - startCn) / iterations / 1_000_000 // Convert nanoseconds to milliseconds
 
     // Test cnLoop()
-    const startLoop = process.hrtime.bigint()
+    const startLoop = Date.now()
     for (let i = 0; i < iterations; i++) {
       cnLoop(
         'base-class',
@@ -65,11 +65,11 @@ describe('cn performance', () => {
         'final-class',
       )
     }
-    const endLoop = process.hrtime.bigint()
+    const endLoop = Date.now()
     const timePerLoop = Number(endLoop - startLoop) / iterations / 1_000_000 // Convert nanoseconds to milliseconds
 
     // Test cnFilter()
-    const startFilter = process.hrtime.bigint()
+    const startFilter = Date.now()
     for (let i = 0; i < iterations; i++) {
       cnFilter(
         'base-class',
@@ -81,7 +81,7 @@ describe('cn performance', () => {
         'final-class',
       )
     }
-    const endFilter = process.hrtime.bigint()
+    const endFilter = Date.now()
     const timePerFilter = Number(endFilter - startFilter) / iterations / 1_000_000 // Convert nanoseconds to milliseconds
 
     logger.info(`Average time per cnParams() call: ${timePerCn.toFixed(6)}ms`)
