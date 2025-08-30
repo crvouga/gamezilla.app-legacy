@@ -1,6 +1,6 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import { Frag } from '~/@/vdom/primitives/frag'
+import { Portal } from '~/@/vdom/primitives/portal'
 import { Pressable } from '~/@/vdom/primitives/pressable'
 import { VDom } from '~/@/vdom/vdom'
 import { sx } from '../../vdom/style/sx'
@@ -14,38 +14,37 @@ export const DropDown = (props: {
   renderReference: () => VDom
   renderFloating: () => VDom
   style?: Record<string, unknown>
+  testId?: string
   position?: DropDownPosition
   alignment?: DropDownAlignment
-  testId?: string
 }) => {
-  const position = props.position ?? 'bottom'
-  const alignment = props.alignment ?? 'starting'
-
   const onClose = () => {
     if (props.open) {
       props.onClose()
     }
   }
 
-  return h(Frag, {}, [
-    h(Backdrop, { open: props.open, onPress: onClose }),
-    h(Box, { style: props.style }, [
+  return h(Box, { style: props.style }, [
+    props.renderReference(),
+    h(Portal.Entrance, {}, [
       h(
         Box,
         {
           style: sx({
-            position: 'relative',
-            zIndex: props.open ? 50 : null,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: props.open ? 'flex' : 'none',
           }),
         },
         [
-          props.renderReference(),
+          h(Backdrop, { open: props.open, onPress: onClose }, []),
           h(Floating, {
             open: props.open,
             id: props.id,
             renderFloating: props.renderFloating,
-            position,
-            alignment,
           }),
         ],
       ),
@@ -53,29 +52,22 @@ export const DropDown = (props: {
   ])
 }
 
-const Floating = (props: {
-  open: boolean
-  id: string
-  renderFloating: () => VDom
-  position: DropDownPosition
-  alignment: DropDownAlignment
-}) =>
+const Floating = (props: { open: boolean; id: string; renderFloating: () => VDom }) =>
   h(
     Box,
     {
       id: props.id,
-      style: {
-        ...sx({
-          position: 'absolute',
-          zIndex: 50,
-          flexDirection: 'col',
-          display: props.open ? 'flex' : 'none',
-          minWidth: 'sm',
-          overflow: 'hidden',
-        }),
-        ...toPositionStyle(props.position),
-        ...toAlignmentStyle(props.position, props.alignment),
-      },
+      style: sx({
+        position: 'absolute',
+        zIndex: 50,
+        flexDirection: 'col',
+        display: props.open ? 'flex' : 'none',
+        minWidth: 'sm',
+        overflow: 'hidden',
+        left: '50%',
+        top: '50%',
+        transform: [{ translateX: '-50%' }, { translateY: '-50%' }],
+      }),
     },
     [props.renderFloating()],
   )
@@ -91,50 +83,4 @@ const Backdrop = (props: { open: boolean; onPress: () => void }) => {
     }),
     onPress: props.onPress,
   })
-}
-
-const toPositionStyle = (position: DropDownPosition): Record<string, unknown> => {
-  switch (position) {
-    case 'bottom':
-      return sx({ top: '100%' })
-    case 'top':
-      return sx({ bottom: '100%' })
-    case 'start':
-      return sx({ right: '100%' })
-    case 'end':
-      return sx({ left: '100%' })
-  }
-}
-
-const toAlignmentStyle = (position: DropDownPosition, alignment: DropDownAlignment): Record<string, unknown> => {
-  switch (position) {
-    case 'bottom':
-    case 'top':
-      return toVerticalAlignmentStyle(alignment)
-    case 'start':
-    case 'end':
-      return toHorizontalAlignmentStyle(alignment)
-  }
-}
-
-const toVerticalAlignmentStyle = (alignment: DropDownAlignment): Record<string, unknown> => {
-  switch (alignment) {
-    case 'ending':
-      return sx({ right: 0 })
-    case 'starting':
-      return sx({ left: 0 })
-    case 'centered':
-      return sx({ left: '50%', transform: [{ translateX: '-50%' }] })
-  }
-}
-
-const toHorizontalAlignmentStyle = (alignment: DropDownAlignment): Record<string, unknown> => {
-  switch (alignment) {
-    case 'ending':
-      return { bottom: 0 }
-    case 'starting':
-      return { top: 0 }
-    case 'centered':
-      return { top: '50%', transform: 'translateY(-50%)' }
-  }
 }
