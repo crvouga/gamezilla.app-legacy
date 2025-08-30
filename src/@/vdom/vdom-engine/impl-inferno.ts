@@ -1,7 +1,8 @@
-import { Fragment, render } from 'inferno'
+import { createPortal, Fragment, render } from 'inferno'
 import { createElement } from 'inferno-create-element'
 import { inPlaceMapKeys } from '~/@/object/in-place-map-keys'
 import { camelToKebab } from '~/@/string/camel-to-kebab'
+import { PORTAL_ENTRANCE_TAG } from '../primitives/portal'
 import { CANVAS_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { inPlaceMapPropsToWebProps } from './web/map-props-to-web-props'
@@ -31,6 +32,8 @@ const init = (_config: ImplInferno): IVirtualDomEngine => {
           return createElement(WebSafeAreaBox as any, props, children) as any
         case CANVAS_TAG:
           return createElement(WebCanvas as any, props, children) as any
+        case PORTAL_ENTRANCE_TAG:
+          return createPortal(createElement(Fragment, props, children), document.body)
         default:
           return createElement(tag, props, children) as any
       }

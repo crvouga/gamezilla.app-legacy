@@ -1,5 +1,5 @@
 import { Fragment, render } from 'preact'
-import { createElement } from 'preact/compat'
+import { createElement, createPortal } from 'preact/compat'
 import { ensureArray } from '~/@/array/ensure-array'
 import { inPlaceMapKeys } from '~/@/object/in-place-map-keys'
 import { camelToKebab } from '~/@/string/camel-to-kebab'
@@ -9,6 +9,7 @@ import { inPlaceMapPropsToWebProps } from './web/map-props-to-web-props'
 import { WebCanvas } from './web/web-canvas'
 import { WebSafeAreaBox } from './web/web-safe-area-box'
 import { WebScrollBox } from './web/web-scroll-box'
+import { PORTAL_ENTRANCE_TAG } from '../primitives/portal'
 
 export type ImplPreact = {
   t: 'preact'
@@ -32,6 +33,8 @@ const init = (_config: ImplPreact): IVirtualDomEngine => {
           return createElement(WebSafeAreaBox, props, children) as any
         case CANVAS_TAG:
           return createElement(WebCanvas, props, children) as any
+        case PORTAL_ENTRANCE_TAG:
+          return createPortal(createElement(Fragment, props, children), document.body)
         default:
           return createElement(tag, props, ...children) as any
       }

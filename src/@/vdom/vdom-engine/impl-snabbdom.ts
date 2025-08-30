@@ -2,6 +2,7 @@ import { attributesModule, eventListenersModule, fragment, init, propsModule, st
 import { inPlaceFlatTruthyArray } from '~/@/array/in-place-flat-truthy-array'
 import { inPlaceMapKeys } from '~/@/object/in-place-map-keys'
 import { kebabToCamel } from '~/@/string/kebab-to-camel'
+import { PORTAL_ENTRANCE_TAG } from '../primitives/portal'
 import { CANVAS_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { createPrimitiveElement } from './snabbdom/snabbdom-create-element'
@@ -39,6 +40,8 @@ const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
           return createElement(WebScrollBox as any, props, children) as any
         case CANVAS_TAG:
           return createElement(WebCanvas as any, props, children) as any
+        case PORTAL_ENTRANCE_TAG:
+          return fragment(children)
         default:
           return createPrimitiveElement(tag, props, children)
       }

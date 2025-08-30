@@ -124,7 +124,7 @@ const Main = () => {
 
   if (!input) return h(SplashScreen, {}, [])
 
-  return h(AppFrontend.View, input, [])
+  return h(ImplReactNative.Root, {}, [h(AppFrontend.View, input, [])])
 }
 
 registerRootComponent(Main as ComponentType<unknown>)

@@ -1,3 +1,4 @@
+import { Portal, PortalProvider } from '@gorhom/portal'
 import { createElement, Fragment } from 'react'
 import { Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
 import Svg, {
@@ -18,6 +19,7 @@ import Svg, {
 import { ensureArray } from '~/@/array/ensure-array'
 import { inPlaceMapKeys } from '~/@/object/in-place-map-keys'
 import { kebabToCamel } from '~/@/string/kebab-to-camel'
+import { PORTAL_ENTRANCE_TAG } from '../primitives/portal'
 import {
   BOX_TAG,
   CANVAS_TAG,
@@ -44,6 +46,7 @@ import {
   TEXT_TAG,
   TRANSITION_ELEMENT_TAG,
 } from '../tags'
+import { VDom } from '../vdom'
 import { IVirtualDomEngine } from './interface'
 import { inPlaceMapPropsToReactNativeProps } from './react-native/map-props-to-react-native-props'
 import { ReactNativeCanvas } from './react-native/react-native-canvas'
@@ -94,6 +97,11 @@ const ALLOWED_PROPS = new Set([
 
 export type ImplReactNative = {
   t: 'react-native'
+}
+
+const Root = (props: { children: VDom[] }) => {
+  const children = ensureArray(props.children) as any[]
+  return createElement(PortalProvider, {} as any, ...children)
 }
 
 const init = (_config: ImplReactNative): IVirtualDomEngine => {
@@ -165,6 +173,8 @@ const init = (_config: ImplReactNative): IVirtualDomEngine => {
           return createElement(Fragment, props, ...children) as any
         case TRANSITION_ELEMENT_TAG:
           return createElement(View, props, ...children) as any
+        case PORTAL_ENTRANCE_TAG:
+          return createElement(Portal, props, ...children)
         default:
           return createElement(tag, props, ...children) as any
       }
@@ -176,10 +186,8 @@ const sanitizeProps = (props: Record<string, any>): Record<string, any> => {
   const sanitized: Record<string, any> = {}
 
   for (const [key, value] of Object.entries(props)) {
-    // Skip non-allowed props
     if (!ALLOWED_PROPS.has(key)) continue
 
-    // Convert string booleans to actual booleans
     if (value === 'true') {
       sanitized[key] = true
       continue
@@ -189,7 +197,6 @@ const sanitizeProps = (props: Record<string, any>): Record<string, any> => {
       continue
     }
 
-    // Map ARIA attributes
     if (key.startsWith('aria-')) {
       const ariaKey = key.replace('aria-', '')
       if (!sanitized.accessibilityState) {
@@ -199,13 +206,11 @@ const sanitizeProps = (props: Record<string, any>): Record<string, any> => {
       continue
     }
 
-    // Map role to accessibilityRole
     if (key === 'role') {
       sanitized.accessibilityRole = value
       continue
     }
 
-    // Pass through allowed props
     sanitized[key] = value
   }
 
@@ -214,4 +219,5 @@ const sanitizeProps = (props: Record<string, any>): Record<string, any> => {
 
 export const ImplReactNative = {
   init,
+  Root,
 }

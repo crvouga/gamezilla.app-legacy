@@ -1,8 +1,10 @@
 import { createElement, Fragment, StrictMode } from 'react'
+import { createPortal } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import { ensureArray } from '~/@/array/ensure-array'
 import { inPlaceMapKeys } from '~/@/object/in-place-map-keys'
 import { kebabToCamel } from '~/@/string/kebab-to-camel'
+import { PORTAL_ENTRANCE_TAG } from '../primitives/portal'
 import { CANVAS_TAG, FRAGMENT_TAG, SAFE_AREA_BOX_TAG, SCROLL_BOX_TAG } from '../tags'
 import { IVirtualDomEngine } from './interface'
 import { mapPropsToWebProps } from './web/map-props-to-web-props'
@@ -35,6 +37,8 @@ const init = (_config: ImplReact): IVirtualDomEngine => {
           return createElement(WebSafeAreaBox as any, props, ...children) as any
         case CANVAS_TAG:
           return createElement(WebCanvas as any, props, ...children) as any
+        case PORTAL_ENTRANCE_TAG:
+          return createPortal(createElement(Fragment, props, ...children), document.body)
         default:
           return createElement(tag, props, ...children) as any
       }
