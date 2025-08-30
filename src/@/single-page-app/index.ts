@@ -1,5 +1,6 @@
 import { IHttpServer } from '~/@/http-server'
 import { IFileSystem } from '../file-system'
+import { isErr } from '../result'
 import { extToContentType } from './ext-to-content-type'
 
 const registerRespond = (config: {
@@ -11,14 +12,23 @@ const registerRespond = (config: {
   config.httpServer.registerRespond(async (request) => {
     const filePath = new URL(request.url).pathname.slice(1)
 
-    if (await config.fs.exists(filePath)) {
-      const file = await config.fs.read(filePath)
+    const existsResult = await config.fs.exists(filePath)
+    if (!isErr(existsResult) && existsResult.value) {
+      const readResult = await config.fs.read(filePath)
+      if (isErr(readResult)) {
+        return new Response('Error reading file', { status: 500 })
+      }
+      const file = readResult.value
       const contentType = extToContentType(filePath)
       return new Response(file, { headers: { 'Content-Type': contentType } })
     }
 
     const indexPath = `${config.directory}/${config.indexFilename}`
-    const indexContent = await config.fs.read(indexPath)
+    const indexReadResult = await config.fs.read(indexPath)
+    if (isErr(indexReadResult)) {
+      return new Response('Error reading index file', { status: 500 })
+    }
+    const indexContent = indexReadResult.value
     const indexContentType = extToContentType(config.indexFilename)
     return new Response(indexContent, { headers: { 'Content-Type': indexContentType } })
   })

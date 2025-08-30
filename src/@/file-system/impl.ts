@@ -6,12 +6,10 @@ export type FileSystem = ImplNode | ImplInMemory
 
 const init = (config: FileSystem): IFileSystem => {
   switch (config.t) {
-    case 'node': {
+    case 'node':
       return ImplNode.init(config)
-    }
-    case 'in-memory': {
+    case 'in-memory':
       return ImplInMemory.init(config)
-    }
   }
 }
 

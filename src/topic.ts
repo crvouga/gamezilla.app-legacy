@@ -27,7 +27,7 @@ const main = async () => {
   await DotEnv.load({
     fs,
     paths: ['.env'],
-    precedence: 'skip-existing-env-var',
+    precedence: 'preserve-process-env',
   })
   logger.info('Environment variables loaded')
 
