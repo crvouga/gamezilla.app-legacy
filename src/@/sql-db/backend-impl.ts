@@ -7,15 +7,16 @@ import type { ISqlDb } from './interface'
 export type BackendSqlDb = ImplPostgres | ImplNoop | ImplBetterSqlite3 | ImplPglite
 
 const init = (config: BackendSqlDb): ISqlDb => {
+  const logger = config.logger.child(['sql-db'])
   switch (config.t) {
     case 'noop':
-      return ImplNoop.init(config)
+      return ImplNoop.init({ ...config, logger })
     case 'postgres':
-      return ImplPostgres.init(config)
+      return ImplPostgres.init({ ...config, logger })
     case 'better-sqlite3':
-      return ImplBetterSqlite3.init(config)
+      return ImplBetterSqlite3.init({ ...config, logger })
     case 'pglite':
-      return ImplPglite.init(config)
+      return ImplPglite.init({ ...config, logger })
   }
 }
 

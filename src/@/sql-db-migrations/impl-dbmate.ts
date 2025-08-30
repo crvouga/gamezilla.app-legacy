@@ -36,7 +36,7 @@ const init = (config: ImplDbMate): ISqlDbMigration => {
         locked = true
         logger.info('Successfully acquired database lock')
 
-        const { stdout, stderr } = await promisify(exec)(`npx dbmate up`, {
+        const { stdout, stderr } = await promisify(exec)('pnpm exec dbmate up', {
           env: {
             ...process.env,
             DATABASE_URL: config.databaseUrl.dangerouslyReadValue(),
