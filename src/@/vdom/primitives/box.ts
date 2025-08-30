@@ -2,6 +2,7 @@ import { h } from '~/@/vdom/vdom-engine/impl'
 import { PrimitiveProps } from '../primitive-props'
 import { BOX_TAG } from '../tags'
 import { VDom } from '../vdom'
+import { UserSelect } from '../style/user-select'
 
 export type BoxProps = PrimitiveProps & {
   children?: VDom[]
@@ -25,6 +26,7 @@ const BASE_STYLE = {
   position: 'relative',
   textDecoration: 'none',
   zIndex: 0,
+  userSelect: UserSelect.of('none'),
 }
 
 export const Box = ({ children, ...props }: BoxProps) => {

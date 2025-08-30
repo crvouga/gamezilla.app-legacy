@@ -1,6 +1,7 @@
 import { h } from '~/@/vdom/vdom-engine/impl'
 import { PrimitiveProps } from '../primitive-props'
 import { SAFE_AREA_BOX_TAG } from '../tags'
+import { UserSelect } from '../style/user-select'
 
 export type SafeAreaBoxEdge = 'top' | 'bottom' | 'left' | 'right'
 
@@ -28,6 +29,7 @@ const BASE_STYLE = {
   position: 'relative',
   textDecoration: 'none',
   zIndex: 0,
+  userSelect: UserSelect.of('none'),
 }
 
 export const SafeAreaBox = ({ children, ...props }: SafeAreaBoxProps) => {

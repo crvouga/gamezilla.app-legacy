@@ -1,5 +1,6 @@
 import { h } from '~/@/vdom/vdom-engine/impl'
 import { PrimitiveProps } from '../primitive-props'
+import { UserSelect } from '../style/user-select'
 import { TEXT_TAG } from '../tags'
 import { VDom } from '../vdom'
 
@@ -22,6 +23,7 @@ const BASE_STYLE = {
   textDecoration: 'none',
   whiteSpace: 'pre-wrap',
   overflowWrap: 'break-word',
+  userSelect: UserSelect.of('none'),
 }
 
 export const Text = ({ text, ...props }: TextProps): VDom => {

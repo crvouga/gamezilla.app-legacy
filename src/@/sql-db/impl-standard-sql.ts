@@ -15,6 +15,7 @@ export type ImplStandardSql = {
   garbageCollectionInterval?: TimeSpan
 }
 
+const MAX_QUERY_LENGTH_LOG = 1500
 const init = (config: ImplStandardSql): ISqlDb => {
   const logger = config.logger.child(['sql'])
 
@@ -29,7 +30,8 @@ const init = (config: ImplStandardSql): ISqlDb => {
       const end = Date.now()
       const durationMs = end - start
       const durationFormatted = `${durationMs.toFixed(2)}ms`
-      logger.debug(durationFormatted, sql.slice(0, 2000))
+
+      logger.debug(durationFormatted, sql.slice(0, MAX_QUERY_LENGTH_LOG))
       const output: s.Infer<typeof input.schema>[] = []
 
       for (const row of rows) {

@@ -1,6 +1,7 @@
 import { h } from '~/@/vdom/vdom-engine/impl'
 import { PrimitiveProps } from '../primitive-props'
 import { TEXT_INPUT_TAG } from '../tags'
+import { UserSelect } from '../style/user-select'
 
 export type TextInputProps = PrimitiveProps & {
   defaultValue?: string | number | null | undefined
@@ -36,6 +37,7 @@ const BASE_STYLE = {
   textDecoration: 'none',
   whiteSpace: 'pre-wrap',
   overflowWrap: 'break-word',
+  userSelect: UserSelect.of('none'),
 }
 
 export const TextInput = (props: TextInputProps) => {

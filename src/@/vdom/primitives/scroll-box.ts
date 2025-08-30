@@ -2,6 +2,7 @@ import { h } from '~/@/vdom/vdom-engine/impl'
 import { PrimitiveProps } from '../primitive-props'
 import { SCROLL_BOX_TAG } from '../tags'
 import { VDom } from '../vdom'
+import { UserSelect } from '../style/user-select'
 
 export type ScrollBoxProps = PrimitiveProps & {
   children?: VDom[]
@@ -29,6 +30,7 @@ const BASE_STYLE = {
   position: 'relative',
   textDecoration: 'none',
   zIndex: 0,
+  userSelect: UserSelect.of('none'),
 }
 
 export const ScrollBox = ({ children, ...props }: ScrollBoxProps) => {

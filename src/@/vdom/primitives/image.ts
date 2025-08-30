@@ -2,6 +2,7 @@ import type { VDom } from '~/@/vdom/vdom'
 import { h } from '~/@/vdom/vdom-engine/impl'
 import { PrimitiveProps } from '../primitive-props'
 import { IMAGE_TAG } from '../tags'
+import { UserSelect } from '../style/user-select'
 
 export type ImageProps = PrimitiveProps & {
   src: string
@@ -23,6 +24,7 @@ const BASE_STYLE = {
   textDecoration: 'none',
   whiteSpace: 'pre-wrap',
   overflowWrap: 'break-word',
+  userSelect: UserSelect.of('none'),
 }
 
 export const Image = ({ children, ...props }: ImageProps) => {

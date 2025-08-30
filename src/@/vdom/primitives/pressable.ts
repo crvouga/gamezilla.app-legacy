@@ -2,6 +2,7 @@ import type { VDom } from '~/@/vdom/vdom'
 import { h } from '~/@/vdom/vdom-engine/impl'
 import { PrimitiveProps } from '../primitive-props'
 import { PRESSABLE_TAG } from '../tags'
+import { UserSelect } from '../style/user-select'
 
 export type PressableProps = PrimitiveProps & {
   children: VDom[]
@@ -25,6 +26,7 @@ const BASE_STYLE = {
   position: 'relative',
   textDecoration: 'none',
   zIndex: 0,
+  userSelect: UserSelect.of('none'),
 }
 
 export const Pressable = ({ children, ...props }: PressableProps) => {
