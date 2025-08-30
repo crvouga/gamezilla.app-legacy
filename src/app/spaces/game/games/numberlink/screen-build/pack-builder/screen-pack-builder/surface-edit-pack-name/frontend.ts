@@ -3,7 +3,7 @@ import { TextField } from '~/@/ui/text-field'
 import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
-import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
+import { FloatingLayout } from '~/app/@/ui/floating/layout/floating-layout'
 import { FrontendModule } from '../types'
 
 const update: FrontendModule['update'] = (input) => {
@@ -22,7 +22,7 @@ const ViewSurface: FrontendModule['View'] = (input) => {
     })
   }
 
-  return h(SurfaceLayout, {
+  return h(FloatingLayout, {
     ctx: input.ctx,
     ariaLabel: input.ctx.t('app.edit-name'),
     id: 'edit-pack-name',

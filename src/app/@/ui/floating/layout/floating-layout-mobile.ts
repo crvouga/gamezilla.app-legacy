@@ -1,10 +1,10 @@
 import { Drawer } from '~/@/ui/surface-drawer/drawer'
 import { h } from '~/@/vdom/h'
 import { Frag } from '~/@/vdom/primitives/frag'
-import { SurfaceContent } from './surface-content'
-import { SurfaceLayoutProps } from './surface-layout-props'
+import { FloatingContent } from './floating-content'
+import { FloatingLayoutProps } from './floating-layout-props'
 
-export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
+export const FloatingLayoutMobile = (props: FloatingLayoutProps) => {
   return h(Frag, {}, [
     props.dropDown?.reference?.render?.(),
     h(
@@ -17,7 +17,7 @@ export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
         ctx: props.ctx,
         ariaLabel: props.ariaLabel,
       },
-      [h(SurfaceContent, props)],
+      [h(FloatingContent, props)],
     ),
   ])
 }

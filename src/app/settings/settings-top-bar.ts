@@ -5,14 +5,14 @@ import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
-import { SurfaceLayout } from '../@/ui/surface/layout/surface-layout'
+import { FloatingLayout } from '../@/ui/floating/layout/floating-layout'
 import { BackendConnectionStatus } from '../@/wire/backend-connection-status'
 import { SoundFrontend } from './sound'
 import type { FrontendModule } from './types'
 
 const View: FrontendModule['View'] = (props) => {
   const iconSize = toStyleIconSize(props)
-  return h(SurfaceLayout, {
+  return h(FloatingLayout, {
     ctx: props.ctx,
     ariaLabel: props.ctx.t('status-bar.status-bar'),
     drawer: {

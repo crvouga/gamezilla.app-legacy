@@ -6,7 +6,7 @@ import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Frag } from '~/@/vdom/primitives/frag'
 import { VDom } from '~/@/vdom/vdom'
-import { SurfaceLayout } from '../../../surface/layout/surface-layout'
+import { FloatingLayout } from '../../../floating/layout/floating-layout'
 import {
   ScreenAction,
   ScreenActionBarProps,
@@ -71,7 +71,7 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
     }),
 
     hasLastActions &&
-      h(SurfaceLayout, {
+      h(FloatingLayout, {
         ctx: input.ctx,
         id: input.id,
         ariaLabel: input.ctx.t('app.more'),

@@ -8,10 +8,10 @@ import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { ScreenSize } from '../../screen/screen-size'
-import { SurfaceLayout } from '../layout/surface-layout'
+import { FloatingLayout } from '../layout/floating-layout'
 import { sx } from '~/@/vdom/style/sx'
 
-export type SurfaceUnsavedChangesProps = {
+export type FloatingUnsavedChangesProps = {
   ctx: {
     t: Translator
     screenSize: ScreenSize
@@ -33,8 +33,8 @@ export type SurfaceUnsavedChangesProps = {
   onCancel: () => void
 }
 
-export const SurfaceUnsavedChanges = (input: SurfaceUnsavedChangesProps) => {
-  return h(SurfaceLayout, {
+export const FloatingUnsavedChanges = (input: FloatingUnsavedChangesProps) => {
+  return h(FloatingLayout, {
     ctx: input.ctx,
     id: 'unsaved-changes-drawer',
     ariaLabel: input.title,

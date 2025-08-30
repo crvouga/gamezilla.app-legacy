@@ -10,7 +10,7 @@ import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import type { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
-import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
+import { FloatingLayout } from '~/app/@/ui/floating/layout/floating-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ScreenLayoutGameCoverArt } from '../../ui/screen-layout-game-cover-art'
 import type { PlayerType, VsBotInput } from '../vs-bot'
@@ -219,7 +219,7 @@ export const View = ({
         }),
       ]),
 
-    h(SurfaceLayout, {
+    h(FloatingLayout, {
       ctx,
       ariaLabel: ctx.t('game.change-bot'),
       drawer: {

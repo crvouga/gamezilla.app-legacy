@@ -6,7 +6,7 @@ import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowOkSmall } from '~/app/@/frontend/show-ok-small'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
-import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
+import { FloatingConfirmation } from '~/app/@/ui/floating/confirmation/floating-confirmation'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { RemovePuzzlesCmd } from '../../../../@/frontend/remove-puzzles-cmd'
 import type { FrontendModule } from '../../../types'
@@ -101,7 +101,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
 }
 
 const ViewSurface = (input: Parameters<FrontendModule['View']>[0] & { dropDown: DropDownConfig }) => {
-  return h(SurfaceConfirmation, {
+  return h(FloatingConfirmation, {
     ctx: input.ctx,
     ariaLabel: input.ctx.t('game.numberlink.delete-puzzle-forever?'),
     id: 'delete-forever-drawer',

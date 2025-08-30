@@ -7,7 +7,7 @@ import { SurfaceBodyText } from '~/@/ui/surface/surface-body-text'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { h } from '~/@/vdom/h'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
-import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
+import { FloatingLayout } from '~/app/@/ui/floating/layout/floating-layout'
 
 type PropsBase = {
   ctx: {
@@ -33,10 +33,10 @@ type PropsBase = {
   confirmLoading?: boolean
 }
 
-export type SurfaceConfirmationProps = DrawerInput & PropsBase
+export type FloatingConfirmationProps = DrawerInput & PropsBase
 
-export const SurfaceConfirmation = (input: SurfaceConfirmationProps) => {
-  return h(SurfaceLayout, {
+export const FloatingConfirmation = (input: FloatingConfirmationProps) => {
+  return h(FloatingLayout, {
     ...input,
     id: 'surface-confirmation',
     ariaLabel: input.title,

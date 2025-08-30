@@ -11,7 +11,7 @@ import { VDom } from '~/@/vdom/vdom'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ScreenLayoutProps } from '~/app/@/ui/screen/layout/screen-layout-props'
-import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
+import { FloatingLayout } from '~/app/@/ui/floating/layout/floating-layout'
 import { ModeEdit } from '.'
 import { GroupId } from '../numberlink/group-id'
 import { BoardLayout } from '../ui/board-layout'
@@ -79,7 +79,7 @@ const View = (props: {
               props.dispatch({ t: 'dimensions-form.clicked-open' })
             },
             renderSurface: ({ dropDown }) =>
-              h(SurfaceLayout, {
+              h(FloatingLayout, {
                 id: 'dimensions',
                 ctx: props.ctx,
                 ariaLabel: props.ctx.t('app.dimensions'),

@@ -7,7 +7,7 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
 import { ShowOkSmall } from '~/app/@/frontend/show-ok-small'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
-import { SurfaceUnsavedChanges } from '~/app/@/ui/surface/unsaved-changes/surface-unsaved-changes'
+import { FloatingUnsavedChanges } from '~/app/@/ui/floating/unsaved-changes/floating-unsaved-changes'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { ModeEdit } from '../../../../@/mode-edit'
 import type { Puzzle } from '../../../../@/puzzle/puzzle'
@@ -234,7 +234,7 @@ const updateDbSavedPuzzle: FrontendModule['update'] = (input) => {
 //
 
 const ViewUnsavedChangesSurface = (input: Parameters<FrontendModule['View']>[0] & { dropDown: DropDownConfig }) => {
-  return h(SurfaceUnsavedChanges, {
+  return h(FloatingUnsavedChanges, {
     dropDown: input.dropDown,
     ctx: input.ctx,
     title: input.ctx.t('app.save-changes?'),

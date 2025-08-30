@@ -12,7 +12,7 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
 import { ShowOkSmall } from '~/app/@/frontend/show-ok-small'
 import { ScreenAction, ScreenActionLocation } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
-import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
+import { FloatingLayout } from '~/app/@/ui/floating/layout/floating-layout'
 import { GotQueryCacheMsg } from '~/app/frontend/query-cache/got-query-cache-msg.$msg'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
@@ -242,7 +242,7 @@ const ViewSurface = (
     screenActionLocation: ScreenActionLocation
   },
 ) => {
-  return h(SurfaceLayout, {
+  return h(FloatingLayout, {
     id: 'edit-name-drawer',
     ctx: input.ctx,
     ariaLabel: input.ctx.t('app.edit-name'),

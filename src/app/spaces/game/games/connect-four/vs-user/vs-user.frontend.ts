@@ -13,7 +13,7 @@ import { Text } from '~/@/vdom/primitives/text'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
+import { FloatingConfirmation } from '~/app/@/ui/floating/confirmation/floating-confirmation'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { VsUserSetupScreen } from '~/app/spaces/game/games/@/vs-user'
@@ -280,7 +280,7 @@ const View: Module['View'] = (input) => {
                   ),
               ]),
 
-              h(SurfaceConfirmation, {
+              h(FloatingConfirmation, {
                 id: 'resign-confirmation',
                 position: 'bottom',
                 title: input.ctx.t('app.resign'),

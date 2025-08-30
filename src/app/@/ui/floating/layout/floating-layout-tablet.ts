@@ -4,10 +4,10 @@ import { Dialog } from '~/@/ui/surface-dialog/dialog'
 import { DialogSurface } from '~/@/ui/surface-dialog/dialog-surface'
 import { h } from '~/@/vdom/h'
 import { Frag } from '~/@/vdom/primitives/frag'
-import { SurfaceContent } from './surface-content'
-import { SurfaceLayoutProps } from './surface-layout-props'
+import { FloatingContent } from './floating-content'
+import { FloatingLayoutProps } from './floating-layout-props'
 
-export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
+export const FloatingLayoutTablet = (props: FloatingLayoutProps) => {
   if (props.dropDown?.reference) {
     return h(DropDown, {
       ...props,
@@ -17,7 +17,7 @@ export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
       renderReference: () => props.dropDown?.reference?.render?.(),
       alignment: props.dropDown?.alignment ?? 'ending',
       position: props.dropDown?.position ?? 'bottom',
-      renderFloating: () => h(DropDownSurface, {}, [h(SurfaceContent, props)]),
+      renderFloating: () => h(DropDownSurface, {}, [h(FloatingContent, props)]),
     })
   }
 
@@ -30,7 +30,7 @@ export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
         open: props.open,
         onClose: props.onClose,
       },
-      [h(DialogSurface, {}, [h(SurfaceContent, props)])],
+      [h(DialogSurface, {}, [h(FloatingContent, props)])],
     ),
   ])
 }

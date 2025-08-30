@@ -10,7 +10,7 @@ import { OpenProfileCmd } from '~/app/@/frontend/open-profile-cmd.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt.$msg'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
-import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
+import { FloatingLayout } from '~/app/@/ui/floating/layout/floating-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { OpenUserDetailsCmd } from '../../@/frontend/open-user-details-cmd'
 import { SectionPeopleList } from '../../@/ui/section-people-list'
@@ -114,7 +114,7 @@ const ViewSurfaces = (
   const modalProfile = input.model.openedPreviewUserId
     ? input.ctx.profilesByUserId[input.model.openedPreviewUserId]
     : null
-  return h(SurfaceLayout, {
+  return h(FloatingLayout, {
     ctx: input.ctx,
     drawer: {
       position: DRAWER_POSITION,
@@ -124,7 +124,7 @@ const ViewSurfaces = (
       alignment: DROPDOWN_ALIGNMENT,
       reference: {
         render: () =>
-          h(SurfaceLayout, {
+          h(FloatingLayout, {
             drawer: {
               position: DRAWER_POSITION,
             },

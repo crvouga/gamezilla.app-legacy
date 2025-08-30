@@ -8,7 +8,7 @@ import { Frag } from '~/@/vdom/primitives/frag'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
-import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
+import { FloatingConfirmation } from '~/app/@/ui/floating/confirmation/floating-confirmation'
 import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
 
 const init: ModelFrontend = {
@@ -62,7 +62,7 @@ const ViewConfirmation = (input: {
   model: ModelFrontend
   dispatch: (msg: MsgFrontend) => void
 }) => {
-  return h(SurfaceConfirmation, {
+  return h(FloatingConfirmation, {
     ctx: input.ctx,
     testId: TEST_ID_LOGOUT_CONFIRMATION,
     ariaLabel: input.ctx.t('auth.logout-of-gamezilla.app'),

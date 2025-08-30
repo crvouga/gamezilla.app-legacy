@@ -10,7 +10,7 @@ import { ShowOkSmall } from '~/app/@/frontend/show-ok-small'
 import { ShowWarningSmall } from '~/app/@/frontend/show-warning-small'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
+import { FloatingConfirmation } from '~/app/@/ui/floating/confirmation/floating-confirmation'
 import { AlgoSolveAsync } from '../algo-solve-async'
 import { problemToString } from '../algo-solve-async/algo-solve-async'
 import { SolutionHash } from '../solution-hash/solution-hash'
@@ -114,7 +114,7 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
       onPress: () => input.dispatch({ t: 'dialog.clicked-open' }),
       testId: TEST_ID_HINT_CALCULATOR_ACTION,
       renderSurface: ({ dropDown }) =>
-        h(SurfaceConfirmation, {
+        h(FloatingConfirmation, {
           title: input.ctx.t('game.numberlink.no-hints-available'),
           body: input.ctx.t('game.numberlink.no-hints-available-body'),
           ctx: input.ctx,

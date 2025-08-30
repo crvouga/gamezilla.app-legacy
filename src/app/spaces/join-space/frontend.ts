@@ -13,7 +13,7 @@ import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SectionTitle } from '~/app/@/ui/section/section-title'
-import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
+import { FloatingLayout } from '~/app/@/ui/floating/layout/floating-layout'
 import { SpaceFrontendCtx } from '../@/frontend/ctx'
 import { SectionPeopleList } from '../@/ui/section-people-list'
 import { SectionPersonDetails } from '../@/ui/section-person-details'
@@ -165,7 +165,7 @@ const view: SpaceFrontendModule['View'] = (input) => {
             ctx: spaceCtx,
             onPressItem: (userId) => input.dispatch({ t: 'join-space.clicked-person-menu-item', userId }),
             renderItem: (profile, vDom) =>
-              h(SurfaceLayout, {
+              h(FloatingLayout, {
                 ctx: spaceCtx,
                 ariaLabel: input.ctx.t('?'),
                 open: input.model.opened === 'join-space.person-preview-surface',

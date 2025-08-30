@@ -5,7 +5,7 @@ import { DrawerPosition } from '~/@/ui/surface-drawer/drawer-position'
 import { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '../../screen/screen-size'
 
-export type SurfaceLayoutProps = {
+export type FloatingLayoutProps = {
   id: string
   ctx: {
     t: Translator
