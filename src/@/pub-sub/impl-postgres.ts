@@ -3,14 +3,15 @@ import type { ILogger } from '../logger'
 import type { ISqlDb } from '../sql-db/interface'
 import { IPubSub } from './interface'
 
-export type Config = {
+export type ImplPostgres = {
   t: 'postgres'
   sqlDb: ISqlDb
   logger: ILogger
   channel: string
 }
 
-export const PubSub = (config: Config): IPubSub => {
+const init = (config: ImplPostgres): IPubSub => {
+  const logger = config.logger.child(['postgres'])
   const runningSubscriberId = 0
 
   const subscribers = new Map<number, (msg: string) => void>()
@@ -39,7 +40,7 @@ export const PubSub = (config: Config): IPubSub => {
       return
     }
 
-    config.logger.info(
+    logger.info(
       `received notification channel=${config.channel} instanceId=${instanceId} payload=${payload?.slice(0, 100)}`,
     )
 
@@ -67,4 +68,8 @@ export const PubSub = (config: Config): IPubSub => {
       }
     },
   }
+}
+
+export const ImplPostgres = {
+  init,
 }

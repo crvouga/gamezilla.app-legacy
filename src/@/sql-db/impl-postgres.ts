@@ -13,12 +13,12 @@ export type ImplPostgres = {
   simulateLatency?: Sleep
 }
 
-let postgresClient: postgres.Sql<{}>
+let postgresClientSingleton: postgres.Sql<{}>
 
 const init = (config: ImplPostgres): ISqlDb => {
   const logger = config.logger.child(['postgres'])
 
-  postgresClient ??= postgres(config.databaseUrl.dangerouslyReadValue(), {
+  postgresClientSingleton ??= postgres(config.databaseUrl.dangerouslyReadValue(), {
     connect_timeout: 10,
     idle_timeout: 20,
     max_lifetime: 60 * 30,
@@ -31,31 +31,27 @@ const init = (config: ImplPostgres): ISqlDb => {
       logger.debug({ notice })
     },
     onclose(error) {
-      logger.error({ error: error, message: 'onclose' })
+      logger.debug({ error: error, message: 'onclose' })
     },
   })
 
   const query = async <TRow>(rawSql: string): Promise<TRow[]> => {
-    return postgresClient.unsafe(rawSql)
+    return postgresClientSingleton.unsafe(rawSql)
   }
 
-  const impl = ImplStandardSql.init({
-    t: 'standard-sql',
-    query,
-    logger: config.logger,
-  })
+  const impl = ImplStandardSql.init({ t: 'standard-sql', query, logger })
 
   return {
     ...impl,
     aggregate: {
       StringConcat: (column, separator) => `STRING_AGG(${column}, '${separator}')`,
     },
-    notify: async (channel, payload) => {
-      await postgresClient.notify(channel, payload)
+    async notify(channel, payload) {
+      await postgresClientSingleton.notify(channel, payload)
       return Ok(null)
     },
-    listen: async (channel, callback) => {
-      const listening = await postgresClient.listen(channel, (payload) => {
+    async listen(channel, callback) {
+      const listening = await postgresClientSingleton.listen(channel, (payload) => {
         callback({
           channel: channel,
           payload: payload,

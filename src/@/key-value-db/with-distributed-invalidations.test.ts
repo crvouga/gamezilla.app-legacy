@@ -46,7 +46,7 @@ const Fixture = async () => {
         cache: KeyValueDb.init({
           t: 'with-distributed-invalidations',
           pubSub: PubSub({
-            t: 'pub-sub-topic-based',
+            t: 'from-topic-based-pub-sub',
             pubSubTopicBased: TopicBasedPubSub.init({
               t: 'in-memory',
               subscribersByTopic: pubSubMap,

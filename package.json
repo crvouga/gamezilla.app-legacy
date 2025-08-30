@@ -6,7 +6,7 @@
   "main": "./src/frontend.native.ts",
   "scripts": {
     "android": "expo run:android",
-    "app": "pnpm exec concurrently \"pnpm run frontend\" \"pnpm run topic\" \"pnpm run backend\"",
+    "app": "pnpm exec concurrently --names \"FRONTEND,TOPIC,BACKEND\" --prefix-colors \"blue,green,magenta\" \"pnpm run frontend\" \"pnpm run topic\" \"pnpm run backend\"",
     "backend": "pnpm exec tsx watch ./src/backend.ts",
     "cg": "pnpm cg:l18n && pnpm cg:screens && pnpm cg:events && pnpm cg:msg-shared",
     "cg:events": "pnpm exec tsx ./src/@/events/events-gen.ts",

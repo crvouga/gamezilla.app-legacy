@@ -11,6 +11,8 @@ export type ImplPglite = {
 }
 
 const init = (config: ImplPglite): ISqlDb => {
+  const logger = config.logger.child(['pglite'])
+
   const query = async (rawSql: string): Promise<unknown[]> => {
     const pgliteClient = await config.pglite
     const queried = await pgliteClient.query(rawSql)
@@ -18,23 +20,19 @@ const init = (config: ImplPglite): ISqlDb => {
     return rows
   }
 
-  const impl = ImplStandardSql.init({
-    t: 'standard-sql',
-    query,
-    logger: config.logger,
-  })
+  const impl = ImplStandardSql.init({ t: 'standard-sql', query, logger })
 
   return {
     ...impl,
     aggregate: {
       StringConcat: (column, separator) => `STRING_AGG(${column}, '${separator}')`,
     },
-    notify: async (channel, payload) => {
+    async notify(channel, payload) {
       const pgliteClient = await config.pglite
       await pgliteClient.query(`NOTIFY ${channel}, $1`, [payload])
       return Ok(null)
     },
-    listen: async (channel, callback) => {
+    async listen(channel, callback) {
       const pgliteClient = await config.pglite
       const unlisten = await pgliteClient.listen(channel, (payload) => {
         callback({
@@ -42,7 +40,6 @@ const init = (config: ImplPglite): ISqlDb => {
           payload: payload,
         })
       })
-
       return unlisten
     },
   }

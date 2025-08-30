@@ -1,13 +1,13 @@
 import { ITopicBasedPubSub } from '../pub-sub-topic-based'
 import { IPubSub } from './interface'
 
-export type Config = {
-  t: 'pub-sub-topic-based'
+export type ImplFromTopicBasedPubSub = {
+  t: 'from-topic-based-pub-sub'
   topic: string
   pubSubTopicBased: ITopicBasedPubSub
 }
 
-export const PubSub = (config: Config): IPubSub => {
+const init = (config: ImplFromTopicBasedPubSub): IPubSub => {
   return {
     async pub(msg) {
       return config.pubSubTopicBased.pub(config.topic, msg)
@@ -17,4 +17,8 @@ export const PubSub = (config: Config): IPubSub => {
       return config.pubSubTopicBased.sub(config.topic, subscriber)
     },
   }
+}
+
+export const ImplFromTopicBasedPubSub = {
+  init,
 }

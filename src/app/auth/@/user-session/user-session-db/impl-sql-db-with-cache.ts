@@ -31,7 +31,7 @@ export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => 
           ...config,
           t: 'with-distributed-invalidations',
           pubSub: PubSub({
-            t: 'pub-sub-topic-based',
+            t: 'from-topic-based-pub-sub',
             pubSubTopicBased: config.pubSubTopicBased,
             topic: 'user-session-db-cache-invalidation',
           }),

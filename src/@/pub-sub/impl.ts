@@ -1,20 +1,17 @@
-import * as ImplPostgres from './impl-postgres'
-import * as ImplInMemory from './impl-in-memory'
-import * as ImplTopicBasedPubSub from './impl-pub-sub-topic-based'
+import { ImplInMemory } from './impl-in-memory'
+import { ImplPostgres } from './impl-postgres'
+import { ImplFromTopicBasedPubSub } from './impl-pub-sub-topic-based'
 import { IPubSub } from './interface'
 
-export type Config = ImplPostgres.Config | ImplInMemory.Config | ImplTopicBasedPubSub.Config
+export type Config = ImplPostgres | ImplInMemory | ImplFromTopicBasedPubSub
 
 export const PubSub = (config: Config): IPubSub => {
   switch (config.t) {
-    case 'postgres': {
-      return ImplPostgres.PubSub(config)
-    }
-    case 'in-memory': {
-      return ImplInMemory.PubSub(config)
-    }
-    case 'pub-sub-topic-based': {
-      return ImplTopicBasedPubSub.PubSub(config)
-    }
+    case 'postgres':
+      return ImplPostgres.init(config)
+    case 'in-memory':
+      return ImplInMemory.init(config)
+    case 'from-topic-based-pub-sub':
+      return ImplFromTopicBasedPubSub.init(config)
   }
 }

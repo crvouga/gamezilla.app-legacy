@@ -1,11 +1,12 @@
 import { IPubSub } from './interface'
 
-export type Config = {
+export type ImplInMemory = {
   t: 'in-memory'
+  subs?: Set<(msg: string) => void>
 }
 
-export const PubSub = (_config: Config): IPubSub => {
-  const subs = new Set<(msg: string) => void>()
+const init = (config: ImplInMemory): IPubSub => {
+  const subs = config.subs ?? new Set<(msg: string) => void>()
 
   return {
     async pub(msg) {
@@ -22,4 +23,8 @@ export const PubSub = (_config: Config): IPubSub => {
       }
     },
   }
+}
+
+export const ImplInMemory = {
+  init,
 }
