@@ -10,7 +10,7 @@ import { NavigationImplKeyValueDb } from './@/navigation/impl-key-value-db'
 import { IPlatform } from './@/platform/platform'
 import { Program } from './@/program/program'
 import { SqlDbMigrationPolicy } from './@/sql-db-migration-policy/impl'
-import { SqlDbImplExpoSqlite } from './@/sql-db/impl-expo-sqlite'
+import { FrontendNativeSqlDb } from './@/sql-db/frontend-native-impl'
 import { Url } from './@/url/url'
 import { h, VDomEngine } from './@/vdom'
 import { ImplReactNative } from './@/vdom/vdom-engine/impl-react-native'
@@ -47,7 +47,7 @@ const topicUrl = Url.derive(TOPIC_URL, httpProtocol)
 logger.info('Derived URLs', { backendUrl, topicUrl })
 
 logger.info('Initializing sqlDb')
-const sqlDb = SqlDbImplExpoSqlite.init({
+const sqlDb = FrontendNativeSqlDb.init({
   t: 'expo-sqlite',
   dbName: 'gamezilla.db',
   logger,

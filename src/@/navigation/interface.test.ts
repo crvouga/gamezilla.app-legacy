@@ -76,10 +76,10 @@ describe('navigation', () => {
   test.skip('sub should notify of changes', async () => {
     for (const f of Fixtures()) {
       const values: (string | null)[] = []
-      f.navigation.sub('test').sub((value) => values.push(value))
-
-      await f.navigation.push('test', 'value1')
-      await f.navigation.push('test', 'value2')
+      const KEY = 'test'
+      f.navigation.sub(KEY).sub((value) => values.push(value))
+      await f.navigation.push(KEY, 'value1')
+      await f.navigation.push(KEY, 'value2')
       await f.navigation.back()
       await f.navigation.clear()
       await eventually(() => {

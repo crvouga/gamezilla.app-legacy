@@ -6,13 +6,10 @@ export type FrontendSqlDb = ImplNoop | ImplPglite
 
 const init = (config: FrontendSqlDb): ISqlDb => {
   switch (config.t) {
-    case 'noop': {
+    case 'noop':
       return ImplNoop.init(config)
-    }
-
-    case 'pglite': {
+    case 'pglite':
       return ImplPglite.init(config)
-    }
   }
 }
 

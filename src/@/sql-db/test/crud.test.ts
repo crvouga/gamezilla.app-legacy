@@ -26,19 +26,16 @@ const Fixtures = async () => {
     fs: FileSystem.init({ t: 'node' }),
   })
 
-  const pglite = Pglite.init({ t: 'main-thread', config: { t: 'in-memory' } })
+  const pglite = Pglite.init({
+    t: 'main-thread',
+    config: { t: 'in-memory' },
+  })
 
   configs.push({
     t: 'pglite',
     logger: Logger.init({ t: 'noop' }),
     pglite,
   })
-
-  // configs.push({
-  //   t: 'expo-sqlite',
-  //   dbName: ':memory:',
-  //   logger: Logger.init({ t: 'noop' }),
-  // })
 
   if (IS_INTEGRATION_TEST) {
     const DATABASE_URL = SecretString.init('DATABASE_URL', process.env.DATABASE_URL)

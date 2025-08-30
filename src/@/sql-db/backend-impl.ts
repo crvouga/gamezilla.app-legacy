@@ -8,18 +8,14 @@ export type BackendSqlDb = ImplPostgres | ImplNoop | ImplBetterSqlite3 | ImplPgl
 
 const init = (config: BackendSqlDb): ISqlDb => {
   switch (config.t) {
-    case 'noop': {
+    case 'noop':
       return ImplNoop.init(config)
-    }
-    case 'postgres': {
+    case 'postgres':
       return ImplPostgres.init(config)
-    }
-    case 'better-sqlite3': {
+    case 'better-sqlite3':
       return ImplBetterSqlite3.init(config)
-    }
-    case 'pglite': {
+    case 'pglite':
       return ImplPglite.init(config)
-    }
   }
 }
 

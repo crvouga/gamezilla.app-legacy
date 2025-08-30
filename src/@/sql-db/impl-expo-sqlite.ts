@@ -4,14 +4,14 @@ import { ImplStandardSql } from './impl-standard-sql'
 import type { ISqlDb } from './interface'
 import { TimeSpan } from '../time/time-span'
 
-export type SqlDbImplExpoSqlite = {
+export type ImplExpoSqlite = {
   t: 'expo-sqlite'
   dbName: string
   logger: ILogger
   pollInterval?: TimeSpan
 }
 
-const init = (config: SqlDbImplExpoSqlite): ISqlDb => {
+const init = (config: ImplExpoSqlite): ISqlDb => {
   const db = SQLite.openDatabaseAsync(config.dbName)
 
   const query = async (rawSql: string): Promise<unknown[]> => {
@@ -77,6 +77,6 @@ const init = (config: SqlDbImplExpoSqlite): ISqlDb => {
   })
 }
 
-export const SqlDbImplExpoSqlite = {
+export const ImplExpoSqlite = {
   init,
 }
