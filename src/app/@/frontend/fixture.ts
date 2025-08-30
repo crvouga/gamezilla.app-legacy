@@ -32,22 +32,23 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     phoneNumber: PhoneNumber.random(),
     role: 'normal',
   }
+  const logger = Logger.init({ t: 'noop' })
   const keyValueDb = KeyValueDb.init({ t: 'in-memory' })
   const migrationPolicy = SqlDbMigrationPolicy.init({
     t: 'dangerously-wipe-on-new-schema',
-    logger: Logger.init({ t: 'noop' }),
+    logger,
     kvDb: keyValueDb,
   })
   const syncEngine = SyncEngineClient.init({
-    logger: Logger.init({ t: 'noop' }),
+    logger,
     crudTransactionDb: CrudTransactionDb.init({
       t: 'sql-db',
-      logger: Logger.init({ t: 'noop' }),
+      logger,
       migrationPolicy,
-      sqlDb: FrontendSqlDb.init({ t: 'noop' }),
+      sqlDb: FrontendSqlDb.init({ t: 'noop', logger }),
     }),
   })
-  const keyValueDbSync = KeyValueDbSync.init({ t: 'hash-map', logger: Logger.init({ t: 'noop' }) })
+  const keyValueDbSync = KeyValueDbSync.init({ t: 'hash-map', logger })
   const vdomImplStorage = VdomImplWebStorage.init({ keyValueDb })
   const vdomImpl = await vdomImplStorage.get()
   const ctx: AppFrontendCtx = {
@@ -61,14 +62,14 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
       t: 'key-value-db-sync',
       keyValueDbSync,
       key: 'navigation-history',
-      logger: Logger.init({ t: 'noop' }),
+      logger,
       maxHistoryLength: 10,
     }),
     viewport: Viewport.init({ t: 'noop' }),
     clientSessionId: ClientSessionId.generate(),
     parentScreen: null,
-    sqlDb: FrontendSqlDb.init({ t: 'noop' }),
-    logger: Logger.init({ t: 'noop' }),
+    sqlDb: FrontendSqlDb.init({ t: 'noop', logger: Logger.init({ t: 'noop' }) }),
+    logger,
     currentScreen: input?.currentScreen ?? {
       n: 'auth',
       t: 'login',

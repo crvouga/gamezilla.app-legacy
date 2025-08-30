@@ -4,9 +4,9 @@ import { LogLevel } from './log-level'
 
 export type ImplConsole = {
   t: 'console'
-  newLinePerMsg: boolean
-  namespace: [string, ...string[]]
-  maxLogLevel: LogLevel
+  newLinePerMsg?: boolean
+  namespace?: [string, ...string[]]
+  maxLogLevel?: LogLevel
 }
 
 const init = (config: ImplConsole): ILogger => {
@@ -16,13 +16,15 @@ const init = (config: ImplConsole): ILogger => {
     (level: LogLevel, color: string, fn: typeof console.log) =>
     (...msg: unknown[]) => {
       const levelLabel = LogLevel.toLabel(level)
+      const maxLogLevel = config.maxLogLevel ?? 'info'
+      const namespace = config.namespace ?? []
 
-      if (LogLevel.ORDER.indexOf(level) < LogLevel.ORDER.indexOf(config.maxLogLevel)) {
+      if (LogLevel.ORDER.indexOf(level) < LogLevel.ORDER.indexOf(maxLogLevel)) {
         return
       }
 
       fn(
-        `\x1b[90m[${timestamp()}]\x1b[0m ${color}[${levelLabel}]\x1b[0m \x1b[90m${config.namespace.join(' > ')}\x1b[0m`,
+        `\x1b[90m[${timestamp()}]\x1b[0m ${color}[${levelLabel}]\x1b[0m \x1b[90m${namespace.join(' > ')}\x1b[0m`,
         ...msg,
         config.newLinePerMsg ? '\n' : '',
       )
@@ -39,7 +41,7 @@ const init = (config: ImplConsole): ILogger => {
       return ImplNoop.init({ t: 'noop' })
     },
     child(namespace) {
-      return init({ ...config, namespace: [...config.namespace, ...namespace] })
+      return init({ ...config, namespace: [...(config.namespace ?? []), ...namespace] })
     },
     setMaxLogLevel(level) {
       return init({ ...config, maxLogLevel: level })
