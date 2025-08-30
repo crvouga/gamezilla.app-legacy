@@ -2,6 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
+import { Portal } from '~/@/vdom/primitives/portal'
 import { Pressable } from '~/@/vdom/primitives/pressable'
 import { SafeAreaBox } from '~/@/vdom/primitives/safe-area-box'
 import type { VDom } from '~/@/vdom/vdom'
@@ -38,36 +39,38 @@ const DrawerContent = (props: { position: 'top' | 'bottom'; open: boolean; child
 }
 
 export const Drawer = (props: DrawerProps) => {
-  return h(
-    Box,
-    {
-      id: props.id,
-      'aria-hidden': !props.open,
-      'data-testid': props.testId,
-      role: 'dialog',
-      'aria-label': props.ariaLabel,
-      style: sx({
-        position: 'absolute',
-        inset: 0,
-        zIndex: 50,
-        flexDirection: 'col',
-        backgroundColor: 'black/80',
-        opacity: props.open ? 100 : 0,
-        pointerEvents: props.open ? 'auto' : 'none',
-      }),
-    },
-    [
-      props.position === 'top' && h(DrawerContent, { position: 'top', open: props.open }, props.children),
-      h(Pressable, {
+  return h(Portal.Entrance, {}, [
+    h(
+      Box,
+      {
+        id: props.id,
+        'aria-hidden': !props.open,
+        'data-testid': props.testId,
+        role: 'dialog',
+        'aria-label': props.ariaLabel,
         style: sx({
-          width: 'full',
-          flex: 1,
+          position: 'absolute',
+          inset: 0,
           zIndex: 50,
+          flexDirection: 'col',
+          backgroundColor: 'black/80',
+          opacity: props.open ? 100 : 0,
+          pointerEvents: props.open ? 'auto' : 'none',
         }),
-        'aria-label': props.ctx.t('drawer.close'),
-        onPress: props.onClose,
-      }),
-      props.position === 'bottom' && h(DrawerContent, { position: 'bottom', open: props.open }, props.children),
-    ],
-  )
+      },
+      [
+        props.position === 'top' && h(DrawerContent, { position: 'top', open: props.open }, props.children),
+        h(Pressable, {
+          style: sx({
+            width: 'full',
+            flex: 1,
+            zIndex: 50,
+          }),
+          'aria-label': props.ctx.t('drawer.close'),
+          onPress: props.onClose,
+        }),
+        props.position === 'bottom' && h(DrawerContent, { position: 'bottom', open: props.open }, props.children),
+      ],
+    ),
+  ])
 }
