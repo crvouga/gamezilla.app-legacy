@@ -4,8 +4,27 @@
 
 ## Architecture
 
-- frontend - www.gamezilla.app - stateless static file server for local-first single page app with multi region replicas. depends on backend and topic
-- backend - backend.gamezilla.app - stateless rpc/worker server with single region replicas. depends topic and postgres
-- topic - topic.gamezilla.app - stateless websocket with multi region replicas. depends on nats
-- postgres - internal private url - stateful postgres database with single region single node. depends on nothing
-- nats - internal private url - stateless nats server with single region single node. depends on nothing
+- Frontend (www.gamezilla.app)
+  - Stateless static file server for local-first SPA
+  - Multi-region replicas
+  - Dependencies: Backend, Topic
+
+- Backend (backend.gamezilla.app)
+  - Stateless RPC/worker server
+  - Single region replicas
+  - Dependencies: Topic, PostgreSQL
+
+- Topic (topic.gamezilla.app)
+  - Stateless WebSocket server
+  - Multi-region replicas
+  - Dependencies: NATS
+
+- PostgreSQL (internal)
+  - Stateful database
+  - Single region, single node
+  - No dependencies
+
+- NATS (internal)
+  - Stateless message broker
+  - Single region, single node
+  - No dependencies
