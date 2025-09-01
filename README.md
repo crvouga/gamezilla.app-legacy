@@ -16,6 +16,7 @@
 
 - Topic (topic.gamezilla.app)
   - Stateless WebSocket server
+  - No business logic just plumbing
   - Multi-region replicas
   - Dependencies: NATS
 
@@ -26,5 +27,6 @@
 
 - NATS (internal)
   - Stateless message broker
+  - No business logic just plumbing
   - Single region, single node
   - No dependencies
