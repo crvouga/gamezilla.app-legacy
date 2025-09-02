@@ -144,7 +144,7 @@ jobs:
     name: Deploy
     needs: [e2e, integration]
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
@@ -158,4 +158,16 @@ jobs:
       - run: pnpm run db:up
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      - run: curl -d "" "${{ secrets.CLOUDFLARE_PAGES_DEPLOY_HOOK_URL }}"
+      - name: Deploy Topic Server
+        run: |
+          # Install flyctl
+          curl -L https://fly.io/install.sh | sh
+          export PATH="$PATH:$HOME/.fly/bin"
+
+          # Authenticate with Fly.io
+          echo "${{ secrets.FLY_API_TOKEN }}" | flyctl auth token
+
+          # Deploy topic server
+          flyctl deploy --config infra/topic.fly.toml
+      - name: Deploy Frontend
+        run: curl -d "" "${{ secrets.CLOUDFLARE_PAGES_DEPLOY_HOOK_URL }}"
