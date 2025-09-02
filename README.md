@@ -22,11 +22,11 @@
 
 - PostgreSQL (internal)
   - Stateful database
-  - Single region, single node
+  - Managed
   - No dependencies
 
 - NATS (internal)
   - Stateless message broker
+  - Managed
   - No business logic just plumbing
-  - Single region, single node
   - No dependencies
