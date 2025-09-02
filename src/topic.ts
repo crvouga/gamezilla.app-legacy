@@ -88,10 +88,8 @@ const main = async () => {
   logger.info('Health check endpoint registered')
 
   httpServer.registerRespond((_request) => {
-    return new Response(JSON.stringify({ message: 'Hello from gamezilla.app topic server' }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    const message = 'Hello from gamezilla.app topic server'
+    return new Response(message, { status: 200, headers: { 'Content-Type': 'text/plain' } })
   })
 
   logger.info(`Starting HTTP server on port ${TOPIC_PORT}`)
