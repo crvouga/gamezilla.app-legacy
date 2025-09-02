@@ -52,6 +52,7 @@
     "frontend": "pnpm exec vite --open",
     "frontend:build": "pnpm exec vite build",
     "frontend:preview": "pnpm frontend:build && pnpm exec serve -s dist -p 5173",
+    "frontend:deploy": "curl -d \"\" \"https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/47d51ba6-a271-433c-b32f-b05c78e5aef5\"",
     "i": "pnpm install",
     "int": "pnpm vitest:int .test.ts",
     "int:down": "PROFILE=int pnpm base:down",

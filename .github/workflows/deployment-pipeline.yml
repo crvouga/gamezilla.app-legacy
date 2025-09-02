@@ -155,6 +155,7 @@ jobs:
         with:
           version: latest
       - run: pnpm install --frozen-lockfile
-      - env:
+      - run: pnpm run db:up
+        env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: pnpm run db:up
+      - run: curl -d "" "${{ secrets.CLOUDFLARE_PAGES_DEPLOY_HOOK_URL }}"
