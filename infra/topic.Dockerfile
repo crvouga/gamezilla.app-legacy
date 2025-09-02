@@ -5,21 +5,12 @@ WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY ./ ./
 
-COPY src/ ./src/
-COPY tsconfig.json ./
+RUN pnpm install --prod --frozen-lockfile
 
-RUN pnpm install --frozen-lockfile
-
-ARG NODE_ENV=production
-ARG TOPIC_PORT=8080
+ARG NODE_ENV
 
 ENV NODE_ENV=${NODE_ENV}
-ENV TOPIC_PORT=${TOPIC_PORT}
 
-EXPOSE ${TOPIC_PORT}
-
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:${TOPIC_PORT}/health || exit 1
-
-CMD ["pnpm", "exec", "tsx", "src/topic.ts"]
+CMD ["pnpm", "run", "topic"]
