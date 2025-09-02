@@ -76,7 +76,7 @@
     "topic:deploy": "fly deploy --config infra/topic.fly.toml",
     "topic:logs": "fly logs --config infra/topic.fly.toml",
     "topic:status": "fly status --config infra/topic.fly.toml",
-    "topic:scale": "fly scale count --config infra/topic.fly.toml",
+    "topic:scale": "fly scale --config infra/topic.fly.toml",
     "unit": "pnpm vitest .test.ts",
     "vitest": "IS_VITEST_TEST=true NODE_ENV=test vitest run",
     "vitest:coverage": "IS_VITEST_TEST=true NODE_ENV=test vitest run --coverage",
