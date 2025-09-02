@@ -17,20 +17,20 @@
   - Infra: [Railway](https://railway.com/project/a382e0f0-8e9a-408b-80d9-223a225ca59c/service/734ff343-6358-4d81-9ded-59ac04740e50?environmentId=00dfa594-64e5-4bf9-bb05-5bb3018466e2)
 
 - Topic (topic.gamezilla.app)
-  - Stateless WebSocket server
+  - Stateless WebSocket server for topic based pub sub
   - No business logic just plumbing
   - Multi-region replicas
   - Dependencies: NATS
-  - Infra: Fly.io
+  - Infra: [Fly.io](https://fly.io/apps/gamezilla-app)
 
 - PostgreSQL (internal)
   - Stateful database
   - Managed
   - No dependencies
-  - Infra: Neon
+  - Infra: [Neon](https://console.neon.tech/app/projects/divine-sky-66973925)
 
 - NATS (internal)
-  - Stateless message broker
+  - Stateless message broker for distributing messages between topic server replicas
   - Managed
   - No business logic just plumbing
   - No dependencies

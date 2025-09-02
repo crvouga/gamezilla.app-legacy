@@ -42,7 +42,7 @@ primary_region = "lax"  # Los Angeles, US West
 
 # Process configuration
 [processes]
-  app = "node -r tsx/cjs src/topic.ts"
+  app = "node dist/topic.js"
 
 # VM configuration
 [[vm]]
