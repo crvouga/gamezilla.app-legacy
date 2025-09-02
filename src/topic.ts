@@ -47,8 +47,7 @@ const main = async () => {
 
   logger.info('Initializing pub/sub system')
   const pubSub = TopicBasedPubSub.init({
-    t: 'nats',
-    logger,
+    t: 'in-memory',
   })
   logger.info('Pub/sub system initialized')
 

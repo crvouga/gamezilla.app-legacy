@@ -43,9 +43,7 @@ services:
       - e2e
 
   nats:
-    build:
-      context: ../
-      dockerfile: infra/nats.Dockerfile
+    image: nats:latest
     ports:
       - '${NATS_PORT:?NATS_PORT is required}:${NATS_PORT:?NATS_PORT is required}'
     profiles:
@@ -54,9 +52,7 @@ services:
       - local
       - all
   postgres:
-    build:
-      context: ../
-      dockerfile: infra/postgres.Dockerfile
+    image: postgres:latest
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
