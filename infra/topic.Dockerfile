@@ -11,8 +11,6 @@ COPY tsconfig.json ./
 
 RUN pnpm install --frozen-lockfile
 
-RUN pnpm exec tsc
-
 ARG NODE_ENV=production
 ARG TOPIC_PORT=8080
 
@@ -21,4 +19,9 @@ ENV TOPIC_PORT=${TOPIC_PORT}
 
 EXPOSE ${TOPIC_PORT}
 
-CMD ["node", "dist/topic.js"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:${TOPIC_PORT}/health || exit 1
+
+# Start the application
+CMD ["pnpm", "exec", "tsx", "src/topic.ts"]
