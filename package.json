@@ -53,6 +53,10 @@
     "frontend:build": "pnpm exec vite build",
     "frontend:preview": "pnpm frontend:build && pnpm exec serve -s dist -p 5173",
     "frontend:deploy": "curl -d \"\" \"https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/47d51ba6-a271-433c-b32f-b05c78e5aef5\"",
+    "worker:dev": "cd src/worker && wrangler dev",
+    "worker:deploy": "cd src/worker && wrangler deploy",
+    "worker:deploy:staging": "cd src/worker && wrangler deploy --env staging",
+    "worker:tail": "cd src/worker && wrangler tail",
     "i": "pnpm install",
     "int": "pnpm vitest:int .test.ts",
     "int:down": "PROFILE=int pnpm base:down",
@@ -138,7 +142,8 @@
     "vite": "^7.0.5",
     "vite-bundle-visualizer": "^1.2.1",
     "vite-plugin-pwa": "^1.0.1",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "wrangler": "^3.78.0"
   },
   "packageManager": "pnpm@10.15.0"
 }

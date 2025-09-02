@@ -1,0 +1,21 @@
+name = "gamezilla-worker"
+main = "index.ts"
+compatibility_date = "2024-01-15"
+
+# Environment variables (add your secrets here)
+[vars]
+# ENVIRONMENT = "production"
+
+# Secrets should be set via: wrangler secret put SECRET_NAME
+# [secrets]
+# API_KEY = ""
+
+# Routes (uncomment and configure as needed)
+# routes = [
+#   { pattern = "api.gamezilla.app/*", zone_name = "gamezilla.app" }
+# ]
+
+# Custom domains (uncomment and configure as needed)
+# [[routes]]
+# pattern = "worker.gamezilla.app/*"
+# zone_name = "gamezilla.app"
