@@ -1,5 +1,5 @@
 export const extToContentType = (ext: string) => {
-  switch (ext) {
+  switch (normalizeExt(ext)) {
     case 'html':
       return 'text/html'
     case 'css':
@@ -51,4 +51,8 @@ export const extToContentType = (ext: string) => {
     default:
       return 'application/octet-stream'
   }
+}
+const normalizeExt = (ext: string) => {
+  const cleaned = ext.trim().toLowerCase()
+  return cleaned.startsWith('.') ? cleaned.slice(1) : cleaned
 }

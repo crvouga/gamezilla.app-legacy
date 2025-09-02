@@ -26,6 +26,7 @@ import { SpacesBackend } from './spaces/backend'
 import * as AppTypes from './types'
 import { BackendCtxModule, rpcContract } from './types'
 import { WireBackend } from './wire/backend'
+import { SinglePageApp } from '~/@/single-page-app'
 
 const initCtx = async (config: {
   port: number
@@ -167,6 +168,15 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
   })
 
   HealthCheck.registerRespond({ httpServer: input.ctx.httpServer })
+
+  SinglePageApp.registerRespond({
+    directory: 'dist',
+    fs: input.ctx.fileSystem,
+    httpServer: input.ctx.httpServer,
+    indexFilename: 'index.html',
+    logger: input.ctx.logger,
+  })
+
   HelloBackend.registerRespond({ ctx: input.ctx, httpServer: input.ctx.httpServer })
 
   input.ctx.httpServer.start(input.ctx.port)
