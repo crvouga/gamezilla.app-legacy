@@ -101,11 +101,11 @@ const init = (config: ImplNode): IHttpServer => {
       }
       pendingWebSocketHandlers.clear()
 
-      server.listen(port, () => {
+      server.listen(port, '0.0.0.0', () => {
         logger.info(`HTTP server listening on port ${port}`)
         events.pub({
           t: 'started',
-          ipAddress: '127.0.0.1',
+          ipAddress: '0.0.0.0',
           port,
           startedAt: UnixMs.now(),
         })

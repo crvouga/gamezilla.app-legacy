@@ -1,11 +1,11 @@
 # Fly.io configuration for Gamezilla Topic Service
-# Multi-region WebSocket server with NATS pub/sub
+# Single region WebSocket server
 
-app = "gamezilla-topic"
-primary_region = "iad"  # Virginia, US East
+app = "gamezilla-app"
+primary_region = "lax"  # Los Angeles, US West
 
 [build]
-  dockerfile = "infra/topic.Dockerfile"
+  dockerfile = "topic.Dockerfile"
   build_args = { NODE_ENV = "production", TOPIC_PORT = "8080" }
 
 [env]
@@ -16,6 +16,7 @@ primary_region = "iad"  # Virginia, US East
 [[services]]
   protocol = "tcp"
   internal_port = 8080
+  processes = ["app"]
 
   [[services.ports]]
     port = 80
@@ -25,12 +26,6 @@ primary_region = "iad"  # Virginia, US East
   [[services.ports]]
     port = 443
     handlers = ["tls", "http"]
-
-  # Connection limits for WebSocket scaling
-  [services.concurrency]
-    type = "connections"
-    hard_limit = 1000
-    soft_limit = 800
 
   # Health checks
   [[services.http_checks]]
@@ -47,19 +42,10 @@ primary_region = "iad"  # Virginia, US East
 
 # Process configuration
 [processes]
-  app = "pnpm run topic"
+  app = "node -r tsx/cjs src/topic.ts"
 
-# VM configuration for each region
+# VM configuration
 [[vm]]
   cpu_kind = "shared"
   cpus = 1
   memory_mb = 256
-
-# Deployment strategy
-[deploy]
-  strategy = "rolling"
-  max_unavailable = 1
-
-# Multi-region configuration
-# Deploy to multiple regions for global coverage
-# Use: fly scale count 2 --region iad,fly scale count 2 --region lhr,etc.
