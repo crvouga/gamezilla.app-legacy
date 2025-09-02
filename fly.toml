@@ -6,6 +6,7 @@ primary_region = "iad"  # Virginia, US East
 
 [build]
   dockerfile = "infra/topic.Dockerfile"
+  build_args = { NODE_ENV = "production", TOPIC_PORT = "8080" }
 
 [env]
   NODE_ENV = "production"

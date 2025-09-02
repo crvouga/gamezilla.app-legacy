@@ -8,6 +8,15 @@ This guide covers deploying the Gamezilla Topic Service to Fly.io with multi-reg
 2. Login to Fly.io: `fly auth login`
 3. Set up your secrets (see below)
 
+## Troubleshooting
+
+### Common Deployment Issues
+
+**Error: "launch manifest was created for a app, but this is a NodeJS app"**
+
+- This is fixed by the updated Dockerfile and .dockerignore file
+- The Dockerfile now only copies necessary files and excludes fly.toml
+
 ## Environment Variables & Secrets
 
 The topic service requires the following environment variables:

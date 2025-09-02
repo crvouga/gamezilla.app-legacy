@@ -1,28 +1,30 @@
-node_modules
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+# Fly.io configuration files
+fly.toml
+fly.staging.toml
+DEPLOYMENT.md
 
-.DS_Store
+# Development files
+.env
+.env.local
+.env.ci
+.github/
+test-results/
+playwright.config.ts
 
-.git
-.gitignore
+# Build artifacts
+dist/
+node_modules/
+
+# Documentation
 README.md
+*.md
 
-dist
-build
-coverage
-.nyc_output
-
-.vscode
-.idea
+# IDE files
+.vscode/
+.idea/
 *.swp
 *.swo
 
-test-results
-playwright-report
-playwright/.cache
-
-*.log 
+# OS files
+.DS_Store
+Thumbs.db
