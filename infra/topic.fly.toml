@@ -49,3 +49,10 @@ primary_region = "lax"  # Los Angeles, US West
   cpu_kind = "shared"
   cpus = 1
   memory_mb = 256
+
+# Ensure only 1 machine runs in primary region
+[deploy]
+  strategy = "immediate"
+  regions = ["lax"]
+  min_machines_running = 1
+  max_machines_running = 1
