@@ -13,7 +13,7 @@
   - stateless rpc/worker server. single region. many replicas. next to database
   - single region replicas
   - dependencies: topic, postgresql
-  - infra: fly.io
+  - infra: railway
 
 - postgresql (internal)
   - stateful database
@@ -21,16 +21,8 @@
   - no dependencies
   - infra: [neon](https://console.neon.tech/app/projects/divine-sky-66973925)
 
-- topic (topic.gamezilla.app)
-  - stateless web socket server for topic based pub sub. many regions. many replicas
-  - no business logic just plumbing
-  - multi-region replicas
-  - dependencies: nats
-  - infra: [fly.io](https://fly.io/apps/gamezilla-app)
-
-- nats (internal)
+- nats (nats.gamezilla.app)
   - stateless message broker for distributing messages between topic server replicas
   - managed
-  - no business logic just plumbing
   - no dependencies
   - infra: fly.io
