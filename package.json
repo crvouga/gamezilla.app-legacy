@@ -74,7 +74,7 @@
     "pipeline:dry-run": "act push --workflows .github/workflows/deployment-pipeline.yml --eventpath .github/act/push.json --dryrun",
     "pipeline:job": "act push --workflows .github/workflows/deployment-pipeline.yml --eventpath .github/act/push.json --job",
     "pipeline:list": "act push --workflows .github/workflows/deployment-pipeline.yml --eventpath .github/act/push.json --list",
-    "pwa-asset-generator": "npx pwa-asset-generator ./public/logo.blue.svg ./public/pwa-assets --background black --index ./index.html --manifest ./public/manifest.json",
+    "pwa-asset-generator": "npx pwa-asset-generator ./public/logo.blue.svg ./public/pwa-assets --background black --index ./index.html --manifest ./public/manifest.json --path-override /pwa-assets && pnpm exec prettier --write index.html",
     "tc": "pnpm exec tsc --noEmit",
     "topic": "pnpm exec tsx watch ./src/topic.ts",
     "topic:cert": "fly certs add topic.gamezilla.app --config infra/topic.fly.toml",
