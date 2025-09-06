@@ -6,9 +6,9 @@ export const renderMiniPlayers = (
   screen: ParentScreenProps | null,
   position: 'top' | 'bottom',
 ): VDom[] => {
-  if (!screen) return []
   const bars = []
-  if (screen.actionBar) {
+
+  if (screen?.actionBar) {
     const barPosition = screen.actionBar.position ?? 'bottom'
     const id = screen.actionBar.id ?? `${screen.id}-${barPosition}-actions`
 
@@ -16,8 +16,10 @@ export const renderMiniPlayers = (
       bars.push(screen.renderMiniPlayer?.({ key: `${id}-mini-player` }))
     }
   }
-  if (screen.parentScreen) {
+
+  if (screen?.parentScreen) {
     bars.push(...renderMiniPlayers(ctx, screen.parentScreen, position))
   }
+
   return bars
 }

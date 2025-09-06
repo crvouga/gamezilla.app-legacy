@@ -1,10 +1,10 @@
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import { VDom } from '~/@/vdom/vdom'
-import { ParentScreenProps, ScreenLayoutProps } from '../screen-layout-props'
-import { ActionBars } from './action-bars'
-import { renderNavBars } from './nav-bars'
 import { sx } from '~/@/vdom/style/sx'
+import { ScreenLayoutProps } from '../screen-layout-props'
+import { ActionBars } from './action-bars'
+import { MiniPlayers } from './mini-players'
+import { renderNavBars } from './nav-bars'
 
 export const ScreenLayoutTablet = (props: ScreenLayoutProps) => {
   return h(
@@ -41,10 +41,7 @@ export const ScreenLayoutTablet = (props: ScreenLayoutProps) => {
 
           h(Box, { style: sx({ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'col' }) }, [
             props.renderBody(),
-            (props.renderMiniPlayer || props.parentScreen?.renderMiniPlayer) &&
-              h(Box, { style: sx({ position: 'absolute', right: 8, bottom: 8, backgroundColor: 'black' }) }, [
-                ...renderMiniPlayers(props),
-              ]),
+            h(MiniPlayers, props),
           ]),
         ],
       ),
@@ -52,16 +49,4 @@ export const ScreenLayoutTablet = (props: ScreenLayoutProps) => {
       h(ActionBars, { ...props, position: 'end' }),
     ],
   )
-}
-
-const renderMiniPlayers = (screen: ParentScreenProps | null): VDom[] => {
-  if (!screen) return []
-  const players = []
-  if (screen.renderMiniPlayer) {
-    players.push(screen.renderMiniPlayer({ key: screen.id }))
-  }
-  if (screen.parentScreen) {
-    players.push(...renderMiniPlayers(screen.parentScreen))
-  }
-  return players
 }
