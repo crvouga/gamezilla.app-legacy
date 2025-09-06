@@ -158,16 +158,3 @@ jobs:
       - run: pnpm run db:up
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      - name: Deploy Topic Server
-        run: |
-          # Install flyctl
-          curl -L https://fly.io/install.sh | sh
-          export PATH="$PATH:$HOME/.fly/bin"
-
-          # Authenticate with Fly.io
-          echo "${{ secrets.FLY_API_TOKEN }}" | flyctl auth token
-
-          # Deploy topic server
-          flyctl deploy --config infra/topic.fly.toml
-      - name: Deploy Frontend
-        run: curl -d "" "${{ secrets.CLOUDFLARE_PAGES_DEPLOY_HOOK_URL }}"
