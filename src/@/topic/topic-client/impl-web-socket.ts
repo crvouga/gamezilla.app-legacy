@@ -158,10 +158,7 @@ const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSock
   const workerSenderReceiver = async (s: AbortSignal, socket: Socket) => {
     const send = (msg: ToServerMsg) => {
       const encoded = config.codec.encode(msg)
-      socket.send(
-        // @ts-expect-error
-        encoded,
-      )
+      socket.send(encoded)
     }
     workerSender(s, send)
     workerReceiver(s, socket)

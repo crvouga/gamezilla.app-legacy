@@ -1,7 +1,9 @@
+export type EncodedMsg = string | Buffer<ArrayBufferLike> | ArrayBufferLike | Blob | ArrayBufferView
+
 export type ITopicMsgCodec = {
-  encode: (msg: unknown) => unknown
+  encode: (msg: unknown) => EncodedMsg
   decodeMessageClient: (event: MessageEvent<any>) => Promise<unknown> | unknown
-  decodeMessageServer: (event: string | Buffer<ArrayBufferLike>) => Promise<unknown> | unknown
+  decodeMessageServer: (event: EncodedMsg) => Promise<unknown> | unknown
 }
 
 export type TopicMsgCodec =
