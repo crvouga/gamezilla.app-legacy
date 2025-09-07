@@ -8,7 +8,7 @@ import { Url } from '../../../url/url'
 import { TopicClient } from '../../topic-client/topic-client'
 import { TopicMsgCodec } from '../../topic-msg-codec'
 import { TopicServer } from '../../topic-server/topic-server'
-import { IFixture, RECONNECTION_RATE, SYNC_SUBSCRIPTION_RATE, testTopicContract } from './interface'
+import { IFixture, IFixtureClient, RECONNECTION_RATE, SYNC_SUBSCRIPTION_RATE, testTopicContract } from './interface'
 
 export type ImplWebSocketServer = {
   t: 'web-socket-server'
@@ -38,7 +38,7 @@ const init = async (_config?: ImplWebSocketServer): Promise<IFixture> => {
     pubSub,
   })
 
-  const initClient = () => {
+  const initClient = (childName: string): IFixtureClient => {
     const clientSessionId = ClientSessionId.generate()
     const topic = TopicClient.init({
       t: 'web-sockets',
@@ -46,7 +46,7 @@ const init = async (_config?: ImplWebSocketServer): Promise<IFixture> => {
       contract: testTopicContract,
       serverUrl,
       endpoint,
-      logger: logger.child(['clientA']),
+      logger: logger.child(['client', childName]),
       reconnectionRate: RECONNECTION_RATE,
       syncSubscriptionRate: SYNC_SUBSCRIPTION_RATE,
       codec,
@@ -57,9 +57,9 @@ const init = async (_config?: ImplWebSocketServer): Promise<IFixture> => {
     }
   }
 
-  const clientA = initClient()
-  const clientB = initClient()
-  const clientC = initClient()
+  const clientA = initClient('A')
+  const clientB = initClient('B')
+  const clientC = initClient('C')
 
   await httpServer.start(port)
 
@@ -80,7 +80,7 @@ const init = async (_config?: ImplWebSocketServer): Promise<IFixture> => {
       topicName: TopicName,
       params: s.Infer<(typeof testTopicContract)[TopicName]['params']>,
     ) => topicServer.isSubscribed(topicName, params, (c) => c.clientSessionId === clientC.clientSessionId),
-    restartServer: async () => {
+    async restartServer() {
       await httpServer.stop()
       await httpServer.start(port)
     },

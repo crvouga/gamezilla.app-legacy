@@ -33,20 +33,16 @@ export const SYNC_SUBSCRIPTION_RATE = TimeSpan.milliseconds(0)
 export type TestTopicContract = typeof testTopicContract
 export type TestTopicContractKey = keyof TestTopicContract
 
+export type IFixtureClient = {
+  clientSessionId: ClientSessionId
+  topic: ITopicClient<TestTopicContract>
+}
+
 export type IFixture = {
   topicContract: typeof testTopicContract
-  clientA: {
-    clientSessionId: ClientSessionId
-    topic: ITopicClient<TestTopicContract>
-  }
-  clientB: {
-    clientSessionId: ClientSessionId
-    topic: ITopicClient<TestTopicContract>
-  }
-  clientC: {
-    clientSessionId: ClientSessionId
-    topic: ITopicClient<TestTopicContract>
-  }
+  clientA: IFixtureClient
+  clientB: IFixtureClient
+  clientC: IFixtureClient
   isSubscribedClientA: (
     topicName: TestTopicContractKey,
     params: s.Infer<(typeof testTopicContract)[TestTopicContractKey]['params']>,
