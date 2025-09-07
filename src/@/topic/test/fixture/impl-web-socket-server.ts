@@ -8,13 +8,13 @@ import { Url } from '../../../url/url'
 import { TopicClient } from '../../topic-client/topic-client'
 import { TopicMsgCodec } from '../../topic-msg-codec'
 import { TopicServer } from '../../topic-server/topic-server'
-import { RECONNECTION_RATE, SYNC_SUBSCRIPTION_RATE, testTopicContract } from './interface'
+import { IFixture, RECONNECTION_RATE, SYNC_SUBSCRIPTION_RATE, testTopicContract } from './interface'
 
 export type ImplWebSocketServer = {
   t: 'web-socket-server'
 }
 
-const init = async (_config?: ImplWebSocketServer) => {
+const init = async (_config?: ImplWebSocketServer): Promise<IFixture> => {
   const port = randomServerPort()
   let logger: ILogger
   logger ??= Logger.init({ t: 'noop' })
@@ -63,41 +63,27 @@ const init = async (_config?: ImplWebSocketServer) => {
 
   await httpServer.start(port)
 
-  const isSubscribedClientA = <TopicName extends keyof typeof testTopicContract>(
-    topicName: TopicName,
-    params: s.Infer<(typeof testTopicContract)[TopicName]['params']>,
-  ) => {
-    return topicServer.isSubscribed(topicName, params, (c) => c.clientSessionId === clientA.clientSessionId)
-  }
-
-  const isSubscribedClientB = <TopicName extends keyof typeof testTopicContract>(
-    topicName: TopicName,
-    params: s.Infer<(typeof testTopicContract)[TopicName]['params']>,
-  ) => {
-    return topicServer.isSubscribed(topicName, params, (c) => c.clientSessionId === clientB.clientSessionId)
-  }
-
-  const isSubscribedClientC = <TopicName extends keyof typeof testTopicContract>(
-    topicName: TopicName,
-    params: s.Infer<(typeof testTopicContract)[TopicName]['params']>,
-  ) => {
-    return topicServer.isSubscribed(topicName, params, (c) => c.clientSessionId === clientC.clientSessionId)
-  }
-
-  const restartServer = async () => {
-    await httpServer.stop()
-    await httpServer.start(port)
-  }
-
   return {
     topicContract: testTopicContract,
     clientA,
     clientB,
     clientC,
-    isSubscribedClientA,
-    isSubscribedClientB,
-    isSubscribedClientC,
-    restartServer,
+    isSubscribedClientA: <TopicName extends keyof typeof testTopicContract>(
+      topicName: TopicName,
+      params: s.Infer<(typeof testTopicContract)[TopicName]['params']>,
+    ) => topicServer.isSubscribed(topicName, params, (c) => c.clientSessionId === clientA.clientSessionId),
+    isSubscribedClientB: <TopicName extends keyof typeof testTopicContract>(
+      topicName: TopicName,
+      params: s.Infer<(typeof testTopicContract)[TopicName]['params']>,
+    ) => topicServer.isSubscribed(topicName, params, (c) => c.clientSessionId === clientB.clientSessionId),
+    isSubscribedClientC: <TopicName extends keyof typeof testTopicContract>(
+      topicName: TopicName,
+      params: s.Infer<(typeof testTopicContract)[TopicName]['params']>,
+    ) => topicServer.isSubscribed(topicName, params, (c) => c.clientSessionId === clientC.clientSessionId),
+    restartServer: async () => {
+      await httpServer.stop()
+      await httpServer.start(port)
+    },
     async [Symbol.asyncDispose]() {
       await httpServer.stop()
     },

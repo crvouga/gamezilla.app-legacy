@@ -1,11 +1,12 @@
 import { describe, expect, test } from '~/@/test-runner'
 import { eventually } from '../../test/eventually'
-import { Fixture as Fixture_, TestMsg, sortMsgs } from './fixture'
+import { Fixture as Fixture_, IFixture, TestMsg, sortMsgs } from './fixture'
 
 const Fixture = async () => {
-  const fixture = await Fixture_.init({
-    t: 'web-socket-server',
-  })
+  let fixture: IFixture
+
+  fixture ??= await Fixture_.init({ t: 'web-socket-server' })
+  // fixture ??= await Fixture_.init({ t: 'web-socket-server-nats' })
 
   return fixture
 }
