@@ -3,7 +3,7 @@ import { Logger } from '~/@/logger'
 import { isOk } from '~/@/result'
 import { SecretString } from '~/@/secrets/secret-string'
 import { describe, expect, test } from '~/@/test-runner'
-import { IS_INTEGRATION_TEST } from '~/app/@/test/is-integration-test'
+import { IS_INTEGRATION_TEST } from '~/@/test/is-integration-test'
 import { BackendSqlDb } from '../sql-db/backend-impl'
 import { SqlDbMigration } from './impl'
 
