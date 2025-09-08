@@ -1,16 +1,15 @@
 import { describe, expect, test } from '~/@/test-runner'
 import { eventually } from '../../test/eventually'
 import { Fixture, IFixture, TestMsg, sortMsgs } from './fixture'
-import { IS_INTEGRATION_TEST } from '~/@/test/is-integration-test'
 
 const Fixtures = async () => {
   const fixtures: IFixture[] = []
 
   fixtures.push(await Fixture.init({ t: 'web-socket-server' }))
 
-  if (IS_INTEGRATION_TEST && false) {
-    fixtures.push(await Fixture.init({ t: 'web-socket-server-nats' }))
-  }
+  // if (IS_INTEGRATION_TEST) {
+  //   fixtures.push(await Fixture.init({ t: 'web-socket-server-nats' }))
+  // }
 
   return fixtures
 }
