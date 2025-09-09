@@ -82,6 +82,7 @@ const init = <TContract extends TopicContractBase>(config: ImplWebSocketsNats<TC
           return pubSubMapped
         },
       }
+
       return [topicName, clientNode] as const
     })
     .reduce((acc, [topicName, topic]) => {
