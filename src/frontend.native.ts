@@ -44,6 +44,7 @@ logger.info('Using protocol', httpProtocol)
 
 const backendUrl = Url.derive(BACKEND_URL, httpProtocol)
 const topicUrl = Url.derive(NATS_URL, httpProtocol)
+const natsUrl = Url.removePath(Url.derive(NATS_URL, httpProtocol))
 logger.info('Derived URLs', { backendUrl, topicUrl })
 
 logger.info('Initializing sqlDb')
@@ -93,6 +94,7 @@ const Main = () => {
       const ctx = await AppFrontend.initCtx({
         backendUrl,
         topicUrl,
+        natsUrl,
         sqlDb,
         logger,
         audioPlayer,

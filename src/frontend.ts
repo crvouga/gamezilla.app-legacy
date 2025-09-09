@@ -32,6 +32,7 @@ const windowProtocol = HttpProtocol.fromWindow() ?? 'https'
 
 const backendUrl = Url.derive(BACKEND_URL, windowProtocol)
 const topicUrl = Url.derive(NATS_URL, windowProtocol)
+const natsUrl = Url.removePath(Url.derive(NATS_URL, windowProtocol))
 
 const sqlDb = FrontendSqlDb.init({
   t: 'pglite',
@@ -57,6 +58,7 @@ const main = async () => {
   const ctx = await AppFrontend.initCtx({
     backendUrl,
     topicUrl,
+    natsUrl,
     sqlDb,
     logger,
     audioPlayer,

@@ -51,4 +51,19 @@ describe('Url', () => {
     const url = Url.derive('https://example.com', 'http')
     expect(url).toEqual('https://example.com' as Url)
   })
+
+  test('should remove path from url', () => {
+    const url = Url.removePath('https://example.com/some/path' as Url)
+    expect(url).toEqual('https://example.com/some' as Url)
+  })
+
+  test('should handle url without path', () => {
+    const url = Url.removePath('https://example.com' as Url)
+    expect(url).toEqual('https://example.com' as Url)
+  })
+
+  test('should handle url with trailing slash', () => {
+    const url = Url.removePath('https://example.com/' as Url)
+    expect(url).toEqual('https://example.com' as Url)
+  })
 })

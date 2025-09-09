@@ -53,6 +53,7 @@ import { WireFrontend } from './wire/frontend'
 const initCtx = async (config: {
   backendUrl: Url
   topicUrl: Url
+  natsUrl: Url
   sqlDb: ISqlDb
   logger: ILogger
   keyValueDbSync: IKeyValueDbSync
@@ -63,7 +64,7 @@ const initCtx = async (config: {
   platform: IPlatform
   keyValueDb: IKeyValueDb
 }): Promise<FrontendCtxModule> => {
-  if (config.platform === 'web') {
+  if (typeof document !== 'undefined') {
     document.addEventListener('contextmenu', (e) => e.preventDefault())
     document.addEventListener('selectstart', (e) => e.preventDefault())
   }
@@ -84,13 +85,24 @@ const initCtx = async (config: {
     httpClient,
   })
 
+  // const topic = TopicClient.init({
+  //   t: 'web-sockets-in-house',
+  //   contract: topicContract,
+  //   serverUrl: config.topicUrl,
+  //   clientSessionId,
+  //   logger,
+  //   endpoint: '/topic',
+  //   reconnectionRate: TimeSpan.seconds(3),
+  //   syncSubscriptionRate: TimeSpan.seconds(3),
+  //   codec: topicMsgCodec,
+  // })
+
   const topic = TopicClient.init({
-    t: 'web-sockets-in-house',
+    t: 'web-sockets-nats',
     contract: topicContract,
-    serverUrl: config.topicUrl,
+    serverUrl: config.natsUrl,
     clientSessionId,
     logger,
-    endpoint: '/topic',
     reconnectionRate: TimeSpan.seconds(3),
     syncSubscriptionRate: TimeSpan.seconds(3),
     codec: topicMsgCodec,

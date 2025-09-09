@@ -56,6 +56,7 @@ services:
       dockerfile: infra/nats/nats.Dockerfile
     ports:
       - '${NATS_PORT:?NATS_PORT is required}:${NATS_PORT:?NATS_PORT is required}'
+      - '8888:8888'
     profiles:
       - e2e
       - int
