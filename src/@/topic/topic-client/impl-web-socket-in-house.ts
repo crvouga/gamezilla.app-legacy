@@ -4,7 +4,6 @@ import { PubSub, Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { Url } from '~/@/url/url'
 import { ClientSessionId } from '~/@/wire/client-session-id'
-import { PUB, SUB, SUB_ALL, ToClientMsg, ToServerMsg, UNSUB, UNSUB_ALL } from '../web-socket-msgs'
 import { Socket } from '../socket'
 import { toWebSocketUrl } from '../to-websocket-url'
 import { TopicContractBase } from '../topic-contract'
@@ -12,10 +11,11 @@ import { ITopicMsgCodec } from '../topic-msg-codec'
 import { TopicNameSubscription } from '../topic-name-subscription'
 import { TopicName, TopicString } from '../topic-string'
 import { TopicSubscription } from '../topic-subscription'
-import { TopicClientNode, ITopicClient } from './interface'
+import { PUB, SUB, SUB_ALL, ToClientMsg, ToServerMsg, UNSUB, UNSUB_ALL } from '../web-socket-msgs'
+import { ITopicClient, TopicClientNode } from './interface'
 
-export type ImplWebSockets<T extends TopicContractBase> = {
-  t: 'web-sockets'
+export type ImplWebSocketsInHouse<T extends TopicContractBase> = {
+  t: 'web-sockets-in-house'
   contract: T
   serverUrl: Url
   endpoint: string
@@ -26,7 +26,9 @@ export type ImplWebSockets<T extends TopicContractBase> = {
   codec: ITopicMsgCodec
 }
 
-const init = <TContract extends TopicContractBase>(config: ImplWebSockets<TContract>): ITopicClient<TContract> => {
+const init = <TContract extends TopicContractBase>(
+  config: ImplWebSocketsInHouse<TContract>,
+): ITopicClient<TContract> => {
   const clientCore = initClientCore(config)
 
   const client = Object.entries(config.contract)
@@ -37,13 +39,11 @@ const init = <TContract extends TopicContractBase>(config: ImplWebSockets<TContr
         pub(topicParams, msg) {
           const topic = TopicString.init(topicName, topicParams)
 
-          clientCore.msgsToServer.pub([PUB, topicName, topicParams, msg])
+          clientCore.sendToServer.pub([PUB, topicName, topicParams, msg])
 
           const subscription = clientCore.subscriptionsByTopic.get(topic)
 
-          if (!subscription) return
-
-          subscription.pubSub.pub(msg)
+          subscription?.pubSub.pub(msg)
         },
         sub(topicParams, mapper) {
           const topic = TopicString.init(topicName, topicParams)
@@ -97,9 +97,9 @@ const init = <TContract extends TopicContractBase>(config: ImplWebSockets<TContr
   return client
 }
 
-const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSockets<TContract>) => {
+const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSocketsInHouse<TContract>) => {
   const logger = config.logger.child(['topic', 'client'])
-  const msgsToServer = Sub.init<ToServerMsg>()
+  const sendToServer = Sub.init<ToServerMsg>()
   const subscriptionsByTopic = new Map<TopicString, TopicSubscription>()
   const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription>()
 
@@ -220,7 +220,7 @@ const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSock
   }
 
   const workerSender = async (s: AbortSignal, send: (msg: ToServerMsg) => void) => {
-    Sub.takeEvery(s, msgsToServer, (toServer) => {
+    Sub.takeEvery(s, sendToServer, (toServer) => {
       switch (toServer[0]) {
         case PUB: {
           send(toServer)
@@ -250,10 +250,10 @@ const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSock
   return {
     subscriptionsByTopic,
     subscriptionsByTopicName,
-    msgsToServer,
+    sendToServer,
   }
 }
 
-export const ImplWebSockets = {
+export const ImplWebSocketsInHouse = {
   init,
 }

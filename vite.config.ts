@@ -14,8 +14,8 @@ await DotEnv.load({
 const BACKEND_URL = process.env.BACKEND_URL
 if (!BACKEND_URL) throw new Error('BACKEND_URL is not set')
 
-const TOPIC_URL = process.env.TOPIC_URL
-if (!TOPIC_URL) throw new Error('TOPIC_URL is not set')
+const NATS_URL = process.env.NATS_URL
+if (!NATS_URL) throw new Error('NATS_URL is not set')
 
 const NODE_ENV = process.env.NODE_ENV
 if (!NODE_ENV) throw new Error('NODE_ENV is not set')
@@ -30,7 +30,7 @@ export default defineConfig({
   define: {
     'process.env.NODE_ENV': `"${NODE_ENV}"`,
     'process.env.BACKEND_URL': `"${BACKEND_URL}"`,
-    'process.env.TOPIC_URL': `"${TOPIC_URL}"`,
+    'process.env.NATS_URL': `"${NATS_URL}"`,
   },
   optimizeDeps: {
     exclude: ['@electric-sql/pglite'],

@@ -24,14 +24,14 @@ const BACKEND_URL = process.env.BACKEND_URL
 if (!BACKEND_URL) throw new Error('BACKEND_URL is not set')
 logger.info('BACKEND_URL', BACKEND_URL)
 
-const TOPIC_URL = process.env.TOPIC_URL
-if (!TOPIC_URL) throw new Error('TOPIC_URL is not set')
-logger.info('TOPIC_URL', TOPIC_URL)
+const NATS_URL = process.env.NATS_URL
+if (!NATS_URL) throw new Error('NATS_URL is not set')
+logger.info('NATS_URL', NATS_URL)
 
 const windowProtocol = HttpProtocol.fromWindow() ?? 'https'
 
 const backendUrl = Url.derive(BACKEND_URL, windowProtocol)
-const topicUrl = Url.derive(TOPIC_URL, windowProtocol)
+const topicUrl = Url.derive(NATS_URL, windowProtocol)
 
 const sqlDb = FrontendSqlDb.init({
   t: 'pglite',

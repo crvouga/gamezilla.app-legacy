@@ -7,14 +7,15 @@ import { randomServerPort } from '../../../test/random-server-port'
 import { Url } from '../../../url/url'
 import { TopicClient } from '../../topic-client/impl'
 import { TopicMsgCodec } from '../../topic-msg-codec'
-import { TopicServer } from '../../topic-server/topic-server-web-socket'
+
+import { TopicServer } from '../../topic-server/impl'
 import { IFixture, IFixtureClient, RECONNECTION_RATE, SYNC_SUBSCRIPTION_RATE, testTopicContract } from './interface'
 
-export type ImplWebSocketServer = {
-  t: 'web-socket-server'
+export type ImplWebSocketInHouse = {
+  t: 'web-socket-in-house'
 }
 
-const init = async (_config?: ImplWebSocketServer): Promise<IFixture> => {
+const init = async (_config?: ImplWebSocketInHouse): Promise<IFixture> => {
   const port = randomServerPort()
   let logger: ILogger
   logger ??= Logger.init({ t: 'noop' })
@@ -29,7 +30,7 @@ const init = async (_config?: ImplWebSocketServer): Promise<IFixture> => {
   const pubSub = TopicBasedPubSub.init({ t: 'in-memory' })
 
   const topicServer = TopicServer.init({
-    t: 'web-sockets',
+    t: 'web-sockets-in-house',
     httpServer,
     logger: logger.child(['server']),
     contract: testTopicContract,
@@ -41,7 +42,7 @@ const init = async (_config?: ImplWebSocketServer): Promise<IFixture> => {
   const initClient = (childName: string): IFixtureClient => {
     const clientSessionId = ClientSessionId.generate()
     const topic = TopicClient.init({
-      t: 'web-sockets',
+      t: 'web-sockets-in-house',
       clientSessionId,
       contract: testTopicContract,
       serverUrl,
@@ -90,6 +91,6 @@ const init = async (_config?: ImplWebSocketServer): Promise<IFixture> => {
   }
 }
 
-export const ImplWebSocketServer = {
+export const ImplWebSocketInHouse = {
   init,
 }

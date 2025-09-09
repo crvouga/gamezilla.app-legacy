@@ -8,7 +8,7 @@ services:
       args:
         NODE_ENV: ${NODE_ENV:?NODE_ENV is required}
         BACKEND_URL: ${BACKEND_URL:?BACKEND_URL is required}
-        TOPIC_URL: ${TOPIC_URL:?TOPIC_URL is required}
+        NATS_URL: ${NATS_URL:?NATS_URL is required}
     ports:
       - '${FRONTEND_PORT:?FRONTEND_PORT is required}:80'
     profiles:
@@ -23,7 +23,7 @@ services:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
       - NODE_ENV=${NODE_ENV:?NODE_ENV is required}
       - BACKEND_PORT=${BACKEND_PORT:?BACKEND_PORT is required}
-      - TOPIC_URL=${TOPIC_URL:?TOPIC_URL is required}
+      - NATS_URL=${NATS_URL:?NATS_URL is required}
       - BACKEND_URL=${BACKEND_URL:?BACKEND_URL is required}
     extra_hosts:
       - 'host.docker.internal:host-gateway'
@@ -43,7 +43,7 @@ services:
       - NODE_ENV=${NODE_ENV:?NODE_ENV is required}
       - TOPIC_PORT=${TOPIC_PORT:?TOPIC_PORT is required}
       - NATS_PORT=${NATS_PORT:?NATS_PORT is required}
-      - TOPIC_URL=${TOPIC_URL:?TOPIC_URL is required}
+      - NATS_URL=${NATS_URL:?NATS_URL is required}
     ports:
       - '${TOPIC_PORT:?TOPIC_PORT is required}:${TOPIC_PORT:?TOPIC_PORT is required}'
     profiles:

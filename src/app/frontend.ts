@@ -85,7 +85,7 @@ const initCtx = async (config: {
   })
 
   const topic = TopicClient.init({
-    t: 'web-sockets',
+    t: 'web-sockets-in-house',
     contract: topicContract,
     serverUrl: config.topicUrl,
     clientSessionId,

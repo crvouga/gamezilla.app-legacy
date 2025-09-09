@@ -6,7 +6,7 @@ import { LoggerMiddleware } from './@/http-server/logger-middleware'
 import { Logger } from './@/logger'
 import { TopicBasedPubSub } from './@/pub-sub-topic-based'
 import { TopicClient } from './@/topic/topic-client/impl'
-import { TopicServer } from './@/topic/topic-server/topic-server-web-socket'
+import { TopicServer } from './@/topic/topic-server/impl'
 import { AppTypes } from './app'
 import { topicMsgCodec } from './app/@/topic-msg-codec'
 import { BackendConnectionBackend } from './app/wire/backend-connection/backend'
@@ -53,7 +53,7 @@ const main = async () => {
 
   logger.info('Initializing topic server')
   const topicServer = TopicServer.init({
-    t: 'web-sockets',
+    t: 'web-sockets-in-house',
     contract: AppTypes.topicContract,
     endpoint: '/topic',
     httpServer,

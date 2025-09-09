@@ -2,27 +2,23 @@ import type { IHttpServer, IWebSocketConnection } from '~/@/http-server/interfac
 import { ILogger } from '~/@/logger'
 import { ITopicBasedPubSub } from '~/@/pub-sub-topic-based'
 import { isErr } from '~/@/result'
-import { s } from '~/@/schema'
 import { Sub } from '~/@/sub'
 import { ClientId } from '~/@/wire/client-id'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionId } from '~/@/wire/session-id'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
-import { PUB, SUB, SUB_ALL, ToClientMsgMany, ToClientMsgOne, ToServerMsg, UNSUB, UNSUB_ALL } from '../web-socket-msgs'
 import { TopicClientData } from '../topic-client/interface'
 import { TopicContractBase } from '../topic-contract'
 import { ITopicMsgCodec } from '../topic-msg-codec'
 import { TopicNameSubscription } from '../topic-name-subscription'
 import { TopicName, TopicParams, TopicString } from '../topic-string'
 import { TopicSubscription } from '../topic-subscription'
+import { PUB, SUB, SUB_ALL, ToClientMsgMany, ToClientMsgOne, ToServerMsg, UNSUB, UNSUB_ALL } from '../web-socket-msgs'
+import { ITopicServer, ServerSubscription } from './interface'
 
-type ServerSubscription = {
-  clients: Set<ClientId | undefined>
-}
-
-export type TopicServer<TContract extends TopicContractBase> = {
-  t: 'web-sockets'
+export type ImplWebSocketInHouse<TContract extends TopicContractBase> = {
+  t: 'web-sockets-in-house'
   contract: TContract
   httpServer: IHttpServer
   logger: ILogger
@@ -31,30 +27,9 @@ export type TopicServer<TContract extends TopicContractBase> = {
   pubSub: ITopicBasedPubSub
 }
 
-export type ITopicServer<TContract extends TopicContractBase> = {
-  _subscriptionsByTopic: Map<TopicString, TopicSubscription & ServerSubscription>
-  _subscriptionsByTopicName: Map<TopicName, TopicNameSubscription & ServerSubscription>
-  _clients: Map<ClientId, TopicClientData>
-  isSubscribed: <TTopicName extends keyof TContract>(
-    topicName: TTopicName,
-    topicParams: s.Infer<TContract[TTopicName]['params']>,
-    match: (client: TopicClientData) => boolean,
-  ) => boolean
-  publishTopicName: (
-    topicName: TopicName,
-    encodedMsg: string | Buffer,
-    decodedMsg: ToClientMsgMany,
-    sourceConnection: IWebSocketConnection<TopicClientData> | null,
-  ) => void
-  publishTopic: (
-    topic: TopicString,
-    encodedMsg: string | Buffer,
-    decodedMsg: ToClientMsgMany,
-    sourceConnection: IWebSocketConnection<TopicClientData> | null,
-  ) => void
-}
-
-const init = <TContract extends TopicContractBase>(config: TopicServer<TContract>): ITopicServer<TContract> => {
+const init = <TContract extends TopicContractBase>(
+  config: ImplWebSocketInHouse<TContract>,
+): ITopicServer<TContract> => {
   const logger = config.logger.child(['topic-server'])
   const subscriptionsByTopic = new Map<TopicString, TopicSubscription & ServerSubscription>()
   const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription & ServerSubscription>()
@@ -236,6 +211,6 @@ const init = <TContract extends TopicContractBase>(config: TopicServer<TContract
   }
 }
 
-export const TopicServer = {
+export const ImplWebSocketInHouse = {
   init,
 }

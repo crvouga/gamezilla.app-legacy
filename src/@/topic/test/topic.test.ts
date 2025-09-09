@@ -5,13 +5,13 @@ import { Fixture, IFixture, TestMsg, sortMsgs } from './fixture'
 const Fixtures = async () => {
   const fixtures: IFixture[] = []
 
-  fixtures.push(await Fixture.init({ t: 'web-socket-server' }))
+  fixtures.push(await Fixture.init({ t: 'web-socket-in-house' }))
 
-  // if (IS_INTEGRATION_TEST ) {
-  //   fixtures.push(await Fixture.init({ t: 'web-socket-server-nats' }))
+  // if (IS_INTEGRATION_TEST) {
+  //   fixtures.push(await Fixture.init({ t: 'web-socket-nats' }))
   // }
 
-  return fixtures
+  return fixtures.filter((f) => f)
 }
 
 describe('Topic', () => {

@@ -27,9 +27,9 @@ const main = async () => {
   if (isNaN(BACKEND_PORT)) throw new Error('BACKEND_PORT is not set')
   logger.info(`Backend port set to ${BACKEND_PORT}`)
 
-  const TOPIC_URL = process.env.TOPIC_URL
-  if (!TOPIC_URL) throw new Error('TOPIC_URL is not set')
-  logger.info(`Topic URL set to ${TOPIC_URL}`)
+  const NATS_URL = process.env.NATS_URL
+  if (!NATS_URL) throw new Error('NATS_URL is not set')
+  logger.info(`Topic URL set to ${NATS_URL}`)
 
   const BACKEND_URL = process.env.BACKEND_URL
   if (!BACKEND_URL) throw new Error('BACKEND_URL is not set')
@@ -54,7 +54,7 @@ const main = async () => {
   const backendUrl = Url.derive(BACKEND_URL, IS_PROD ? 'https' : 'http')
   logger.info(`Backend URL set to ${backendUrl}`)
 
-  const topicUrl = Url.derive(TOPIC_URL, IS_PROD ? 'https' : 'http')
+  const topicUrl = Url.derive(NATS_URL, IS_PROD ? 'https' : 'http')
   logger.info(`Topic URL set to ${topicUrl}`)
 
   logger.info('Initializing backend context')

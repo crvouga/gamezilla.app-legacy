@@ -9,13 +9,14 @@ import { ILogger } from '~/@/logger'
 import { TopicBasedPubSub } from '~/@/pub-sub-topic-based'
 import { RPC } from '~/@/rpc'
 import { Runtime } from '~/@/runtime'
+import { SinglePageApp } from '~/@/single-page-app'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { ISqlDb } from '~/@/sql-db/interface'
 import { SyncEngineServer } from '~/@/sync-engine/sync-engine-server'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { TopicClient } from '~/@/topic/topic-client/impl'
-import { TopicServer } from '~/@/topic/topic-server/topic-server-web-socket'
+import { TopicServer } from '~/@/topic/topic-server/impl'
 import { AppBackendCtxBase } from './@/backend/ctx'
 import { topicMsgCodec } from './@/topic-msg-codec'
 import { AuthBackend } from './auth/backend'
@@ -26,7 +27,6 @@ import { SpacesBackend } from './spaces/backend'
 import * as AppTypes from './types'
 import { BackendCtxModule, rpcContract } from './types'
 import { WireBackend } from './wire/backend'
-import { SinglePageApp } from '~/@/single-page-app'
 
 const initCtx = async (config: {
   port: number
@@ -81,7 +81,7 @@ const initCtx = async (config: {
   )
 
   const topicServer = TopicServer.init({
-    t: 'web-sockets',
+    t: 'web-sockets-in-house',
     contract: AppTypes.topicContract,
     endpoint: '/topic',
     httpServer,
