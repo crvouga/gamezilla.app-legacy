@@ -1,4 +1,4 @@
-import { NatsConnection, wsconnect } from '@nats-io/nats-core'
+import { NatsConnection, Subscription, wsconnect } from '@nats-io/nats-core'
 import { ILogger } from '~/@/logger'
 import { p } from '~/@/promise'
 import { PubSub, Sub } from '~/@/sub'
@@ -8,9 +8,8 @@ import { ClientSessionId } from '~/@/wire/client-session-id'
 import { TopicContractBase } from '../topic-contract'
 import { ITopicMsgCodec } from '../topic-msg-codec'
 import { TopicNameSubscription } from '../topic-name-subscription'
-import { TopicName, TopicString } from '../topic-string'
+import { TopicName, TopicParams, TopicString } from '../topic-string'
 import { TopicSubscription } from '../topic-subscription'
-import { PUB, SUB, SUB_ALL, ToServerMsg, UNSUB, UNSUB_ALL } from '../web-socket-msgs'
 import { ITopicClient, TopicClientNode } from './interface'
 
 export type ImplWebSocketsNats<T extends TopicContractBase> = {
@@ -36,7 +35,7 @@ const init = <TContract extends TopicContractBase>(config: ImplWebSocketsNats<TC
         pub(topicParams, msg) {
           const topic = TopicString.init(topicName, topicParams)
 
-          clientCore.sendToServer.pub([PUB, topicName, topicParams, msg])
+          clientCore.sendToServer.pub({ topicName, topicParams, msg })
 
           const subscription = clientCore.subscriptionsByTopic.get(topic)
 
@@ -96,7 +95,7 @@ const init = <TContract extends TopicContractBase>(config: ImplWebSocketsNats<TC
 
 const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSocketsNats<TContract>) => {
   const logger = config.logger.child(['topic', 'client'])
-  const sendToServer = Sub.init<ToServerMsg>()
+  const sendToServer = Sub.init<{ topicName: TopicName; topicParams: TopicParams; msg: Uint8Array | string }>()
   const subscriptionsByTopic = new Map<TopicString, TopicSubscription>()
   const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription>()
 
@@ -106,8 +105,11 @@ const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSock
       try {
         logger.info('connecting to server')
 
+        const url = config.serverUrl.replace('http', 'ws')
+        logger.info('connecting to server', { url })
+
         const connection = await wsconnect({
-          servers: [config.serverUrl.toString()],
+          servers: [url],
         })
 
         await workerSenderReceiver(abortController.signal, connection)
@@ -123,35 +125,31 @@ const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSock
     }
   }
 
-  const workerSenderReceiver = async (s: AbortSignal, _connection: NatsConnection) => {
-    const send = (_msg: ToServerMsg) => {
-      // const encoded = config.codec.encode(msg)
-      // socket.send(encoded)
-    }
-    workerSender(s, send)
-    workerReceiver(s, _connection)
-    workerSyncTopic(s, send)
-    workerSyncTopicName(s, send)
+  const workerSenderReceiver = async (s: AbortSignal, connection: NatsConnection) => {
+    workerSender(s, connection)
+    workerSyncTopic(s, connection)
+    workerSyncTopicName(s, connection)
   }
 
-  const workerSyncTopic = async (s: AbortSignal, send: (msg: ToServerMsg) => void) => {
-    const subscribedTopicsServer = new Set<string>()
+  const workerSyncTopic = async (s: AbortSignal, connection: NatsConnection) => {
+    const natsSubscriptionsByTopicString = new Map<TopicString, Subscription>()
     while (true) {
       s.throwIfAborted()
 
       for (const [topic, { topicName, topicParams, pubSub }] of subscriptionsByTopic.entries()) {
-        const isSubbedServer = subscribedTopicsServer.has(topic)
+        const isSubbedServer = natsSubscriptionsByTopicString.has(topic)
         const isSubbedClient = pubSub.subscriberCount() > 0
 
         if (isSubbedClient && !isSubbedServer) {
-          send([SUB, topicName, topicParams])
-          subscribedTopicsServer.add(topic)
+          const topicString = TopicString.init(topicName, topicParams)
+          const subscription = connection.subscribe(topicString)
+          natsSubscriptionsByTopicString.set(topic, subscription)
+          workerConsumeSubscription(s, subscription, topicString)
           continue
         }
 
         if (!isSubbedClient && isSubbedServer) {
-          send([UNSUB, topicName, topicParams])
-          subscribedTopicsServer.delete(topic)
+          natsSubscriptionsByTopicString.get(topic)?.unsubscribe()
           continue
         }
       }
@@ -160,25 +158,27 @@ const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSock
     }
   }
 
-  const workerSyncTopicName = async (s: AbortSignal, send: (msg: ToServerMsg) => void) => {
-    const subscribedTopicsServer = new Set<string>()
+  const workerSyncTopicName = async (s: AbortSignal, connection: NatsConnection) => {
+    const natsSubscriptionsByTopicName = new Map<TopicName, Subscription>()
 
     while (true) {
       s.throwIfAborted()
 
       for (const [topicName, { pubSub }] of subscriptionsByTopicName.entries()) {
-        const isSubbedServer = subscribedTopicsServer.has(topicName)
+        const isSubbedServer = natsSubscriptionsByTopicName.has(topicName)
         const isSubbedClient = pubSub.subscriberCount() > 0
 
         if (isSubbedClient && !isSubbedServer) {
-          send([SUB_ALL, topicName])
-          subscribedTopicsServer.add(topicName)
+          const topicString = toSubAll(topicName)
+          const subscription = connection.subscribe(topicString)
+          natsSubscriptionsByTopicName.set(topicName, subscription)
+          workerConsumeSubscription(s, subscription, topicString)
           continue
         }
 
         if (!isSubbedClient && isSubbedServer) {
-          send([UNSUB_ALL, topicName])
-          subscribedTopicsServer.delete(topicName)
+          natsSubscriptionsByTopicName.get(topicName)?.unsubscribe()
+          natsSubscriptionsByTopicName.delete(topicName)
           continue
         }
       }
@@ -187,29 +187,19 @@ const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSock
     }
   }
 
-  const workerSender = async (s: AbortSignal, send: (msg: ToServerMsg) => void) => {
+  const workerSender = async (s: AbortSignal, connection: NatsConnection) => {
     Sub.takeEvery(s, sendToServer, (toServer) => {
-      switch (toServer[0]) {
-        case PUB: {
-          send(toServer)
-          return
-        }
-      }
+      const topicString = TopicString.init(toServer.topicName, toServer.topicParams)
+      connection.publish(topicString, toServer.msg)
     })
   }
 
-  const workerReceiver = async (_s: AbortSignal, _connection: NatsConnection) => {
-    // Sub.takeEvery(s, _connection.msgsFromServer, async (fromServer) => {
-    //   const fromServerParsed = (await config.codec.decodeMessageClient(fromServer)) as ToClientMsg
-    //   switch (fromServerParsed[0]) {
-    //     case PUB: {
-    //       const topic = TopicString.init(fromServerParsed[1], fromServerParsed[2])
-    //       const subscription = subscriptionsByTopic.get(topic)
-    //       subscription?.pubSub.pub(fromServerParsed[3])
-    //       return
-    //     }
-    //   }
-    // })
+  const workerConsumeSubscription = async (s: AbortSignal, subscription: Subscription, topicString: TopicString) => {
+    for await (const msg of subscription) {
+      s.throwIfAborted()
+      const sub = subscriptionsByTopic.get(topicString)
+      sub?.pubSub.pub(msg.data)
+    }
   }
 
   worker()
@@ -219,6 +209,10 @@ const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSock
     subscriptionsByTopicName,
     sendToServer,
   }
+}
+
+const toSubAll = (topicName: TopicName): TopicString => {
+  return TopicString.fromString(`${topicName}.*`)
 }
 
 export const ImplWebSocketsNats = {

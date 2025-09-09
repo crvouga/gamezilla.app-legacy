@@ -14,7 +14,12 @@ const init = (topicName: TopicName, topicParams: TopicParams): TopicString => {
   return [topicName, deterministicJsonStringify(topicParams)].join('/') as TopicString
 }
 
+const fromString = (topicString: string): TopicString => {
+  return topicString as TopicString
+}
+
 export const TopicString = {
   ...parser,
   init,
+  fromString,
 }
