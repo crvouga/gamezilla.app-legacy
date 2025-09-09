@@ -53,7 +53,7 @@ services:
   nats:
     build:
       context: ../
-      dockerfile: infra/nats.Dockerfile
+      dockerfile: infra/nats/nats.Dockerfile
     ports:
       - '${NATS_PORT:?NATS_PORT is required}:${NATS_PORT:?NATS_PORT is required}'
     profiles:

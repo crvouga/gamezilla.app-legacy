@@ -1,7 +1,7 @@
 import { ascend } from '~/@/array/sorting'
 import { s } from '~/@/schema'
 import { TimeSpan } from '~/@/time/time-span'
-import { ITopicClient } from '~/@/topic/topic-client/types'
+import { ITopicClient } from '~/@/topic/topic-client/interface'
 import { TopicContract } from '~/@/topic/topic-contract'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 

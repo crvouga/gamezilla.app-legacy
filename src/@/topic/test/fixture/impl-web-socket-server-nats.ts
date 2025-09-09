@@ -1,6 +1,6 @@
 import { Logger } from '~/@/logger'
 import { ClientSessionId } from '~/@/wire/client-session-id'
-import { TopicClient } from '../../topic-client/topic-client'
+import { TopicClient } from '../../topic-client/impl'
 import { IFixture, IFixtureClient, testTopicContract } from './interface'
 
 export type ImplWebSocketServerNats = {

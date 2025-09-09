@@ -5,9 +5,9 @@ import { ClientSessionId } from '~/@/wire/client-session-id'
 import { TopicBasedPubSub } from '../../../pub-sub-topic-based'
 import { randomServerPort } from '../../../test/random-server-port'
 import { Url } from '../../../url/url'
-import { TopicClient } from '../../topic-client/topic-client'
+import { TopicClient } from '../../topic-client/impl'
 import { TopicMsgCodec } from '../../topic-msg-codec'
-import { TopicServer } from '../../topic-server/topic-server'
+import { TopicServer } from '../../topic-server/topic-server-web-socket'
 import { IFixture, IFixtureClient, RECONNECTION_RATE, SYNC_SUBSCRIPTION_RATE, testTopicContract } from './interface'
 
 export type ImplWebSocketServer = {

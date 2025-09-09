@@ -1,11 +1,11 @@
 import { ILogger } from '~/@/logger'
 import { PubSub, Sub } from '~/@/sub'
-import { PUB, ToClientMsgMany } from '../msgs'
+import { PUB, ToClientMsgMany } from '../web-socket-msgs'
 import { TopicContractBase } from '../topic-contract'
 import { ITopicMsgCodec } from '../topic-msg-codec'
-import { ITopicServer } from '../topic-server/topic-server'
+import { ITopicServer } from '../topic-server/topic-server-web-socket'
 import { TopicName, TopicString } from '../topic-string'
-import { ITopicClient, TopicClientNode } from './types'
+import { ITopicClient, TopicClientNode } from './interface'
 
 export type ImplFromServer<TContract extends TopicContractBase> = {
   t: 'from-server'

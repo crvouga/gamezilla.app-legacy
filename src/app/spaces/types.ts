@@ -1,5 +1,5 @@
 import { RPC } from '~/@/rpc'
-import { ITopicClient } from '~/@/topic/topic-client/types'
+import { ITopicClient } from '~/@/topic/topic-client/interface'
 import { TopicContract } from '~/@/topic/topic-contract'
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'

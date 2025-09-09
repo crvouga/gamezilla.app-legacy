@@ -1,5 +1,5 @@
 import { RPC } from '~/@/rpc'
-import { ITopicClient } from '~/@/topic/topic-client/types'
+import { ITopicClient } from '~/@/topic/topic-client/interface'
 import { AppBackendCtxBase } from '../@/backend/ctx'
 import { GameBackend } from './game/backend'
 import { SpaceDb } from './space/space-db'

@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { Msg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
-import { ITopicClient } from '~/@/topic/topic-client/types'
+import { ITopicClient } from '~/@/topic/topic-client/interface'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { BackendConnectionFrontend } from './backend-connection/frontend'
 import { BackendInstanceFrontend } from './backend-instance/frontend'

@@ -7,7 +7,7 @@ const Fixtures = async () => {
 
   fixtures.push(await Fixture.init({ t: 'web-socket-server' }))
 
-  // if (IS_INTEGRATION_TEST) {
+  // if (IS_INTEGRATION_TEST ) {
   //   fixtures.push(await Fixture.init({ t: 'web-socket-server-nats' }))
   // }
 

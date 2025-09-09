@@ -1,4 +1,4 @@
-import { ITopicClient } from '~/@/topic/topic-client/types'
+import { ITopicClient } from '~/@/topic/topic-client/interface'
 import { TopicContract } from '~/@/topic/topic-contract'
 import { AppFrontendModule } from '../@/architecture/app-frontend'
 import { AppBackendCtxBase } from '../@/backend/ctx'

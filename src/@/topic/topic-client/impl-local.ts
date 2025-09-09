@@ -4,7 +4,7 @@ import { TopicContractBase } from '../topic-contract'
 import { TopicNameSubscription } from '../topic-name-subscription'
 import { TopicName, TopicString } from '../topic-string'
 import { TopicSubscription } from '../topic-subscription'
-import { TopicClientNode, ITopicClient } from './types'
+import { TopicClientNode, ITopicClient } from './interface'
 
 export type ImplLocal<TContract extends TopicContractBase> = {
   t: 'local'

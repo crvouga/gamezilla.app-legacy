@@ -1,6 +1,6 @@
 import { Sub } from '~/@/sub'
 import { UnixMs } from '~/@/time/unix-ms'
-import { ITopicClient } from '~/@/topic/topic-client/types'
+import { ITopicClient } from '~/@/topic/topic-client/interface'
 import { topicContract } from './types'
 
 const worker = async (s: AbortSignal, input: { topicClient: ITopicClient<typeof topicContract> }) => {

@@ -3,7 +3,7 @@ import { ImplFromServer } from './impl-from-server'
 import { ImplLocal } from './impl-local'
 import { ImplWebSockets } from './impl-web-socket'
 import { ImplWebSocketsNats } from './impl-web-socket-nats'
-import { ITopicClient } from './types'
+import { ITopicClient } from './interface'
 
 export type Config<T extends TopicContractBase> =
   | ImplLocal<T>

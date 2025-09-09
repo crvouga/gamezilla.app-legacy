@@ -9,8 +9,8 @@ import { ClientSessionId } from '~/@/wire/client-session-id'
 import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionId } from '~/@/wire/session-id'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
-import { PUB, SUB, SUB_ALL, ToClientMsgMany, ToClientMsgOne, ToServerMsg, UNSUB, UNSUB_ALL } from '../msgs'
-import { TopicClientData } from '../topic-client/types'
+import { PUB, SUB, SUB_ALL, ToClientMsgMany, ToClientMsgOne, ToServerMsg, UNSUB, UNSUB_ALL } from '../web-socket-msgs'
+import { TopicClientData } from '../topic-client/interface'
 import { TopicContractBase } from '../topic-contract'
 import { ITopicMsgCodec } from '../topic-msg-codec'
 import { TopicNameSubscription } from '../topic-name-subscription'
@@ -86,7 +86,6 @@ const init = <TContract extends TopicContractBase>(config: TopicServer<TContract
     return newSub
   }
 
-  // Register WebSocket handler with the HTTP server
   const wsServer = config.httpServer.registerWebSocketHandler<TopicClientData>(config.endpoint, {
     async onConnection(_connection, request) {
       const maybeSessionId = SessionIdHttp.fromRequest(request)
@@ -176,10 +175,8 @@ const init = <TContract extends TopicContractBase>(config: TopicServer<TContract
     decodedMsg: ToClientMsgMany,
     sourceConnection: IWebSocketConnection<TopicClientData> | null,
   ) => {
-    // Publish to all connections subscribed to this topic
     wsServer.publish(topic, encodedMsg)
 
-    // Notify local subscribers
     subscriptionsByTopic.get(topic)?.pubSub.pub({
       ...decodedMsg[3],
       clientId: sourceConnection?.data?.clientId,
@@ -194,10 +191,8 @@ const init = <TContract extends TopicContractBase>(config: TopicServer<TContract
     decodedMsg: ToClientMsgMany,
     sourceConnection: IWebSocketConnection<TopicClientData> | null,
   ) => {
-    // Publish to all connections subscribed to this topic name
     wsServer.publish(topicName, encodedMsg)
 
-    // Notify local subscribers
     subscriptionsByTopicName.get(topicName)?.pubSub.pub({
       ...decodedMsg[3],
       clientId: sourceConnection?.data?.clientId,

@@ -1,4 +1,4 @@
-import { ITopicClient } from '~/@/topic/topic-client/types'
+import { ITopicClient } from '~/@/topic/topic-client/interface'
 import { AppBackendCtxBase } from '../@/backend/ctx'
 import { BackendConnectionBackend } from './backend-connection/backend'
 import { BackendInstanceBackend } from './backend-instance/backend'
