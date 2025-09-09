@@ -238,8 +238,7 @@ const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSock
         case PUB: {
           const topic = TopicString.init(fromServerParsed[1], fromServerParsed[2])
           const subscription = subscriptionsByTopic.get(topic)
-          if (!subscription) return
-          subscription.pubSub.pub(fromServerParsed[3])
+          subscription?.pubSub.pub(fromServerParsed[3])
           return
         }
       }
