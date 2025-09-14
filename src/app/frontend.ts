@@ -52,7 +52,6 @@ import { WireFrontend } from './wire/frontend'
 
 const initCtx = async (config: {
   backendUrl: Url
-  topicUrl: Url
   natsUrl: Url
   sqlDb: ISqlDb
   logger: ILogger

@@ -16,7 +16,6 @@ import { h, render } from './@/vdom'
 import { SwapVDomEngine } from './@/vdom/swap-vdom-engine'
 import { VdomImplWebStorage } from './@/vdom/vdom-impl-web-storage'
 import { Viewport } from './@/viewport/impl'
-import './frontend.css'
 
 const logger = Logger.init({ t: 'console', namespace: ['frontend'], newLinePerMsg: false, maxLogLevel: 'debug' })
 
@@ -31,7 +30,6 @@ logger.info('NATS_URL', NATS_URL)
 const windowProtocol = HttpProtocol.fromWindow() ?? 'https'
 
 const backendUrl = Url.derive(BACKEND_URL, windowProtocol)
-const topicUrl = Url.derive(NATS_URL, windowProtocol)
 const natsUrl = Url.removePath(Url.derive(NATS_URL, windowProtocol))
 
 const sqlDb = FrontendSqlDb.init({
@@ -57,7 +55,6 @@ const vdomImplStorage = VdomImplWebStorage.init({ keyValueDb })
 const main = async () => {
   const ctx = await AppFrontend.initCtx({
     backendUrl,
-    topicUrl,
     natsUrl,
     sqlDb,
     logger,

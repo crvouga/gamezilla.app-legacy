@@ -1,9 +1,0 @@
-{
-  "$schema": "https://railway.com/railway.schema.json",
-  "build": {
-    "dockerfilePath": "./infra/nats/nats.Dockerfile"
-  },
-  "deploy": {
-    "sleepApplication": true
-  }
-}

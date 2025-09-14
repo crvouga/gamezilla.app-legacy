@@ -17,7 +17,6 @@ import { ImplReactNative } from './@/vdom/vdom-engine/impl-react-native'
 import { ViewportImplReactNative } from './@/viewport/impl-react-native'
 import { SplashScreen } from './app/@/ui/logo/splash-screen'
 import { AppFrontend } from './app/frontend'
-import './frontend.css'
 
 const logger = Logger.init({
   t: 'console',
@@ -31,11 +30,11 @@ VDomEngine.set(vdomEngine)
 
 logger.info('Starting main')
 
-const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:3000'
+const BACKEND_URL = process.env.BACKEND_URL
 if (!BACKEND_URL) throw new Error('BACKEND_URL is not set')
 logger.info('BACKEND_URL', BACKEND_URL)
 
-const NATS_URL = process.env.NATS_URL ?? 'ws://localhost:3001'
+const NATS_URL = process.env.NATS_URL
 if (!NATS_URL) throw new Error('NATS_URL is not set')
 logger.info('NATS_URL', NATS_URL)
 
@@ -43,9 +42,8 @@ const httpProtocol = 'https'
 logger.info('Using protocol', httpProtocol)
 
 const backendUrl = Url.derive(BACKEND_URL, httpProtocol)
-const topicUrl = Url.derive(NATS_URL, httpProtocol)
 const natsUrl = Url.removePath(Url.derive(NATS_URL, httpProtocol))
-logger.info('Derived URLs', { backendUrl, topicUrl })
+logger.info('Derived URLs', { backendUrl, natsUrl })
 
 logger.info('Initializing sqlDb')
 const sqlDb = FrontendNativeSqlDb.init({
@@ -93,7 +91,6 @@ const Main = () => {
 
       const ctx = await AppFrontend.initCtx({
         backendUrl,
-        topicUrl,
         natsUrl,
         sqlDb,
         logger,

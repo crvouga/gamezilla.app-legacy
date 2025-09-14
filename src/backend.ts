@@ -29,7 +29,7 @@ const main = async () => {
 
   const NATS_URL = process.env.NATS_URL
   if (!NATS_URL) throw new Error('NATS_URL is not set')
-  logger.info(`Topic URL set to ${NATS_URL}`)
+  logger.info(`NATS URL set to ${NATS_URL}`)
 
   const BACKEND_URL = process.env.BACKEND_URL
   if (!BACKEND_URL) throw new Error('BACKEND_URL is not set')

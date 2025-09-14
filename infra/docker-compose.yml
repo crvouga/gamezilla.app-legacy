@@ -4,7 +4,7 @@ services:
   frontend:
     build:
       context: ../
-      dockerfile: infra/frontend.Dockerfile
+      dockerfile: infra/frontend/frontend.Dockerfile
       args:
         NODE_ENV: ${NODE_ENV:?NODE_ENV is required}
         BACKEND_URL: ${BACKEND_URL:?BACKEND_URL is required}
@@ -18,7 +18,7 @@ services:
   backend:
     build:
       context: ../
-      dockerfile: infra/backend.Dockerfile
+      dockerfile: infra/backend/backend.Dockerfile
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
       - NODE_ENV=${NODE_ENV:?NODE_ENV is required}
@@ -32,28 +32,10 @@ services:
     profiles:
       - e2e
       - all
-  topic:
-    build:
-      context: ../
-      dockerfile: infra/topic.Dockerfile
-    depends_on:
-      nats:
-        condition: service_started
-    environment:
-      - NODE_ENV=${NODE_ENV:?NODE_ENV is required}
-      - TOPIC_PORT=${TOPIC_PORT:?TOPIC_PORT is required}
-      - NATS_PORT=${NATS_PORT:?NATS_PORT is required}
-      - NATS_URL=${NATS_URL:?NATS_URL is required}
-    ports:
-      - '${TOPIC_PORT:?TOPIC_PORT is required}:${TOPIC_PORT:?TOPIC_PORT is required}'
-    profiles:
-      - e2e
-      - all
-
   nats:
     build:
       context: ../
-      dockerfile: infra/nats/nats.Dockerfile
+      dockerfile: infra/nats/nats/nats.Dockerfile
     ports:
       - '${NATS_PORT:?NATS_PORT is required}:${NATS_PORT:?NATS_PORT is required}'
       - '8888:8888'
@@ -65,7 +47,7 @@ services:
   postgres:
     build:
       context: ../
-      dockerfile: infra/postgres.Dockerfile
+      dockerfile: infra/postgres/postgres.Dockerfile
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
