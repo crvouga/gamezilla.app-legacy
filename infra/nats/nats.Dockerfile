@@ -2,8 +2,8 @@ FROM nats:2.10-alpine
 
 RUN apk add --no-cache gettext
 
-COPY infra/nats/nats.conf /etc/nats/nats.conf
-COPY infra/nats/start.sh /start.sh
+COPY nats.conf /etc/nats/nats.conf
+COPY start.sh /start.sh
 
 RUN chmod +x /start.sh
 

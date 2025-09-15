@@ -33,8 +33,17 @@ primary_region = "sea"
   [[services.ports]]
     port = 7777
 
-# Health check removed - NATS server is working correctly
-# The server responds to NATS protocol on port 4222, not HTTP
+  [services.http_checks]
+    interval = "10s"
+    timeout = "2s"
+    grace_period = "1s"
+    method = "get"
+    path = "/varz"
+    protocol = "http"
+    tls_skip_verify = false
+
+    [services.http_checks.headers]
+      Content-Type = "application/json"
 
 [processes]
   app = "/usr/local/bin/nats-server"
