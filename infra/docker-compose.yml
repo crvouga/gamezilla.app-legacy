@@ -35,7 +35,10 @@ services:
   nats:
     build:
       context: ../
-      dockerfile: infra/nats/nats/nats.Dockerfile
+      dockerfile: infra/nats/nats.Dockerfile
+    environment:
+      - NATS_USER=${NATS_USER:?NATS_USER is required}
+      - NATS_PASSWORD=${NATS_PASSWORD:?NATS_PASSWORD is required}
     ports:
       - '${NATS_PORT:?NATS_PORT is required}:${NATS_PORT:?NATS_PORT is required}'
       - '8888:8888'

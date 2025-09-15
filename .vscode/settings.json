@@ -25,6 +25,7 @@
     "dpdm",
     "dryrun",
     "electricsql",
+    "envsubst",
     "esbuild",
     "Esports",
     "Esque",
