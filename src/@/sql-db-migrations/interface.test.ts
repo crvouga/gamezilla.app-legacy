@@ -16,7 +16,7 @@ const Fixture = async (config: SqlDbMigration) => {
 
 const Fixtures = async () => {
   const configs: SqlDbMigration[] = []
-  const logger = Logger.init({ t: 'console' })
+  const logger = Logger.init({ t: 'noop' })
 
   if (IS_INTEGRATION_TEST) {
     const DATABASE_URL = SecretString.init('DATABASE_URL', process.env.DATABASE_URL)
