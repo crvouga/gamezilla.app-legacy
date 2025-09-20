@@ -1,61 +1,84 @@
-# NATS Super Cluster Deployment (Stateless)
+# NATS Server for Gamezilla
 
-This directory contains the configuration files for deploying a stateless NATS super cluster to Fly.io as a single app called `gamezilla-app-nats`. This configuration does not use persistent storage or JetStream.
+Minimal NATS server setup for Railway deployment with WebSocket support.
 
 ## Files
 
-- `fly.toml` - Fly.io deployment configuration
-- `nats.Dockerfile` - Docker image configuration for NATS server
-- `nats.conf` - NATS server configuration file
+- `nats.conf` - NATS server configuration with WebSocket support
+- `nats.Dockerfile` - Docker image definition
+- `start.sh` - Startup script with conditional authentication
+- `railway.json` - Railway deployment configuration
+
+## Features
+
+- Single-node NATS server
+- WebSocket client support on port 9222
+- Standard NATS client port 4222
+- Monitoring on port 8222
+- Optional authentication (can be disabled)
+
+## Security & Authentication
+
+**No hardcoded credentials** - Authentication is optional and controlled by environment variables:
+
+- **With Authentication** (Production): Set `NATS_USER` and `NATS_PASSWORD` environment variables
+- **Without Authentication** (Development): Leave environment variables unset
+
+### Production Setup
+
+```bash
+# Set these environment variables in Railway or Docker
+NATS_USER=your_secure_username
+NATS_PASSWORD=your_secure_password
+```
+
+### Development Setup
+
+```bash
+# No environment variables needed - runs without authentication
+docker run -p 4222:4222 -p 9222:9222 -p 8222:8222 gamezilla-nats
+```
 
 ## Deployment
 
-To deploy the NATS super cluster to Fly.io:
+### Railway
 
-1. **Initialize the Fly.io app** (first time only):
+1. Connect your repository to Railway
+2. Deploy from the `infra/nats` directory
+
+### Docker
+
+1. Build the image:
 
    ```bash
-   cd infra/nats
-   fly apps create gamezilla-app-nats
+   docker build -f nats.Dockerfile -t gamezilla-nats .
    ```
 
-2. **Deploy the application**:
+2. Run the container:
+
+   **Development (no auth):**
+
    ```bash
-   fly deploy
+   docker run -p 4222:4222 -p 9222:9222 -p 8222:8222 gamezilla-nats
    ```
+
+   **Production (with auth):**
+
+   ```bash
+   docker run -e NATS_USER=your_user -e NATS_PASSWORD=your_password \
+     -p 4222:4222 -p 9222:9222 -p 8222:8222 gamezilla-nats
+   ```
+
+## WebSocket Connection
+
+WebSocket clients can connect to `ws://your-domain:9222` for NATS over WebSocket connections.
 
 ## Configuration
 
-The NATS server is configured with:
+The NATS server includes:
 
-- **Port 4222**: Client connections
-- **Port 6222**: Cluster connections
-- **Port 8222**: HTTP monitoring
-- **Port 7777**: Gateway connections
-- **Stateless Operation**: No persistent storage or JetStream
-- **Authentication**: Basic user authentication (change password in production)
-- **Clustering**: Ready for super cluster expansion
-
-## Security Notes
-
-⚠️ **Important**: Before deploying to production:
-
-1. Change the password in `nats.conf` (currently set to a placeholder)
-2. Consider enabling TLS encryption
-3. Update cluster and gateway routes as needed
-4. Review and adjust connection limits
-
-## Monitoring
-
-The NATS server exposes a monitoring endpoint at:
-
-- `https://gamezilla-app-nats.fly.dev:8222/varz` - Server variables
-- `https://gamezilla-app-nats.fly.dev:8222/healthz` - Health check
-
-## Scaling
-
-To add more nodes to the super cluster:
-
-1. Update the `routes` array in `nats.conf` with other NATS instances
-2. Update the `gateways` array for cross-cluster communication
-3. Redeploy the application
+- WebSocket support on port 9222
+- Standard NATS port 4222
+- Monitoring on port 8222
+- CORS enabled for WebSocket connections
+- Optional user authentication
