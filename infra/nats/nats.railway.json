@@ -6,7 +6,7 @@
   },
   "deploy": {
     "startCommand": "/start.sh",
-    "healthcheckPath": "/healthz",
+    "healthcheckPath": "/varz",
     "healthcheckTimeout": 100,
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10

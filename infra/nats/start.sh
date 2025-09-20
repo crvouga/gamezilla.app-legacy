@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo "Starting NATS server..."
+
 # Create a temporary config file
 TEMP_CONFIG="/tmp/nats.conf"
 cp /etc/nats/nats.conf "$TEMP_CONFIG"
@@ -26,5 +28,10 @@ else
   echo "Running NATS server without authentication (development mode)"
 fi
 
+# Show the final config for debugging
+echo "Final NATS configuration:"
+cat "$TEMP_CONFIG"
+
 # Start NATS server with the configuration
+echo "Starting NATS server with config: $TEMP_CONFIG"
 exec /usr/local/bin/nats-server -c "$TEMP_CONFIG"
