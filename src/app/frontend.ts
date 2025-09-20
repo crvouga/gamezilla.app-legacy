@@ -51,8 +51,6 @@ import { toBackendConnectionStatus } from './wire/backend-connection/backend-con
 import { WireFrontend } from './wire/frontend'
 
 const initCtx = async (config: {
-  backendUrl: Url
-  natsUrl: Url
   sqlDb: ISqlDb
   logger: ILogger
   keyValueDbSync: IKeyValueDbSync
@@ -79,27 +77,15 @@ const initCtx = async (config: {
   const rpc = RPC.initClient({
     t: 'http',
     contract: rpcContract,
-    serverUrl: config.backendUrl,
+    serverUrl: Url.derive('', 'http'),
     clientSessionId,
     httpClient,
   })
 
-  // const topic = TopicClient.init({
-  //   t: 'web-sockets-in-house',
-  //   contract: topicContract,
-  //   serverUrl: config.topicUrl,
-  //   clientSessionId,
-  //   logger,
-  //   endpoint: '/topic',
-  //   reconnectionRate: TimeSpan.seconds(3),
-  //   syncSubscriptionRate: TimeSpan.seconds(3),
-  //   codec: topicMsgCodec,
-  // })
-
   const topic = TopicClient.init({
     t: 'web-sockets-nats',
     contract: topicContract,
-    serverUrl: config.natsUrl,
+    serverUrl: Url.derive('', 'http'),
     clientSessionId,
     logger,
     reconnectionRate: TimeSpan.seconds(3),

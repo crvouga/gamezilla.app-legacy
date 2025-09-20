@@ -90,8 +90,6 @@ const Main = () => {
       logger.info('Initializing app context')
 
       const ctx = await AppFrontend.initCtx({
-        backendUrl,
-        natsUrl,
         sqlDb,
         logger,
         audioPlayer,

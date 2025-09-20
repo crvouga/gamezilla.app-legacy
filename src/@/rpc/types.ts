@@ -4,6 +4,7 @@ import { IHttpClient } from '../http-client'
 import { ClientSessionId } from '../wire/client-session-id'
 import { SessionId } from '../wire/session-id'
 import { RPCError } from './error'
+import { Url } from '../url/url'
 
 export type Base = Contract<Record<string, Endpoint<any, any>>>
 
@@ -33,7 +34,7 @@ export const initContract = <TEndpoints extends Record<string, Endpoint<any, any
 
 export type ClientConfigHttp<T extends Base> = {
   t: 'http'
-  serverUrl: string
+  serverUrl: Url
   clientSessionId: ClientSessionId
   contract: T
   httpClient: IHttpClient

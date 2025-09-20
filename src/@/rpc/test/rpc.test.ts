@@ -10,6 +10,7 @@ import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
 import * as RPC from '../rpc'
 import { contract, server } from './test-contract'
+import { Url } from '~/@/url/url'
 
 type Fixture = {
   client: RPC.Client<typeof contract>
@@ -43,7 +44,7 @@ export const FixtureHttp = async (): Promise<Fixture> => {
 
   const clientSessionId = ClientSessionId.generate()
 
-  const serverUrl = `http://localhost:${port}`
+  const serverUrl = Url.derive(`http://localhost:${port}`, 'http')
 
   RPC.registerRespond({ httpServer, contract, server, logger })
 
