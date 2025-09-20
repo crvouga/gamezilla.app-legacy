@@ -165,6 +165,21 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   return Sub.batch<MsgFrontend>([
+    // ?input.ctx.userAccountDb.sub({
+    //       whereAnd: {
+    //         userId: {
+    //           equals: input.ctx.currentUser.userId,
+    //         },
+    //       },
+    //       order: {
+    //         createdAt: 'desc',
+    //       },
+    //       pagination: {
+    //         limit: 1,
+    //         offset: 0,
+    //       },
+    //     }),
+
     input.ctx.userSessionDb.sub(
       {
         whereAnd: {
