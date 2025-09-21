@@ -70,7 +70,14 @@ const init = (self: ImplMain): IServerRegistry => {
       logger.debug('Cleaning up server registry cache')
       await self.sqlDb.query({
         schema: s.unknown,
-        sql: 'DELETE FROM server_registry WHERE id NOT IN (SELECT id FROM server_registry ORDER BY inserted_at_unix_ms DESC LIMIT :limit)',
+        sql: `
+        WITH latest_server_registry AS (
+          SELECT id FROM server_registry 
+          ORDER BY inserted_at_unix_ms DESC 
+          LIMIT :limit
+        )
+        DELETE FROM server_registry 
+        WHERE id NOT IN (SELECT id FROM latest_server_registry)`,
         vars: {
           limit: 100,
         },
