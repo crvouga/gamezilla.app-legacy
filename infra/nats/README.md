@@ -21,7 +21,7 @@ Minimal NATS server setup for Railway deployment with WebSocket support.
 
 **No hardcoded credentials** - Authentication is optional and controlled by environment variables:
 
-- **With Authentication** (Production): Set `NATS_USER` and `NATS_PASSWORD` environment variables
+- **With Authentication** (Production): Set `NATS_USER` and `NATS_PASS` environment variables
 - **Without Authentication** (Development): Leave environment variables unset
 
 ### Production Setup
@@ -29,7 +29,7 @@ Minimal NATS server setup for Railway deployment with WebSocket support.
 ```bash
 # Set these environment variables in Railway or Docker
 NATS_USER=your_secure_username
-NATS_PASSWORD=your_secure_password
+NATS_PASS=your_secure_password
 ```
 
 ### Development Setup
@@ -65,7 +65,7 @@ docker run -p 4222:4222 -p 9222:9222 -p 8222:8222 gamezilla-nats
    **Production (with auth):**
 
    ```bash
-   docker run -e NATS_USER=your_user -e NATS_PASSWORD=your_password \
+   docker run -e NATS_USER=your_user -e NATS_PASS=your_password \
      -p 4222:4222 -p 9222:9222 -p 8222:8222 gamezilla-nats
    ```
 
