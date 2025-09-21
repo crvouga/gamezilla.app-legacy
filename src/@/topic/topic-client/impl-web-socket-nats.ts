@@ -13,15 +13,18 @@ import { TopicSubscription } from '../topic-subscription'
 import { ITopicClient, TopicClientNode } from './interface'
 
 export type ImplWebSocketsNats<T extends TopicContractBase> = {
-  t: 'web-sockets-nats'
+  t: 'nats-client'
   contract: T
   getServerUrls: () => Promise<Url[]>
   clientSessionId: ClientSessionId
   logger: ILogger
-  reconnectionRate: TimeSpan
-  syncSubscriptionRate: TimeSpan
+  reconnectionRate?: TimeSpan
+  syncSubscriptionRate?: TimeSpan
   codec: ITopicMsgCodec
 }
+
+export const DEFAULT_RECONNECTION_RATE = TimeSpan.seconds(3)
+export const DEFAULT_SYNC_SUBSCRIPTION_RATE = TimeSpan.seconds(3)
 
 const init = <TContract extends TopicContractBase>(config: ImplWebSocketsNats<TContract>): ITopicClient<TContract> => {
   const clientCore = initClientCore(config)
@@ -120,7 +123,7 @@ const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSock
       } finally {
         logger.info('restarting connection')
         abortController.abort('reconnecting')
-        await p.sleep(config.reconnectionRate, abortController.signal)
+        await p.sleep(config.reconnectionRate ?? DEFAULT_RECONNECTION_RATE, abortController.signal)
       }
     }
   }
@@ -154,7 +157,7 @@ const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSock
         }
       }
 
-      await p.sleep(config.syncSubscriptionRate, s)
+      await p.sleep(config.syncSubscriptionRate ?? DEFAULT_SYNC_SUBSCRIPTION_RATE, s)
     }
   }
 
@@ -183,7 +186,7 @@ const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSock
         }
       }
 
-      await p.sleep(config.syncSubscriptionRate, s)
+      await p.sleep(config.syncSubscriptionRate ?? DEFAULT_SYNC_SUBSCRIPTION_RATE, s)
     }
   }
 

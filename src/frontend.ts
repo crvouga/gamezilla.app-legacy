@@ -10,6 +10,7 @@ import { Pglite } from './@/pglite/impl'
 import { DebuggerReduxDevTools } from './@/program/debugger'
 import { SqlDbMigrationPolicy } from './@/sql-db-migration-policy/impl'
 import { FrontendSqlDb } from './@/sql-db/frontend-impl'
+import { Url } from './@/url/url'
 import { h, render } from './@/vdom'
 import { SwapVDomEngine } from './@/vdom/swap-vdom-engine'
 import { VdomImplWebStorage } from './@/vdom/vdom-impl-web-storage'
@@ -37,8 +38,14 @@ const keyValueDb = KeyValueDb.init({
 
 const vdomImplStorage = VdomImplWebStorage.init({ keyValueDb })
 
+const serverRegistrySrcUrl = Url.derive(process.env.SERVER_REGISTRY_SRC_URL ?? '', 'http')
+if (!serverRegistrySrcUrl) throw new Error('SERVER_REGISTRY_SRC_URL is not set')
+
+logger.info('serverRegistrySrcUrl', serverRegistrySrcUrl)
+
 const main = async () => {
   const ctx = await AppFrontend.initCtx({
+    serverRegistrySrcUrl,
     sqlDb,
     logger,
     audioPlayer,

@@ -2,6 +2,27 @@
   "servers": [
     {
       "name": "nats",
+      "region": "us-west",
+      "url": "nats-production-6a58.up.railway.app"
+    },
+    {
+      "name": "nats",
+      "region": "us-west",
+      "url": "nats-production-6a58.up.railway.app"
+    },
+    {
+      "name": "nats",
+      "region": "us-east",
+      "url": "nats-production-6a58.up.railway.app"
+    },
+    {
+      "name": "nats",
+      "region": "eu",
+      "url": "nats-production-6a58.up.railway.app"
+    },
+    {
+      "name": "nats",
+      "region": "au",
       "url": "nats-production-6a58.up.railway.app"
     }
   ]

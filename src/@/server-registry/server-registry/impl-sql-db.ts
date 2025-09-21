@@ -44,7 +44,7 @@ const init = (self: ImplSqlDb): IServerRegistry => {
     async get() {
       const queried = await self.sqlDb.query({
         schema: Row,
-        sql: 'SELECT id, data_json, inserted_at_unix_ms FROM server_registry',
+        sql: 'SELECT id, data_json, inserted_at_unix_ms FROM server_registry ORDER BY inserted_at_unix_ms DESC LIMIT 1',
         vars: {},
       })
       if (isErr(queried)) return queried

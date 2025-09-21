@@ -1,10 +1,10 @@
 import { Logger } from '~/@/logger'
+import { TimeSpan } from '~/@/time/time-span'
+import { Url } from '~/@/url/url'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { TopicClient } from '../../topic-client/impl'
 import { TopicMsgCodec } from '../../topic-msg-codec'
 import { IFixture, IFixtureClient, testTopicContract } from './interface'
-import { Url } from '~/@/url/url'
-import { TimeSpan } from '~/@/time/time-span'
 
 export type ImplWebSocketNats = {
   t: 'web-socket-nats'
@@ -18,12 +18,14 @@ const init = async (_config?: ImplWebSocketNats): Promise<IFixture> => {
     const natsServerUrl = process.env.NATS_URL
     if (!natsServerUrl) throw new Error('NATS_URL is not set')
     const topic = TopicClient.init({
-      t: 'web-sockets-nats',
+      t: 'nats-client',
       contract: testTopicContract,
       clientSessionId,
       codec,
       logger: logger.child(['client', childName]),
-      serverUrl: Url.derive(natsServerUrl, 'http'),
+      async getServerUrls() {
+        return [Url.derive(natsServerUrl, 'http')]
+      },
       reconnectionRate: TimeSpan.seconds(0),
       syncSubscriptionRate: TimeSpan.seconds(0),
     })

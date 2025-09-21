@@ -30,21 +30,6 @@ VDomEngine.set(vdomEngine)
 
 logger.info('Starting main')
 
-const BACKEND_URL = process.env.BACKEND_URL
-if (!BACKEND_URL) throw new Error('BACKEND_URL is not set')
-logger.info('BACKEND_URL', BACKEND_URL)
-
-const NATS_URL = process.env.NATS_URL
-if (!NATS_URL) throw new Error('NATS_URL is not set')
-logger.info('NATS_URL', NATS_URL)
-
-const httpProtocol = 'https'
-logger.info('Using protocol', httpProtocol)
-
-const backendUrl = Url.derive(BACKEND_URL, httpProtocol)
-const natsUrl = Url.removePath(Url.derive(NATS_URL, httpProtocol))
-logger.info('Derived URLs', { backendUrl, natsUrl })
-
 logger.info('Initializing sqlDb')
 const sqlDb = FrontendNativeSqlDb.init({
   t: 'expo-sqlite',
@@ -82,6 +67,8 @@ const navigation = NavigationImplKeyValueDb.init({
 
 const platform: IPlatform = 'native'
 
+const serverRegistrySrcUrl = Url.derive(process.env.SERVER_REGISTRY_SRC_URL ?? '', 'http')
+
 const Main = () => {
   const [input, setInput] = useState<Parameters<typeof AppFrontend.View>[0] | null>(null)
 
@@ -91,6 +78,7 @@ const Main = () => {
 
       const ctx = await AppFrontend.initCtx({
         sqlDb,
+        serverRegistrySrcUrl,
         logger,
         audioPlayer,
         keyboard,

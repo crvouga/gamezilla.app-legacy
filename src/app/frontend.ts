@@ -12,7 +12,7 @@ import { IPlatform } from '~/@/platform/platform'
 import { isErr } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screens/generated/screens'
-import { ServerRegistry } from '~/@/server-registry/server-registry-record-db/impl'
+import { ServerRegistry } from '~/@/server-registry/server-registry/impl'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { ISqlDb } from '~/@/sql-db/interface'
 import { Sub } from '~/@/sub'
@@ -51,8 +51,10 @@ import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract, topicContract } from './types'
 import { toBackendConnectionStatus } from './wire/backend-connection/backend-connection-status'
 import { WireFrontend } from './wire/frontend'
+import { Psql } from '~/@/psql'
 
 const initCtx = async (config: {
+  serverRegistrySrcUrl: Url
   sqlDb: ISqlDb
   logger: ILogger
   keyValueDbSync: IKeyValueDbSync
@@ -70,18 +72,12 @@ const initCtx = async (config: {
 
   const logger = config.logger.child(['app'])
 
-  const clientSessionId = await ClientSessionIdStorage.init({ keyValueDb: config.keyValueDb }).get()
+  const clientSessionIdStorage = ClientSessionIdStorage.init({ keyValueDb: config.keyValueDb })
+
+  const clientSessionId = await clientSessionIdStorage.get()
 
   const httpClient = HttpClient.init({
     t: 'fetch',
-  })
-
-  const rpc = RPC.initClient({
-    t: 'http',
-    contract: rpcContract,
-    serverUrl: Url.derive('', 'http'),
-    clientSessionId,
-    httpClient,
   })
 
   const navigatorLanguage = LanguageCodeISO_639_1.getLangFromNavigator() ?? 'en'
@@ -96,24 +92,39 @@ const initCtx = async (config: {
     t: 'main',
     httpClient,
     logger,
-    srcUrl: Url.derive('', 'http'),
+    serverRegistrySrcUrl: config.serverRegistrySrcUrl,
     sqlDb: config.sqlDb,
     migrationPolicy,
+    pollRate: TimeSpan.seconds(10),
   })
 
   const topic = TopicClient.init({
-    t: 'web-sockets-nats',
+    t: 'nats-client',
     contract: topicContract,
+    clientSessionId,
+    logger,
+    codec: topicMsgCodec,
     async getServerUrls() {
       const got = await serverRegistry.get()
       if (isErr(got)) return []
-      return got.value.servers.filter((s) => s.name === 'nats').map((s) => s.url)
+      return got.value.servers.map((s) => s.url)
     },
+  })
+
+  const psql = Psql({
+    sqlDb: config.sqlDb,
+  })
+  if (typeof window !== 'undefined') {
+    // @ts-ignore
+    window.q = psql.psql
+  }
+
+  const rpc = RPC.initClient({
+    t: 'http',
+    contract: rpcContract,
+    serverUrl: Url.derive('', 'http'),
     clientSessionId,
-    logger,
-    reconnectionRate: TimeSpan.seconds(3),
-    syncSubscriptionRate: TimeSpan.seconds(3),
-    codec: topicMsgCodec,
+    httpClient,
   })
 
   const crudTransactionDb = CrudTransactionDb.init({

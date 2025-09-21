@@ -19,7 +19,7 @@ const init = <T extends TopicContractBase>(config: Config<T>): ITopicClient<T> =
       return ImplWebSocketsInHouse.init(config)
     case 'from-server':
       return ImplFromServer.init(config)
-    case 'web-sockets-nats':
+    case 'nats-client':
       return ImplWebSocketsNats.init(config)
   }
 }

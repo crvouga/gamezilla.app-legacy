@@ -144,6 +144,20 @@ const removePath = (url: Url): Url => {
   return of(parts.slice(0, -1).join('/'))
 }
 
+/**
+ * Sets the path component of a URL
+ * @param url The input URL
+ * @param path The path to set (without leading slash)
+ * @returns The URL with the new path
+ * @example
+ * Url.setPath('https://example.com/old-path', 'new-path') // returns 'https://example.com/new-path'
+ * Url.setPath('https://example.com', 'new-path') // returns 'https://example.com/new-path'
+ */
+const setPath = (url: Url, path: string): Url => {
+  const withoutPath = removePath(url)
+  return of(`${withoutPath}/${path}`)
+}
+
 export const Url = {
   derive,
   ensureHttp,
@@ -151,5 +165,6 @@ export const Url = {
   ensureWs,
   ensureWss,
   removePath,
+  setPath,
   schema,
 }
