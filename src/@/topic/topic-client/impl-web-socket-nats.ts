@@ -15,8 +15,7 @@ import { ITopicClient, TopicClientNode } from './interface'
 export type ImplWebSocketsNats<T extends TopicContractBase> = {
   t: 'web-sockets-nats'
   contract: T
-  serverUrl: Url
-  endpoint?: string
+  getServerUrls: () => Promise<Url[]>
   clientSessionId: ClientSessionId
   logger: ILogger
   reconnectionRate: TimeSpan
@@ -105,11 +104,12 @@ const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSock
       try {
         logger.info('connecting to server')
 
-        const url = config.serverUrl.replace('http', 'ws')
-        logger.info('connecting to server', { url })
+        const serverUrls = await config.getServerUrls()
+
+        logger.info('connecting to server', { serverUrls })
 
         const connection = await wsconnect({
-          servers: [url],
+          servers: serverUrls,
         })
 
         await workerSenderReceiver(abortController.signal, connection)

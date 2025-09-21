@@ -1,0 +1,44 @@
+import { IHttpClient } from '~/@/http-client'
+import { ILogger } from '~/@/logger'
+import { Err, isErr, Ok } from '~/@/result'
+import { Url } from '~/@/url/url'
+import { ServerRegistryRecord } from '../server-registry-record'
+import { IServerRegistry } from './interface'
+
+export type ImplFetch = {
+  t: 'fetch'
+  httpClient: IHttpClient
+  logger: ILogger
+  srcUrl: Url
+}
+
+const init = (self: ImplFetch): IServerRegistry => {
+  return {
+    async get() {
+      const req = new Request(self.srcUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      })
+      const res = await self.httpClient.send(req)
+      if (!res.ok) {
+        return Err(`Failed to load server registry: ${res.statusText}`)
+      }
+      const data = await res.json()
+      const parsed = ServerRegistryRecord.schema.parse(data)
+      if (isErr(parsed)) {
+        return Err(`Failed to load server registry: ${parsed.error}`)
+      }
+      return Ok(parsed.value)
+    },
+    async put(_serverRegistry) {
+      return Ok(null)
+    },
+  }
+}
+
+export const ImplFetch = {
+  init,
+}

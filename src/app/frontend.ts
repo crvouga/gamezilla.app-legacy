@@ -9,8 +9,10 @@ import { Translator } from '~/@/l18n/generated'
 import { Msg } from '~/@/msg/msg'
 import { INavigation } from '~/@/navigation'
 import { IPlatform } from '~/@/platform/platform'
+import { isErr } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screens/generated/screens'
+import { ServerRegistry } from '~/@/server-registry/server-registry-record-db/impl'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { ISqlDb } from '~/@/sql-db/interface'
 import { Sub } from '~/@/sub'
@@ -82,23 +84,36 @@ const initCtx = async (config: {
     httpClient,
   })
 
-  const topic = TopicClient.init({
-    t: 'web-sockets-nats',
-    contract: topicContract,
-    serverUrl: Url.derive('', 'http'),
-    clientSessionId,
-    logger,
-    reconnectionRate: TimeSpan.seconds(3),
-    syncSubscriptionRate: TimeSpan.seconds(3),
-    codec: topicMsgCodec,
-  })
-
   const navigatorLanguage = LanguageCodeISO_639_1.getLangFromNavigator() ?? 'en'
 
   const migrationPolicy = SqlDbMigrationPolicy.init({
     t: 'dangerously-wipe-on-new-schema',
     kvDb: config.keyValueDb,
     logger: logger.setMaxLogLevel('debug'),
+  })
+
+  const serverRegistry = ServerRegistry.init({
+    t: 'main',
+    httpClient,
+    logger,
+    srcUrl: Url.derive('', 'http'),
+    sqlDb: config.sqlDb,
+    migrationPolicy,
+  })
+
+  const topic = TopicClient.init({
+    t: 'web-sockets-nats',
+    contract: topicContract,
+    async getServerUrls() {
+      const got = await serverRegistry.get()
+      if (isErr(got)) return []
+      return got.value.servers.filter((s) => s.name === 'nats').map((s) => s.url)
+    },
+    clientSessionId,
+    logger,
+    reconnectionRate: TimeSpan.seconds(3),
+    syncSubscriptionRate: TimeSpan.seconds(3),
+    codec: topicMsgCodec,
   })
 
   const crudTransactionDb = CrudTransactionDb.init({

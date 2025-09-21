@@ -9,7 +9,7 @@ export type ImplFetch = {
 
 const init = (config: ImplFetch): IHttpClient => {
   return {
-    async fetch(request) {
+    async send(request) {
       const headers = config.mapHeaders?.(request.headers) ?? request.headers
 
       const response = await fetch(request, {

@@ -1,7 +1,9 @@
-import { Brand } from '../brand/brand'
 import { HttpProtocol } from '../http/protocol'
+import { s } from '../schema'
 
-export type Url = Brand<string, 'Url'>
+const schema = s.brand(s.str(), 'Url')
+
+export type Url = s.Infer<typeof schema>
 
 /**
  * Derives a URL with the specified HTTP protocol
@@ -83,6 +85,50 @@ const ensureHttp = (url: string): Url => {
 }
 
 /**
+ * Ensures a URL uses WS protocol
+ * @param url The input URL
+ * @returns A URL with WS protocol
+ * @example
+ * Url.ensureWs('example.com') // returns 'ws://example.com'
+ * Url.ensureWs('wss://example.com') // returns 'ws://example.com'
+ * Url.ensureWs('http://example.com') // returns 'ws://example.com'
+ */
+const ensureWs = (url: string): Url => {
+  if (url.startsWith('ws://')) {
+    return of(url)
+  }
+  if (url.startsWith('wss://')) {
+    return of('ws://' + url.slice(6))
+  }
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return of('ws://' + url.replace(/^https?:\/\//, ''))
+  }
+  return of('ws://' + url)
+}
+
+/**
+ * Ensures a URL uses WSS protocol
+ * @param url The input URL
+ * @returns A URL with WSS protocol
+ * @example
+ * Url.ensureWss('example.com') // returns 'wss://example.com'
+ * Url.ensureWss('ws://example.com') // returns 'wss://example.com'
+ * Url.ensureWss('http://example.com') // returns 'wss://example.com'
+ */
+const ensureWss = (url: string): Url => {
+  if (url.startsWith('wss://')) {
+    return of(url)
+  }
+  if (url.startsWith('ws://')) {
+    return of('wss://' + url.slice(5))
+  }
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return of('wss://' + url.replace(/^https?:\/\//, ''))
+  }
+  return of('wss://' + url)
+}
+
+/**
  * Removes the path component from a URL
  * @param url The input URL
  * @returns The URL with path removed
@@ -102,5 +148,8 @@ export const Url = {
   derive,
   ensureHttp,
   ensureHttps,
+  ensureWs,
+  ensureWss,
   removePath,
+  schema,
 }
