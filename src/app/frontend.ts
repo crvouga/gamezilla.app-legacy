@@ -10,7 +10,6 @@ import { Msg } from '~/@/msg/msg'
 import { INavigation } from '~/@/navigation'
 import { IPlatform } from '~/@/platform/platform'
 import { Psql } from '~/@/psql'
-import { isErr } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screens/generated/screens'
 import { ServerRegistry } from '~/@/server-registry/server-registry'
@@ -106,11 +105,7 @@ const initCtx = async (config: {
     clientSessionId,
     logger,
     codec: topicMsgCodec,
-    async getServerUrls() {
-      const got = await serverRegistry.get()
-      if (isErr(got)) return []
-      return got.value.servers.map((s) => s.url)
-    },
+    getServerUrls: serverRegistry.getServerUrls,
   })
 
   const psql = Psql({

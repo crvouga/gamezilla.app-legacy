@@ -18,21 +18,12 @@ export type ServerRegistry = {
   sqlDb: ISqlDb
   migrationPolicy: ISqlDbMigrationPolicy
   pollRate?: TimeSpan
-  cleanUpRate?: TimeSpan
 }
 
-const DEFAULT_POLL_RATE = TimeSpan.seconds(10)
-const DEFAULT_CLEAN_UP_RATE = TimeSpan.seconds(10)
+const DEFAULT_POLL_RATE = TimeSpan.seconds(30)
 
 const init = (self: ServerRegistry) => {
   const logger = self.logger.child(['impl-main'])
-
-  const serverRegistryCache = ServerRegistryRecordDb.init({
-    t: 'sql-db',
-    sqlDb: self.sqlDb,
-    logger,
-    migrationPolicy: self.migrationPolicy,
-  })
 
   const serverRegistrySource = ServerRegistryRecordDb.init({
     t: 'src-url',
@@ -41,7 +32,14 @@ const init = (self: ServerRegistry) => {
     logger,
   })
 
-  const workerPollSource = async (signal: AbortSignal) => {
+  const serverRegistryCache = ServerRegistryRecordDb.init({
+    t: 'sql-db',
+    sqlDb: self.sqlDb,
+    logger,
+    migrationPolicy: self.migrationPolicy,
+  })
+
+  const workerPoll = async (signal: AbortSignal) => {
     logger.info('Starting server registry worker')
     while (true) {
       signal.throwIfAborted()
@@ -49,33 +47,29 @@ const init = (self: ServerRegistry) => {
       const got = await serverRegistrySource.get()
       if (isErr(got)) {
         logger.error('Failed to fetch server registry', got.error)
-        return
+        await p.sleep(self.pollRate ?? DEFAULT_POLL_RATE, signal)
+        continue
       }
       logger.debug('Updating server registry cache')
       const id = ServerRegistryId.generate()
-      serverRegistryCache.insert(id, got.value)
-      logger.debug('Sleeping before next update')
+      logger.debug(`Inserting server registry into cache: ${id}`)
+      await serverRegistryCache.insert(id, got.value)
+      logger.debug(`Cleaning up server registry cache: ${id}`)
+      await serverRegistryCache.cleanUp()
       await p.sleep(self.pollRate ?? DEFAULT_POLL_RATE, signal)
     }
   }
 
-  const workerCacheCleanUp = async (signal: AbortSignal) => {
-    logger.info('Starting server registry cache clean up worker')
-    while (true) {
-      signal.throwIfAborted()
-      logger.debug('Cleaning up server registry cache')
-      await serverRegistryCache.cleanUp()
-      logger.debug('Sleeping before next clean up')
-      await p.sleep(self.cleanUpRate ?? DEFAULT_CLEAN_UP_RATE, signal)
-    }
-  }
-
   const worker = async (signal: AbortSignal) => {
-    workerPollSource(signal)
-    workerCacheCleanUp(signal)
+    workerPoll(signal)
   }
 
   return {
+    async getServerUrls(): Promise<Url[]> {
+      const got = await serverRegistryCache.get()
+      if (isErr(got)) return []
+      return got.value.servers.map((s) => s.url)
+    },
     async get() {
       logger.debug('Getting server registry from cache')
       return serverRegistryCache.get()
