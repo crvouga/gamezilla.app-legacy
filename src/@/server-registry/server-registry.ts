@@ -9,6 +9,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { Url } from '~/@/url/url'
 
 import { ServerRegistryRecordDb } from './server-registry-record-db/impl'
+import { ServerRegistryId } from './server-registry-record-id'
 
 export type ServerRegistry = {
   httpClient: IHttpClient
@@ -51,7 +52,8 @@ const init = (self: ServerRegistry) => {
         return
       }
       logger.debug('Updating server registry cache')
-      serverRegistryCache.insert(got.value)
+      const id = ServerRegistryId.generate()
+      serverRegistryCache.insert(id, got.value)
       logger.debug('Sleeping before next update')
       await p.sleep(self.pollRate ?? DEFAULT_POLL_RATE, signal)
     }

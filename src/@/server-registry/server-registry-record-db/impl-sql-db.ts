@@ -6,7 +6,6 @@ import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
 import { ISqlDb } from '~/@/sql-db/interface'
 import { UnixMs } from '~/@/time/unix-ms'
 import { ServerRegistryRecord } from '../server-registry-record'
-import { ServerRegistryId } from '../server-registry-record-id'
 import { IServerRegistryRecordDb } from './interface'
 
 export type ImplSqlDb = {
@@ -38,6 +37,8 @@ const Row = s.obj({
   inserted_at_unix_ms: s.num(),
 })
 
+const MAX_ROWS = 100
+
 const init = (self: ImplSqlDb): IServerRegistryRecordDb => {
   self.migrationPolicy.execute({ sqlDb: self.sqlDb, up: UP, down: DOWN, logger: self.logger })
   return {
@@ -56,15 +57,14 @@ const init = (self: ImplSqlDb): IServerRegistryRecordDb => {
       if (isErr(parsed)) return Err(`Failed to parse server registry: ${parsed.error}`)
       return Ok(parsed.value)
     },
-    async insert(serverRegistry) {
+    async insert(serverRegistryId, serverRegistry) {
       const json = Json.stringify(serverRegistry)
       if (isErr(json)) return Err(`Failed to stringify server registry: ${json.error}`)
-      const id = ServerRegistryId.generate()
       const result = await self.sqlDb.query({
         schema: Row,
         sql: 'INSERT INTO server_registry (id, data_json, inserted_at_unix_ms) VALUES (:id, :data_json, :inserted_at_unix_ms)',
         vars: {
-          id,
+          id: serverRegistryId,
           data_json: json.value,
           inserted_at_unix_ms: UnixMs.now(),
         },
@@ -77,12 +77,15 @@ const init = (self: ImplSqlDb): IServerRegistryRecordDb => {
       const cleaned = await self.sqlDb.query({
         schema: s.unknown,
         sql: `
-        WITH latest_server_registry AS (
-          SELECT id FROM server_registry ORDER BY inserted_at_unix_ms DESC LIMIT :limit
+        WITH latest AS (
+          SELECT id FROM server_registry 
+          ORDER BY inserted_at_unix_ms DESC 
+          LIMIT :limit
         )
-        DELETE FROM server_registry WHERE id NOT IN (SELECT id FROM latest_server_registry)`,
+        DELETE FROM server_registry 
+        WHERE id NOT IN (SELECT id FROM latest)`,
         vars: {
-          limit: 100,
+          limit: MAX_ROWS,
         },
       })
       if (isErr(cleaned)) return cleaned

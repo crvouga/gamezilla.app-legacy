@@ -35,7 +35,7 @@ const init = (self: ImplSrcUrl): IServerRegistryRecordDb => {
 
       return Ok(parsed.value)
     },
-    async insert(_serverRegistry) {
+    async insert() {
       self.logger.warn('put is not supported for src-url')
       return Ok(null)
     },
