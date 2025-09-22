@@ -3,27 +3,7 @@
     {
       "name": "nats",
       "region": "us-west",
-      "url": "http://localhost:4222"
-    },
-    {
-      "name": "nats",
-      "region": "us-west",
-      "url": "http://localhost:4222"
-    },
-    {
-      "name": "nats",
-      "region": "us-east",
-      "url": "http://localhost:4222"
-    },
-    {
-      "name": "nats",
-      "region": "eu",
-      "url": "http://localhost:4222"
-    },
-    {
-      "name": "nats",
-      "region": "au",
-      "url": "http://localhost:4222"
+      "url": "ws://localhost:9222"
     }
   ]
 }

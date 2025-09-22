@@ -1,0 +1,9 @@
+{
+  "servers": [
+    {
+      "name": "nats",
+      "region": "us-west",
+      "url": "nats-production-6a58.up.railway.app"
+    }
+  ]
+}

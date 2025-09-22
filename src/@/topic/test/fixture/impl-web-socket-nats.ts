@@ -15,8 +15,6 @@ const init = async (_config?: ImplWebSocketNats): Promise<IFixture> => {
   const codec = TopicMsgCodec.init({ t: 'json' })
   const initClient = (childName: string): IFixtureClient => {
     const clientSessionId = ClientSessionId.generate()
-    const natsServerUrl = process.env.NATS_URL
-    if (!natsServerUrl) throw new Error('NATS_URL is not set')
     const topic = TopicClient.init({
       t: 'nats-client',
       contract: testTopicContract,
@@ -24,7 +22,7 @@ const init = async (_config?: ImplWebSocketNats): Promise<IFixture> => {
       codec,
       logger: logger.child(['client', childName]),
       async getServerUrls() {
-        return [Url.derive(natsServerUrl, 'http')]
+        return [Url.derive('http://localhost:9222', 'http')]
       },
       reconnectionRate: TimeSpan.seconds(0),
       syncSubscriptionRate: TimeSpan.seconds(0),

@@ -14,16 +14,10 @@ await DotEnv.load({
 const NODE_ENV = process.env.NODE_ENV
 if (!NODE_ENV) throw new Error('NODE_ENV is not set')
 
-const FRONTEND_PORT = Number(process.env.FRONTEND_PORT)
-if (Number.isNaN(FRONTEND_PORT)) throw new Error('FRONTEND_PORT is not set')
-
 const SERVER_REGISTRY_SRC_URL = process.env.SERVER_REGISTRY_SRC_URL
 if (!SERVER_REGISTRY_SRC_URL) throw new Error('SERVER_REGISTRY_SRC_URL is not set')
 
 export default defineConfig({
-  server: {
-    port: Number(FRONTEND_PORT),
-  },
   define: {
     'process.env.NODE_ENV': `"${NODE_ENV}"`,
     'process.env.SERVER_REGISTRY_SRC_URL': `"${SERVER_REGISTRY_SRC_URL}"`,
