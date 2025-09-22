@@ -3,16 +3,16 @@ import { ILogger } from '~/@/logger'
 import { Err, isErr, Ok } from '~/@/result'
 import { Url } from '~/@/url/url'
 import { ServerRegistryRecord } from '../server-registry-record'
-import { IServerRegistry } from './interface'
+import { IServerRegistryRecordDb } from './interface'
 
-export type ImplFetch = {
-  t: 'fetch'
+export type ImplSrcUrl = {
+  t: 'src-url'
   httpClient: IHttpClient
   logger: ILogger
   srcUrl: Url
 }
 
-const init = (self: ImplFetch): IServerRegistry => {
+const init = (self: ImplSrcUrl): IServerRegistryRecordDb => {
   return {
     async get() {
       const req = new Request(self.srcUrl, {
@@ -35,12 +35,17 @@ const init = (self: ImplFetch): IServerRegistry => {
 
       return Ok(parsed.value)
     },
-    async put(_serverRegistry) {
+    async insert(_serverRegistry) {
+      self.logger.warn('put is not supported for src-url')
+      return Ok(null)
+    },
+    async cleanUp() {
+      self.logger.warn('cleanUp is not supported for src-url')
       return Ok(null)
     },
   }
 }
 
-export const ImplFetch = {
+export const ImplSrcUrl = {
   init,
 }

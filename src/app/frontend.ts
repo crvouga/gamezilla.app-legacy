@@ -9,10 +9,11 @@ import { Translator } from '~/@/l18n/generated'
 import { Msg } from '~/@/msg/msg'
 import { INavigation } from '~/@/navigation'
 import { IPlatform } from '~/@/platform/platform'
+import { Psql } from '~/@/psql'
 import { isErr } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screens/generated/screens'
-import { ServerRegistry } from '~/@/server-registry/server-registry/impl'
+import { ServerRegistry } from '~/@/server-registry/server-registry'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { ISqlDb } from '~/@/sql-db/interface'
 import { Sub } from '~/@/sub'
@@ -51,7 +52,6 @@ import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract, topicContract } from './types'
 import { toBackendConnectionStatus } from './wire/backend-connection/backend-connection-status'
 import { WireFrontend } from './wire/frontend'
-import { Psql } from '~/@/psql'
 
 const initCtx = async (config: {
   serverRegistrySrcUrl: Url
@@ -89,7 +89,6 @@ const initCtx = async (config: {
   })
 
   const serverRegistry = ServerRegistry.init({
-    t: 'main',
     httpClient,
     logger,
     serverRegistrySrcUrl: config.serverRegistrySrcUrl,
@@ -97,6 +96,9 @@ const initCtx = async (config: {
     migrationPolicy,
     pollRate: TimeSpan.seconds(10),
   })
+
+  const abortController = new AbortController()
+  serverRegistry.worker(abortController.signal)
 
   const topic = TopicClient.init({
     t: 'nats-client',
