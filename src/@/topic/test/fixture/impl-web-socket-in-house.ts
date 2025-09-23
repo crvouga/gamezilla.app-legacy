@@ -8,6 +8,7 @@ import { Url } from '../../../url/url'
 import { TopicClient } from '../../topic-client/impl'
 import { TopicMsgCodec } from '../../topic-msg-codec'
 
+import { NonEmpty } from '~/@/array/non-empty'
 import { TopicServer } from '../../topic-server/impl'
 import { IFixture, IFixtureClient, RECONNECTION_RATE, SYNC_SUBSCRIPTION_RATE, testTopicContract } from './interface'
 
@@ -23,7 +24,6 @@ const init = async (_config?: ImplWebSocketInHouse): Promise<IFixture> => {
   const httpServer = HttpServer.init({ t: 'node', logger })
 
   const endpoint = '/topic'
-  const serverUrl = Url.derive(`http://localhost:${port}`, 'http')
 
   const codec = TopicMsgCodec.init({ t: 'json' })
 
@@ -45,8 +45,7 @@ const init = async (_config?: ImplWebSocketInHouse): Promise<IFixture> => {
       t: 'web-sockets-in-house',
       clientSessionId,
       contract: testTopicContract,
-      serverUrl,
-      endpoint,
+      getServerUrls: async () => NonEmpty.assert([Url.derive(`http://localhost:${port}${endpoint}`, 'http')]),
       logger: logger.child(['client', childName]),
       reconnectionRate: RECONNECTION_RATE,
       syncSubscriptionRate: SYNC_SUBSCRIPTION_RATE,

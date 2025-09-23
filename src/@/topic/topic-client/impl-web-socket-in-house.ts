@@ -17,14 +17,16 @@ import { ITopicClient, TopicClientNode } from './interface'
 export type ImplWebSocketsInHouse<T extends TopicContractBase> = {
   t: 'web-sockets-in-house'
   contract: T
-  serverUrl: Url
-  endpoint: string
   clientSessionId: ClientSessionId
   logger: ILogger
-  reconnectionRate: TimeSpan
-  syncSubscriptionRate: TimeSpan
+  reconnectionRate?: TimeSpan
+  syncSubscriptionRate?: TimeSpan
   codec: ITopicMsgCodec
+  getServerUrls: () => Promise<Url[]>
 }
+
+const DEFAULT_RECONNECTION_RATE = TimeSpan.seconds(10)
+const DEFAULT_SYNC_SUBSCRIPTION_RATE = TimeSpan.seconds(10)
 
 const init = <TContract extends TopicContractBase>(
   config: ImplWebSocketsInHouse<TContract>,
@@ -109,7 +111,25 @@ const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSock
       try {
         logger.info('connecting to server')
 
-        const socket = Socket.create({ url: toWebSocketUrl(config) })
+        const serverUrls = await config.getServerUrls()
+
+        const serverUrl = serverUrls[0]
+
+        logger.info('connecting to server', { serverUrl })
+
+        if (!serverUrl) {
+          logger.warn('no server url found')
+          await p.sleep(config.reconnectionRate ?? DEFAULT_RECONNECTION_RATE, abortController.signal)
+          continue
+        }
+
+        const webSocketUrl = toWebSocketUrl({ serverUrl, clientSessionId: config.clientSessionId })
+
+        logger.info('connecting to server', { webSocketUrl })
+
+        const socket = Socket.create({
+          url: webSocketUrl,
+        })
 
         await workerSocket(abortController.signal, socket)
 
@@ -119,7 +139,7 @@ const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSock
       } finally {
         logger.info('restarting connection')
         abortController.abort('reconnecting')
-        await p.sleep(config.reconnectionRate, abortController.signal)
+        await p.sleep(config.reconnectionRate ?? DEFAULT_RECONNECTION_RATE, abortController.signal)
       }
     }
   }
@@ -188,7 +208,7 @@ const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSock
         }
       }
 
-      await p.sleep(config.syncSubscriptionRate, s)
+      await p.sleep(config.syncSubscriptionRate ?? DEFAULT_SYNC_SUBSCRIPTION_RATE, s)
     }
   }
 
@@ -215,7 +235,7 @@ const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSock
         }
       }
 
-      await p.sleep(config.syncSubscriptionRate, s)
+      await p.sleep(config.syncSubscriptionRate ?? DEFAULT_SYNC_SUBSCRIPTION_RATE, s)
     }
   }
 

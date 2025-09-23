@@ -1,5 +1,4 @@
 import { describe, expect, test } from '~/@/test-runner'
-import { IS_INTEGRATION_TEST } from '~/@/test/is-integration-test'
 import { eventually } from '../../test/eventually'
 import { Fixture, IFixture, TestMsg, sortMsgs } from './fixture'
 
@@ -8,9 +7,9 @@ const Fixtures = async () => {
 
   fixtures.push(await Fixture.init({ t: 'web-socket-in-house' }))
 
-  if (IS_INTEGRATION_TEST) {
-    fixtures.push(await Fixture.init({ t: 'web-socket-in-house' }))
-  }
+  // if (IS_INTEGRATION_TEST) {
+  //   fixtures.push(await Fixture.init({ t: 'web-socket-in-house' }))
+  // }
 
   return fixtures.filter((f) => f)
 }

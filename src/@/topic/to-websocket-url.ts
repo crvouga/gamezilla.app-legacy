@@ -1,11 +1,9 @@
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 
-export const toWebSocketUrl = (input: { serverUrl: string; endpoint: string; clientSessionId: ClientSessionId }) => {
+export const toWebSocketUrl = (input: { serverUrl: string; clientSessionId: ClientSessionId }) => {
   try {
     const baseBackendUrlObj = ClientSessionIdHttp.addToUrl(new URL(input.serverUrl), input.clientSessionId)
-
-    baseBackendUrlObj.pathname = input.endpoint
 
     if (baseBackendUrlObj.protocol === 'https:') {
       baseBackendUrlObj.protocol = 'wss'
@@ -17,6 +15,6 @@ export const toWebSocketUrl = (input: { serverUrl: string; endpoint: string; cli
 
     return baseBackendUrlObj.toString()
   } catch (e) {
-    return input.endpoint
+    return input.serverUrl
   }
 }

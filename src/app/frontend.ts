@@ -100,12 +100,14 @@ const initCtx = async (config: {
   serverRegistry.worker(abortController.signal)
 
   const topic = TopicClient.init({
-    t: 'nats-client',
+    t: 'web-sockets-in-house',
     contract: topicContract,
     clientSessionId,
     logger,
     codec: topicMsgCodec,
     getServerUrls: serverRegistry.getServerUrls,
+    reconnectionRate: TimeSpan.seconds(0),
+    syncSubscriptionRate: TimeSpan.seconds(0),
   })
 
   const psql = Psql({

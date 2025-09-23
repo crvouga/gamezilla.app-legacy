@@ -1,13 +1,14 @@
 import { IHttpClient } from '~/@/http-client'
 import { ILogger } from '~/@/logger'
 import { p } from '~/@/promise'
-import { isErr } from '~/@/result'
+import { isErr, unwrap } from '~/@/result'
 import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
 import { ISqlDb } from '~/@/sql-db/interface'
 
 import { TimeSpan } from '~/@/time/time-span'
 import { Url } from '~/@/url/url'
 
+import { NonEmpty } from '../array/non-empty'
 import { ServerRegistryRecordDb } from './server-registry-record-db/impl'
 import { ServerRegistryId } from './server-registry-record-id'
 
@@ -65,10 +66,10 @@ const init = (self: ServerRegistry) => {
   }
 
   return {
-    async getServerUrls(): Promise<Url[]> {
-      const got = await serverRegistryCache.get()
-      if (isErr(got)) return []
-      return got.value.servers.map((s) => s.url)
+    async getServerUrls(): Promise<NonEmpty<Url>> {
+      const got = unwrap(await serverRegistryCache.get())
+      const serverUrls = got.servers.map((s) => s.url)
+      return NonEmpty.assert(serverUrls)
     },
     async get() {
       logger.debug('Getting server registry from cache')
