@@ -6,12 +6,12 @@ const respond = (_input: { ctx: AppBackendCtxBase; request: Request }) => {
   return new Response(message, { status: 200, headers: { 'Content-Type': 'text/plain' } })
 }
 
-const registerRespond = (config: { httpServer: IHttpServer; ctx: AppBackendCtxBase }) => {
+const register = (config: { httpServer: IHttpServer; ctx: AppBackendCtxBase }) => {
   config.httpServer.registerRespond((request) => {
     return respond({ request, ctx: config.ctx })
   })
 }
 
 export const HelloBackend = {
-  registerRespond,
+  register,
 }

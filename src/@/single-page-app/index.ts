@@ -5,7 +5,7 @@ import { extToContentType } from './ext-to-content-type'
 import { ILogger } from '../logger'
 import { TraceIdHttp } from '../wire/trace-id-http'
 
-const registerRespond = (config: {
+const register = (config: {
   httpServer: IHttpServer
   directory: string
   indexFilename: string
@@ -61,5 +61,5 @@ const registerRespond = (config: {
 }
 
 export const SinglePageApp = {
-  registerRespond,
+  register,
 }

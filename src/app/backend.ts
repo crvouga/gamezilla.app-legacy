@@ -158,24 +158,22 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
 
   input.ctx.httpServer.registerMiddleware(LoggerMiddleware({ logger: input.ctx.logger }))
 
-  RPC.registerRespond({
+  RPC.register({
+    t: 'http-server',
     httpServer: input.ctx.httpServer,
     logger: input.ctx.logger,
     contract: AppTypes.rpcContract,
     server: AppBackend.rpc({ ctx: input.ctx }),
   })
-
-  HealthCheck.registerRespond({ httpServer: input.ctx.httpServer })
-
-  SinglePageApp.registerRespond({
+  HealthCheck.register({ httpServer: input.ctx.httpServer })
+  SinglePageApp.register({
     directory: 'dist',
     fs: input.ctx.fileSystem,
     httpServer: input.ctx.httpServer,
     indexFilename: 'index.html',
     logger: input.ctx.logger,
   })
-
-  HelloBackend.registerRespond({ ctx: input.ctx, httpServer: input.ctx.httpServer })
+  HelloBackend.register({ ctx: input.ctx, httpServer: input.ctx.httpServer })
 
   input.ctx.httpServer.start(input.ctx.port)
 

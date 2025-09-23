@@ -1,6 +1,6 @@
 import { IHttpServer } from '~/@/http-server/interface'
 
-const registerRespond = (config: { httpServer: IHttpServer }) => {
+const register = (config: { httpServer: IHttpServer }) => {
   config.httpServer.registerRespond((request: Request) => {
     switch (new URL(request.url).pathname) {
       case '/health': {
@@ -14,5 +14,5 @@ const registerRespond = (config: { httpServer: IHttpServer }) => {
 }
 
 export const HealthCheck = {
-  registerRespond,
+  register,
 }

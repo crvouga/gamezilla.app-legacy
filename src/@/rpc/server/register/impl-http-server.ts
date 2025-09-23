@@ -6,16 +6,19 @@ import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionId } from '~/@/wire/session-id'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { TraceId } from '~/@/wire/trace-id'
-import { Base, Contract, Server } from '../types'
+import { Base, Contract, Server } from '../../types'
 
-export const registerRespond = <T extends Base>(config: {
+export type ImplHttpServer<T extends Base> = {
+  t: 'http-server'
   httpServer: IHttpServer
   contract: T
   server: Server<T>
   logger: ILogger
-}) => {
-  const logger_ = config.logger.child(['rpc'])
-  config.httpServer.registerRespond(async (request, _, traceId) => {
+}
+
+const register = <T extends Base>(self: ImplHttpServer<T>): void => {
+  const logger_ = self.logger.child(['rpc'])
+  self.httpServer.registerRespond(async (request, _, traceId) => {
     const logger = logger_.child([traceId])
     try {
       logger.debug('Processing RPC request')
@@ -34,8 +37,8 @@ export const registerRespond = <T extends Base>(config: {
 
       logger.debug('Handling RPC request', { rpcName, sessionId, clientSessionId })
       const response = await handleRequest({
-        contract: config.contract,
-        server: config.server,
+        contract: self.contract,
+        server: self.server,
         rpcName,
         request,
         sessionId,
@@ -126,4 +129,7 @@ const handleRequest = async (input: {
     input.logger.error('Error handling request:', error)
     return new Response(JSON.stringify({ error: String(error) }), { status: 400 })
   }
+}
+export const ImplHttpServer = {
+  register,
 }
