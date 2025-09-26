@@ -88,6 +88,10 @@ const init = <TContract extends TopicContractBase>(
 
           return pubSubMapped
         },
+        isSubscribed(topicParams) {
+          const topic = TopicString.init(topicName, topicParams)
+          return clientCore.subscriptionsByTopic.has(topic)
+        },
       }
       return [topicName, clientNode] as const
     })

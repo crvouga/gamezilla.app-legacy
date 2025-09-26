@@ -84,6 +84,10 @@ const init = <TContract extends TopicContractBase>(config: ImplWebSocketsNats<TC
 
           return pubSubMapped
         },
+        isSubscribed(topicParams) {
+          const topic = TopicString.init(topicName, topicParams)
+          return clientCore.subscriptionsByTopic.has(topic)
+        },
       }
       return [topicName, clientNode] as const
     })

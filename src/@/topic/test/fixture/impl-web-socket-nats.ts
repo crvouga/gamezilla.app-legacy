@@ -27,19 +27,29 @@ const init = async (_config?: ImplWebSocketNats): Promise<IFixture> => {
       reconnectionRate: TimeSpan.seconds(0),
       syncSubscriptionRate: TimeSpan.seconds(0),
     })
+
     return {
       clientSessionId,
       topic,
     }
   }
+  const clientA = initClient('A')
+  const clientB = initClient('B')
+  const clientC = initClient('C')
   return {
     topicContract: testTopicContract,
-    clientA: initClient('A'),
-    clientB: initClient('B'),
-    clientC: initClient('C'),
-    isSubscribedClientA: (_topicName, _params) => true,
-    isSubscribedClientB: (_topicName, _params) => true,
-    isSubscribedClientC: (_topicName, _params) => true,
+    clientA,
+    clientB,
+    clientC,
+    isSubscribedClientA(topicName, params) {
+      return clientA.topic[topicName].isSubscribed(params)
+    },
+    isSubscribedClientB(topicName, params) {
+      return clientB.topic[topicName].isSubscribed(params)
+    },
+    isSubscribedClientC(topicName, params) {
+      return clientC.topic[topicName].isSubscribed(params)
+    },
     restartServer: async () => {},
     [Symbol.asyncDispose]: async () => {},
   }
