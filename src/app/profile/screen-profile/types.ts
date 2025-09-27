@@ -1,4 +1,4 @@
-import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
+import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { ProfileFrontendCtx } from '../@/frontend/ctx'
 
 export type ModelFrontend = {}

@@ -59,7 +59,6 @@ const init = (input: {
     edgeHash: null,
     nodeHash: null,
     terminalHash: null,
-    Flow: true,
     nodes: {},
     terminalsByGroupId: {},
     pipesBySourceId: input.pipesBySourceId ?? {},

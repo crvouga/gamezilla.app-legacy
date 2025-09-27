@@ -123,6 +123,7 @@ const updateSpacesFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
       GotQueryCacheMsg.init({
         t: 'got-entity',
         id: msgSpace.spaceId,
+        entityType: 'space',
         entity: spaceNew,
         lastUpdatedAtKey: Space.key('lastUpdatedAt'),
       }),

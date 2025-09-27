@@ -1,4 +1,4 @@
-import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
+import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { IBackendInstanceDb } from '~/app/@/backend/backend-instance/backend-instance-db'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { AppFrontendCtx, AppFrontendCtxBase } from '~/app/@/frontend/ctx'

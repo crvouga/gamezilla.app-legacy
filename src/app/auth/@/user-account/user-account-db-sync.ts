@@ -4,8 +4,8 @@ import { ISync } from '~/@/sync-engine/sync-transaction'
 import { UserAccount } from '~/app/@/data/user-account'
 import { IUserAccountDb } from './user-account-db/interface'
 
-export const UserAccountSync = (config: { userAccountDb: IUserAccountDb; logger: ILogger }): ISync => {
-  const logger = config.logger.child(['user-account-sync'])
+export const UserAccountDbSync = (config: { userAccountDb: IUserAccountDb; logger: ILogger }): ISync => {
+  const logger = config.logger.child(['user-account-db-sync'])
 
   return {
     async push({ crudTransaction }) {

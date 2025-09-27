@@ -23,7 +23,6 @@ const fromNumberlink = (model: Numberlink.Model): Solution => {
     nodeHash: model.nodeHash,
     pipesBySourceId: model.pipesBySourceId,
     edges: model.edges,
-    Flow: true,
     nodes: model.nodes,
     terminalsByGroupId: model.terminalsByGroupId,
     terminalHash: model.terminalHash,

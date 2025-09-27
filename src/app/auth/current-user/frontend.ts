@@ -1,6 +1,6 @@
 import { NotAsked, Ok } from '~/@/result'
 import { Sub } from '~/@/sub'
-import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
+import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'

@@ -1,4 +1,4 @@
-import { AppFrontendModule } from '../@/architecture/app-frontend'
+import { AppFrontendModule } from '../@/frontend/app-frontend-module'
 import { UserId } from '../@/data/user-id'
 import { UserProfile } from '../@/data/user-profile'
 import { ProfileBackendCtx } from './@/backend/ctx'

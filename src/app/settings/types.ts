@@ -1,4 +1,4 @@
-import { AppFrontendModule } from '../@/architecture/app-frontend'
+import { AppFrontendModule } from '../@/frontend/app-frontend-module'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { ScreenLangTypes } from './screen-lang'
 import { ScreenRendererTypes } from './screen-renderer'

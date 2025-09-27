@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { h } from '~/@/vdom/h'
-import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
+import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { OpenProfileCmd } from '~/app/@/frontend/open-profile-cmd.$msg'
 import { AddProfilesCmd } from '../@/frontend/add-profiles-cmd$msg'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'

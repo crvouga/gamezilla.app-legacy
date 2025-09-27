@@ -8,6 +8,8 @@ import { Space } from './space'
 import { ISpaceDb } from './space-db/interface'
 import { SpaceDbQuery } from './space-db/interface-query'
 
+const ENTITY_TYPE = 'space'
+
 const sub = <TMsg>(spaceDb: ISpaceDb, query: SpaceDbQuery, mapper: (m: unknown) => TMsg): Sub<TMsg> => {
   return spaceDb.sub(query, (spaces) => {
     return mapper(
@@ -16,6 +18,7 @@ const sub = <TMsg>(spaceDb: ISpaceDb, query: SpaceDbQuery, mapper: (m: unknown) 
         query,
         results: spaces.map((c) => Space.toSpaceId(c) ?? ''),
         t: 'got-entities',
+        entityType: 'space',
         lastUpdatedAtKey: Space.key('lastUpdatedAt'),
       }),
     )
@@ -25,10 +28,12 @@ const sub = <TMsg>(spaceDb: ISpaceDb, query: SpaceDbQuery, mapper: (m: unknown) 
 const read = (ctx: { queryCache: QueryCache }, query: SpaceDbQuery): Space[] => {
   const queryKey = deterministicJsonStringify(query)
   const results = ctx.queryCache.results[queryKey]
-  const entities = (results?.map((id) => ctx.queryCache.entities[id] as Space) ?? []).filter((space) => {
-    const spaceProjection = Space.toSpaceProjection(space)
-    return spaceProjection?.type === 'started'
-  })
+  const entities = (results?.map((id) => ctx.queryCache.entities.byType['space']?.byId[id] as Space) ?? []).filter(
+    (space) => {
+      const spaceProjection = Space.toSpaceProjection(space)
+      return spaceProjection?.type === 'started'
+    },
+  )
   return entities
 }
 
@@ -43,10 +48,21 @@ const isEmpty = (ctx: { queryCache: QueryCache }, query: SpaceDbQuery): boolean 
 }
 
 const entity = (ctx: { queryCache: QueryCache }, spaceId: SpaceId): Space | null => {
-  return ctx.queryCache.entities[spaceId] as Space | null
+  return ctx.queryCache.entities.byType[ENTITY_TYPE]?.byId[spaceId] as Space | null
+}
+
+const gotEntity = (spaceId: SpaceId, spaceNew: Space): GotQueryCacheMsg => {
+  return GotQueryCacheMsg.init({
+    t: 'got-entity',
+    id: spaceId,
+    entityType: ENTITY_TYPE,
+    entity: spaceNew,
+    lastUpdatedAtKey: Space.key('lastUpdatedAt'),
+  })
 }
 
 export const SpaceDbQueryCache = {
+  gotEntity,
   sub,
   read,
   isLoading,

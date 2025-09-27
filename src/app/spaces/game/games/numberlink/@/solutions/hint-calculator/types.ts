@@ -1,6 +1,6 @@
 import { RemoteResult, Result } from '~/@/result'
 import { s } from '~/@/schema'
-import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
+import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { NumberlinkVariant } from '../../variant'
 import { SolutionHash } from '../solution-hash/solution-hash'

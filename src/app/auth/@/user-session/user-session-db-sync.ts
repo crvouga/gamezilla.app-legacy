@@ -6,8 +6,8 @@ import { UserSession } from './user-session'
 import { IUserSessionDb } from './user-session-db/interface'
 import { UserSessionId } from './user-session-id'
 
-export const UserSessionSync = (config: { userSessionDb: IUserSessionDb; logger: ILogger }): ISync => {
-  const logger = config.logger.child(['user-session-sync'])
+export const UserSessionDbSync = (config: { userSessionDb: IUserSessionDb; logger: ILogger }): ISync => {
+  const logger = config.logger.child(['user-session-db-sync'])
 
   return {
     async push({ crudTransaction }) {

@@ -7,6 +7,8 @@ import { Solution } from './solution'
 import { SolutionHash } from './solution-hash/solution-hash'
 import { ISolutionsDb } from './solutions-db/interface'
 
+const ENTITY_TYPE = 'game-numberlink-solution'
+
 type Query = {
   solutionHash: SolutionHash | null
 }
@@ -28,6 +30,7 @@ const sub = <TMsg>(
         query,
         results: solutions.map(SolutionHash.init),
         t: 'got-entities',
+        entityType: ENTITY_TYPE,
         lastUpdatedAtKey: Solution.key('lastUpdatedAt'),
       }),
     )
@@ -39,14 +42,14 @@ const read = (ctx: { queryCache: QueryCache }, solutionHash: SolutionHash | null
   const queryKey = deterministicJsonStringify(query)
   const results = ctx.queryCache.results[queryKey] as SolutionHash[]
   if (!results) return []
-  return results.map((solutionHash) => ctx.queryCache.entities[solutionHash] as Solution)
+  return results.map((solutionHash) => ctx.queryCache.entities.byType[ENTITY_TYPE]?.byId[solutionHash] as Solution)
 }
 
 const entity = (ctx: { queryCache: QueryCache }, solutionHash: SolutionHash | null): Solution | null => {
   if (!solutionHash) return null
   const query = initQuery(solutionHash)
   const queryKey = deterministicJsonStringify(query)
-  const entity = ctx.queryCache.entities[queryKey] as Solution
+  const entity = ctx.queryCache.entities.byType[ENTITY_TYPE]?.byId[queryKey] as Solution
   if (!entity) return null
   return entity
 }
@@ -62,7 +65,18 @@ const isEmpty = (ctx: { queryCache: QueryCache }, solutionHash: SolutionHash | n
   return !isLoading(ctx, solutionHash) && solutions.length === 0
 }
 
+const gotEntity = (solutionHash: SolutionHash, solutionNew: Solution): GotQueryCacheMsg => {
+  return GotQueryCacheMsg.init({
+    t: 'got-entity',
+    entityType: ENTITY_TYPE,
+    id: solutionHash,
+    entity: solutionNew,
+    lastUpdatedAtKey: Solution.key('lastUpdatedAt'),
+  })
+}
+
 export const SolutionsDbQueryCache = {
+  gotEntity,
   sub,
   entity,
   read,

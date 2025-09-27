@@ -14,7 +14,7 @@ import { toOrderBySql } from './order-by-sql'
 import { quoteIfPostgresKeyword } from './postgres-keywords'
 import { toWhereSql } from './where-sql'
 
-export type Config<
+export type ImplSqlDb<
   TEntity extends Record<string, unknown>,
   TRelated extends Record<string, unknown>,
   TRow extends Record<string, unknown>,
@@ -38,18 +38,18 @@ export type Config<
   computedColumnKeys?: (keyof TRow)[]
 }
 
-export const Db = <
+const init = <
   TEntity extends Record<string, unknown>,
   TRelated extends Record<string, unknown>,
   TRow extends Record<string, unknown>,
 >(
-  config: Config<TEntity, TRelated, TRow>,
+  self: ImplSqlDb<TEntity, TRelated, TRow>,
 ): IDb.IDb<TEntity, TRelated> => {
-  const run = config.migration?.policy.execute({
-    logger: config.logger,
-    sqlDb: config.sqlDb,
-    up: config.migration.up,
-    down: config.migration.down,
+  const run = self.migration?.policy.execute({
+    logger: self.logger,
+    sqlDb: self.sqlDb,
+    up: self.migration.up,
+    down: self.migration.down,
   })
   const mapOutput = (input: {
     queryInput: QueryInput<TEntity>
@@ -59,7 +59,7 @@ export const Db = <
     const { queryInput, related, dbOutput } = input
     if (isErr(dbOutput)) return mapErr(dbOutput, DbErr.from)
 
-    const entities = dbOutput.value.map(config.rowToEntity)
+    const entities = dbOutput.value.map(self.rowToEntity)
     const output: QueryOutput<TEntity, TRelated> = Ok({
       entities: {
         items: entities,
@@ -83,11 +83,11 @@ export const Db = <
       limit: queryInput.limit,
       offset: queryInput.offset,
     }
-    const whereClause = queryInput.where ? toWhereSql(queryInput.where, config.entityKeyToSqlColumn) : ''
+    const whereClause = queryInput.where ? toWhereSql(queryInput.where, self.entityKeyToSqlColumn) : ''
 
-    const orderByClause = queryInput.orderBy ? toOrderBySql(queryInput.orderBy, config.entityKeyToSqlColumn) : ''
+    const orderByClause = queryInput.orderBy ? toOrderBySql(queryInput.orderBy, self.entityKeyToSqlColumn) : ''
 
-    const sql = ['SELECT *', `FROM ${config.viewName}`, whereClause, orderByClause, 'LIMIT :limit', 'OFFSET :offset']
+    const sql = ['SELECT *', `FROM ${self.viewName}`, whereClause, orderByClause, 'LIMIT :limit', 'OFFSET :offset']
       .filter(Boolean)
       .join('\n')
 
@@ -101,10 +101,10 @@ export const Db = <
     async query(queryInput) {
       await run
       const { sql, vars } = toSql(queryInput)
-      const dbOutput = await config.sqlDb.query({ sql, vars: vars, schema: config.schema })
-      const entities = unwrapOr(dbOutput, []).map(config.rowToEntity)
+      const dbOutput = await self.sqlDb.query({ sql, vars: vars, schema: self.schema })
+      const entities = unwrapOr(dbOutput, []).map(self.rowToEntity)
 
-      const related = await config.getRelated(entities)
+      const related = await self.getRelated(entities)
       const output = mapOutput({ queryInput, related, dbOutput })
       return output
     },
@@ -112,14 +112,14 @@ export const Db = <
     liveQuery(queryInput) {
       const { sql, vars } = toSql(queryInput)
       return Sub.map(
-        config.sqlDb.sub({ sql, vars, schema: config.schema }, (rows: TRow[]) => {
-          const entities = rows.map(config.rowToEntity)
+        self.sqlDb.sub({ sql, vars, schema: self.schema }, (rows: TRow[]) => {
+          const entities = rows.map(self.rowToEntity)
           return entities
         }),
         (entities: TEntity[]) => {
           // Return a sync result for now - the related data will be empty
           // In a real implementation, this would need to be handled differently
-          const mockDbOutput = Ok(entities.map(config.entityToRow))
+          const mockDbOutput = Ok(entities.map(self.entityToRow))
           return mapOutput({ queryInput, related: {} as TRelated, dbOutput: mockDbOutput })
         },
       )
@@ -138,16 +138,16 @@ export const Db = <
       const entityKeys = sortedEntries.map(([key]): keyof TEntity => key)
 
       const sqlColumns = entityKeys.flatMap((key): (keyof TRow)[] => {
-        const sqlColumn = config.entityKeyToSqlColumn(key)
+        const sqlColumn = self.entityKeyToSqlColumn(key)
         if (!sqlColumn) return []
-        const isComputedColumn = config.computedColumnKeys?.includes(sqlColumn)
+        const isComputedColumn = self.computedColumnKeys?.includes(sqlColumn)
         if (isComputedColumn) return []
         return [sqlColumn]
       })
 
       const values = input.entities
         .map((entity, index) => {
-          config.entityToRow(entity)
+          self.entityToRow(entity)
           const placeholders = sqlColumns.map((column) => `:${String(column)}_${index}`)
           return `(${placeholders.join(', ')})`
         })
@@ -155,7 +155,7 @@ export const Db = <
 
       const vars: Sql.Vars = {}
       input.entities.forEach((entity, index) => {
-        const row = config.entityToRow(entity)
+        const row = self.entityToRow(entity)
         sqlColumns.forEach((column) => {
           const columnStr = String(column)
           const value = row[column]
@@ -164,16 +164,16 @@ export const Db = <
       })
 
       const sql = `
-INSERT INTO ${config.viewName} (
+INSERT INTO ${self.viewName} (
 ${sqlColumns.map((column) => `\t${quoteIfPostgresKeyword(column)}`).join(',\n')}
 )
 VALUES ${values}
-ON CONFLICT (${config.primaryKey}) 
+ON CONFLICT (${self.primaryKey}) 
 DO UPDATE SET
 ${sqlColumns.map((column) => `\t${quoteIfPostgresKeyword(column)} = EXCLUDED.${quoteIfPostgresKeyword(column)}`).join(',\n')}
 `
 
-      const queried = await config.sqlDb.query({ sql, vars, schema: s.unknown })
+      const queried = await self.sqlDb.query({ sql, vars, schema: s.unknown })
 
       if (isErr(queried)) return mapErr(queried, DbErr.from)
 
@@ -182,4 +182,8 @@ ${sqlColumns.map((column) => `\t${quoteIfPostgresKeyword(column)} = EXCLUDED.${q
       })
     },
   }
+}
+
+export const ImplSqlDb = {
+  init,
 }

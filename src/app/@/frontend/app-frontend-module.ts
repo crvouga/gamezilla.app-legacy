@@ -3,12 +3,6 @@ import { Msg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
 import type { VDom } from '~/@/vdom/vdom'
 
-//
-//
-//
-//
-//
-
 export type AppFrontendModuleTypes = {
   /**
    * `Ctx` is data passed down from parent modules
@@ -31,30 +25,6 @@ export type AppFrontendModuleTypes = {
    */
   MsgOut?: unknown
   /**
-   * `MsgToFrontend` is a message to send to the frontend component of the module
-   */
-  MsgToFrontend?: unknown
-  /**
-   * `MsgToBackend` is a message to send to the frontend component of the module
-   */
-  MsgToBackend?: unknown
-  /**
-   * `MsgCmdIn` is a message from other modules. Usually verbs
-   */
-  MsgCmdIn?: unknown
-  /**
-   * `MsgEvtIn` is a message to notify other modules. Usually past tense verbs
-   */
-  MsgEvtIn?: unknown
-  /**
-   * `MsgCmdOut` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
-   */
-  MsgCmdOut?: unknown
-  /**
-   * `MsgEvtOut` is a message that is only produced by this module. Always past tense verbs
-   */
-  MsgEvtOut?: unknown
-  /**
    *  `ViewSlot` is a slot that the module can fill with a view
    */
   ViewSlot?: SlotInputTypes
@@ -64,7 +34,6 @@ export type AppFrontendModuleTypes = {
   ViewEmit?: EmitInputTypes
 }
 
-// Define a more flexible structure for slots and emits
 type SlotInputTypes = {
   [key: string]: unknown
 }
@@ -75,11 +44,6 @@ type EmitInputTypes = {
 type SlotRenderFunctions<Slots> = Slots extends SlotInputTypes ? { [K in keyof Slots]: (input: Slots[K]) => VDom } : {}
 
 type EmitFunctions<Emits> = Emits extends EmitInputTypes ? { [K in keyof Emits]: (input: Emits[K]) => void } : {}
-//
-//
-// Input
-//
-//
 
 export type Input<T extends AppFrontendModuleTypes> = {
   /**
@@ -100,12 +64,6 @@ export type Input<T extends AppFrontendModuleTypes> = {
   msgIn?: T['MsgIn'] | null
 }
 
-//
-//
-// Output
-//
-//
-
 export type Output<T extends AppFrontendModuleTypes> = {
   /**
    * `model` will be the new state of the module
@@ -115,10 +73,6 @@ export type Output<T extends AppFrontendModuleTypes> = {
    * `eff` is a side effect to be performed. May dispatch a message
    */
   eff?: Eff<T['Msg']>
-  /**
-   * `msgCmd` is a message to send to another module
-   */
-  msgCmd?: T['MsgCmdOut'][]
   /**
    * `msgOut` is a message to send to the parent module
    */
@@ -155,11 +109,27 @@ export type AppFrontendModule<T extends AppFrontendModuleTypes> = {
     emits?: EmitFunctions<T['ViewEmit']>
   }) => VDom
 }
-
+/**
+ * Chains multiple update functions together, merging their outputs.
+ * Each update function receives the model from the previous update.
+ * Effects and messages are batched together.
+ *
+ * @example
+ * ```ts
+ * const update = (input) => {
+ *   return AppFrontendModule.andThen(
+ *     { model: input.model }, // initial output
+ *     (model) => updateFromMsg({ ...input, model }), // first update
+ *     (model) => watchForLogin({ ...input, model }), // second update
+ *   )
+ * }
+ * ```
+ */
 const andThen = <T extends AppFrontendModuleTypes>(
-  acc: Output<T>,
+  initial: Output<T>,
   ...updates: ((model: T['Model']) => Output<T>)[]
 ): Output<T> => {
+  let acc = initial
   for (const update of updates) {
     const updated = update(acc.model)
     acc = {

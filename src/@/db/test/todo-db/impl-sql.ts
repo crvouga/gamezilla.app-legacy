@@ -32,7 +32,7 @@ DROP TABLE IF EXISTS todo
 ]
 
 const init = (config: TodoDb): ITodoDb => {
-  return Db({
+  return Db.init({
     t: 'sql-db',
     logger: config.logger,
     parser: ITodoDb.schema,

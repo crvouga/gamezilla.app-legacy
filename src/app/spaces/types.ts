@@ -1,7 +1,7 @@
 import { RPC } from '~/@/rpc'
 import { ITopicClient } from '~/@/topic/topic-client/interface'
 import { TopicContract } from '~/@/topic/topic-contract'
-import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
+import type { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { UserId } from '~/app/@/data/user-id'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'

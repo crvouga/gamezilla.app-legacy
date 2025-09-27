@@ -125,6 +125,7 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
                 GotQueryCacheMsg.init({
                   t: 'got-entity',
                   id: input.msgSpace.puzzleId,
+                  entityType: 'numberlink-puzzle',
                   entity: puzzlePatched,
                   lastUpdatedAtKey: Puzzle.key('lastUpdatedAt'),
                 }),

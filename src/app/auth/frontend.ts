@@ -10,7 +10,7 @@ import { sx } from '~/@/vdom/style/sx'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
-import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
+import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { UserProfile } from '../@/data/user-profile'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { PushScreenCmd } from '../@/frontend/push-screen-cmd.$msg'
@@ -19,9 +19,9 @@ import { AuthScreenLayout } from './@/frontend/ui/auth-screen-layout'
 import { GuestSessionMappingDb } from './@/guest-session-mapping/guest-session-mapping-db'
 import { GuestSessionMappingSync } from './@/guest-session-mapping/guest-session-mapping-sync'
 import { UserAccountDb } from './@/user-account/user-account-db'
-import { UserAccountSync } from './@/user-account/user-account-sync'
+import { UserAccountDbSync } from './@/user-account/user-account-db-sync'
 import { UserSessionDb } from './@/user-session/user-session-db'
-import { UserSessionSync } from './@/user-session/user-session-sync'
+import { UserSessionDbSync } from './@/user-session/user-session-db-sync'
 import { CurrentUserFrontend, toCurrentUserState } from './current-user/frontend'
 import { ContinueAsGuestFrontend } from './login-as-guest/frontend'
 import { LoginWithSMSFrontend } from './login-with-sms/frontend'
@@ -61,8 +61,8 @@ const initCtx = async (input: {
     migrationPolicy: input.ctx.migrationPolicy,
   })
 
-  input.ctx.syncEngine.registerSync(UserAccountSync({ logger: input.ctx.logger, userAccountDb }))
-  input.ctx.syncEngine.registerSync(UserSessionSync({ logger: input.ctx.logger, userSessionDb }))
+  input.ctx.syncEngine.registerSync(UserAccountDbSync({ logger: input.ctx.logger, userAccountDb }))
+  input.ctx.syncEngine.registerSync(UserSessionDbSync({ logger: input.ctx.logger, userSessionDb }))
   input.ctx.syncEngine.registerSync(GuestSessionMappingSync({ logger: input.ctx.logger, guestSessionMappingDb }))
 
   return {

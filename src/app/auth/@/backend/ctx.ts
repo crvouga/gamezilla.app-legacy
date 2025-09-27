@@ -2,9 +2,9 @@ import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { GuestSessionMappingDb, IGuestSessionMappingDb } from '../guest-session-mapping/guest-session-mapping-db'
 import { GuestSessionMappingSync } from '../guest-session-mapping/guest-session-mapping-sync'
 import { IUserAccountDb, UserAccountDb } from '../user-account/user-account-db'
-import { UserAccountSync } from '../user-account/user-account-sync'
+import { UserAccountDbSync } from '../user-account/user-account-db-sync'
 import { IUserSessionDb, UserSessionDb } from '../user-session/user-session-db'
-import { UserSessionSync } from '../user-session/user-session-sync'
+import { UserSessionDbSync } from '../user-session/user-session-db-sync'
 import { IVerifySMS } from './verify-sms'
 import { VerifySMSFactory } from './verify-sms/impl/factory'
 
@@ -37,9 +37,9 @@ const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> 
     logger: input.ctx.logger,
   })
 
-  input.ctx.syncEngine.registerSync(UserAccountSync({ userAccountDb, logger: input.ctx.logger }))
+  input.ctx.syncEngine.registerSync(UserAccountDbSync({ userAccountDb, logger: input.ctx.logger }))
 
-  input.ctx.syncEngine.registerSync(UserSessionSync({ userSessionDb, logger: input.ctx.logger }))
+  input.ctx.syncEngine.registerSync(UserSessionDbSync({ userSessionDb, logger: input.ctx.logger }))
 
   input.ctx.syncEngine.registerSync(GuestSessionMappingSync({ guestSessionMappingDb, logger: input.ctx.logger }))
 

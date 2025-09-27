@@ -56,8 +56,6 @@ export const toNodes = (model: Model): { [nodeId: NodeId]: Node } => {
  */
 
 export const Model = s.obj({
-  Flow: s.l(true),
-
   /**
    * The set of all valid nodes in the puzzle.
    */
@@ -102,7 +100,6 @@ export type Model = s.Infer<typeof Model>
  *
  */
 export const init: Model = {
-  Flow: true,
   nodes: {},
   edges: {},
   terminalsByGroupId: {},

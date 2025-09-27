@@ -1,5 +1,5 @@
 import { RemoteResult, Result } from '~/@/result'
-import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
+import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { UserAccount } from '~/app/@/data/user-account'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
 

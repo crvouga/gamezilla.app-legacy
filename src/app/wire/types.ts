@@ -1,6 +1,6 @@
 import { ITopicClient } from '~/@/topic/topic-client/interface'
 import { TopicContract } from '~/@/topic/topic-contract'
-import { AppFrontendModule } from '../@/architecture/app-frontend'
+import { AppFrontendModule } from '../@/frontend/app-frontend-module'
 import { AppBackendCtxBase } from '../@/backend/ctx'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { BackendConnectionTypes } from './backend-connection'

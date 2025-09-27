@@ -1,5 +1,5 @@
 import { RPC } from '~/@/rpc'
-import type { AppFrontendModule } from '../@/architecture/app-frontend'
+import type { AppFrontendModule } from '../@/frontend/app-frontend-module'
 import { AuthBackendCtx } from './@/backend/ctx'
 import { AuthFrontendCtx } from './@/frontend/ctx'
 import { CurrentUserTypes } from './current-user'

@@ -1,5 +1,5 @@
 import { RequestResponse } from '~/@/request-response/request-response'
-import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
+import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 
 export type ModelFrontend = {

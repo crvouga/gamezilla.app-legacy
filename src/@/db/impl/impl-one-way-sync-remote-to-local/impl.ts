@@ -16,7 +16,10 @@ export type Msg<TEntity extends Record<string, unknown>, TRelated extends Record
   localUpsert: UpsertOutput<TEntity>
 }
 
-export type Config<TEntity extends Record<string, unknown>, TRelated extends Record<string, unknown>> = {
+export type ImplOneWaySyncRemoteToLocal<
+  TEntity extends Record<string, unknown>,
+  TRelated extends Record<string, unknown>,
+> = {
   t: 'one-way-sync-remote-to-local'
   logger: ILogger
   kvDb: IKeyValueDb
@@ -27,8 +30,8 @@ export type Config<TEntity extends Record<string, unknown>, TRelated extends Rec
   updateRelatedDbs?: (related: TRelated) => Promise<void>
 }
 
-export const Db = <TEntity extends Record<string, unknown>, TRelated extends Record<string, unknown>>(
-  config: Config<TEntity, TRelated>,
+const init = <TEntity extends Record<string, unknown>, TRelated extends Record<string, unknown>>(
+  config: ImplOneWaySyncRemoteToLocal<TEntity, TRelated>,
 ): IDb.IDb<TEntity, TRelated> => {
   const kvDb = KeyValueDb.init({
     t: 'with-cache',
@@ -69,4 +72,8 @@ export const Db = <TEntity extends Record<string, unknown>, TRelated extends Rec
       return config.local.query(query)
     },
   }
+}
+
+export const ImplOneWaySyncRemoteToLocal = {
+  init,
 }

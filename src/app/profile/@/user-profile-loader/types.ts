@@ -1,4 +1,4 @@
-import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
+import type { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { ProfileFrontendCtx } from '../frontend/ctx'

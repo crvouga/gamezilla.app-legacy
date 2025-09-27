@@ -9,7 +9,7 @@ import { logSlowQuery } from '../shared/slow-query-logging'
 import { Indexes } from './indexes'
 import { queryMap } from './query-input-map'
 
-export type Config<TEntity extends Record<string, unknown>, TRelated extends Record<string, unknown>> = {
+export type ImplHashMap<TEntity extends Record<string, unknown>, TRelated extends Record<string, unknown>> = {
   t: 'hash-map'
   parser: IDb.Parser<TEntity, TRelated>
   toPrimaryKey: (entity: TEntity) => string
@@ -20,8 +20,8 @@ export type Config<TEntity extends Record<string, unknown>, TRelated extends Rec
 
 const globalPubSub = Sub.init<{ t: 'publish' }>()
 
-export const Db = <TEntity extends Record<string, unknown>, TRelated extends Record<string, unknown>>(
-  config: Config<TEntity, TRelated>,
+const init = <TEntity extends Record<string, unknown>, TRelated extends Record<string, unknown>>(
+  config: ImplHashMap<TEntity, TRelated>,
 ): IDb.IDb<TEntity, TRelated> => {
   const pubSubsByQueryKey = new Map<string, PubSub<QueryOutput<TEntity, TRelated>>>()
   const liveQueriesByQueryKey = new Map<string, QueryInput<TEntity>>()
@@ -122,4 +122,8 @@ export const Db = <TEntity extends Record<string, unknown>, TRelated extends Rec
       })
     },
   }
+}
+
+export const ImplHashMap = {
+  init,
 }
