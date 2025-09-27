@@ -76,6 +76,13 @@ const init = <TContract extends TopicContractBase>(config: ImplFromServer<TContr
 
           return pubSubMapped
         },
+        isSubscribed(topicParams) {
+          const topic = TopicString.init(topicName, topicParams)
+          return topicServer._subscriptionsByTopic.has(topic)
+        },
+        isSubscribedAll() {
+          return topicServer._subscriptionsByTopicName.has(topicName)
+        },
       }
       return [topicName, clientNode] as const
     })

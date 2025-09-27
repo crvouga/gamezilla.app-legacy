@@ -19,6 +19,7 @@ export type TopicClientNode<T extends TopicContractBase, K extends keyof T> = {
   ) => Sub<TMsg>
   subAll: <TMsg>(mapper: (msg: s.Infer<T[K]['msg']> & TopicClientData) => TMsg) => Sub<TMsg>
   isSubscribed: (params: s.Infer<T[K]['params']>) => boolean
+  isSubscribedAll: () => boolean
 }
 
 export type ITopicClient<T extends TopicContractBase> = {

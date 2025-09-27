@@ -4,7 +4,7 @@ import { TopicContractBase } from '../topic-contract'
 import { TopicNameSubscription } from '../topic-name-subscription'
 import { TopicName, TopicString } from '../topic-string'
 import { TopicSubscription } from '../topic-subscription'
-import { TopicClientNode, ITopicClient } from './interface'
+import { ITopicClient, TopicClientNode } from './interface'
 
 export type ImplLocal<TContract extends TopicContractBase> = {
   t: 'local'
@@ -76,6 +76,13 @@ const init = <TContract extends TopicContractBase>(config: ImplLocal<TContract>)
           })
 
           return pubSubMapped
+        },
+        isSubscribed(params) {
+          const topic = TopicString.init(topicName, params)
+          return subscriptionsByTopic.has(topic)
+        },
+        isSubscribedAll() {
+          return subscriptionsByTopicName.has(topicName)
         },
       }
       return [topicName, clientNode] as const

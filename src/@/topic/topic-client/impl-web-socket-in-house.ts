@@ -92,6 +92,9 @@ const init = <TContract extends TopicContractBase>(
           const topic = TopicString.init(topicName, topicParams)
           return clientCore.subscriptionsByTopic.has(topic)
         },
+        isSubscribedAll() {
+          return clientCore.subscriptionsByTopicName.has(topicName)
+        },
       }
       return [topicName, clientNode] as const
     })
