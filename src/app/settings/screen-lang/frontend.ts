@@ -1,20 +1,21 @@
+import { Eff } from '~/@/eff'
 import { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
 import { translations } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
 import { Gutter } from '~/@/ui/gutter'
 import { MenuItem } from '~/@/ui/menu-item'
 import { RadioInputIcon } from '~/@/ui/radio-input'
-import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { Text } from '~/@/vdom/primitives/text'
+import { sx } from '~/@/vdom/style/sx'
 import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { APP_SOUND } from '../../@/frontend/app-sound'
 import { AppFrontendCtxBase } from '../../@/frontend/ctx'
 import { FrontendModule } from '../types'
-import { ModelFrontend, MsgFrontend } from './types'
+import { isMsgFrontend, ModelFrontend, MsgFrontend } from './types'
 
 const LANG_STORAGE_KEY = 'lang'
 
@@ -23,26 +24,35 @@ const init = (input: { ctx: AppFrontendCtxBase }): { model: ModelFrontend } => {
 
   return {
     model: {
-      settings_lang: initialLang,
-      settings_langLoading: {},
+      lang_lang: initialLang,
+      lang_loading: {},
     },
   }
 }
 
-const update: FrontendModule['update'] = (input) => {
-  if (!input.msg) return { model: input.model }
+const update = <T extends ModelFrontend>(input: {
+  ctx: AppFrontendCtxBase
+  model: T
+  msg?: unknown
+  msgIn?: unknown
+}): {
+  model: T
+  eff?: Eff<MsgFrontend>
+  msgOut?: unknown[]
+} => {
+  if (!isMsgFrontend(input.msg)) return { model: input.model }
 
   switch (input.msg?.t) {
-    case 'lang.clicked-back-button': {
+    case 'lang_clickedBackButton': {
       return { model: input.model, msgOut: [BackScreenCmd.init()] }
     }
 
-    case 'lang.clicked-lang': {
+    case 'lang_clickedLang': {
       const { lang } = input.msg
       return {
         model: {
           ...input.model,
-          settings_lang: lang,
+          lang_lang: lang,
         },
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
         async eff(_dispatch) {
@@ -73,7 +83,7 @@ const View: FrontendModule['View'] = (input) => {
     parentScreen: input.ctx.parentScreen,
     navBar: {
       title: input.ctx.t('l18n.language'),
-      back: { onPress: () => input.dispatch({ t: 'lang.clicked-back-button' }) },
+      back: { onPress: () => input.dispatch({ t: 'lang_clickedBackButton' }) },
     },
     renderBody: () =>
       h(ScrollBox, { style: sx({ flexDirection: 'col', flex: 1 }) }, [
@@ -102,14 +112,14 @@ const ViewChooseLangMenuItem = (input: {
     link: true,
     primary: TranslatedText.of(primary),
     renderEnd: () => h(Text, { style: sx({ textColor: 'white', fontSize: 'lg' }), text: input.ctx.t(input.langCode) }),
-    onPress: () => input.dispatch({ t: 'lang.clicked-lang', lang: input.langCode }),
+    onPress: () => input.dispatch({ t: 'lang_clickedLang', lang: input.langCode }),
     renderIcon: (iconProps) => h(RadioInputIcon, { ...iconProps, status: toStatus(input) }),
   })
 }
 
 const toStatus = (input: { langCode: LanguageCodeISO_639_1; model: ModelFrontend; ctx: AppFrontendCtxBase }) => {
-  if (input.model.settings_langLoading[input.langCode]?.endedAt === null) return 'loading'
-  if (input.model.settings_lang === input.langCode) return 'selected'
+  if (input.model.lang_loading?.[input.langCode]?.endedAt === null) return 'loading'
+  if (input.model.lang_lang === input.langCode) return 'selected'
   return 'unselected'
 }
 

@@ -3,22 +3,28 @@ import { Sub } from '~/@/sub'
 import { Gutter } from '~/@/ui/gutter'
 import { IconCode, IconLanguage } from '~/@/ui/icon'
 import { MenuItem } from '~/@/ui/menu-item'
-import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { Text } from '~/@/vdom/primitives/text'
+import { sx } from '~/@/vdom/style/sx'
 import { VDomImplWeb } from '~/@/vdom/vdom-impl-web'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { AppFrontendModule } from '../@/frontend/app-frontend-module'
+import { andThen } from '../@/frontend/and-then'
 import { APP_SOUND } from '../@/frontend/app-sound'
 import { BackScreenCmd } from '../@/frontend/back-screen-cmd.$msg'
 import { ScreenLangFrontend } from './screen-lang/frontend'
 import { ScreenRendererFrontend } from './screen-renderer/frontend'
 import { SoundFrontend } from './sound'
-import type { FrontendModule, MsgFrontend } from './types'
+import {
+  isMsgFrontendBase,
+  type FrontendCtxModule,
+  type FrontendModule,
+  type ModelFrontend,
+  type MsgFrontend,
+} from './types'
 
 const init: FrontendModule['init'] = (input) => {
   const lang = ScreenLangFrontend.init(input)
@@ -29,81 +35,83 @@ const init: FrontendModule['init'] = (input) => {
     model: {
       ...lang.model,
       ...renderer.model,
-      settings_sound: sound.model,
-      settings_isTopBarSurfaceOpen: false,
+      ...sound.model,
+      settings_opened: null,
     },
   }
 }
 
-const update: FrontendModule['update'] = (input) => {
-  return AppFrontendModule.andThen(
+const update = <T extends ModelFrontend>(input: {
+  ctx: FrontendCtxModule
+  model: T
+  msg?: unknown
+  msgIn?: unknown
+}): {
+  model: T
+  eff?: Eff<MsgFrontend>
+  msgOut?: unknown[]
+} => {
+  return andThen<T, MsgFrontend>(
     { model: input.model },
     (model) => updateBase({ ...input, model }),
-    (model) => updateChild({ ...input, model }),
+    (model) => SoundFrontend.update({ ...input, model }),
     (model) => ScreenLangFrontend.update({ ...input, model }),
     (model) => ScreenRendererFrontend.update({ ...input, model }),
   )
 }
 
-const updateChild: FrontendModule['update'] = (input) => {
-  const sound = SoundFrontend.update({
-    ...input,
-    model: input.model.settings_sound,
-    msg: input.msg?.t === 'sound' ? input.msg.c : null,
-  })
-  return {
-    model: { ...input.model, settings_sound: sound.model },
-    msgOut: sound.msgOut,
-    eff: Eff.tag('sound', sound.eff),
-  }
-}
+const updateBase: typeof update = ({ model, ctx, msg }) => {
+  if (!isMsgFrontendBase(msg)) return { model }
 
-const updateBase: FrontendModule['update'] = ({ model, ctx, msg }) => {
-  if (!msg) return { model }
-
-  switch (msg?.t) {
-    case 'settings.clicked-open-renderer': {
+  switch (msg.t) {
+    case 'settings_clickedOpenRenderer': {
       return {
-        model: { ...model, settings_isTopBarSurfaceOpen: false },
+        model: { ...model, settings_opened: null },
         msgOut: [PushScreenCmd.init({ n: 'settings', t: 'settings_renderer' }, true)],
       }
     }
 
-    case 'settings.clicked-open-lang': {
+    case 'settings_clickedOpenLang': {
       if (ctx.currentScreen.n === 'settings' && ctx.currentScreen.t === 'settings_chooseLang') {
         return {
-          model: { ...model, settings_isTopBarSurfaceOpen: false },
+          model: { ...model, settings_opened: null },
           msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)],
         }
       }
 
       return {
-        model: { ...model, settings_isTopBarSurfaceOpen: false },
+        model: { ...model, settings_opened: null },
         msgOut: [PushScreenCmd.init({ n: 'settings', t: 'settings_chooseLang' }, true)],
       }
     }
 
-    case 'settings.clicked-open-settings': {
+    case 'settings_clickedOpenSettings': {
       return {
-        model: { ...model, settings_isTopBarSurfaceOpen: false },
+        model: { ...model, settings_opened: null },
         msgOut: [PushScreenCmd.init({ n: 'settings', t: 'settings_main', back: ctx.currentScreen }, true)],
       }
     }
 
-    case 'settings.clicked-back-button': {
+    case 'settings_clickedBackButton': {
       return { model, msgOut: [BackScreenCmd.init()] }
     }
 
-    case 'settings.clicked-top-bar': {
-      const isOpenNew = !model.settings_isTopBarSurfaceOpen
+    case 'settings_clickedTopBar': {
+      const isOpenNew = model.settings_opened === 'top-bar-surface' ? null : 'top-bar-surface'
       return {
-        model: { ...model, settings_isTopBarSurfaceOpen: isOpenNew },
+        model: { ...model, settings_opened: isOpenNew },
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
       }
     }
 
-    case 'settings.closed-top-bar-surface': {
-      return { model: { ...model, settings_isTopBarSurfaceOpen: false }, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
+    case 'settings_closedTopBarSurface': {
+      return {
+        model: {
+          ...model,
+          settings_opened: null,
+        },
+        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
+      }
     }
 
     default: {
@@ -147,23 +155,23 @@ const ViewMain: FrontendModule['View'] = (props) => {
     navBar: {
       title: props.ctx.t('l18n.settings'),
       back: {
-        onPress: () => props.dispatch({ t: 'settings.clicked-back-button' }),
+        onPress: () => props.dispatch({ t: 'settings_clickedBackButton' }),
       },
     },
     renderBody: () =>
       h(ScrollBox, { style: sx({ flexDirection: 'col', flex: 1 }) }, [
         h(MenuItem, {
           primary: props.ctx.t('l18n.language'),
-          renderEnd: (endProps) => h(Text, { ...endProps, text: props.ctx.t(props.model.settings_lang) }),
-          onPress: () => props.dispatch({ t: 'settings.clicked-open-lang' }),
+          renderEnd: (endProps) => h(Text, { ...endProps, text: props.ctx.t(props.model.lang_lang ?? 'en') }),
+          onPress: () => props.dispatch({ t: 'settings_clickedOpenLang' }),
           link: true,
           renderIcon: (inputIcon) => IconLanguage(inputIcon),
         }),
         h(MenuItem, {
           primary: props.ctx.t('l18n.renderer'),
           renderEnd: (endProps) =>
-            h(Box, {}, [h(Text, { ...endProps, text: VDomImplWeb.toName(props.model.settings_renderVDomImpl) })]),
-          onPress: () => props.dispatch({ t: 'settings.clicked-open-renderer' }),
+            h(Box, {}, [h(Text, { ...endProps, text: VDomImplWeb.toName(props.model.render_vDomImpl) })]),
+          onPress: () => props.dispatch({ t: 'settings_clickedOpenRenderer' }),
           renderIcon: (inputIcon) => IconCode(inputIcon),
           link: true,
         }),

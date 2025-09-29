@@ -19,8 +19,8 @@ const View: FrontendModule['View'] = (props) => {
       position: 'top',
     },
     id: 'status-bar-drawer',
-    open: props.model.settings_isTopBarSurfaceOpen,
-    onClose: () => props.dispatch({ t: 'settings.closed-top-bar-surface' }),
+    open: props.model.settings_opened === 'top-bar-surface',
+    onClose: () => props.dispatch({ t: 'settings_closedTopBarSurface' }),
     style: toStyle(props),
     dropDown: {
       position: 'bottom',
@@ -33,7 +33,7 @@ const View: FrontendModule['View'] = (props) => {
               style: toStyleClickable(props),
               'aria-label': props.ctx.t('app.open-settings'),
               onPress: () => {
-                props.dispatch({ t: 'settings.clicked-top-bar' })
+                props.dispatch({ t: 'settings_clickedTopBar' })
               },
             },
             [
@@ -43,7 +43,7 @@ const View: FrontendModule['View'] = (props) => {
                 ctx: props.ctx,
               }),
               h(SoundFrontend.ViewIcon, {
-                model: props.model.settings_sound,
+                model: props.model,
                 style: { ...iconSize, ...sx({ textColor: 'white' }) },
               }),
               h(IconGear, {
@@ -71,18 +71,18 @@ const View: FrontendModule['View'] = (props) => {
 
             h(SoundFrontend.ViewSoundMenuItem, {
               ctx: props.ctx,
-              model: props.model.settings_sound,
-              dispatch: (c) => {
-                props.dispatch({ t: 'sound', c })
+              model: props.model,
+              dispatch(c) {
+                props.dispatch(c)
               },
             }),
 
             h(MenuItem, {
               renderIcon: (iconProps) => h(IconLanguage, iconProps),
               primary: props.ctx.t('l18n.language'),
-              renderEnd: () => h(Text, { text: props.ctx.t(props.model.settings_lang) }),
+              renderEnd: () => h(Text, { text: props.ctx.t(props.model.lang_lang ?? 'en') }),
               onPress: () => {
-                props.dispatch({ t: 'settings.clicked-open-lang' })
+                props.dispatch({ t: 'settings_clickedOpenLang' })
               },
             }),
 
@@ -91,7 +91,7 @@ const View: FrontendModule['View'] = (props) => {
               primary: props.ctx.t('l18n.settings'),
               link: true,
               onPress: () => {
-                props.dispatch({ t: 'settings.clicked-open-settings' })
+                props.dispatch({ t: 'settings_clickedOpenSettings' })
               },
             }),
           ],

@@ -1,3 +1,4 @@
+import { isAnyMsg } from '~/@/msg/msg'
 import { AppFrontendModule } from '../@/frontend/app-frontend-module'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { ScreenLangTypes } from './screen-lang'
@@ -5,22 +6,32 @@ import { ScreenRendererTypes } from './screen-renderer'
 import { SoundFrontend } from './sound'
 
 export type ModelFrontendBase = {
-  settings_isTopBarSurfaceOpen: boolean
-  settings_sound: SoundFrontend.Model
+  settings_opened?: 'top-bar-surface' | null
 }
-export type ModelFrontend = ModelFrontendBase & ScreenLangTypes.ModelFrontend & ScreenRendererTypes.ModelFrontend
+export type ModelFrontend = ModelFrontendBase &
+  ScreenLangTypes.ModelFrontend &
+  ScreenRendererTypes.ModelFrontend &
+  SoundFrontend.Model
 
 export type MsgFrontendBase =
-  | { t: 'sound'; c: SoundFrontend.Msg }
-  | { t: 'settings.clicked-open-lang' }
-  | { t: 'settings.clicked-open-renderer' }
-  | { t: 'settings.clicked-open-settings' }
-  | { t: 'settings.clicked-back-button' }
-  | { t: 'settings.clicked-top-bar' }
-  | { t: 'settings.closed-top-bar-surface' }
+  | { t: 'settings_clickedOpenLang' }
+  | { t: 'settings_clickedOpenRenderer' }
+  | { t: 'settings_clickedOpenSettings' }
+  | { t: 'settings_clickedBackButton' }
+  | { t: 'settings_clickedTopBar' }
+  | { t: 'settings_closedTopBarSurface' }
 
-export type MsgFrontend = MsgFrontendBase | ScreenLangTypes.MsgFrontend | ScreenRendererTypes.MsgFrontend
+export const isMsgFrontendBase = (msg: unknown): msg is MsgFrontend => {
+  return isAnyMsg(msg) && msg.t.startsWith('settings_')
+}
 
+export type MsgFrontend =
+  | MsgFrontendBase
+  | ScreenLangTypes.MsgFrontend
+  | ScreenRendererTypes.MsgFrontend
+  | SoundFrontend.Msg
+
+export type FrontendCtxModule = AppFrontendCtxBase
 export type FrontendModule = AppFrontendModule<{
   Ctx: AppFrontendCtxBase
   Model: ModelFrontend

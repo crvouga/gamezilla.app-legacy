@@ -30,9 +30,7 @@ import { VdomImplWebStorage } from '~/@/vdom/vdom-impl-web-storage'
 import { IViewport } from '~/@/viewport'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { ILogger } from '../@/logger'
-import { APP_SOUND } from './@/frontend/app-sound'
 import { AppFrontendCtx, AppFrontendCtxBase, isAppFrontendCtx } from './@/frontend/ctx'
-import { PreloadSoundsCmd } from './@/frontend/preload-sounds-cmd.$msg'
 import { topicMsgCodec } from './@/topic-msg-codec'
 import { AppRoot } from './@/ui/app-root/app-root'
 import { SplashScreen } from './@/ui/logo/splash-screen'
@@ -194,7 +192,7 @@ const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): Fronten
   const baseCtx: FrontendCtxModule = {
     ...input.ctx,
     now: UnixMs.now(),
-    t: Translator(input.model.settings_lang),
+    t: Translator(input.model.lang_lang ?? 'en'),
     profilesByUserId: input.model.profiles_profilesByUserId ?? {},
     viewportVisibility: input.model.viewport_visibility,
     currentScreen: input.model.currentScreen_screen,
@@ -234,7 +232,7 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
     Eff.tag('spaces', space.eff),
   ])
 
-  const msgOut = Msg.batch(PreloadSoundsCmd.init(Object.values(APP_SOUND)))
+  const msgOut = Msg.batch(frontend.msgOut, settings.msgOut, space.msgOut)
 
   return updateLoop(input.ctx, { model, eff, msgOut })
 }
