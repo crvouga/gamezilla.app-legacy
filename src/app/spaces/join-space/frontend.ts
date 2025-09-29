@@ -35,15 +35,15 @@ const update: SpaceFrontendModule['update'] = (input) => {
 const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'join-space.clicked-person-menu-item': {
-      const isOpen = input.model.opened === 'join-space.person-preview-surface'
+      const isOpen = input.model.spaces_opened === 'join-space.person-preview-surface'
       if (isOpen) {
         return {
-          model: { ...input.model, opened: null },
+          model: { ...input.model, spaces_opened: null },
           msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
         }
       }
       return {
-        model: { ...input.model, opened: 'join-space.person-preview-surface' },
+        model: { ...input.model, spaces_opened: 'join-space.person-preview-surface' },
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
       }
     }
@@ -62,8 +62,8 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
       }
     }
     case 'join-space.closed-person-item-surface': {
-      if (input.model.opened === 'join-space.person-preview-surface') {
-        return { model: { ...input.model, opened: null }, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
+      if (input.model.spaces_opened === 'join-space.person-preview-surface') {
+        return { model: { ...input.model, spaces_opened: null }, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
       }
       return { model: input.model }
     }
@@ -168,7 +168,7 @@ const view: SpaceFrontendModule['View'] = (input) => {
               h(FloatingLayout, {
                 ctx: spaceCtx,
                 ariaLabel: input.ctx.t('?'),
-                open: input.model.opened === 'join-space.person-preview-surface',
+                open: input.model.spaces_opened === 'join-space.person-preview-surface',
                 onClose: () => input.dispatch({ t: 'join-space.closed-person-item-surface' }),
                 drawer: {
                   position: 'bottom',

@@ -28,8 +28,8 @@ type Opened =
   | 'leave-space.confirmation'
 
 type ModelFrontendBase = {
-  openedPreviewUserId: UserId | null
-  opened: Opened
+  spaces_openedPreviewUserId: UserId | null
+  spaces_opened: Opened
 }
 
 export type ModelFrontend = ModelFrontendBase & GameTypes.ModelFrontend

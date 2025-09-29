@@ -19,7 +19,7 @@ const View: FrontendModule['View'] = (props) => {
       position: 'top',
     },
     id: 'status-bar-drawer',
-    open: props.model.isTopBarSurfaceOpen,
+    open: props.model.settings_isTopBarSurfaceOpen,
     onClose: () => props.dispatch({ t: 'settings.closed-top-bar-surface' }),
     style: toStyle(props),
     dropDown: {
@@ -43,7 +43,7 @@ const View: FrontendModule['View'] = (props) => {
                 ctx: props.ctx,
               }),
               h(SoundFrontend.ViewIcon, {
-                model: props.model.sound,
+                model: props.model.settings_sound,
                 style: { ...iconSize, ...sx({ textColor: 'white' }) },
               }),
               h(IconGear, {
@@ -71,7 +71,7 @@ const View: FrontendModule['View'] = (props) => {
 
             h(SoundFrontend.ViewSoundMenuItem, {
               ctx: props.ctx,
-              model: props.model.sound,
+              model: props.model.settings_sound,
               dispatch: (c) => {
                 props.dispatch({ t: 'sound', c })
               },
@@ -80,7 +80,7 @@ const View: FrontendModule['View'] = (props) => {
             h(MenuItem, {
               renderIcon: (iconProps) => h(IconLanguage, iconProps),
               primary: props.ctx.t('l18n.language'),
-              renderEnd: () => h(Text, { text: props.ctx.t(props.model.lang) }),
+              renderEnd: () => h(Text, { text: props.ctx.t(props.model.settings_lang) }),
               onPress: () => {
                 props.dispatch({ t: 'settings.clicked-open-lang' })
               },

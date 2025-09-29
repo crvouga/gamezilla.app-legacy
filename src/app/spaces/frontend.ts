@@ -50,9 +50,9 @@ const initCtx = async (input: {
 
 const init: FrontendModule['init'] = (_input) => {
   const model: ModelFrontend = {
-    games: {},
-    opened: null,
-    openedPreviewUserId: null,
+    spaces_games: {},
+    spaces_opened: null,
+    spaces_openedPreviewUserId: null,
   }
 
   return {

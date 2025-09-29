@@ -8,7 +8,7 @@ import { GameName } from './games/@/game-name'
 export type GamesBackendCtxModule = SpaceBackendCtx & GameTypes.GameBackendCtxModule
 
 export type ModelFrontend = {
-  games: {
+  spaces_games: {
     [spaceId: SpaceId]: GameTypes.ModelFrontend
   }
 }

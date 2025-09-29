@@ -7,9 +7,9 @@ import { ScreenProfileTypes } from './screen-profile'
 import { ScreenUpdateUsernameTypes } from './screen-update-username'
 
 export type ModelFrontend = {
-  profilesByUserId: { [userId: UserId]: UserProfile }
-  screenProfile: ScreenProfileTypes.ModelFrontend
-  screenUpdateUsername: ScreenUpdateUsernameTypes.ModelFrontend
+  profiles_profilesByUserId: { [userId: UserId]: UserProfile }
+  profiles_screenProfile: ScreenProfileTypes.ModelFrontend
+  profiles_screenUpdateUsername: ScreenUpdateUsernameTypes.ModelFrontend
 }
 
 export type MsgFrontend =

@@ -5,8 +5,8 @@ import { ScreenRendererTypes } from './screen-renderer'
 import { SoundFrontend } from './sound'
 
 export type ModelFrontendBase = {
-  isTopBarSurfaceOpen: boolean
-  sound: SoundFrontend.Model
+  settings_isTopBarSurfaceOpen: boolean
+  settings_sound: SoundFrontend.Model
 }
 export type ModelFrontend = ModelFrontendBase & ScreenLangTypes.ModelFrontend & ScreenRendererTypes.ModelFrontend
 

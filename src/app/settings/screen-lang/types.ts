@@ -7,8 +7,8 @@ export type TranslationLoading = {
 }
 
 export type ModelFrontend = {
-  lang: LanguageCodeISO_639_1
-  langLoading: { [lang in LanguageCodeISO_639_1]?: TranslationLoading }
+  settings_lang: LanguageCodeISO_639_1
+  settings_langLoading: { [lang in LanguageCodeISO_639_1]?: TranslationLoading }
 }
 
 export type MsgFrontend = { t: 'lang.clicked-back-button' } | { t: 'lang.clicked-lang'; lang: LanguageCodeISO_639_1 }

@@ -36,11 +36,11 @@ const update: SpaceFrontendModule['update'] = (input) => {
 const updateUserPreview: SpaceFrontendModule['update'] = ({ msg, model }) => {
   switch (msg?.t) {
     case 'people-action.clicked-preview-user-link': {
-      if (!model.openedPreviewUserId) return { model }
+      if (!model.spaces_openedPreviewUserId) return { model }
 
       return {
         model,
-        msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin), OpenProfileCmd.init(model.openedPreviewUserId)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin), OpenProfileCmd.init(model.spaces_openedPreviewUserId)],
       }
     }
   }
@@ -50,23 +50,23 @@ const updateUserPreview: SpaceFrontendModule['update'] = ({ msg, model }) => {
 const updatePeopleModals: SpaceFrontendModule['update'] = ({ msg, model }) => {
   switch (msg?.t) {
     case 'people-action.closed-surface': {
-      return { model: { ...model, opened: null }, msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)] }
+      return { model: { ...model, spaces_opened: null }, msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)] }
     }
 
     case 'people-action.clicked-people-action': {
-      const isOpen = model.opened === 'people.people-surface'
+      const isOpen = model.spaces_opened === 'people.people-surface'
       if (isOpen) {
-        return { model: { ...model, opened: null }, msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)] }
+        return { model: { ...model, spaces_opened: null }, msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)] }
       }
       return {
-        model: { ...model, opened: 'people.people-surface' },
+        model: { ...model, spaces_opened: 'people.people-surface' },
         msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceOpened)],
       }
     }
 
     case 'people-action.clicked-person-menu-item': {
       return {
-        model: { ...model, openedPreviewUserId: msg.userId, opened: 'people.person-preview-surface' },
+        model: { ...model, spaces_openedPreviewUserId: msg.userId, spaces_opened: 'people.person-preview-surface' },
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
       }
     }
@@ -79,8 +79,8 @@ const updateFromCmd: SpaceFrontendModule['update'] = ({ msgIn, model }) => {
     return {
       model: {
         ...model,
-        openedPreviewUserId: msgIn.userId,
-        opened: 'people.person-preview-surface',
+        spaces_openedPreviewUserId: msgIn.userId,
+        spaces_opened: 'people.person-preview-surface',
       },
       msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
     }
@@ -91,7 +91,7 @@ const updateFromCmd: SpaceFrontendModule['update'] = ({ msgIn, model }) => {
 
 const updateFromEvent: SpaceFrontendModule['update'] = ({ msgIn, model }) => {
   if (ScreenChangedEvt.is(msgIn)) {
-    return { model: { ...model, opened: null } }
+    return { model: { ...model, spaces_opened: null } }
   }
 
   return { model }
@@ -111,8 +111,8 @@ const ViewSurfaces = (
 
   const spaceCtx: SpaceFrontendCtx = { ...input.ctx, space: input.ctx.space, currentUser: input.ctx.currentUser }
 
-  const modalProfile = input.model.openedPreviewUserId
-    ? input.ctx.profilesByUserId[input.model.openedPreviewUserId]
+  const modalProfile = input.model.spaces_openedPreviewUserId
+    ? input.ctx.profilesByUserId[input.model.spaces_openedPreviewUserId]
     : null
   return h(FloatingLayout, {
     ctx: input.ctx,
@@ -136,7 +136,7 @@ const ViewSurfaces = (
             id: 'users',
             ctx: input.ctx,
             ariaLabel: input.ctx.t('app.people'),
-            open: input.model.opened === 'people.people-surface',
+            open: input.model.spaces_opened === 'people.people-surface',
             onClose: () => input.dispatch({ t: 'people-action.closed-surface' }),
             body: {
               render: () =>
@@ -150,7 +150,7 @@ const ViewSurfaces = (
     },
     ariaLabel: input.ctx.t('app.see-profile'),
     id: 'user-preview',
-    open: input.model.opened === 'people.person-preview-surface',
+    open: input.model.spaces_opened === 'people.person-preview-surface',
     onClose: () => input.dispatch({ t: 'people-action.closed-surface' }),
     body: {
       render: () =>

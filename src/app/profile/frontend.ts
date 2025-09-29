@@ -29,9 +29,9 @@ const init: FrontendModule['init'] = ({ ctx }) => {
   const screenUpdateUsername = ScreenUpdateUsernameFrontend.init({ ctx })
   const screenProfile = ScreenProfileFrontend.init({ ctx })
   const model: ModelFrontend = {
-    profilesByUserId: {},
-    screenProfile: screenProfile.model,
-    screenUpdateUsername: screenUpdateUsername.model,
+    profiles_profilesByUserId: {},
+    profiles_screenProfile: screenProfile.model,
+    profiles_screenUpdateUsername: screenUpdateUsername.model,
   }
 
   return { model }
@@ -50,7 +50,10 @@ const updateFromCmd: FrontendModule['update'] = (input) => {
 
   if (AddProfilesCmd.is(msgIn)) {
     return {
-      model: { ...input.model, profilesByUserId: { ...input.model.profilesByUserId, ...msgIn.profiles } },
+      model: {
+        ...input.model,
+        profiles_profilesByUserId: { ...input.model.profiles_profilesByUserId, ...msgIn.profiles },
+      },
     }
   }
 
@@ -68,12 +71,12 @@ const updateFromMsg: FrontendModule['update'] = (input): ReturnType<FrontendModu
   const updated = ScreenProfileFrontend.update({
     ctx: input.ctx,
     msg: input.msg?.t === 'got-profile-screen-msg' ? input.msg.c : null,
-    model: input.model.screenProfile,
+    model: input.model.profiles_screenProfile,
     msgIn: input.msgIn,
   })
 
   return {
-    model: { ...input.model, screenProfile: updated.model },
+    model: { ...input.model, profiles_screenProfile: updated.model },
     eff: Eff.tag('got-profile-screen-msg', updated.eff),
     msgOut: updated.msgOut,
   }
@@ -118,7 +121,7 @@ const View: FrontendModule['View'] = (input) => {
         case 'profile-edit-username': {
           return h(ScreenUpdateUsernameFrontend.View, {
             ctx: input.ctx,
-            model: input.model.screenUpdateUsername,
+            model: input.model.profiles_screenUpdateUsername,
             dispatch: (c) => input.dispatch({ t: 'got-update-username-screen-msg', c }),
           })
         }

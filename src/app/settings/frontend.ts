@@ -29,8 +29,8 @@ const init: FrontendModule['init'] = (input) => {
     model: {
       ...lang.model,
       ...renderer.model,
-      sound: sound.model,
-      isTopBarSurfaceOpen: false,
+      settings_sound: sound.model,
+      settings_isTopBarSurfaceOpen: false,
     },
   }
 }
@@ -48,11 +48,11 @@ const update: FrontendModule['update'] = (input) => {
 const updateChild: FrontendModule['update'] = (input) => {
   const sound = SoundFrontend.update({
     ...input,
-    model: input.model.sound,
+    model: input.model.settings_sound,
     msg: input.msg?.t === 'sound' ? input.msg.c : null,
   })
   return {
-    model: { ...input.model, sound: sound.model },
+    model: { ...input.model, settings_sound: sound.model },
     msgOut: sound.msgOut,
     eff: Eff.tag('sound', sound.eff),
   }
@@ -64,7 +64,7 @@ const updateBase: FrontendModule['update'] = ({ model, ctx, msg }) => {
   switch (msg?.t) {
     case 'settings.clicked-open-renderer': {
       return {
-        model: { ...model, isTopBarSurfaceOpen: false },
+        model: { ...model, settings_isTopBarSurfaceOpen: false },
         msgOut: [PushScreenCmd.init({ t: 'renderer', n: 'settings' }, true)],
       }
     }
@@ -72,20 +72,20 @@ const updateBase: FrontendModule['update'] = ({ model, ctx, msg }) => {
     case 'settings.clicked-open-lang': {
       if (ctx.currentScreen.n === 'settings' && ctx.currentScreen.t === 'choose-lang') {
         return {
-          model: { ...model, isTopBarSurfaceOpen: false },
+          model: { ...model, settings_isTopBarSurfaceOpen: false },
           msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)],
         }
       }
 
       return {
-        model: { ...model, isTopBarSurfaceOpen: false },
+        model: { ...model, settings_isTopBarSurfaceOpen: false },
         msgOut: [PushScreenCmd.init({ t: 'choose-lang', n: 'settings' }, true)],
       }
     }
 
     case 'settings.clicked-open-settings': {
       return {
-        model: { ...model, isTopBarSurfaceOpen: false },
+        model: { ...model, settings_isTopBarSurfaceOpen: false },
         msgOut: [PushScreenCmd.init({ t: 'main', n: 'settings', back: ctx.currentScreen }, true)],
       }
     }
@@ -95,12 +95,15 @@ const updateBase: FrontendModule['update'] = ({ model, ctx, msg }) => {
     }
 
     case 'settings.clicked-top-bar': {
-      const isOpenNew = !model.isTopBarSurfaceOpen
-      return { model: { ...model, isTopBarSurfaceOpen: isOpenNew }, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
+      const isOpenNew = !model.settings_isTopBarSurfaceOpen
+      return {
+        model: { ...model, settings_isTopBarSurfaceOpen: isOpenNew },
+        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
+      }
     }
 
     case 'settings.closed-top-bar-surface': {
-      return { model: { ...model, isTopBarSurfaceOpen: false }, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
+      return { model: { ...model, settings_isTopBarSurfaceOpen: false }, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
     }
 
     default: {
@@ -151,7 +154,7 @@ const ViewMain: FrontendModule['View'] = (props) => {
       h(ScrollBox, { style: sx({ flexDirection: 'col', flex: 1 }) }, [
         h(MenuItem, {
           primary: props.ctx.t('l18n.language'),
-          renderEnd: (endProps) => h(Text, { ...endProps, text: props.ctx.t(props.model.lang) }),
+          renderEnd: (endProps) => h(Text, { ...endProps, text: props.ctx.t(props.model.settings_lang) }),
           onPress: () => props.dispatch({ t: 'settings.clicked-open-lang' }),
           link: true,
           renderIcon: (inputIcon) => IconLanguage(inputIcon),
@@ -159,7 +162,7 @@ const ViewMain: FrontendModule['View'] = (props) => {
         h(MenuItem, {
           primary: props.ctx.t('l18n.renderer'),
           renderEnd: (endProps) =>
-            h(Box, {}, [h(Text, { ...endProps, text: VDomImplWeb.toName(props.model.renderVDomImpl) })]),
+            h(Box, {}, [h(Text, { ...endProps, text: VDomImplWeb.toName(props.model.settings_renderVDomImpl) })]),
           onPress: () => props.dispatch({ t: 'settings.clicked-open-renderer' }),
           renderIcon: (inputIcon) => IconCode(inputIcon),
           link: true,

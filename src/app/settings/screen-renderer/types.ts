@@ -1,8 +1,8 @@
 import { VDomImplWeb } from '~/@/vdom/vdom-impl-web'
 
 export type ModelFrontend = {
-  renderVDomImpl: VDomImplWeb
-  renderVDomImplInitial: VDomImplWeb
+  settings_renderVDomImpl: VDomImplWeb
+  settings_renderVDomImplInitial: VDomImplWeb
 }
 
 export type MsgFrontend =

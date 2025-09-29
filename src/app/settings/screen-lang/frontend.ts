@@ -23,8 +23,8 @@ const init = (input: { ctx: AppFrontendCtxBase }): { model: ModelFrontend } => {
 
   return {
     model: {
-      lang: initialLang,
-      langLoading: {},
+      settings_lang: initialLang,
+      settings_langLoading: {},
     },
   }
 }
@@ -42,7 +42,7 @@ const update: FrontendModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          lang,
+          settings_lang: lang,
         },
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
         async eff(_dispatch) {
@@ -108,8 +108,8 @@ const ViewChooseLangMenuItem = (input: {
 }
 
 const toStatus = (input: { langCode: LanguageCodeISO_639_1; model: ModelFrontend; ctx: AppFrontendCtxBase }) => {
-  if (input.model.langLoading[input.langCode]?.endedAt === null) return 'loading'
-  if (input.model.lang === input.langCode) return 'selected'
+  if (input.model.settings_langLoading[input.langCode]?.endedAt === null) return 'loading'
+  if (input.model.settings_lang === input.langCode) return 'selected'
   return 'unselected'
 }
 

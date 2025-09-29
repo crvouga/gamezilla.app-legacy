@@ -15,8 +15,8 @@ import { ModelFrontend } from './types'
 const init = (input: { ctx: AppFrontendCtxBase }): { model: ModelFrontend } => {
   return {
     model: {
-      renderVDomImpl: input.ctx.vdomImpl,
-      renderVDomImplInitial: input.ctx.vdomImpl,
+      settings_renderVDomImpl: input.ctx.vdomImpl,
+      settings_renderVDomImplInitial: input.ctx.vdomImpl,
     },
   }
 }
@@ -34,7 +34,7 @@ const update: FrontendModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          renderVDomImpl: vDomImpl,
+          settings_renderVDomImpl: vDomImpl,
         },
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
         async eff() {
@@ -70,8 +70,8 @@ const View: FrontendModule['View'] = (input) => {
         ScrollBox,
         { style: sx({ flexDirection: 'col', flex: 1 }) },
         VDomImplWeb.VISIBLE.map((vDomImpl) => {
-          const isSelected = vDomImpl === input.model.renderVDomImpl
-          const isDefault = vDomImpl === input.model.renderVDomImplInitial
+          const isSelected = vDomImpl === input.model.settings_renderVDomImpl
+          const isDefault = vDomImpl === input.model.settings_renderVDomImplInitial
           return h(MenuItem, {
             key: vDomImpl,
             primary: VDomImplWeb.toName(vDomImpl),

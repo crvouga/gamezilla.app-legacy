@@ -121,7 +121,7 @@ const updateGame: SpaceFrontendModule['update'] = (input) => {
 
   if (!spaceState.game) return { model: input.model }
 
-  const modelGame = input.model.games[spaceId] ?? GamesFrontend.init(spaceState.game.t)
+  const modelGame = input.model.spaces_games[spaceId] ?? GamesFrontend.init(spaceState.game.t)
 
   const gameUpdated = GamesFrontend.update({
     ctx: { ...input.ctx, space: spaceState, currentUser },
@@ -133,7 +133,7 @@ const updateGame: SpaceFrontendModule['update'] = (input) => {
   })
 
   return {
-    model: { ...input.model, games: { ...input.model.games, [spaceId]: gameUpdated.model } },
+    model: { ...input.model, spaces_games: { ...input.model.spaces_games, [spaceId]: gameUpdated.model } },
     msgOut: gameUpdated.msgOut,
     eff: Eff.map(gameUpdated.eff, (c) => ({ t: 'game', c, spaceId })),
     msgSpace: gameUpdated.msgSpace?.map((c) => withEventId({ spaceId, t: 'game', c })),
@@ -164,7 +164,7 @@ const subscriptionsCurrentUserGame: SpaceFrontendModule['subscriptions'] = (inpu
 
   if (!modelSpace) return Sub.none()
 
-  const gameModel = input.model.games[currentUserSpaceId] ?? GamesFrontend.init(modelSpace.t)
+  const gameModel = input.model.spaces_games[currentUserSpaceId] ?? GamesFrontend.init(modelSpace.t)
 
   const gameSub = GamesFrontend.subscriptions({
     ctx: { ...frontendCtx, space: spaceState },
@@ -189,7 +189,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
     ctx: { ...input.ctx, space: input.ctx.space, currentUser: input.ctx.currentUser },
     dispatch: (c) =>
       input.ctx.space?.spaceId ? input.dispatch({ t: 'game', spaceId: input.ctx.space.spaceId, c }) : null,
-    model: input.model.games[input.ctx.space.spaceId] ?? GamesFrontend.init(input.ctx.space.game.t),
+    model: input.model.spaces_games[input.ctx.space.spaceId] ?? GamesFrontend.init(input.ctx.space.game.t),
   })
 }
 

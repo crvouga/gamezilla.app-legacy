@@ -19,8 +19,8 @@ const init: FrontendModule['init'] = (input) => {
   const backendConnection = BackendConnectionFrontend.init({ ctx: input.ctx })
   return {
     model: {
-      backendInstance: backendInstance.model,
-      backendConnection: backendConnection.model,
+      wire_backendInstance: backendInstance.model,
+      wire_backendConnection: backendConnection.model,
     },
     eff: Eff.batch<MsgFrontend>(
       Eff.tag('got-backend-instance-msg', backendInstance.eff),
@@ -35,20 +35,20 @@ const update: FrontendModule['update'] = (input) => {
     ...input,
     msg: input.msg?.t === 'got-backend-instance-msg' ? input.msg.c : null,
     ctx: input.ctx,
-    model: input.model.backendInstance,
+    model: input.model.wire_backendInstance,
   })
 
   const backendConnection = BackendConnectionFrontend.update({
     ...input,
     msg: input.msg?.t === 'got-backend-connection-msg' ? input.msg.c : null,
     ctx: input.ctx,
-    model: input.model.backendConnection,
+    model: input.model.wire_backendConnection,
   })
 
   return {
     model: {
-      backendInstance: backendInstance.model,
-      backendConnection: backendConnection.model,
+      wire_backendInstance: backendInstance.model,
+      wire_backendConnection: backendConnection.model,
     },
     eff: Eff.batch<MsgFrontend>(
       Eff.tag('got-backend-instance-msg', backendInstance.eff),
@@ -61,11 +61,11 @@ const update: FrontendModule['update'] = (input) => {
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   return Sub.batch<MsgFrontend>([
     Sub.map(
-      BackendInstanceFrontend.subscriptions({ ctx: input.ctx, model: input.model.backendInstance }),
+      BackendInstanceFrontend.subscriptions({ ctx: input.ctx, model: input.model.wire_backendInstance }),
       (c): MsgFrontend => ({ t: 'got-backend-instance-msg', c }),
     ),
     Sub.map(
-      BackendConnectionFrontend.subscriptions({ ctx: input.ctx, model: input.model.backendConnection }),
+      BackendConnectionFrontend.subscriptions({ ctx: input.ctx, model: input.model.wire_backendConnection }),
       (c): MsgFrontend => ({ t: 'got-backend-connection-msg', c }),
     ),
   ])

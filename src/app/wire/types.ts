@@ -7,8 +7,8 @@ import { BackendConnectionTypes } from './backend-connection'
 import { BackendInstanceTypes } from './backend-instance'
 
 export type ModelFrontend = {
-  backendInstance: BackendInstanceTypes.ModelFrontend
-  backendConnection: BackendConnectionTypes.ModelFrontend
+  wire_backendInstance: BackendInstanceTypes.ModelFrontend
+  wire_backendConnection: BackendConnectionTypes.ModelFrontend
 }
 
 export type MsgFrontend =

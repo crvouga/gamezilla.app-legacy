@@ -194,15 +194,15 @@ const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): Fronten
   const baseCtx: FrontendCtxModule = {
     ...input.ctx,
     now: UnixMs.now(),
-    t: Translator(input.model.settings.lang),
-    profilesByUserId: input.model.profile.profilesByUserId,
+    t: Translator(input.model.settings.settings_lang),
+    profilesByUserId: input.model.profile.profiles_profilesByUserId,
     viewportVisibility: input.model.frontend.viewport_visibility,
     currentScreen: input.model.frontend.currentScreen_screen,
     screenSize: input.model.frontend.screenSize_screenSize,
     parentScreen: null,
     currentUserState,
     currentUser: currentUserState.t === 'logged-in' ? currentUserState.userAccount : null,
-    backendConnectionStatus: toBackendConnectionStatus(input.model.wire.backendConnection),
+    backendConnectionStatus: toBackendConnectionStatus(input.model.wire.wire_backendConnection),
     queryCache: input.model.frontend,
   }
 
