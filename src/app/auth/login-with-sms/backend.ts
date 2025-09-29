@@ -95,19 +95,24 @@ const verifyCode = async (
   logger.info(`Code verification successful for ${PhoneNumber.toString(input.phoneNumber)}`)
 
   logger.info(`Looking up user account for ${PhoneNumber.toString(input.phoneNumber)}`)
-  const foundAccount = await input.ctx.userAccountDb.findOneByPhoneNumber({
-    phoneNumber: input.phoneNumber,
+  const foundAccount = await input.ctx.userAccountDb.query({
+    where: {
+      op: 'and',
+      clauses: [{ op: '=', column: 'phoneNumber', value: input.phoneNumber }],
+    },
+    limit: 1,
+    offset: 0,
   })
 
   if (isErr(foundAccount)) {
-    logger.error(`Database error while looking up user: ${foundAccount.error}`)
+    logger.error(`Database error while looking up user: ${foundAccount.error.message}`)
     return Err({
       t: 'database-error',
-      error: foundAccount.error,
+      error: foundAccount.error.message,
     })
   }
 
-  if (!foundAccount.value) {
+  if (!foundAccount.value.entities.items.length) {
     logger.info(`No existing account found for ${PhoneNumber.toString(input.phoneNumber)}`)
   }
 
@@ -118,13 +123,15 @@ const verifyCode = async (
     userId: UserId.generate(),
   }
 
-  const account: UserAccount = foundAccount.value ?? accountNew
+  const account: UserAccount = foundAccount.value.entities.items[0] ?? accountNew
 
-  const insertedAccount = foundAccount.value ? Ok(null) : await input.ctx.userAccountDb.upsert(account)
+  const insertedAccount = foundAccount.value.entities.items.length
+    ? Ok(null)
+    : await input.ctx.userAccountDb.upsert({ entities: [account] })
 
   if (isErr(insertedAccount)) {
     logger.error(`Failed to insert new account: ${insertedAccount.error}`)
-    return Err({ t: 'database-error', error: insertedAccount.error })
+    return Err({ t: 'database-error', error: insertedAccount.error.message })
   }
 
   logger.info(`Successfully created new account for ${PhoneNumber.toString(input.phoneNumber)}`)

@@ -47,29 +47,33 @@ export const toCurrentUserState = (input: { model: ModelFrontend; ctx: AppFronte
       return { t: 'logged-out' }
     }
     case 'ok': {
-      const userSessions = UserSessionDbQueryCache.read(input.ctx, toQueryUserSessionByClientSessionId(input.ctx))
-      const userSession = userSessions.find((userSession) => userSession.clientSessionId === input.ctx.clientSessionId)
-
-      if (!userSession) return { t: 'logged-out' }
-
-      const maybeUserAccount = UserAccountDbQueryCache.read(input.ctx, { userId: userSession.userId }).find(
-        (userAccount) => userAccount.userId === userSession.userId,
+      const userSessions = UserSessionDbQueryCache.query(input.ctx, toQueryUserSessionByClientSessionId(input.ctx))
+      const maybeUserSession = userSessions.find(
+        (userSession) => userSession.clientSessionId === input.ctx.clientSessionId,
       )
+
+      if (!maybeUserSession) return { t: 'logged-out' }
+
+      const userAccounts = UserAccountDbQueryCache.query(
+        input.ctx,
+        toQueryUserAccountByUserId({ userId: maybeUserSession.userId }),
+      )
+      const maybeUserAccount = userAccounts.find((userAccount) => userAccount.userId === maybeUserSession.userId)
 
       const userAccountFallback: UserAccount = {
         createdAt: input.ctx.now,
         phoneNumber: null,
         role: 'normal',
-        userId: userSession.userId,
+        userId: maybeUserSession.userId,
       }
 
       const userAccount: UserAccount = maybeUserAccount ?? userAccountFallback
 
-      const maybeUserProfile = input.ctx.profilesByUserId[userSession.userId]
+      const maybeUserProfile = input.ctx.profilesByUserId[maybeUserSession.userId]
 
       const userProfile: UserProfile = maybeUserProfile ?? {
         id: UserProfileId.generate(),
-        userId: userSession.userId,
+        userId: maybeUserSession.userId,
         username: Username.of(''),
         avatarSeed: null,
         avatarStyle: null,
@@ -79,7 +83,7 @@ export const toCurrentUserState = (input: { model: ModelFrontend; ctx: AppFronte
 
       return {
         t: 'logged-in',
-        userSession,
+        userSession: maybeUserSession,
         userAccount,
         userProfile,
       }
@@ -159,29 +163,41 @@ const toQueryUserSessionByClientSessionId = (input: { clientSessionId: ClientSes
   }
 }
 
-const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return Sub.batch<MsgFrontend>([
-    // ?input.ctx.userAccountDb.sub({
-    //       whereAnd: {
-    //         userId: {
-    //           equals: input.ctx.currentUser.userId,
-    //         },
-    //       },
-    //       order: {
-    //         createdAt: 'desc',
-    //       },
-    //       pagination: {
-    //         limit: 1,
-    //         offset: 0,
-    //       },
-    //     }),
+const toQueryUserAccountByUserId = (input: { userId: UserId }): QueryInput<UserAccount> => {
+  return {
+    where: {
+      op: '=',
+      column: 'userId',
+      value: input.userId,
+    },
+    orderBy: [{ column: 'createdAt', direction: 'desc' }],
+    limit: 1,
+    offset: 0,
+  }
+}
 
-    UserSessionDbQueryCache.liveQuery(
-      input.ctx.userSessionDb,
-      toQueryUserSessionByClientSessionId(input.ctx),
-      (msgOut): MsgFrontend => ({ t: 'got-msg-out', msgOut }),
-    ),
-  ])
+const subscriptions: FrontendModule['subscriptions'] = (input) => {
+  return Sub.batch<MsgFrontend>([subscriptionsUserSession(input), subscriptionsUserAccount(input)])
+}
+
+const subscriptionsUserSession: FrontendModule['subscriptions'] = (input) => {
+  return UserSessionDbQueryCache.watch(
+    input.ctx.userSessionDb,
+    toQueryUserSessionByClientSessionId(input.ctx),
+    (msgOut) => ({ t: 'got-msg-out', msgOut }),
+  )
+}
+
+const subscriptionsUserAccount: FrontendModule['subscriptions'] = (input) => {
+  const queryUserSession = toQueryUserSessionByClientSessionId(input.ctx)
+  const userSessions = UserSessionDbQueryCache.query(input.ctx, queryUserSession)
+  const userSession = userSessions[0]
+  if (!userSession) return Sub.none()
+  return UserAccountDbQueryCache.watch(
+    input.ctx.userAccountDb,
+    toQueryUserAccountByUserId({ userId: userSession.userId }),
+    (msgOut) => ({ t: 'got-msg-out', msgOut }),
+  )
 }
 
 export const CurrentUserFrontend = {

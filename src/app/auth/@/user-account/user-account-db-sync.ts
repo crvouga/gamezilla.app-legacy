@@ -16,11 +16,11 @@ export const UserAccountDbSync = (config: { userAccountDb: IUserAccountDb; logge
         return Err(account.error)
       }
 
-      const upserted = await config.userAccountDb.upsert(account.value)
+      const upserted = await config.userAccountDb.upsert({ entities: [account.value] })
 
       if (isErr(upserted)) {
         logger.error('Failed to upsert user account', { error: upserted.error })
-        return Err(upserted.error)
+        return Err(upserted.error.message)
       }
 
       return Ok(null)

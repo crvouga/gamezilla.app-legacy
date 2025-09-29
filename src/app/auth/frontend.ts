@@ -40,27 +40,9 @@ const initCtx = async (input: {
   ctx: AppFrontendCtxBase
   rpc: RPC.Client<typeof rpcContract>
 }): Promise<FrontendCtxModule> => {
-  const guestSessionMappingDb = GuestSessionMappingDb({
-    logger: input.ctx.logger,
-    t: 'sql',
-    sqlDb: input.ctx.sqlDb,
-    migrationPolicy: input.ctx.migrationPolicy,
-  })
-
-  const userSessionDb = await UserSessionDb({
-    t: 'sql',
-    sqlDb: input.ctx.sqlDb,
-    logger: input.ctx.logger,
-    migrationPolicy: input.ctx.migrationPolicy,
-  })
-
-  const userAccountDb = UserAccountDb({
-    t: 'sql',
-    sqlDb: input.ctx.sqlDb,
-    logger: input.ctx.logger,
-    migrationPolicy: input.ctx.migrationPolicy,
-  })
-
+  const guestSessionMappingDb = GuestSessionMappingDb({ ...input.ctx, t: 'sql' })
+  const userSessionDb = await UserSessionDb.init({ ...input.ctx, t: 'sql' })
+  const userAccountDb = await UserAccountDb.init({ ...input.ctx, t: 'sql' })
   input.ctx.syncEngine.registerSync(UserAccountDbSync({ logger: input.ctx.logger, userAccountDb }))
   input.ctx.syncEngine.registerSync(UserSessionDbSync({ logger: input.ctx.logger, userSessionDb }))
   input.ctx.syncEngine.registerSync(GuestSessionMappingDbSync({ logger: input.ctx.logger, guestSessionMappingDb }))

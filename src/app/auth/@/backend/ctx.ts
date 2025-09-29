@@ -16,7 +16,7 @@ export type AuthBackendCtx = AppBackendCtxBase & {
 }
 
 const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> => {
-  const userAccountDb = UserAccountDb({
+  const userAccountDb = await UserAccountDb.init({
     t: 'sql',
     sqlDb: input.ctx.sqlDb,
     logger: input.ctx.logger,
@@ -59,9 +59,11 @@ const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> 
 }
 
 const initUnitTest = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> => {
-  const userAccountDb = UserAccountDb({
-    t: 'in-memory',
-    async simulateLatency() {},
+  const userAccountDb = await UserAccountDb.init({
+    t: 'sql',
+    sqlDb: input.ctx.sqlDb,
+    logger: input.ctx.logger,
+    migrationPolicy: input.ctx.migrationPolicy,
   })
 
   const userSessionDb = await UserSessionDb.init({

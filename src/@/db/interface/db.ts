@@ -50,4 +50,5 @@ export type IDb<TEntity extends Record<string, unknown>, TRelated extends Record
   liveQuery: <TMsg>(query: QueryInput<TEntity>, map: (output: QueryOutput<TEntity, TRelated>) => TMsg) => Sub<TMsg>
   upsert: (input: UpsertInput<TEntity>) => Promise<UpsertOutput<TEntity>>
   update: (input: UpdateInput<TEntity>) => Promise<UpdateOutput<TEntity>>
+  extra: unknown
 }

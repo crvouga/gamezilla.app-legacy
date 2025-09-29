@@ -78,41 +78,37 @@ const init = async (config: ImplSqlDb): Promise<IUserSessionDb> => {
       created_at_unix_ms: s.or(s.str(), s.num()),
       ended_at_unix_ms: s.maybe(s.or(s.str(), s.num())),
     }),
-    entityKeyToSqlColumn: (key) => {
-      switch (key) {
-        case 'userSessionId':
-          return 'id'
-        case 'sessionId':
-          return 'session_id'
-        case 'clientSessionId':
-          return 'client_session_id'
-        case 'userId':
-          return 'user_id'
-        case 'createdAt':
-          return 'created_at_unix_ms'
-        case 'endedAt':
-          return 'ended_at_unix_ms'
-      }
+    mapKeyEntityToSql: {
+      userSessionId: 'id',
+      sessionId: 'session_id',
+      clientSessionId: 'client_session_id',
+      userId: 'user_id',
+      createdAt: 'created_at_unix_ms',
+      endedAt: 'ended_at_unix_ms',
     },
-    rowToEntity(row) {
-      return {
-        userSessionId: row.id,
-        sessionId: row.session_id ?? null,
-        userId: row.user_id,
-        createdAt: UnixMs.init(row.created_at_unix_ms),
-        endedAt: row.ended_at_unix_ms ? UnixMs.init(row.ended_at_unix_ms) : null,
-        clientSessionId: row.client_session_id,
-      }
+    mapKeySqlToEntity: {
+      id: 'userSessionId',
+      session_id: 'sessionId',
+      client_session_id: 'clientSessionId',
+      user_id: 'userId',
+      created_at_unix_ms: 'createdAt',
+      ended_at_unix_ms: 'endedAt',
     },
-    entityToRow(entity) {
-      return {
-        id: entity.userSessionId,
-        session_id: entity.sessionId,
-        client_session_id: entity.clientSessionId,
-        user_id: entity.userId,
-        created_at_unix_ms: entity.createdAt,
-        ended_at_unix_ms: entity.endedAt,
-      }
+    mapValueEntityToSql: {
+      userSessionId: (userSessionId) => userSessionId,
+      sessionId: (sessionId) => sessionId ?? null,
+      clientSessionId: (clientSessionId) => clientSessionId,
+      userId: (userId) => userId,
+      createdAt: (createdAt) => createdAt,
+      endedAt: (endedAt) => endedAt ?? null,
+    },
+    mapValueSqlToEntity: {
+      id: (id) => id,
+      session_id: (session_id) => session_id,
+      client_session_id: (client_session_id) => client_session_id,
+      user_id: (user_id) => user_id,
+      created_at_unix_ms: (created_at_unix_ms) => UnixMs.init(created_at_unix_ms),
+      ended_at_unix_ms: (ended_at_unix_ms) => (ended_at_unix_ms ? UnixMs.init(ended_at_unix_ms) : null),
     },
   })
 }

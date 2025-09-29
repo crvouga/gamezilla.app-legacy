@@ -7,6 +7,7 @@ import { QueryInput } from '../../interface/query-input/query-input'
 import { QueryOutput } from '../../interface/query-output/query-output'
 import { logSlowQuery } from '../shared/slow-query-logging'
 import { Indexes } from './indexes'
+import { filterArray } from './filter-array'
 import { queryMap } from './query-input-map'
 
 export type ImplHashMap<TEntity extends Record<string, unknown>, TRelated extends Record<string, unknown>> = {
@@ -82,10 +83,10 @@ const init = <TEntity extends Record<string, unknown>, TRelated extends Record<s
     globalPubSub.pub({ t: 'publish' })
   }
   return {
-    // @ts-ignore
-    entities,
-    // @ts-ignore
-    indexes,
+    extra: {
+      entities,
+      indexes,
+    },
     query,
     liveQuery(queryInput, map) {
       const queryKey = QueryInput.toKey(queryInput)
@@ -122,6 +123,21 @@ const init = <TEntity extends Record<string, unknown>, TRelated extends Record<s
       return Ok({
         entities: input.entities,
       })
+    },
+    async update(input) {
+      const filtered = input.where
+        ? filterArray(Array.from(entities.values()), input.where)
+        : Array.from(entities.values())
+      const toUpdate = filtered.slice(input.offset, input.offset + input.limit)
+      for (const entity of toUpdate) {
+        const updated = { ...entity, ...input.set }
+        const primaryKey = config.toPrimaryKey(updated)
+        const primaryKeyValue = updated[primaryKey]
+        entities.set(primaryKeyValue, updated)
+        Indexes.populate(indexes, updated, primaryKey)
+      }
+      enqueuePublish()
+      return Ok(null)
     },
   }
 }

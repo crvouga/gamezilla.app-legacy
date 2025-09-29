@@ -1,17 +1,18 @@
-import * as ImplInMemory from './impl-in-memory'
-import * as ImplSql from './impl-sql'
+import { ImplSqlDb } from './impl-sql-db'
 import type { IUserAccountDb } from './interface'
 
-export type Impl = ImplInMemory.Config | ImplSql.Config
+export type UserAccountDb = ImplSqlDb
 
-export const UserAccountDb = (impl: Impl): IUserAccountDb => {
-  switch (impl.t) {
-    case 'in-memory': {
-      return ImplInMemory.UserAccountDb(impl)
-    }
+const init = async (config: UserAccountDb): Promise<IUserAccountDb> => {
+  const logger = config.logger.child(['user-account-db'])
 
+  switch (config.t) {
     case 'sql': {
-      return ImplSql.UserAccountDb(impl)
+      return ImplSqlDb.init({ ...config, logger })
     }
   }
+}
+
+export const UserAccountDb = {
+  init,
 }

@@ -17,7 +17,7 @@ const init = <TEntity extends Record<string, unknown>, TRelated extends Record<s
 }) => {
   type Db = IDb.IDb<TEntity, TRelated>
 
-  const liveQuery = <TMsg>(db: Db, queryInput: QueryInput<TEntity>, mapper: (m: unknown) => TMsg): Sub<TMsg> => {
+  const watch = <TMsg>(db: Db, queryInput: QueryInput<TEntity>, mapper: (m: unknown) => TMsg): Sub<TMsg> => {
     return db.liveQuery(queryInput, (result) => {
       return mapper(
         GotQueryCacheMsg.init({
@@ -32,21 +32,26 @@ const init = <TEntity extends Record<string, unknown>, TRelated extends Record<s
     })
   }
 
-  const read = (ctx: { queryCache: QueryCache }, query: QueryInput<TEntity>): TEntity[] => {
-    const queryKey = deterministicJsonStringify(query)
+  const query = (ctx: { queryCache: QueryCache }, queryInput: QueryInput<TEntity>): TEntity[] => {
+    const queryKey = deterministicJsonStringify(queryInput)
     const results = ctx.queryCache.results[queryKey]
     const entities = results?.map((id) => ctx.queryCache.entities.byType[config.entityType]?.byId[id] as TEntity) ?? []
     return entities
   }
 
-  const isLoading = (ctx: { queryCache: QueryCache }, query: QueryInput<TEntity>): boolean => {
-    const queryKey = deterministicJsonStringify(query)
+  const toEntity = (ctx: { queryCache: QueryCache }, id: string): TEntity | null => {
+    const entity = ctx.queryCache.entities.byType[config.entityType]?.byId[id] as TEntity
+    return entity ?? null
+  }
+
+  const isLoading = (ctx: { queryCache: QueryCache }, queryInput: QueryInput<TEntity>): boolean => {
+    const queryKey = deterministicJsonStringify(queryInput)
     return ctx.queryCache.results[queryKey] === undefined
   }
 
-  const isEmpty = (ctx: { queryCache: QueryCache }, query: QueryInput<TEntity>): boolean => {
-    const entities = read(ctx, query)
-    return !isLoading(ctx, query) && entities.length === 0
+  const isEmpty = (ctx: { queryCache: QueryCache }, queryInput: QueryInput<TEntity>): boolean => {
+    const entities = query(ctx, queryInput)
+    return !isLoading(ctx, queryInput) && entities.length === 0
   }
 
   const gotEntity = (entityId: string, entityNew: TEntity): GotQueryCacheMsg => {
@@ -60,9 +65,10 @@ const init = <TEntity extends Record<string, unknown>, TRelated extends Record<s
   }
 
   return {
+    toEntity,
     gotEntity,
-    liveQuery,
-    read,
+    watch,
+    query,
     isLoading,
     isEmpty,
   }

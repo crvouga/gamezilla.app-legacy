@@ -1,34 +1,41 @@
-import { describe, expect, test } from '~/@/test-runner'
+import { Logger } from '~/@/logger'
 import { PhoneNumber } from '~/@/phone-number'
-import { Ok, Result, unwrap } from '~/@/result'
-import { UnixMs } from '~/@/time/unix-ms'
+import { isOk, unwrap } from '~/@/result'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
+import { describe, expect, test } from '~/@/test-runner'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
-import { Impl, UserAccountDb } from './impl'
-import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
-import { Logger } from '~/@/logger'
+import { UserAccountDb } from './impl'
 
-const Fixture = async (config: Impl) => {
-  const userAccountDb = UserAccountDb(config)
+const Fixture = async (config: UserAccountDb) => {
+  const userAccountDb = await UserAccountDb.init(config)
+  const userId = UserId.generate()
+  const accounts: [UserAccount, ...UserAccount[]] = [
+    UserAccount.random({ userId }),
+    UserAccount.random({ userId }),
+    UserAccount.random({ userId }),
+    UserAccount.random(),
+    UserAccount.random(),
+    UserAccount.random(),
+  ]
+  await userAccountDb.upsert({ entities: accounts })
+
   return {
     userAccountDb,
+    userId,
+    accounts,
   }
 }
 
 const Fixtures = async () => {
   const f = await FixtureAppBackend()
-  const configs: Impl[] = []
-
-  configs.push({
-    t: 'in-memory',
-    simulateLatency: async () => {},
-  })
+  const configs: UserAccountDb[] = []
 
   configs.push({
     t: 'sql',
     sqlDb: f.sqlDbSqlite,
-    logger: f.logger,
+    logger: Logger.init({ t: 'noop' }),
     migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
   })
 
@@ -36,7 +43,7 @@ const Fixtures = async () => {
     configs.push({
       t: 'sql',
       sqlDb: f.sqlDbPostgres,
-      logger: f.logger,
+      logger: Logger.init({ t: 'noop' }),
       migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
     })
   }
@@ -45,96 +52,142 @@ const Fixtures = async () => {
 }
 
 describe('UserAccountDb', () => {
-  test('should be able to insert accounts', async () => {
+  test('should insert correctly', async () => {
     for (const f of await Fixtures()) {
-      const inserted = await f.userAccountDb.upsert({
-        userId: UserId.generate(),
-        role: 'guest',
-        createdAt: UnixMs.now({
-          precision: 'seconds',
-        }),
-        phoneNumber: null,
-      })
-      expect(unwrap(inserted)).toEqual(null)
-    }
-  })
+      const userAccount = UserAccount.random()
+      if (!userAccount.userId) throw new Error('test setup failed')
 
-  test('should be able to find account by user id', async () => {
-    for (const f of await Fixtures()) {
-      const account: UserAccount = {
-        userId: UserId.generate(),
-        role: 'guest',
-        createdAt: UnixMs.now({
-          precision: 'seconds',
-        }),
-        phoneNumber: null,
+      const before = await f.userAccountDb.query({
+        limit: 100,
+        offset: 0,
+        where: {
+          op: 'and',
+          clauses: [
+            {
+              op: '=',
+              column: 'userId',
+              value: userAccount.userId,
+            },
+          ],
+        },
+      })
+
+      const inserted = await f.userAccountDb.upsert({ entities: [userAccount] })
+
+      const after = await f.userAccountDb.query({
+        limit: 100,
+        offset: 0,
+        where: {
+          op: 'and',
+          clauses: [{ op: '=', column: 'userId', value: userAccount.userId }],
+        },
+      })
+      expect(unwrap(before).entities.items).toEqual([])
+      if (isOk(inserted)) {
+        expect(inserted.value.entities).toEqual([userAccount])
+      } else {
+        throw new Error(`Upsert failed: ${JSON.stringify(inserted)}`)
       }
-      await f.userAccountDb.upsert(account)
-      const found = await f.userAccountDb.findOneByUserId({
-        userId: account.userId,
-      })
-      const maybeAccount = Result.unwrapOr(found, null)
-      expect(maybeAccount).toEqual(account)
+      expect(unwrap(after).entities.items).toEqual([userAccount])
     }
   })
 
-  test('should be able to find account by phone number', async () => {
+  test('should find accounts by user id', async () => {
     for (const f of await Fixtures()) {
-      const phoneNumber = PhoneNumber.random()
-      const account: UserAccount = {
-        phoneNumber,
-        userId: UserId.generate(),
-        role: 'normal',
-        createdAt: UnixMs.now({
-          precision: 'seconds',
-        }),
-      }
-      const insert = await f.userAccountDb.upsert(account)
-      expect(insert.t).toEqual('ok')
-      const found = await f.userAccountDb.findOneByPhoneNumber({
-        phoneNumber,
+      const userId = UserId.generate()
+      const accounts = await f.userAccountDb.query({
+        where: {
+          op: 'and',
+          clauses: [{ op: '=', column: 'userId', value: userId }],
+        },
+        limit: 100,
+        offset: 0,
       })
-      expect(found).toEqual(Ok(account))
+      expect(accounts.t).toEqual('ok')
+      const expected = f.accounts.filter((a) => a.userId === userId)
+      expect(unwrap(accounts).entities.items).toEqual(expected)
     }
   })
 
-  test('should find null if finding account by user id and null is passed as user id', async () => {
+  test('query equals userId with pagination', async () => {
     for (const f of await Fixtures()) {
-      const found = await f.userAccountDb.findOneByUserId({
-        userId: null,
+      const userId = UserId.generate()
+      const before = await f.userAccountDb.query({
+        where: {
+          op: 'and',
+          clauses: [{ op: '=', column: 'userId', value: userId }],
+        },
+        limit: 100,
+        offset: 0,
+        orderBy: [{ column: 'createdAt', direction: 'asc' }],
       })
-      expect(found).toEqual(Ok(null))
+
+      const account = UserAccount.random({ userId })
+      await f.userAccountDb.upsert({ entities: [account] })
+
+      const after = await f.userAccountDb.query({
+        where: {
+          op: 'and',
+          clauses: [{ op: '=', column: 'userId', value: userId }],
+        },
+        limit: 100,
+        offset: 0,
+        orderBy: [{ column: 'createdAt', direction: 'asc' }],
+      })
+
+      expect(unwrap(before)).toEqual({
+        entities: {
+          items: [],
+          total: 0,
+          limit: 100,
+          offset: 0,
+        },
+        related: {},
+      })
+
+      expect(unwrap(after)).toEqual({
+        entities: {
+          items: [account],
+          total: 1,
+          limit: 100,
+          offset: 0,
+        },
+        related: {},
+      })
     }
   })
 
-  test("should find null if user id doesn't exist", async () => {
-    for (const f of await Fixtures()) {
-      const found = await f.userAccountDb.findOneByUserId({
-        userId: UserId.generate(),
-      })
-      expect(found).toEqual(Ok(null))
-    }
-  })
-
-  test('should upsert an account', async () => {
+  test('upsert should update if exists', async () => {
     for (const f of await Fixtures()) {
       const account = UserAccount.random()
-      const inserted = await f.userAccountDb.upsert(account)
-      const before = await f.userAccountDb.findOneByUserId({
-        userId: account.userId,
+      const inserted = await f.userAccountDb.upsert({ entities: [account] })
+      const before = await f.userAccountDb.query({
+        where: {
+          op: 'and',
+          clauses: [{ op: '=', column: 'userId', value: account.userId }],
+        },
+        orderBy: [],
+        limit: 1,
+        offset: 0,
       })
       const accountNew: UserAccount = {
         ...account,
         phoneNumber: PhoneNumber.random(),
       }
-      const updated = await f.userAccountDb.upsert(accountNew)
-      const found = await f.userAccountDb.findOneByUserId({
-        userId: accountNew.userId,
+      const updated = await f.userAccountDb.upsert({ entities: [accountNew] })
+      const after = await f.userAccountDb.query({
+        where: {
+          op: 'and',
+          clauses: [{ op: '=', column: 'userId', value: account.userId }],
+        },
+        orderBy: [],
+        limit: 1,
+        offset: 0,
       })
-      expect(unwrap(inserted)).toEqual(null)
-      expect(unwrap(before)).toEqual(account)
-      expect(unwrap(updated)).toEqual(null)
-      expect(unwrap(found)).toEqual(accountNew)
+      expect(unwrap(inserted).entities).toEqual([account])
+      expect(unwrap(updated).entities).toEqual([accountNew])
+      expect(unwrap(before).entities.items).toEqual([account])
+      expect(unwrap(after).entities.items).toEqual([accountNew])
     }
   })
 })

@@ -62,10 +62,16 @@ const continueAsGuest = async (input: {
 
   if (isErr(existingGuestUserId)) return existingGuestUserId
 
-  const existingGuestAccount = unwrapOr(
-    await input.ctx.userAccountDb.findOneByUserId({ userId: existingGuestUserId.value }),
-    null,
-  )
+  const existingGuestAccount = existingGuestUserId.value
+    ? unwrapOr(
+        await input.ctx.userAccountDb.query({
+          where: { op: 'and', clauses: [{ op: '=', column: 'userId', value: existingGuestUserId.value }] },
+          limit: 1,
+          offset: 0,
+        }),
+        null,
+      )
+    : null
 
   const newGuestAccount: UserAccount = {
     role: 'guest',
@@ -74,7 +80,7 @@ const continueAsGuest = async (input: {
     phoneNumber: null,
   }
 
-  const guestAccount: UserAccount = existingGuestAccount ?? newGuestAccount
+  const guestAccount: UserAccount = existingGuestAccount?.entities.items[0] ?? newGuestAccount
 
   const guestSessionMappingNew: GuestSessionMapping = {
     id: GuestSessionMappingId.generate(),
@@ -87,9 +93,11 @@ const continueAsGuest = async (input: {
 
   if (isErr(inserted)) return inserted
 
-  const insertedAccount = existingGuestAccount ? Ok(null) : await input.ctx.userAccountDb.upsert(guestAccount)
+  const insertedAccount = existingGuestAccount
+    ? Ok(null)
+    : await input.ctx.userAccountDb.upsert({ entities: [guestAccount] })
 
-  if (isErr(insertedAccount)) return insertedAccount
+  if (isErr(insertedAccount)) return Err(insertedAccount.error.message)
 
   const userSessionNew: UserSession = {
     userSessionId: UserSessionId.generate(),

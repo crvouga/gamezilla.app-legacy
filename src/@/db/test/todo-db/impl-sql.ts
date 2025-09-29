@@ -60,41 +60,37 @@ const init = (config: ImplSql): ITodoDb => {
       updated_at_unix_ms: s.num(),
       deleted_at_unix_ms: s.maybe(s.num()),
     }),
-    entityKeyToSqlColumn(key) {
-      switch (key) {
-        case 'id':
-          return 'id'
-        case 'title':
-          return 'title'
-        case 'completed':
-          return 'completed'
-        case 'createdAt':
-          return 'created_at_unix_ms'
-        case 'updatedAt':
-          return 'updated_at_unix_ms'
-        case 'deletedAt':
-          return 'deleted_at_unix_ms'
-      }
+    mapKeyEntityToSql: {
+      id: 'id',
+      title: 'title',
+      completed: 'completed',
+      createdAt: 'created_at_unix_ms',
+      updatedAt: 'updated_at_unix_ms',
+      deletedAt: 'deleted_at_unix_ms',
     },
-    rowToEntity(row) {
-      return {
-        id: row.id,
-        title: row.title,
-        completed: row.completed,
-        createdAt: row.created_at_unix_ms,
-        updatedAt: row.updated_at_unix_ms,
-        deletedAt: row.deleted_at_unix_ms,
-      }
+    mapKeySqlToEntity: {
+      id: 'id',
+      title: 'title',
+      completed: 'completed',
+      created_at_unix_ms: 'createdAt',
+      updated_at_unix_ms: 'updatedAt',
+      deleted_at_unix_ms: 'deletedAt',
     },
-    entityToRow(entity) {
-      return {
-        id: entity.id,
-        title: entity.title,
-        completed: entity.completed,
-        created_at_unix_ms: entity.createdAt,
-        updated_at_unix_ms: entity.updatedAt,
-        deleted_at_unix_ms: entity.deletedAt,
-      }
+    mapValueEntityToSql: {
+      id: (id) => id,
+      title: (title) => title,
+      completed: (completed) => completed,
+      createdAt: (createdAt) => createdAt,
+      updatedAt: (updatedAt) => updatedAt,
+      deletedAt: (deletedAt) => deletedAt,
+    },
+    mapValueSqlToEntity: {
+      id: (id) => id,
+      title: (title) => title,
+      completed: (completed) => completed,
+      created_at_unix_ms: (createdAt) => createdAt,
+      updated_at_unix_ms: (updatedAt) => updatedAt,
+      deleted_at_unix_ms: (deletedAt) => deletedAt,
     },
   })
 }

@@ -76,7 +76,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     syncEngine,
     env: 'test',
     keyValueDbDurable: keyValueDbHashMap,
-    sqlDb: BackendSqlDb.init({ t: 'noop', logger }),
+    sqlDb: sqlDbSqlite,
     migrationPolicy,
     logger,
     now,
@@ -91,7 +91,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
     return {
       t: 'unit',
-      ctx,
+      ctx: { ...ctx, sqlDb: sqlDbSqlite },
       sqlDbSqlite: sqlDbSqlite,
       keyValueDbHashMap,
       pubSubTopicBased,
@@ -131,7 +131,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   return {
     t: 'integration',
-    ctx,
+    ctx: { ...ctx, sqlDb: sqlDbPostgres },
     sqlDbSqlite,
     sqlDbPostgres,
     keyValueDbSqlite,

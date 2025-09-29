@@ -33,22 +33,47 @@ describe('LoginWithSMSBackend', () => {
     const sent = await LoginWithSMSBackend.sendCode({ ...f, phoneNumber })
     if (isErr(sent)) throw new Error('Failed to send code')
 
-    const before = unwrap(await f.ctx.userAccountDb.findOneByPhoneNumber({ phoneNumber }))
-    const result = unwrap(await LoginWithSMSBackend.verifyCode({ ...f, phoneNumber, code: '123' }))
-    const userAccount = unwrap(await f.ctx.userAccountDb.findOneByPhoneNumber({ phoneNumber }))
-
-    if (!userAccount) throw new Error('No account found')
-    const userSession = unwrap(
-      await f.ctx.userSessionDb.query({
-        where: { op: 'and', clauses: [{ op: '=', column: 'userId', value: userAccount.userId }] },
-        orderBy: [{ column: 'createdAt', direction: 'desc' }],
+    const before = unwrap(
+      await f.ctx.userAccountDb.query({
+        where: {
+          op: '=',
+          column: 'phoneNumber',
+          value: phoneNumber,
+        },
         limit: 1,
         offset: 0,
       }),
-    ).entities.items[0]
+    )
+    const result = unwrap(
+      //
+      await LoginWithSMSBackend.verifyCode({ ...f, phoneNumber, code: '123' }),
+    )
+    const userAccountQuery = unwrap(
+      await f.ctx.userAccountDb.query({
+        where: {
+          op: '=',
+          column: 'phoneNumber',
+          value: phoneNumber,
+        },
+        limit: 1,
+        offset: 0,
+      }),
+    )
+
+    if (!userAccountQuery.entities.items[0]) throw new Error('No account found')
+    const userAccount = userAccountQuery.entities.items[0]
+    const userSession =
+      unwrap(
+        await f.ctx.userSessionDb.query({
+          where: { op: 'and', clauses: [{ op: '=', column: 'userId', value: userAccount.userId }] },
+          orderBy: [{ column: 'createdAt', direction: 'desc' }],
+          limit: 1,
+          offset: 0,
+        }),
+      ).entities.items[0] ?? null
     if (!userSession) throw new Error('No session found')
 
-    expect(before).toEqual(null)
+    expect(before.entities.items).toEqual([])
     expect(result).toEqual({ userAccount, userSession })
     expect(userAccount.phoneNumber).toEqual(phoneNumber)
   })
@@ -56,7 +81,7 @@ describe('LoginWithSMSBackend', () => {
   test('should use existing account on verification', async () => {
     const f = await Fixture()
     const userAccount = UserAccount.randomNormal()
-    unwrap(await f.ctx.userAccountDb.upsert(userAccount))
+    unwrap(await f.ctx.userAccountDb.upsert({ entities: [userAccount] }))
     unwrap(await LoginWithSMSBackend.sendCode({ ...f, phoneNumber: userAccount.phoneNumber }))
     const result = unwrap(
       await LoginWithSMSBackend.verifyCode({
@@ -66,15 +91,24 @@ describe('LoginWithSMSBackend', () => {
       }),
     )
     expect(result.userAccount).toEqual(userAccount)
-    const after = unwrap(await f.ctx.userAccountDb.findOneByPhoneNumber({ phoneNumber: userAccount.phoneNumber }))
-    expect(after).toEqual(userAccount)
+    const after = unwrap(
+      await f.ctx.userAccountDb.query({
+        where: {
+          op: 'and',
+          clauses: [{ op: '=', column: 'phoneNumber', value: userAccount.phoneNumber }],
+        },
+        limit: 1,
+        offset: 0,
+      }),
+    )
+    expect(after.entities.items).toEqual([userAccount])
   })
 
   test.skip('should use existing profile on verification', async () => {
     const f = await Fixture()
     const userAccount = UserAccount.randomNormal()
-    unwrap(await f.ctx.userAccountDb.upsert(userAccount))
-    const userProfile = await UserProfile.random()
+    unwrap(await f.ctx.userAccountDb.upsert({ entities: [userAccount] }))
+    const userProfile = await UserProfile.random({ userId: userAccount.userId })
     unwrap(await f.ctx.userProfileDb.put(userProfile))
     unwrap(await LoginWithSMSBackend.sendCode({ ...f, phoneNumber: userAccount.phoneNumber }))
     unwrap(
@@ -84,7 +118,13 @@ describe('LoginWithSMSBackend', () => {
         code: '123',
       }),
     )
-    const after = unwrap(await f.ctx.userProfileDb.findByUserIds([userAccount.userId]))
-    expect(after).toEqual([userProfile])
+    const after = unwrap(
+      await f.ctx.userProfileDb.query({
+        whereAnd: { userId: { equals: userAccount.userId } },
+        pagination: { limit: 1, offset: 0 },
+        order: { createdAt: 'desc' },
+      }),
+    )
+    expect(after.items).toEqual([userProfile])
   })
 })
