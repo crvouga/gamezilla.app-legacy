@@ -8,7 +8,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { UserProfileId } from '~/app/@/data/user-profile-id'
 import { Username } from '~/app/@/data/username'
-import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
+import { andThen } from '~/app/@/frontend/and-then'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -119,10 +119,7 @@ const update = <T extends ModelFrontend>(input: {
   eff?: Eff<MsgFrontend>
   msgOut?: unknown[]
 } => {
-  return AppFrontendModule.andThen<{
-    Model: T
-    Msg: MsgFrontend
-  }>(
+  return andThen(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => watchForLogin({ ...input, model, modelBefore: input.model, modelAfter: model }),

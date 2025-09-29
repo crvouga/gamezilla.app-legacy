@@ -10,8 +10,8 @@ import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { sx } from '~/@/vdom/style/sx'
-import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { UserProfile } from '../@/data/user-profile'
+import { andThen } from '../@/frontend/and-then'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { PushScreenCmd } from '../@/frontend/push-screen-cmd.$msg'
 import { AuthFrontendCtx } from './@/frontend/ctx'
@@ -75,10 +75,7 @@ const update = <T extends ModelFrontend>(input: {
   eff?: Eff<MsgFrontend>
   msgOut?: unknown[]
 } => {
-  return AppFrontendModule.andThen<{
-    Model: T
-    Msg: MsgFrontend
-  }>(
+  return andThen(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => LoginWithSMSFrontend.update({ ...input, model }),
