@@ -1,5 +1,5 @@
 import { Eff } from '~/@/eff'
-import { AnyMsg, isAnyMsg } from '~/@/msg/msg'
+import { isAnyMsg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
 import { ViewportVisibility } from '~/@/viewport'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
@@ -23,22 +23,17 @@ const isMsg = (msg: unknown): msg is Msg => {
   return isAnyMsg(msg) && msg.t.startsWith('viewport_')
 }
 
-export const update = <TModel extends Model>(input: {
-  msg?: AnyMsg | null
+export const update = <T extends Model>(input: {
+  ctx: AppFrontendCtxBase
+  model: T
+  msg?: unknown
   msgIn?: unknown
-  model: TModel
 }): {
-  model: TModel
+  model: T
   eff?: Eff<Msg>
   msgOut?: unknown[]
 } => {
-  if (input.msg) return updateFromMsg(input)
-
-  return { model: input.model }
-}
-
-const updateFromMsg: typeof update = (input) => {
-  if (!isMsg(input.msg)) return { model: input.model }
+  if (!isMsg(input.msg)) return input
 
   switch (input.msg.t) {
     case 'viewport_becameHidden': {
@@ -56,7 +51,7 @@ const updateFromMsg: typeof update = (input) => {
     }
 
     default: {
-      return { model: input.model }
+      return input
     }
   }
 }

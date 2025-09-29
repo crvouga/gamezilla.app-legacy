@@ -12,13 +12,17 @@ type Output<TModel, TMsg> = {
  * Each update function receives the model from the previous update.
  * Effects and messages are batched together.
  *
+ * @param input - Object containing the initial model
+ * @param updates - Array of update functions that each take a model and return an Output
+ * @returns Combined Output containing merged model, effects and messages
+ *
  * @example
  * ```ts
  * const update = (input) => {
- *   return AppFrontendModule.andThen(
- *     { model: input.model }, // initial output
- *     (model) => updateFromMsg({ ...input, model }), // first update
- *     (model) => watchForLogin({ ...input, model }), // second update
+ *   return andThen(
+ *     { model: input.model },
+ *     (model) => updateFromMsg({ ...input, model }),
+ *     (model) => updateFromMsgIn({ ...input, model })
  *   )
  * }
  * ```
@@ -27,14 +31,14 @@ export const andThen = <TModel, TMsg>(
   input: { model: TModel },
   ...updates: ((model: TModel) => Output<TModel, TMsg>)[]
 ): Output<TModel, TMsg> => {
-  let acc: Output<TModel, TMsg> = { model: input.model }
+  const output: Output<TModel, TMsg> = input
+
   for (const update of updates) {
-    const updated = update(acc.model)
-    acc = {
-      model: updated.model,
-      eff: Eff.batch(acc.eff, updated.eff),
-      msgOut: Msg.batch(acc.msgOut, updated.msgOut),
-    }
+    const updated = update(output.model)
+    output.model = updated.model
+    output.eff = Eff.batch(output.eff, updated.eff)
+    output.msgOut = Msg.batch(output.msgOut, updated.msgOut)
   }
-  return acc
+
+  return output
 }

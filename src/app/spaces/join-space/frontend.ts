@@ -1,20 +1,22 @@
-import { withEventId } from '~/@/event-sourced/event'
+import { withEventMeta } from '~/@/event-sourced/event'
 import { Translator } from '~/@/l18n/generated'
 import { IPlatform } from '~/@/platform/platform'
 import { IconArrowRightOnRect } from '~/@/ui/icon'
-import { sx } from '~/@/vdom/style/sx'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
+import { sx } from '~/@/vdom/style/sx'
+import { andThen } from '~/app/@/frontend/and-then'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
+import { FloatingLayout } from '~/app/@/ui/floating/layout/floating-layout'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SectionTitle } from '~/app/@/ui/section/section-title'
-import { FloatingLayout } from '~/app/@/ui/floating/layout/floating-layout'
 import { SpaceFrontendCtx } from '../@/frontend/ctx'
+import { GotSpaceMsg } from '../@/got-space-msg.$msg'
 import { SectionPeopleList } from '../@/ui/section-people-list'
 import { SectionPersonDetails } from '../@/ui/section-person-details'
 import { SpaceFrontendModule } from '../frontend/space-frontend'
@@ -23,16 +25,28 @@ import { GameCoverArt } from '../game/games/cover-art'
 import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
 import { MsgSpace } from '../space/msg-space'
 import { Space } from '../space/space'
+import { FrontendCtxModule, ModelFrontend } from '../types'
+import { isMsgFrontend, MsgFrontend } from './types'
 
-const update: SpaceFrontendModule['update'] = (input) => {
-  return SpaceFrontendModule.andThen(
-    { model: input.model },
+const update = <T extends ModelFrontend>(input: {
+  ctx: FrontendCtxModule
+  model: T
+  msg?: unknown
+  msgIn?: unknown
+}): {
+  model: T
+  msgOut?: unknown[]
+} => {
+  return andThen<T, MsgFrontend>(
+    input,
     (model) => updateFromMsgSpace({ ...input, model }),
     (model) => updateFromJoinSpaceButton({ ...input, model }),
   )
 }
 
-const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
+const updateFromJoinSpaceButton: typeof update = (input) => {
+  if (!isMsgFrontend(input.msg)) return input
+
   switch (input.msg?.t) {
     case 'joinSpace_clickedPersonMenuItem': {
       const isOpen = input.model.spaces_opened === 'join-space.person-preview-surface'
@@ -48,16 +62,18 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
       }
     }
     case 'joinSpace_submittedJoinSpaceForm': {
-      if (!input.ctx.currentUser?.userId) return { model: input.model }
+      if (!input.ctx.currentUser?.userId) return input
 
       return {
         model: input.model,
-        msgSpace: [
-          withEventId<MsgSpace>({
-            t: 'user-joined-space',
-            spaceId: input.msg.spaceId,
-            userId: input.ctx.currentUser.userId,
-          }),
+        msgOut: [
+          GotSpaceMsg.init(
+            withEventMeta<MsgSpace>({
+              t: 'user-joined-space',
+              spaceId: input.msg.spaceId,
+              userId: input.ctx.currentUser.userId,
+            }),
+          ),
         ],
       }
     }
@@ -65,7 +81,7 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
       if (input.model.spaces_opened === 'join-space.person-preview-surface') {
         return { model: { ...input.model, spaces_opened: null }, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
       }
-      return { model: input.model }
+      return input
     }
 
     case 'joinSpace_openedPersonDetails': {
@@ -75,22 +91,25 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
       }
     }
   }
-  return { model: input.model }
 }
 
-const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
-  switch (input.msgSpace?.t) {
+const updateFromMsgSpace: typeof update = (input) => {
+  if (!GotSpaceMsg.is(input.msgIn)) return input
+
+  const msgSpace = input.msgIn.c
+
+  switch (msgSpace.t) {
     case 'user-joined-space': {
       const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
 
-      if (!currentUserSpace) return { model: input.model }
+      if (!currentUserSpace) return input
 
       const currentUserSpaceId = Space.toSpaceId(currentUserSpace)
 
-      if (input.msgSpace.spaceId !== currentUserSpaceId) return { model: input.model }
+      if (msgSpace.spaceId !== currentUserSpaceId) return input
 
-      if (input.msgSpace.userId !== input.ctx.currentUser?.userId) {
-        const username = input.ctx.profilesByUserId[input.msgSpace.userId]?.username ?? null
+      if (msgSpace.userId !== input.ctx.currentUser?.userId) {
+        const username = input.ctx.profilesByUserId[msgSpace.userId]?.username ?? null
         return {
           model: input.model,
           msgOut: [
@@ -111,7 +130,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
       }
     }
   }
-  return { model: input.model }
+  return input
 }
 
 const view: SpaceFrontendModule['View'] = (input) => {
@@ -145,7 +164,7 @@ const view: SpaceFrontendModule['View'] = (input) => {
           })
         : null,
       back: {
-        onPress: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
+        onPress: () => input.dispatch({ t: 'exitSpaceAction_clicked' }),
       },
     },
     renderBody: () =>

@@ -1,9 +1,9 @@
 import { RPC } from '~/@/rpc'
 import { ITopicClient } from '~/@/topic/topic-client/interface'
 import { TopicContract } from '~/@/topic/topic-contract'
-import type { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { UserId } from '~/app/@/data/user-id'
+import type { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { EndSpaceTypes } from './end-space'
 import { CurrentSpaceMiniPlayerTypes } from './frontend/current-space-mini-player'
@@ -12,8 +12,7 @@ import { PeopleActionTypes } from './frontend/people-action'
 import { GameTypes } from './game'
 import { JoinSpaceTypes } from './join-space'
 import { LeaveSpaceTypes } from './leave-space'
-
-import { SpaceId } from '../@/data/space-id'
+import { ListSpacesTypes } from './list-spaces'
 import { ISpaceDb } from './space/space-db/interface'
 import { SpaceProjectionStarted } from './space/space-projection'
 import { StartSpaceTypes } from './start-space'
@@ -36,7 +35,7 @@ export type ModelFrontend = ModelFrontendBase & GameTypes.ModelFrontend
 
 export type MsgFrontend =
   | { t: 'got-msg-out'; c: unknown }
-  | { t: 'list-spaces.clicked-space-card'; spaceId: SpaceId }
+  | ListSpacesTypes.MsgFrontend
   | PeopleActionTypes.MsgFrontend
   | LeaveSpaceTypes.MsgFrontend
   | EndSpaceTypes.MsgFrontend

@@ -1,6 +1,6 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
-import { AppFrontendModule } from '../@/frontend/app-frontend-module'
+import { andThen } from '../@/frontend/and-then'
 import { APP_SOUND } from '../@/frontend/app-sound'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { PreloadSoundsCmd } from '../@/frontend/preload-sounds-cmd.$msg'
@@ -47,18 +47,18 @@ const init = (input: {
   }
 }
 
-const update = (input: {
+const update = <T extends ModelFrontend>(input: {
   ctx: AppFrontendCtxBase
-  model: ModelFrontend
-  msg?: MsgFrontend
-  msgIn?: unknown | null
+  model: T
+  msg?: unknown
+  msgIn?: unknown
 }): {
-  model: ModelFrontend
+  model: T
   eff?: Eff<MsgFrontend>
   msgOut?: unknown[]
 } => {
-  return AppFrontendModule.andThen<{ Model: ModelFrontend; Msg: MsgFrontend }>(
-    { model: input.model },
+  return andThen<T, MsgFrontend>(
+    input,
     (model) => CurrentScreenFrontend.update({ ...input, model }),
     (model) => ViewportFrontend.update({ ...input, model }),
     (model) => ToasterFrontend.update({ ...input, model }),

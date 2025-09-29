@@ -1,5 +1,5 @@
 import { Eff } from '~/@/eff'
-import { AnyMsg, isAnyMsg } from '~/@/msg/msg'
+import { isAnyMsg } from '~/@/msg/msg'
 import type { Screen } from '~/@/screens/generated/screens'
 import { Sub } from '~/@/sub'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
@@ -61,13 +61,13 @@ const isMsg = (msg: unknown): msg is Msg => {
   return isAnyMsg(msg) && msg.t.startsWith('currentScreen_')
 }
 
-export const update = <TModel extends Model>(input: {
-  msg?: AnyMsg | null
+export const update = <T extends Model>(input: {
+  msg?: unknown
   msgIn?: unknown
-  model: TModel
+  model: T
   ctx: AppFrontendCtxBase
 }): {
-  model: TModel
+  model: T
   eff?: Eff<Msg>
   msgOut?: unknown[]
 } => {
@@ -76,15 +76,7 @@ export const update = <TModel extends Model>(input: {
   return { model: input.model }
 }
 
-const updateFromMsgIn = <TModel extends Model>(input: {
-  ctx: AppFrontendCtxBase
-  msgIn?: unknown
-  model: TModel
-}): {
-  model: TModel
-  eff?: Eff<Msg>
-  msgOut?: unknown[]
-} => {
+const updateFromMsgIn: typeof update = (input) => {
   if (!input.msgIn) return { model: input.model }
 
   const { msgIn } = input

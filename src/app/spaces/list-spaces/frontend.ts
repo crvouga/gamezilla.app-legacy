@@ -1,19 +1,21 @@
 import { EmptyState } from '~/@/ui/empty-state'
 import { IconGamepad } from '~/@/ui/icon'
 import { LoadingState } from '~/@/ui/spinner-block'
-import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
+import { sx } from '~/@/vdom/style/sx'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
+import { ActionCreateProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import type { SpaceFrontendModule } from '../frontend/space-frontend'
 import { Space } from '../space/space'
 import { SpaceDbQueryCache } from '../space/space-db-query-cache'
 import { SpaceDbQuery } from '../space/space-db/interface-query'
-import { StartSpaceFrontend } from '../start-space/frontend'
+import { FrontendCtxModule, ModelFrontend } from '../types'
 import { ViewSpaceCard } from './space-card/space-card'
+import { isMsgFrontend, MsgFrontend } from './types'
 
 export const TEST_ID_SPACE_LIST_SCREEN = 'spaces/space-list-screen'
 
@@ -27,9 +29,19 @@ const toQuery = (): SpaceDbQuery => {
   }
 }
 
-const update: SpaceFrontendModule['update'] = (input) => {
-  switch (input.msg?.t) {
-    case 'list-spaces.clicked-space-card': {
+const update = <T extends ModelFrontend>(input: {
+  ctx: FrontendCtxModule
+  model: T
+  msg?: unknown
+  msgIn?: unknown
+}): {
+  model: T
+  msgOut?: unknown[]
+} => {
+  if (!isMsgFrontend(input.msg)) return input
+
+  switch (input.msg.t) {
+    case 'listSpaces_clickedSpaceCard': {
       return {
         model: input.model,
         msgOut: [
@@ -39,11 +51,16 @@ const update: SpaceFrontendModule['update'] = (input) => {
       }
     }
   }
-
-  return { model: input.model }
 }
 
-const View: SpaceFrontendModule['View'] = (input) => {
+const View = (input: {
+  ctx: FrontendCtxModule
+  model: ModelFrontend
+  dispatch: (msg: MsgFrontend) => void
+  slots: {
+    actionCreate: ActionCreateProps | null
+  }
+}) => {
   const query = toQuery()
   const spaces = SpaceDbQueryCache.read(input.ctx, query)
   const isLoading = SpaceDbQueryCache.isLoading(input.ctx, query)
@@ -57,7 +74,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
     navBar: {
       title: input.ctx.t('spaces.spaces'),
     },
-    actionCreate: StartSpaceFrontend.viewStartSpaceButton(input),
+    actionCreate: input.slots.actionCreate,
     renderBody: () => {
       if (isLoading) return h(LoadingState, {})
 
@@ -89,8 +106,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
                 h(ViewSpaceCard, {
                   key: spaceProjection.spaceId,
                   ctx: { ...input.ctx, currentUser: input.ctx.currentUser },
-                  onPress: () =>
-                    input.dispatch({ t: 'list-spaces.clicked-space-card', spaceId: spaceProjection.spaceId }),
+                  onPress: () => input.dispatch({ t: 'listSpaces_clickedSpaceCard', spaceId: spaceProjection.spaceId }),
                   state: spaceProjection,
                 }),
               ]

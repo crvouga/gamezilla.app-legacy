@@ -90,10 +90,15 @@ const updateChild: SpaceFrontendModule['update'] = (input) => {
     (model) => updateSpacesFromMsgSpace({ ...input, model }),
     (model) => SyncFrontend.update({ ...input, model }),
     (model) => StartSpaceFrontend.update({ ...input, model }),
+    // done
     (model) => JoinSpaceFrontend.update({ ...input, model }),
+    // done
     (model) => ListSpacesFrontend.update({ ...input, model }),
+    // done
     (model) => ExitSpaceAction.update({ ...input, model }),
-    (model) => CurrentSpaceMiniPlayer.update({ ...input, model }),
+    // done
+    (model) => CurrentSpaceMiniPlayer.update({ ...input, model: model }),
+    // done
     (model) => PeopleActionFrontend.update({ ...input, model }),
     (model) => {
       switch (input.msg?.t) {
@@ -167,16 +172,16 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 const View: FrontendModule['View'] = (input) => {
   switch (input.ctx.currentScreen.t) {
     case 'spaces_list': {
-      return h(ListSpacesFrontend.View, { dispatch: input.dispatch, ctx: input.ctx, model: input.model })
+      return h(ListSpacesFrontend.View, {
+        ...input,
+        slots: {
+          actionCreate: StartSpaceFrontend.viewStartSpaceButton(input),
+        },
+      })
     }
     case 'spaces_space': {
       if (isAppFrontendCtx(input.ctx)) {
-        return h(SpaceFrontend.View, {
-          spaceId: input.ctx.currentScreen.spaceId,
-          ctx: input.ctx,
-          dispatch: input.dispatch,
-          model: input.model,
-        })
+        return h(SpaceFrontend.View, { ...input, spaceId: input.ctx.currentScreen.spaceId })
       }
       return null
     }

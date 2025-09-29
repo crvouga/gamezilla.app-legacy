@@ -2,10 +2,11 @@ import { Avatar } from '~/@/ui/avatar'
 import { Clickable } from '~/@/ui/clickable'
 import { IconXMark } from '~/@/ui/icon'
 import { IconButton } from '~/@/ui/icon-button'
-import { sx } from '~/@/vdom/style/sx'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
+import { sx } from '~/@/vdom/style/sx'
+import { VDom } from '~/@/vdom/vdom'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
@@ -16,13 +17,22 @@ import { GameCoverArt } from '../../game/games/cover-art'
 import { CurrentUserSpaceLoader } from '../../space/current-user-space-loader'
 import { Space } from '../../space/space'
 import { SpaceProjectionStarted } from '../../space/space-projection'
-import type { ModelFrontend, MsgFrontend } from '../../types'
-import type { SpaceFrontendModule } from '../space-frontend'
-import { VDom } from '~/@/vdom/vdom'
+import type { FrontendCtxModule, ModelFrontend, MsgFrontend } from '../../types'
+import { isMsgFrontend } from './types'
 
-const update: SpaceFrontendModule['update'] = (input) => {
+const update = <T extends ModelFrontend>(input: {
+  ctx: FrontendCtxModule
+  model: T
+  msg?: unknown
+  msgIn?: unknown
+}): {
+  model: T
+  msgOut?: unknown[]
+} => {
+  if (!isMsgFrontend(input.msg)) return input
+
   switch (input.msg?.t) {
-    case 'current-space-bar.clicked-current-space-bottom-bar': {
+    case 'currentSpaceMiniPlayer_clicked': {
       if (!input.ctx.currentUser?.userId) return { model: input.model }
 
       const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
@@ -42,7 +52,6 @@ const update: SpaceFrontendModule['update'] = (input) => {
       }
     }
   }
-  return { model: input.model }
 }
 
 const ViewSpaceInfo = (props: { hostProfile: UserProfile | undefined; userCount: number; ctx: AppFrontendCtx }) => {
@@ -169,7 +178,7 @@ const View = (input: {
           alignItems: 'center',
           gap: 4,
         }),
-        onPress: () => input.dispatch({ t: 'current-space-bar.clicked-current-space-bottom-bar' }),
+        onPress: () => input.dispatch({ t: 'currentSpaceMiniPlayer_clicked' }),
       },
       [
         h(ViewSpaceImage, {
