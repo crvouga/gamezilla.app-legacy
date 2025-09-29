@@ -3,9 +3,9 @@ import { IBackendInstanceDb } from '~/app/@/backend/backend-instance/backend-ins
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { AppFrontendCtx, AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 
-export type ModelFrontend = { t: 'noop' }
+export type ModelFrontend = {}
 
-export type MsgFrontend = { t: 'noop' }
+export type MsgFrontend = { t: 'backendInstance_noop' }
 
 export type FrontendCtx = AppFrontendCtxBase | AppFrontendCtx
 

@@ -6,14 +6,9 @@ import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { BackendConnectionTypes } from './backend-connection'
 import { BackendInstanceTypes } from './backend-instance'
 
-export type ModelFrontend = {
-  wire_backendInstance: BackendInstanceTypes.ModelFrontend
-  wire_backendConnection: BackendConnectionTypes.ModelFrontend
-}
+export type ModelFrontend = BackendInstanceTypes.ModelFrontend & BackendConnectionTypes.ModelFrontend
 
-export type MsgFrontend =
-  | { t: 'got-backend-instance-msg'; c: BackendInstanceTypes.MsgFrontend }
-  | { t: 'got-backend-connection-msg'; c: BackendConnectionTypes.MsgFrontend }
+export type MsgFrontend = BackendInstanceTypes.MsgFrontend | BackendConnectionTypes.MsgFrontend
 
 export const topicContract = TopicContract.combine([BackendConnectionTypes.topicContract])
 

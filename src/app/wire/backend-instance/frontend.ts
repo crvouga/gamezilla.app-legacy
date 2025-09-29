@@ -1,11 +1,17 @@
 import { Sub } from '~/@/sub'
-import type { FrontendModule } from './types'
+import { FrontendCtxModule } from '../types'
+import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
+import { Eff } from '~/@/eff'
 
-const init: FrontendModule['init'] = (_input) => {
-  return { model: { t: 'noop' } }
-}
-
-const update: FrontendModule['update'] = (input) => {
+const update = <T extends ModelFrontend>(input: {
+  ctx: FrontendCtxModule
+  model: T
+  msg?: unknown
+}): {
+  model: T
+  eff?: Eff<MsgFrontend>
+  msgOut?: unknown[]
+} => {
   return { model: input.model }
 }
 
@@ -18,7 +24,6 @@ const View: FrontendModule['View'] = (_input) => {
 }
 
 export const BackendInstanceFrontend = {
-  init,
   update,
   subscriptions,
   View,

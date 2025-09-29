@@ -202,7 +202,7 @@ const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): Fronten
     parentScreen: null,
     currentUserState,
     currentUser: currentUserState.t === 'logged-in' ? currentUserState.userAccount : null,
-    backendConnectionStatus: toBackendConnectionStatus(input.model.wire_backendConnection),
+    backendConnectionStatus: toBackendConnectionStatus(input.model),
     queryCache: input.model,
   }
 
@@ -220,13 +220,11 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
   }
 
   const settings = SettingsFrontend.init({ ctx })
-  const wire = WireFrontend.init({ ctx })
   const space = SpacesFrontend.init({ ctx })
 
   const model: ModelFrontend = {
     ...frontend.model,
     ...space.model,
-    ...wire.model,
     ...settings.model,
   }
 
@@ -234,7 +232,6 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
     Eff.tag('frontend', frontend.eff),
     Eff.tag('settings', settings.eff),
     Eff.tag('spaces', space.eff),
-    Eff.tag('wire', wire.eff),
   ])
 
   const msgOut = Msg.batch(PreloadSoundsCmd.init(Object.values(APP_SOUND)))

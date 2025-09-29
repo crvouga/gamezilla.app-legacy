@@ -1,32 +1,44 @@
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { Sub } from '~/@/sub'
 import { Time } from '~/@/time/time'
+import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { PingId } from './ping-id'
 import { toPingRate } from './ping-rate'
-import { FrontendModule, initModel, Model, MsgFrontend, PingItem } from './types'
-import { TimeSpan } from '~/@/time/time-span'
+import {
+  FrontendCtxModule,
+  FrontendModule,
+  INITIAL_PINGS,
+  isMsgFrontend,
+  ModelFrontend,
+  MsgFrontend,
+  PingItem,
+} from './types'
+import { Eff } from '~/@/eff'
 
-const init: FrontendModule['init'] = (_input) => {
-  const model = initModel()
-
-  return {
-    model,
-  }
-}
-
-const update: FrontendModule['update'] = (input) => {
+const update = <T extends ModelFrontend>(input: {
+  ctx: FrontendCtxModule
+  model: T
+  msg?: unknown
+  msgIn?: unknown
+}): {
+  model: T
+  eff?: Eff<MsgFrontend>
+  msgOut?: unknown[]
+} => {
   const { msg, model } = input
 
-  if (!msg) return { model }
+  if (!isMsgFrontend(msg)) return { model }
 
   switch (msg.t) {
     case 'backendConnection_ping': {
       const pingNew: PingItem = { pingId: msg.pingId, pingAt: msg.now, pongAt: null }
 
-      const pingsNew = CappedOrderedDict.add(model.pings, msg.pingId, pingNew)
+      const pings = model.backendConnection_pings ?? INITIAL_PINGS
 
-      const modelNew: Model = { ...model, pings: pingsNew }
+      const pingsNew = CappedOrderedDict.add(pings, msg.pingId, pingNew)
+
+      const modelNew: T = { ...model, backendConnection_pings: pingsNew }
 
       return {
         model: modelNew,
@@ -37,15 +49,17 @@ const update: FrontendModule['update'] = (input) => {
     }
 
     case 'backendConnection_pong': {
-      const ping = CappedOrderedDict.get(model.pings, msg.pingId)
+      const pings = model.backendConnection_pings ?? INITIAL_PINGS
+
+      const ping = CappedOrderedDict.get(pings, msg.pingId)
 
       if (!ping) return { model }
 
       const pingNew: PingItem = { ...ping, pongAt: msg.now }
 
-      const pingsNew = CappedOrderedDict.set(model.pings, msg.pingId, pingNew)
+      const pingsNew = CappedOrderedDict.set(pings, msg.pingId, pingNew)
 
-      const modelNew: Model = { ...model, pings: pingsNew }
+      const modelNew: T = { ...model, backendConnection_pings: pingsNew }
 
       return { model: modelNew }
     }
@@ -75,5 +89,4 @@ const pongs: FrontendModule['subscriptions'] = (input) => {
 export const BackendConnectionFrontend = {
   subscriptions,
   update,
-  init,
 }

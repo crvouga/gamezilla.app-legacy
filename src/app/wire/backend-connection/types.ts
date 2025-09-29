@@ -1,13 +1,14 @@
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { s } from '~/@/schema'
 import { UnixMs } from '~/@/time/unix-ms'
-import { TopicContract } from '~/@/topic/topic-contract'
 import { ITopicClient } from '~/@/topic/topic-client/interface'
+import { TopicContract } from '~/@/topic/topic-contract'
 import { ClientSessionId } from '~/@/wire/client-session-id'
-import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
+import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { PingId } from './ping-id'
+import { isAnyMsg } from '~/@/msg/msg'
 
 export type PingItem = {
   pingId: PingId
@@ -16,14 +17,10 @@ export type PingItem = {
 }
 
 export type Model = {
-  pings: CappedOrderedDict<PingId, PingItem>
+  backendConnection_pings?: CappedOrderedDict<PingId, PingItem>
 }
 
-export const initModel = (): Model => {
-  return {
-    pings: CappedOrderedDict.init({ maxSize: 5 }),
-  }
-}
+export const INITIAL_PINGS: CappedOrderedDict<PingId, PingItem> = CappedOrderedDict.init({ maxSize: 5 })
 
 export type ModelFrontend = Model
 
@@ -35,6 +32,10 @@ export type PingPongMsg = s.Infer<typeof PingPongMsg>
 export type MsgFrontend =
   | { t: 'backendConnection_ping'; pingId: PingId; now: UnixMs }
   | { t: 'backendConnection_pong'; pingId: PingId; now: UnixMs }
+
+export const isMsgFrontend = (msg: unknown): msg is MsgFrontend => {
+  return isAnyMsg(msg) && msg.t.startsWith('backendConnection_')
+}
 
 export const topicContract = TopicContract.init({
   backendConnection_ping: {
