@@ -1,4 +1,4 @@
-import { isErr, Loading, NotAsked, Ok, Result, unwrapOr } from '~/@/result'
+import { Err, isErr, Loading, NotAsked, Ok, Result, unwrapOr } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Button } from '~/@/ui/button'
 import { IconUserCircle } from '~/@/ui/icon'
@@ -100,9 +100,9 @@ const continueAsGuest = async (input: {
     endedAt: null,
   }
 
-  const insertedSession = await input.ctx.userSessionDb.upsert(userSessionNew)
+  const insertedSession = await input.ctx.userSessionDb.upsert({ entities: [userSessionNew] })
 
-  if (isErr(insertedSession)) return insertedSession
+  if (isErr(insertedSession)) return Err(insertedSession.error.message)
 
   return Ok(guestAccount)
 }

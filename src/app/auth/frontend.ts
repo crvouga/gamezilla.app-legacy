@@ -17,7 +17,7 @@ import { PushScreenCmd } from '../@/frontend/push-screen-cmd.$msg'
 import { AuthScreenHeaderCta } from './@/frontend/ui/auth-screen-header-cta'
 import { AuthScreenLayout } from './@/frontend/ui/auth-screen-layout'
 import { GuestSessionMappingDb } from './@/guest-session-mapping/guest-session-mapping-db'
-import { GuestSessionMappingSync } from './@/guest-session-mapping/guest-session-mapping-sync'
+import { GuestSessionMappingDbSync } from './@/guest-session-mapping/guest-session-mapping-sync'
 import { UserAccountDb } from './@/user-account/user-account-db'
 import { UserAccountDbSync } from './@/user-account/user-account-db-sync'
 import { UserSessionDb } from './@/user-session/user-session-db'
@@ -63,7 +63,7 @@ const initCtx = async (input: {
 
   input.ctx.syncEngine.registerSync(UserAccountDbSync({ logger: input.ctx.logger, userAccountDb }))
   input.ctx.syncEngine.registerSync(UserSessionDbSync({ logger: input.ctx.logger, userSessionDb }))
-  input.ctx.syncEngine.registerSync(GuestSessionMappingSync({ logger: input.ctx.logger, guestSessionMappingDb }))
+  input.ctx.syncEngine.registerSync(GuestSessionMappingDbSync({ logger: input.ctx.logger, guestSessionMappingDb }))
 
   return {
     ...input.ctx,

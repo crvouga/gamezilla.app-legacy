@@ -1,5 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { NotAsked } from '~/@/result'
+import { UnixMs } from '~/@/time/unix-ms'
 import { IconPowerOff } from '~/@/ui/icon'
 import { MenuItem } from '~/@/ui/menu-item'
 import { Typography } from '~/@/ui/typography'
@@ -35,7 +36,12 @@ const update: FrontendModule['update'] = (input) => {
           opened: null,
         },
         async eff(_dispatch) {
-          await input.ctx.userSessionDb.zapByClientSessionId(input.ctx.clientSessionId)
+          await input.ctx.userSessionDb.update({
+            where: { op: '=', column: 'clientSessionId', value: input.ctx.clientSessionId },
+            set: { endedAt: UnixMs.now() },
+            limit: 1,
+            offset: 0,
+          })
         },
       }
     }

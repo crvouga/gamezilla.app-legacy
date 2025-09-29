@@ -1,24 +1,26 @@
-import { NotAsked, Ok } from '~/@/result'
+import { QueryInput } from '~/@/db/interface/query-input/query-input'
+import { NotAsked } from '~/@/result'
 import { Sub } from '~/@/sub'
-import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
+import { ClientSessionId } from '~/@/wire/client-session-id'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { UserProfileId } from '~/app/@/data/user-profile-id'
 import { Username } from '~/app/@/data/username'
+import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
+import { UserAccountDbQueryCache } from '../@/user-account/user-account-db-query-cache'
 import { UserSession } from '../@/user-session/user-session'
+import { UserSessionDbQueryCache } from '../@/user-session/user-session-db-query-cache'
 import { FrontendModule, ModelFrontend, MsgFrontend } from './types'
 
 const init: ModelFrontend = {
   status: NotAsked,
-  userSessions: {},
-  userAccounts: {},
 }
 
 export type CurrentUserState =
@@ -45,22 +47,23 @@ export const toCurrentUserState = (input: { model: ModelFrontend; ctx: AppFronte
       return { t: 'logged-out' }
     }
     case 'ok': {
-      const userSession = Object.values(input.model.userSessions).find(
-        (userSession) => userSession.clientSessionId === input.ctx.clientSessionId,
-      )
+      const userSessions = UserSessionDbQueryCache.read(input.ctx, toQueryUserSessionByClientSessionId(input.ctx))
+      const userSession = userSessions.find((userSession) => userSession.clientSessionId === input.ctx.clientSessionId)
 
       if (!userSession) return { t: 'logged-out' }
 
-      const maybeUserAccount = Object.values(input.model.userAccounts).find(
+      const maybeUserAccount = UserAccountDbQueryCache.read(input.ctx, { userId: userSession.userId }).find(
         (userAccount) => userAccount.userId === userSession.userId,
       )
 
-      const userAccount: UserAccount = maybeUserAccount ?? {
+      const userAccountFallback: UserAccount = {
         createdAt: input.ctx.now,
         phoneNumber: null,
         role: 'normal',
         userId: userSession.userId,
       }
+
+      const userAccount: UserAccount = maybeUserAccount ?? userAccountFallback
 
       const maybeUserProfile = input.ctx.profilesByUserId[userSession.userId]
 
@@ -134,32 +137,25 @@ const watchForLogin = (
 
 const updateFromMsg: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
-    case 'got-user-accounts': {
-      return {
-        model: {
-          ...input.model,
-          userAccounts: input.msg.userAccounts.reduce(
-            (acc, userAccount) => ({ ...acc, [userAccount.userId]: userAccount }),
-            {},
-          ),
-        },
-      }
+    case 'got-msg-out': {
+      return { model: input.model, msgOut: [input.msg.msgOut] }
     }
-    case 'got-user-sessions': {
-      return {
-        model: {
-          ...input.model,
-          status: Ok(null),
-          userSessions: input.msg.userSessions.reduce(
-            (acc, userSession) => ({ ...acc, [userSession.userSessionId]: userSession }),
-            {},
-          ),
-        },
-      }
+    default: {
+      return { model: input.model }
     }
   }
+}
+
+const toQueryUserSessionByClientSessionId = (input: { clientSessionId: ClientSessionId }): QueryInput<UserSession> => {
   return {
-    model: input.model,
+    where: {
+      op: '=',
+      column: 'clientSessionId',
+      value: input.clientSessionId,
+    },
+    orderBy: [{ column: 'createdAt', direction: 'desc' }],
+    limit: 10,
+    offset: 0,
   }
 }
 
@@ -180,27 +176,10 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
     //       },
     //     }),
 
-    input.ctx.userSessionDb.sub(
-      {
-        whereAnd: {
-          clientSessionId: {
-            equals: input.ctx.clientSessionId,
-          },
-        },
-        order: {
-          createdAt: 'desc',
-        },
-        pagination: {
-          limit: 10,
-          offset: 0,
-        },
-      },
-      (userSessions): MsgFrontend => {
-        return {
-          t: 'got-user-sessions',
-          userSessions,
-        }
-      },
+    UserSessionDbQueryCache.liveQuery(
+      input.ctx.userSessionDb,
+      toQueryUserSessionByClientSessionId(input.ctx),
+      (msgOut): MsgFrontend => ({ t: 'got-msg-out', msgOut }),
     ),
   ])
 }

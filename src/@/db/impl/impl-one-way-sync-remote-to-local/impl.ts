@@ -63,9 +63,9 @@ const init = <TEntity extends Record<string, unknown>, TRelated extends Record<s
   })
   return {
     ...config.local,
-    liveQuery(query) {
+    liveQuery(query, map) {
       remoteToLocalSync(query)
-      return config.local.liveQuery(query)
+      return config.local.liveQuery(query, map)
     },
     async query(query) {
       await remoteToLocalSync(query)

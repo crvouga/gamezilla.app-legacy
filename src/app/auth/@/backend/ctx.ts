@@ -1,6 +1,6 @@
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { GuestSessionMappingDb, IGuestSessionMappingDb } from '../guest-session-mapping/guest-session-mapping-db'
-import { GuestSessionMappingSync } from '../guest-session-mapping/guest-session-mapping-sync'
+import { GuestSessionMappingDbSync } from '../guest-session-mapping/guest-session-mapping-sync'
 import { IUserAccountDb, UserAccountDb } from '../user-account/user-account-db'
 import { UserAccountDbSync } from '../user-account/user-account-db-sync'
 import { IUserSessionDb, UserSessionDb } from '../user-session/user-session-db'
@@ -23,7 +23,7 @@ const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> 
     migrationPolicy: input.ctx.migrationPolicy,
   })
 
-  const userSessionDb = await UserSessionDb({
+  const userSessionDb = await UserSessionDb.init({
     t: 'sql',
     sqlDb: input.ctx.sqlDb,
     logger: input.ctx.logger,
@@ -41,7 +41,7 @@ const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> 
 
   input.ctx.syncEngine.registerSync(UserSessionDbSync({ userSessionDb, logger: input.ctx.logger }))
 
-  input.ctx.syncEngine.registerSync(GuestSessionMappingSync({ guestSessionMappingDb, logger: input.ctx.logger }))
+  input.ctx.syncEngine.registerSync(GuestSessionMappingDbSync({ guestSessionMappingDb, logger: input.ctx.logger }))
 
   const verifySMS = await VerifySMSFactory.createForEnvironment({
     logger: input.ctx.logger.child(['verifySMS']),
@@ -64,10 +64,11 @@ const initUnitTest = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBack
     async simulateLatency() {},
   })
 
-  const userSessionDb = await UserSessionDb({
-    t: 'in-memory',
-    async simulateLatency() {},
+  const userSessionDb = await UserSessionDb.init({
+    t: 'sql',
     logger: input.ctx.logger,
+    migrationPolicy: input.ctx.migrationPolicy,
+    sqlDb: input.ctx.sqlDb,
   })
 
   const verifySMS = await VerifySMSFactory.createInHouseUnitTest({

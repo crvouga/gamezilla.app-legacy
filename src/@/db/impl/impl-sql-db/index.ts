@@ -10,8 +10,8 @@ import { Sub } from '~/@/sub'
 import { IDb } from '../../interface'
 import { QueryInput } from '../../interface/query-input/query-input'
 import { QueryOutput } from '../../interface/query-output/query-output'
-import { toOrderBySql } from './order-by-sql'
 import { quoteIfKeyword } from './keywords'
+import { toOrderBySql } from './order-by-sql'
 import { toWhereSql } from './where-sql'
 
 export type ImplSqlDb<
@@ -109,9 +109,9 @@ const init = <
       return output
     },
 
-    liveQuery(queryInput) {
+    liveQuery(queryInput, map) {
       const { sql, vars } = toSql(queryInput)
-      return Sub.map(
+      const subOut: Sub<QueryOutput<TEntity, TRelated>> = Sub.map(
         self.sqlDb.sub({ sql, vars, schema: self.schema }, (rows: TRow[]) => {
           const entities = rows.map(self.rowToEntity)
           return entities
@@ -127,6 +127,8 @@ const init = <
           })
         },
       )
+
+      return Sub.map(subOut, map)
     },
 
     async upsert(input) {
@@ -184,6 +186,38 @@ ${sqlColumns.map((column) => `\t${quoteIfKeyword(column)} = EXCLUDED.${quoteIfKe
       return Ok({
         entities: input.entities,
       })
+    },
+
+    async update(input) {
+      const whereSql = input.where ? toWhereSql(input.where, self.entityKeyToSqlColumn) : null
+      const setEntries = Object.entries(input.set)
+      const setColumns = setEntries.flatMap(([key]): (keyof TRow)[] => {
+        const sqlColumn = self.entityKeyToSqlColumn(key as keyof TEntity)
+        if (!sqlColumn) return []
+        const isComputedColumn = self.computedColumnKeys?.includes(sqlColumn)
+        if (isComputedColumn) return []
+        return [sqlColumn]
+      })
+
+      const vars: Sql.Vars = {}
+      setColumns.forEach((column) => {
+        const value = self.entityToRow(input.set as TEntity)[column]
+        vars[String(column)] = value as any
+      })
+
+      const sql = `
+UPDATE ${self.viewName}
+SET
+${setColumns.map((column) => `\t${quoteIfKeyword(column)} = :${String(column)}`).join(',\n')}
+${whereSql}
+LIMIT ${input.limit}
+OFFSET ${input.offset}`
+
+      const queried = await self.sqlDb.query({ sql, vars, schema: self.schema })
+
+      if (isErr(queried)) return mapErr(queried, DbErr.from)
+
+      return Ok(null)
     },
   }
 }

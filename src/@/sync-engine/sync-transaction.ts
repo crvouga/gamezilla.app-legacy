@@ -4,7 +4,11 @@ import { ILogger } from '../logger'
 import { CrudTransaction } from './crud-transaction/crud-transaction'
 
 export type ISync = {
-  push(input: { meta?: Record<string, unknown>; crudTransaction: CrudTransaction }): Promise<Result<string, null>>
+  push(input: {
+    //
+    meta?: Record<string, unknown>
+    crudTransaction: CrudTransaction
+  }): Promise<Result<string, null>>
   pull?(input: {
     meta?: Record<string, unknown>
     query: unknown

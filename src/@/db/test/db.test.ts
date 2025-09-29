@@ -130,4 +130,34 @@ describe('Db', () => {
       expect(unwrap(before).entities.items).toEqual(expected)
     }
   })
+
+  test('update', async () => {
+    for (const f of await Fixtures()) {
+      const todo = await Todo.random({ completed: false })
+
+      unwrap(await f.todoDb.upsert({ entities: [todo] }))
+
+      const before = await f.todoDb.query({
+        where: { op: '=', column: 'id', value: todo.id },
+        orderBy: [{ column: 'id', direction: 'asc' }],
+        limit: 1,
+        offset: 0,
+      })
+      const updated = await f.todoDb.update({
+        where: { op: '=', column: 'id', value: todo.id },
+        set: { completed: true },
+        limit: 1,
+        offset: 0,
+      })
+      const after = await f.todoDb.query({
+        where: { op: '=', column: 'id', value: todo.id },
+        orderBy: [{ column: 'id', direction: 'asc' }],
+        limit: 1,
+        offset: 0,
+      })
+      expect(unwrap(before).entities.items[0]?.completed).toEqual(false)
+      expect(unwrap(updated)).toEqual(null)
+      expect(unwrap(after).entities.items[0]?.completed).toEqual(true)
+    }
+  })
 })

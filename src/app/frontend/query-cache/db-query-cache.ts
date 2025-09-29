@@ -1,0 +1,73 @@
+import { indexBy } from '~/@/array/index-by'
+import { IDb } from '~/@/db/interface'
+import { QueryInput } from '~/@/db/interface/query-input/query-input'
+import { deterministicJsonStringify } from '~/@/json/deterministic-stringify'
+import { isOk } from '~/@/result'
+import { s } from '~/@/schema'
+import { Sub } from '~/@/sub'
+import { GotQueryCacheMsg } from '~/app/frontend/query-cache/got-query-cache-msg.$msg'
+import { QueryCache } from '~/app/frontend/query-cache/query-cache'
+
+const init = <TEntity extends Record<string, unknown>, TRelated extends Record<string, unknown>>(config: {
+  entityType: string
+  lastUpdatedAtKey: keyof TEntity
+  primaryKey: keyof TEntity
+  entity: s.Schema<TEntity>
+  related: s.Schema<TRelated>
+}) => {
+  type Db = IDb.IDb<TEntity, TRelated>
+
+  const liveQuery = <TMsg>(db: Db, queryInput: QueryInput<TEntity>, mapper: (m: unknown) => TMsg): Sub<TMsg> => {
+    return db.liveQuery(queryInput, (result) => {
+      return mapper(
+        GotQueryCacheMsg.init({
+          entities: isOk(result) ? indexBy(result.value.entities.items, (c) => String(c[config.primaryKey])) : {},
+          query: queryInput,
+          results: isOk(result) ? result.value.entities.items.map((c) => String(c[config.primaryKey])) : [],
+          t: 'got-entities',
+          entityType: config.entityType,
+          lastUpdatedAtKey: String(config.lastUpdatedAtKey),
+        }),
+      )
+    })
+  }
+
+  const read = (ctx: { queryCache: QueryCache }, query: QueryInput<TEntity>): TEntity[] => {
+    const queryKey = deterministicJsonStringify(query)
+    const results = ctx.queryCache.results[queryKey]
+    const entities = results?.map((id) => ctx.queryCache.entities.byType[config.entityType]?.byId[id] as TEntity) ?? []
+    return entities
+  }
+
+  const isLoading = (ctx: { queryCache: QueryCache }, query: QueryInput<TEntity>): boolean => {
+    const queryKey = deterministicJsonStringify(query)
+    return ctx.queryCache.results[queryKey] === undefined
+  }
+
+  const isEmpty = (ctx: { queryCache: QueryCache }, query: QueryInput<TEntity>): boolean => {
+    const entities = read(ctx, query)
+    return !isLoading(ctx, query) && entities.length === 0
+  }
+
+  const gotEntity = (entityId: string, entityNew: TEntity): GotQueryCacheMsg => {
+    return GotQueryCacheMsg.init({
+      t: 'got-entity',
+      entityType: config.entityType,
+      id: entityId,
+      entity: entityNew,
+      lastUpdatedAtKey: String(config.lastUpdatedAtKey),
+    })
+  }
+
+  return {
+    gotEntity,
+    liveQuery,
+    read,
+    isLoading,
+    isEmpty,
+  }
+}
+
+export const DbQueryCache = {
+  init,
+}

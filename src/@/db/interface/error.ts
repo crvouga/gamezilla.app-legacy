@@ -1,7 +1,7 @@
 import { s } from '~/@/schema'
 
 const schema = s.obj({
-  message: s.unknown,
+  message: s.str(),
 })
 
 export type DbErr = s.Infer<typeof schema>

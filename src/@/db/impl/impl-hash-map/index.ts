@@ -87,15 +87,15 @@ const init = <TEntity extends Record<string, unknown>, TRelated extends Record<s
     // @ts-ignore
     indexes,
     query,
-    liveQuery(queryInput) {
+    liveQuery(queryInput, map) {
       const queryKey = QueryInput.toKey(queryInput)
       liveQueriesByQueryKey.set(queryKey, queryInput)
       const existing = pubSubsByQueryKey.get(queryKey)
-      if (existing) return existing
+      if (existing) return Sub.map(existing, map)
       const pubSub = Sub.init<QueryOutput<TEntity, TRelated>>()
       pubSubsByQueryKey.set(queryKey, pubSub)
       enqueuePublish()
-      return {
+      const sub: Sub<QueryOutput<TEntity, TRelated>> = {
         ...pubSub,
         sub(callback) {
           const unsub = pubSub.sub(callback)
@@ -108,6 +108,7 @@ const init = <TEntity extends Record<string, unknown>, TRelated extends Record<s
           }
         },
       }
+      return Sub.map(sub, map)
     },
     async upsert(input) {
       for (const unmappedEntity of input.entities) {

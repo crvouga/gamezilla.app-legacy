@@ -1,24 +1,18 @@
-import * as ImplInMemory from './impl-in-memory'
-import * as ImplSql from './impl-sql-db'
-import * as ImplSqlWithCache from './impl-sql-db-with-cache'
+import { ImplSqlDb } from './impl-sql-db'
 import type { IUserSessionDb } from './interface'
 
-export type Config = ImplInMemory.Config | ImplSql.Config | ImplSqlWithCache.Config
+export type UserSessionDb = ImplSqlDb
 
-export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => {
+const init = async (config: UserSessionDb): Promise<IUserSessionDb> => {
   const logger = config.logger.child(['user-session-db'])
 
   switch (config.t) {
-    case 'in-memory': {
-      return ImplInMemory.UserSessionDb({ ...config, logger })
-    }
-
     case 'sql': {
-      return ImplSql.UserSessionDb({ ...config, logger })
-    }
-
-    case 'sql-with-cache': {
-      return ImplSqlWithCache.UserSessionDb({ ...config, logger })
+      return ImplSqlDb.init({ ...config, logger })
     }
   }
+}
+
+export const UserSessionDb = {
+  init,
 }

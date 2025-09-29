@@ -40,11 +40,12 @@ describe('LoginWithSMSBackend', () => {
     if (!userAccount) throw new Error('No account found')
     const userSession = unwrap(
       await f.ctx.userSessionDb.query({
-        whereAnd: { userId: { equals: userAccount.userId } },
-        order: { createdAt: 'desc' },
-        pagination: { limit: 1, offset: 0 },
+        where: { op: 'and', clauses: [{ op: '=', column: 'userId', value: userAccount.userId }] },
+        orderBy: [{ column: 'createdAt', direction: 'desc' }],
+        limit: 1,
+        offset: 0,
       }),
-    ).items[0]
+    ).entities.items[0]
     if (!userSession) throw new Error('No session found')
 
     expect(before).toEqual(null)

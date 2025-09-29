@@ -191,7 +191,10 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       return {
         model: modelNew,
         async eff(_dispatch) {
-          await Promise.all([input.ctx.userSessionDb.upsert(userSession), input.ctx.userAccountDb.upsert(userAccount)])
+          await Promise.all([
+            input.ctx.userSessionDb.upsert({ entities: [userSession] }),
+            input.ctx.userAccountDb.upsert(userAccount),
+          ])
         },
       }
     }

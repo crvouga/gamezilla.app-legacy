@@ -168,11 +168,11 @@ const verifyCode = async (
     endedAt: null,
   }
 
-  const insertedSession = await input.ctx.userSessionDb.upsert(userSessionNew)
+  const insertedSession = await input.ctx.userSessionDb.upsert({ entities: [userSessionNew] })
 
   if (isErr(insertedSession)) {
     logger.error(`Failed to insert new session: ${insertedSession.error}`)
-    return Err({ t: 'database-error', error: insertedSession.error })
+    return Err({ t: 'database-error', error: insertedSession.error.message })
   }
 
   return Ok({ userAccount: account, userSession: userSessionNew })

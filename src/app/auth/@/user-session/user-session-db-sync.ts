@@ -25,13 +25,17 @@ export const UserSessionDbSync = (config: { userSessionDb: IUserSessionDb; logge
           }
 
           const inserted = await config.userSessionDb.upsert({
-            ...userSession.value,
-            sessionId: sessionId!,
+            entities: [
+              {
+                ...userSession.value,
+                sessionId: sessionId!,
+              },
+            ],
           })
 
           if (isErr(inserted)) {
             logger.error(`push: failed to upsert user session: ${inserted.error}`)
-            return Err(inserted.error)
+            return Err(inserted.error.message)
           }
           return Ok(null)
         }
@@ -48,12 +52,14 @@ export const UserSessionDbSync = (config: { userSessionDb: IUserSessionDb; logge
             return Err(updates.error)
           }
           const updated = await config.userSessionDb.update({
-            userSessionId: userSessionId.value,
-            updates: updates.value,
+            where: { op: '=', column: 'userSessionId', value: userSessionId.value },
+            set: updates.value,
+            limit: 1,
+            offset: 0,
           })
           if (isErr(updated)) {
             logger.error(`push: failed to update user session: ${updated.error}`)
-            return Err(updated.error)
+            return Err(updated.error.message)
           }
           return updated
         }

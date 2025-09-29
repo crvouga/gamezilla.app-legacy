@@ -2,6 +2,8 @@ import { s } from '~/@/schema'
 import { Sub } from '~/@/sub'
 import { QueryInput } from './query-input/query-input'
 import { QueryOutput } from './query-output/query-output'
+import { UpdateInput } from './update-input/update-input'
+import { UpdateOutput } from './update-output/update-output'
 import { UpsertInput } from './upsert-input/upsert-input'
 import { UpsertOutput } from './upsert-output/upsert-output'
 
@@ -45,6 +47,7 @@ export type InferUpsertOutput<T> = T extends Parser<infer TEntity, infer _TRelat
 
 export type IDb<TEntity extends Record<string, unknown>, TRelated extends Record<string, unknown>> = {
   query: (query: QueryInput<TEntity>) => Promise<QueryOutput<TEntity, TRelated>>
-  liveQuery: (query: QueryInput<TEntity>) => Sub<QueryOutput<TEntity, TRelated>>
+  liveQuery: <TMsg>(query: QueryInput<TEntity>, map: (output: QueryOutput<TEntity, TRelated>) => TMsg) => Sub<TMsg>
   upsert: (input: UpsertInput<TEntity>) => Promise<UpsertOutput<TEntity>>
+  update: (input: UpdateInput<TEntity>) => Promise<UpdateOutput<TEntity>>
 }

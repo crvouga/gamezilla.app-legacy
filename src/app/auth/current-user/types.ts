@@ -1,32 +1,18 @@
-import { s } from '~/@/schema'
 import { RemoteResult } from '~/@/result'
 import { RPC } from '~/@/rpc'
-import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
+import { s } from '~/@/schema'
 import { UserAccount } from '~/app/@/data/user-account'
-import { UserId } from '~/app/@/data/user-id'
+import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
-import { UserSession } from '../@/user-session/user-session'
-import { UserSessionId } from '../@/user-session/user-session-id'
 
 export type ModelFrontend = {
   status: RemoteResult<string, null>
-  userSessions: {
-    [userSessionId: UserSessionId]: UserSession
-  }
-  userAccounts: {
-    [userId: UserId]: UserAccount
-  }
 }
 
-export type MsgFrontend =
-  | {
-      t: 'got-user-accounts'
-      userAccounts: UserAccount[]
-    }
-  | {
-      t: 'got-user-sessions'
-      userSessions: UserSession[]
-    }
+export type MsgFrontend = {
+  t: 'got-msg-out'
+  msgOut: unknown
+}
 
 export type MsgToBackend = { t: 'noop' }
 
