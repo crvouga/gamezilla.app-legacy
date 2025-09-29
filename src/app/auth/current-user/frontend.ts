@@ -1,6 +1,8 @@
 import { QueryInput } from '~/@/db/interface/query-input/query-input'
 import { Eff } from '~/@/eff'
-import { Err, isErr, NotAsked, Ok, Result } from '~/@/result'
+import { isAnyMsg } from '~/@/msg/msg'
+import { Err, isErr, Ok, RemoteResult, Result } from '~/@/result'
+import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { UserAccount } from '~/app/@/data/user-account'
@@ -19,10 +21,23 @@ import { UserAccountDbQueryCache } from '../@/user-account/user-account-db-query
 import { UserSession } from '../@/user-session/user-session'
 import { UserSessionDbQueryCache } from '../@/user-session/user-session-db-query-cache'
 import { UserSessionId } from '../@/user-session/user-session-id'
-import { FrontendModule, isMsgFrontend, ModelFrontend, MsgFrontend } from './types'
+import { rpcContract } from './types'
 
-const init: ModelFrontend = {
-  currentUser_status: NotAsked,
+export type ModelFrontend = {
+  currentUser_status?: RemoteResult<string, null>
+}
+
+export type MsgFrontend = {
+  t: 'currentUser_gotMsgOut'
+  msgOut: unknown
+}
+
+export const isMsgFrontend = (msg: unknown): msg is MsgFrontend => {
+  return isAnyMsg(msg) && msg.t.startsWith('currentUser_')
+}
+
+type Ctx = AuthFrontendCtx & {
+  rpc: RPC.Client<typeof rpcContract>
 }
 
 export type CurrentUserState =
@@ -110,7 +125,7 @@ export const toCurrentUserState = (input: { model: ModelFrontend; ctx: AppFronte
   }
 }
 
-const update = <T extends ModelFrontend>(input: {
+export const update = <T extends ModelFrontend>(input: {
   ctx: AuthFrontendCtx
   model: T
   msg?: unknown
@@ -270,11 +285,11 @@ const updateFromMsg: typeof update = (input) => {
   }
 }
 
-const subscriptions: FrontendModule['subscriptions'] = (input) => {
+export const subscriptions = (input: { ctx: Ctx; model: ModelFrontend }): Sub<MsgFrontend> => {
   return Sub.batch<MsgFrontend>([subscriptionsUserSession(input), subscriptionsUserAccount(input)])
 }
 
-const subscriptionsUserSession: FrontendModule['subscriptions'] = (input) => {
+const subscriptionsUserSession: typeof subscriptions = (input) => {
   return UserSessionDbQueryCache.watch(
     input.ctx.userSessionDb,
     toQueryUserSessionByClientSessionId(input.ctx),
@@ -282,7 +297,7 @@ const subscriptionsUserSession: FrontendModule['subscriptions'] = (input) => {
   )
 }
 
-const subscriptionsUserAccount: FrontendModule['subscriptions'] = (input) => {
+const subscriptionsUserAccount: typeof subscriptions = (input) => {
   const queryUserSession = toQueryUserSessionByClientSessionId(input.ctx)
   const userSessions = UserSessionDbQueryCache.query(input.ctx, queryUserSession)
   const userSession = userSessions[0]
@@ -292,10 +307,4 @@ const subscriptionsUserAccount: FrontendModule['subscriptions'] = (input) => {
     toQueryUserAccountByUserId({ userId: userSession.userId }),
     (msgOut) => ({ t: 'currentUser_gotMsgOut', msgOut }),
   )
-}
-
-export const CurrentUserFrontend = {
-  subscriptions,
-  update,
-  init,
 }

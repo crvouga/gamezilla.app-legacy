@@ -221,7 +221,6 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
 
   const settings = SettingsFrontend.init({ ctx })
   const wire = WireFrontend.init({ ctx })
-  const auth = AuthFrontend.init({ ctx })
   const space = SpacesFrontend.init({ ctx })
   const profile = ProfileFrontend.init({ ctx })
 
@@ -229,14 +228,13 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
     ...frontend.model,
     ...space.model,
     ...wire.model,
-    ...auth.model,
     ...profile.model,
     ...settings.model,
   }
 
   const eff = Eff.batch<MsgFrontend>([
     Eff.tag('frontend', frontend.eff),
-    Eff.tag('auth', auth.eff),
+
     Eff.tag('settings', settings.eff),
     Eff.tag('profile', profile.eff),
     Eff.tag('spaces', space.eff),

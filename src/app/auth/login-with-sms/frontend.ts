@@ -1,13 +1,20 @@
 import { Iso3166Alpha2Code } from '~/@/country/iso-3166-alpha-2-code'
+import { Eff } from '~/@/eff'
+import { Translator } from '~/@/l18n/generated'
+import { TranslatedText } from '~/@/l18n/translations'
+import { isAnyMsg } from '~/@/msg/msg'
 import { PhoneNumber } from '~/@/phone-number'
 import { isErr, NotAsked, Remote, RemoteResult } from '~/@/result'
+import { RPC } from '~/@/rpc'
 import { TimeSpan } from '~/@/time/time-span'
+import { UnixMs } from '~/@/time/unix-ms'
 import { IconMobilePhone } from '~/@/ui/icon'
 import { TextField } from '~/@/ui/text-field'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Frag } from '~/@/vdom/primitives/frag'
 import { Text } from '~/@/vdom/primitives/text'
+import { sx } from '~/@/vdom/style/sx'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { FocusViewCmd } from '~/app/@/frontend/focus-view-cmd.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -15,21 +22,13 @@ import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ReplaceScreenCmd } from '~/app/@/frontend/replace-screen-cmd.$msg'
 import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
-import { AuthScreenFormLayout } from '../@/frontend/ui/auth-screen-form-layout'
-
-import { Eff } from '~/@/eff'
-import { Translator } from '~/@/l18n/generated'
-import { TranslatedText } from '~/@/l18n/translations'
-import { isAnyMsg } from '~/@/msg/msg'
-import { RPC } from '~/@/rpc'
-import { UnixMs } from '~/@/time/unix-ms'
-import { sx } from '~/@/vdom/style/sx'
 import { SendCodeProblem } from '../@/backend/verify-sms/send-code-problem'
 import { VerifyCodeProblem } from '../@/backend/verify-sms/verify-code-problem'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
+import { AuthScreenFormLayout } from '../@/frontend/ui/auth-screen-form-layout'
 import { rpcContract, Sent, Verified } from './types'
 
-export type ModelFrontend = {
+export type Model = {
   loginWithSms_phone?: string
   loginWithSms_phoneError?: TranslatedText | null
   loginWithSms_countryCode?: Iso3166Alpha2Code
@@ -41,7 +40,7 @@ export type ModelFrontend = {
   loginWithSms_verifiedAt?: UnixMs | null
 }
 
-export const toSendErrorMessage = (input: { model: ModelFrontend; ctx: { t: Translator } }): TranslatedText | null => {
+const toSendErrorMessage = (input: { model: Model; ctx: { t: Translator } }): TranslatedText | null => {
   const send = input.model.loginWithSms_sent ?? NotAsked
 
   if (send.t === 'loading' || send.t === 'not-asked') {
@@ -59,10 +58,7 @@ export const toSendErrorMessage = (input: { model: ModelFrontend; ctx: { t: Tran
   return null
 }
 
-export const toVerifyErrorMessage = (input: {
-  model: ModelFrontend
-  ctx: { t: Translator }
-}): TranslatedText | null => {
+const toVerifyErrorMessage = (input: { model: Model; ctx: { t: Translator } }): TranslatedText | null => {
   const verified = input.model.loginWithSms_verified ?? NotAsked
 
   if (verified.t === 'loading' || verified.t === 'not-asked') {
@@ -96,27 +92,15 @@ const isMsg = (msg: unknown): msg is MsgFrontend => {
   return isAnyMsg(msg) && msg.t.startsWith('loginWithSms_')
 }
 
-export type Ctx = AuthFrontendCtx & {
+type Ctx = AuthFrontendCtx & {
   rpc: RPC.Client<typeof rpcContract>
-}
-
-export const init: ModelFrontend = {
-  loginWithSms_code: '',
-  loginWithSms_codeError: null,
-  loginWithSms_phone: '',
-  loginWithSms_countryCode: Iso3166Alpha2Code.of('US'),
-  loginWithSms_phoneError: null,
-  loginWithSms_sent: NotAsked,
-  loginWithSms_verified: NotAsked,
-  loginWithSms_sentCodeAt: null,
-  loginWithSms_verifiedAt: null,
 }
 
 const CODE_INPUT_VIEW_ID = 'codeInput'
 
 const PHONE_NUMBER_INPUT_VIEW_ID = 'phoneNumberInput'
 
-export const update = <T extends ModelFrontend>(input: {
+export const update = <T extends Model>(input: {
   ctx: Ctx
   model: T
   msg?: unknown
@@ -290,7 +274,7 @@ export const update = <T extends ModelFrontend>(input: {
   }
 }
 
-export const View = (input: { ctx: Ctx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
+export const View = (input: { ctx: Ctx; model: Model; dispatch: (msg: MsgFrontend) => void }) => {
   switch (input.ctx.currentScreen.n) {
     case 'auth': {
       switch (input.ctx.currentScreen.t) {
@@ -310,7 +294,7 @@ export const View = (input: { ctx: Ctx; model: ModelFrontend; dispatch: (msg: Ms
 
 export const TEST_ID_SEND_CODE_SCREEN = 'auth/send-code-screen'
 
-const ViewSendCode = (input: { ctx: Ctx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
+const ViewSendCode = (input: { ctx: Ctx; model: Model; dispatch: (msg: MsgFrontend) => void }) => {
   return h(AuthScreenFormLayout, {
     testId: TEST_ID_SEND_CODE_SCREEN,
     ctx: input.ctx,
@@ -343,7 +327,7 @@ const ViewSendCode = (input: { ctx: Ctx; model: ModelFrontend; dispatch: (msg: M
 
 export const TEST_ID_VERIFY_CODE_SCREEN = 'auth/verify-code-screen'
 
-const ViewVerifyCode = (input: { ctx: Ctx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
+const ViewVerifyCode = (input: { ctx: Ctx; model: Model; dispatch: (msg: MsgFrontend) => void }) => {
   if (input.ctx.currentScreen.t !== 'verify-code') return null
 
   const phoneNumber = input.ctx.currentScreen.phoneNumber

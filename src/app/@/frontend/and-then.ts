@@ -24,10 +24,10 @@ type Output<TModel, TMsg> = {
  * ```
  */
 export const andThen = <TModel, TMsg>(
-  initial: Output<TModel, TMsg>,
+  input: { model: TModel },
   ...updates: ((model: TModel) => Output<TModel, TMsg>)[]
 ): Output<TModel, TMsg> => {
-  let acc = initial
+  let acc: Output<TModel, TMsg> = { model: input.model }
   for (const update of updates) {
     const updated = update(acc.model)
     acc = {

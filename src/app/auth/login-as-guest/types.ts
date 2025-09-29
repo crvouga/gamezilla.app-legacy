@@ -5,7 +5,7 @@ import { AuthFrontendCtx } from '../@/frontend/ctx'
 import { isAnyMsg } from '~/@/msg/msg'
 
 export type ModelFrontend = {
-  loginAsGuest_request: RemoteResult<string, UserAccount>
+  loginAsGuest_request?: RemoteResult<string, UserAccount>
 }
 
 export type MsgFrontend =

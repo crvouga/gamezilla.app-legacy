@@ -32,14 +32,16 @@ export const PingPongMsg = s.obj({
 })
 export type PingPongMsg = s.Infer<typeof PingPongMsg>
 
-export type MsgFrontend = { t: 'ping'; pingId: PingId; now: UnixMs } | { t: 'pong'; pingId: PingId; now: UnixMs }
+export type MsgFrontend =
+  | { t: 'backendConnection_ping'; pingId: PingId; now: UnixMs }
+  | { t: 'backendConnection_pong'; pingId: PingId; now: UnixMs }
 
 export const topicContract = TopicContract.init({
-  ping: {
+  backendConnection_ping: {
     params: ClientSessionId,
     msg: PingPongMsg,
   },
-  pong: {
+  backendConnection_pong: {
     params: ClientSessionId,
     msg: PingPongMsg,
   },

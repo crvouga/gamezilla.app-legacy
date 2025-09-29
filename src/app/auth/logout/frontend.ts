@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { TranslatedText } from '~/@/l18n'
 import { isAnyMsg } from '~/@/msg/msg'
-import { NotAsked, RemoteResult } from '~/@/result'
+import { RemoteResult } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'
 import { IconPowerOff } from '~/@/ui/icon'
 import { MenuItem } from '~/@/ui/menu-item'
@@ -15,13 +15,8 @@ import { FloatingConfirmation } from '~/app/@/ui/floating/confirmation/floating-
 import { AuthFrontendCtx } from '../@/frontend/ctx'
 
 export type ModelFrontend = {
-  logout_request: RemoteResult<string, null>
-  logout_opened: 'logged-out' | null
-}
-
-export const init: ModelFrontend = {
-  logout_opened: null,
-  logout_request: NotAsked,
+  logout_request?: RemoteResult<string, null>
+  logout_opened?: 'logged-out' | null
 }
 
 export type Msg =

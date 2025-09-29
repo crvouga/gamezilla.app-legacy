@@ -23,16 +23,18 @@ import { UserAccountDb } from './@/user-account/user-account-db'
 import { UserAccountDbSync } from './@/user-account/user-account-db-sync'
 import { UserSessionDb } from './@/user-session/user-session-db'
 import { UserSessionDbSync } from './@/user-session/user-session-db-sync'
-import { CurrentUserFrontend, toCurrentUserState } from './current-user/frontend'
+import { CurrentUserFrontend } from './current-user'
+import { toCurrentUserState } from './current-user/frontend'
 import { ContinueAsGuestFrontend } from './login-as-guest/frontend'
 import { LoginWithSMSFrontend } from './login-with-sms'
 import { LogoutFrontend } from './logout'
-import { FrontendCtxModule, FrontendModule, isMsgBase, ModelFrontend, MsgFrontend, rpcContract } from './types'
+import { isMsgBase, ModelFrontend, MsgFrontend, rpcContract } from './types'
 
-const initCtx = async (input: {
-  ctx: AppFrontendCtxBase
+type Ctx = AuthFrontendCtx & {
   rpc: RPC.Client<typeof rpcContract>
-}): Promise<FrontendCtxModule> => {
+}
+
+const initCtx = async (input: { ctx: AppFrontendCtxBase; rpc: RPC.Client<typeof rpcContract> }): Promise<Ctx> => {
   const guestSessionMappingDb = GuestSessionMappingDb({ ...input.ctx, t: 'sql' })
   const userSessionDb = await UserSessionDb.init({ ...input.ctx, t: 'sql' })
   const userAccountDb = await UserAccountDb.init({ ...input.ctx, t: 'sql' })
@@ -49,22 +51,6 @@ const initCtx = async (input: {
   }
 }
 
-const init: FrontendModule['init'] = () => {
-  const model: ModelFrontend = {
-    ...LogoutFrontend.init,
-    ...CurrentUserFrontend.init,
-    ...LoginWithSMSFrontend.init,
-    ...ContinueAsGuestFrontend.init,
-  }
-  return {
-    model,
-  }
-}
-
-type Ctx = AuthFrontendCtx & {
-  rpc: RPC.Client<typeof rpcContract>
-}
-
 const update = <T extends ModelFrontend>(input: {
   ctx: Ctx
   model: T
@@ -76,7 +62,7 @@ const update = <T extends ModelFrontend>(input: {
   msgOut?: unknown[]
 } => {
   return andThen(
-    { model: input.model },
+    input,
     (model) => updateFromMsg({ ...input, model }),
     (model) => LoginWithSMSFrontend.update({ ...input, model }),
     (model) => CurrentUserFrontend.update({ ...input, model }),
@@ -98,11 +84,11 @@ const updateFromMsg: typeof update = (input) => {
   }
 }
 
-const subscriptions: FrontendModule['subscriptions'] = (input) => {
+const subscriptions = (input: { ctx: Ctx; model: ModelFrontend }): Sub<MsgFrontend> => {
   return Sub.batch<MsgFrontend>([CurrentUserFrontend.subscriptions(input)])
 }
 
-const View: FrontendModule['View'] = (input) => {
+const View = (input: { ctx: Ctx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
   switch (input.ctx.currentScreen.n) {
     case 'auth': {
       switch (input.ctx.currentScreen.t) {
@@ -121,7 +107,7 @@ const View: FrontendModule['View'] = (input) => {
 
 export const TEST_ID_LOGIN_SCREEN = 'auth/login-screen'
 
-const ViewLoginScreen: FrontendModule['View'] = (input) => {
+const ViewLoginScreen: typeof View = (input) => {
   return h(
     AuthScreenLayout,
     {
@@ -196,7 +182,6 @@ const ViewCurrentUserMenuItem = (input: {
 }
 
 export const AuthFrontend = {
-  init,
   update,
   subscriptions,
   View,

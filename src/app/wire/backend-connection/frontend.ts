@@ -11,7 +11,7 @@ const init: FrontendModule['init'] = (_input) => {
   const model = initModel()
 
   return {
-    model: model,
+    model,
   }
 }
 
@@ -21,7 +21,7 @@ const update: FrontendModule['update'] = (input) => {
   if (!msg) return { model }
 
   switch (msg.t) {
-    case 'ping': {
+    case 'backendConnection_ping': {
       const pingNew: PingItem = { pingId: msg.pingId, pingAt: msg.now, pongAt: null }
 
       const pingsNew = CappedOrderedDict.add(model.pings, msg.pingId, pingNew)
@@ -31,12 +31,12 @@ const update: FrontendModule['update'] = (input) => {
       return {
         model: modelNew,
         eff: () => {
-          input.ctx.topic.ping.pub(input.ctx.clientSessionId, { pingId: msg.pingId })
+          input.ctx.topic.backendConnection_ping.pub(input.ctx.clientSessionId, { pingId: msg.pingId })
         },
       }
     }
 
-    case 'pong': {
+    case 'backendConnection_pong': {
       const ping = CappedOrderedDict.get(model.pings, msg.pingId)
 
       if (!ping) return { model }
@@ -61,14 +61,14 @@ const pings: FrontendModule['subscriptions'] = (input) => {
   return Time.interval(
     `pings${TimeSpan.toMilliseconds(pingRate)}`,
     pingRate,
-    (now): MsgFrontend => ({ t: 'ping', now, pingId: PingId.generate() }),
+    (now): MsgFrontend => ({ t: 'backendConnection_ping', now, pingId: PingId.generate() }),
   )
 }
 
 const pongs: FrontendModule['subscriptions'] = (input) => {
-  return input.ctx.topic.pong.sub(
+  return input.ctx.topic.backendConnection_pong.sub(
     input.ctx.clientSessionId,
-    (msg): MsgFrontend => ({ t: 'pong', pingId: msg.pingId, now: UnixMs.now() }),
+    (msg): MsgFrontend => ({ t: 'backendConnection_pong', pingId: msg.pingId, now: UnixMs.now() }),
   )
 }
 
