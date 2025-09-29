@@ -1,3 +1,4 @@
+import { isAnyMsg } from '~/@/msg/msg'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
@@ -15,13 +16,17 @@ export type ModelFrontend = {
 
 export type MsgFrontend =
   | {
-      t: 'game'
+      t: 'game_gotGameMsg'
       spaceId: SpaceId
       c: GamesTypes.MsgFrontend
     }
   | {
-      t: 'game.clicked-game-tile'
+      t: 'game_clickedGameTile'
       gameName: GameName
       userId: UserId
       spaceId: SpaceId
     }
+
+export const isMsgFrontend = (msg: unknown): msg is MsgFrontend => {
+  return isAnyMsg(msg) && msg.t.startsWith('game_')
+}

@@ -11,7 +11,7 @@ import { rpcContract } from './types'
 
 const rpc = (config: { ctx: BackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
-    async 'spaces.sync.sync'(input) {
+    async spaces_sync(input) {
       const spaceId = Space.toSpaceId(input.space)
 
       if (!spaceId) {
@@ -56,7 +56,7 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
 const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
   const ctx = input.ctx
 
-  const msgSpaceSub = ctx.topic['spaces/msg'].subAll((c) => c)
+  const msgSpaceSub = ctx.topic.spaces_msg.subAll((c) => c)
 
   const spaceCache = new Map<SpaceId, Space>()
 

@@ -1,18 +1,18 @@
 import { Clickable } from '~/@/ui/clickable'
 import { Grid } from '~/@/ui/grid/grid'
-import { sx } from '~/@/vdom/style/sx'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { sx } from '~/@/vdom/style/sx'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SpaceFrontendCtx } from '../../@/frontend/ctx'
-import { SpaceFrontendModule } from '../../frontend/space-frontend'
-import type { MsgFrontend } from '../../types'
+import type { FrontendCtxModule, MsgFrontend } from '../../types'
 import { GameName } from '../games/@/game-name'
 import { ScreenLayoutHostSettingUpGame } from '../games/@/ui/screen-layout-host-setting-up-game/screen-layout-host-setting-up-game'
 import { GameCoverArt } from '../games/cover-art'
 import { GAME_NAME_LIST } from '../games/types'
+import { ModelFrontend } from '../types'
 
-const View: SpaceFrontendModule['View'] = (input) => {
+const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFrontend) => void; model: ModelFrontend }) => {
   if (!input.ctx.space) return null
   if (!input.ctx.currentUser) return null
 
@@ -86,7 +86,7 @@ const GameTile = (input: { gameName: GameName; ctx: SpaceFrontendCtx; dispatch: 
       'aria-label': input.gameName,
       onPress: () => {
         input.dispatch({
-          t: 'game.clicked-game-tile',
+          t: 'game_clickedGameTile',
           gameName: input.gameName,
           spaceId: input.ctx.space.spaceId,
           userId: input.ctx.currentUser.userId,

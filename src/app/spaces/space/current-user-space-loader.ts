@@ -2,8 +2,7 @@ import { Sub } from '~/@/sub'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
-import { SpaceFrontendModule } from '../frontend/space-frontend'
-import { MsgFrontend } from '../types'
+import { FrontendCtxModule, ModelFrontend, MsgFrontend } from '../types'
 import { Space } from './space'
 import { SpaceDbQueryCache } from './space-db-query-cache'
 import { SpaceDbQuery } from './space-db/interface-query'
@@ -12,10 +11,14 @@ const toQuery = (currentUserId: UserId): SpaceDbQuery => {
   return { where: { hostId: { '=': currentUserId }, type: { '=': 'started' } } }
 }
 
-const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
+const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<MsgFrontend> => {
   const currentUserId = input.ctx.currentUser?.userId
   if (!currentUserId) return Sub.none()
-  return SpaceDbQueryCache.sub(input.ctx.spaceDb, toQuery(currentUserId), (c): MsgFrontend => ({ t: 'got-msg-out', c }))
+  return SpaceDbQueryCache.sub(
+    input.ctx.spaceDb,
+    toQuery(currentUserId),
+    (c): MsgFrontend => ({ t: 'spaces_gotMsgOut', c }),
+  )
 }
 
 const toCurrentUserSpace = (ctx: AppFrontendCtxBase): Space | null => {

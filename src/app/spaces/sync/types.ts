@@ -1,4 +1,5 @@
 import { WithEventMeta } from '~/@/event-sourced/event'
+import { isAnyMsg } from '~/@/msg/msg'
 import { Result } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { RPCError } from '~/@/rpc/error'
@@ -10,32 +11,31 @@ import { Space } from '../space/space'
 
 export type MsgFrontend =
   | {
-      t: 'sync.got-msg-space'
+      t: 'sync_gotMsgSpace'
       c: WithEventMeta<MsgSpace>
     }
   | {
-      t: 'sync.synced'
+      t: 'sync_synced'
       synced: Result<RPCError, { space: Space }>
     }
 
-export type MsgBackend = {
-  t: 'sync.got-msg-space'
-  c: WithEventMeta<MsgSpace>
+export const isMsgFrontend = (msg: unknown): msg is MsgFrontend => {
+  return isAnyMsg(msg) && msg.t.startsWith('sync_')
 }
 
 export const topicContract = TopicContract.init({
-  'spaces/msg': {
+  spaces_msg: {
     params: SpaceId,
     msg: WithEventMeta(MsgSpace),
   },
-  'spaces/snapshot': {
+  spaces_snapshot: {
     params: SpaceId,
     msg: Space.schema,
   },
 })
 
 export const rpcContract = RPC.initContract({
-  'spaces.sync.sync': {
+  spaces_sync: {
     input: s.obj({
       space: Space.schema,
     }),

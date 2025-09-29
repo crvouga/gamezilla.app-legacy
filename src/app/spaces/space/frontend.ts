@@ -7,7 +7,6 @@ import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { EndSpaceFrontend } from '../end-space/frontend'
 import { ExitSpaceAction } from '../frontend/exit-space-action/frontend'
 import { PeopleActionFrontend } from '../frontend/people-action/frontend'
-import { SpaceFrontendModule } from '../frontend/space-frontend'
 import { GameFrontend } from '../game/frontend'
 import { JoinSpaceFrontend } from '../join-space/frontend'
 import { LeaveSpaceFrontend } from '../leave-space/frontend'
@@ -105,10 +104,10 @@ const ViewSpaceNotFound = (input: { ctx: FrontendCtxModule; dispatch: (m: MsgFro
   })
 }
 
-const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
+const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<MsgFrontend> => {
   const spaceId = input.ctx.currentScreen.t === 'spaces_space' ? input.ctx.currentScreen.spaceId : null
   if (!spaceId) return Sub.none()
-  return SpaceDbQueryCache.sub(input.ctx.spaceDb, toQuery(spaceId), (c): MsgFrontend => ({ t: 'got-msg-out', c }))
+  return SpaceDbQueryCache.sub(input.ctx.spaceDb, toQuery(spaceId), (c): MsgFrontend => ({ t: 'spaces_gotMsgOut', c }))
 }
 
 export const SpaceFrontend = {

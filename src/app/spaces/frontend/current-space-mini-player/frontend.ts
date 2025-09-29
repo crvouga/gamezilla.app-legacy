@@ -123,13 +123,13 @@ const ViewActionButton = (props: {
           renderIcon: (iconInput) => h(IconXMark, iconInput),
           label: props.ctx.t('spaces.end'),
           size: 'lg',
-          onPress: () => props.dispatch({ t: 'end-space.clicked-end-space-button', spaceId: props.spaceId }),
+          onPress: () => props.dispatch({ t: 'endSpace_clickedEndSpaceButton', spaceId: props.spaceId }),
         })
       : h(IconButton, {
           renderIcon: (iconInput) => h(IconXMark, iconInput),
           label: props.ctx.t('spaces.leave'),
           size: 'lg',
-          onPress: () => props.dispatch({ t: 'leave-space.clicked-leave-space-button', spaceId: props.spaceId }),
+          onPress: () => props.dispatch({ t: 'leaveSpace_clickedLeaveSpaceButton', spaceId: props.spaceId }),
         }),
   ])
 }

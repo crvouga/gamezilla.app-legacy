@@ -1,6 +1,5 @@
 import { Eff } from '~/@/eff'
 import { EventSourced } from '~/@/event-sourced'
-import { Msg } from '~/@/msg/msg'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { throttleByKey } from '~/@/throttle/throttle'
@@ -8,13 +7,14 @@ import { TimeSpan } from '~/@/time/time-span'
 import { ITopicClient } from '~/@/topic/topic-client/interface'
 import { h } from '~/@/vdom'
 import { SpaceId } from '~/app/@/data/space-id'
+import { andThen } from '../@/frontend/and-then'
 import { AppFrontendCtxBase, isAppFrontendCtx } from '../@/frontend/ctx'
 import { GotQueryCacheMsg } from '../frontend/query-cache/got-query-cache-msg.$msg'
+import { GotSpaceMsg } from './@/got-space-msg.$msg'
 import { EndSpaceFrontend } from './end-space/frontend'
 import { CurrentSpaceMiniPlayer } from './frontend/current-space-mini-player/frontend'
 import { ExitSpaceAction } from './frontend/exit-space-action/frontend'
 import { PeopleActionFrontend } from './frontend/people-action/frontend'
-import { type Input, type Output, SpaceFrontendModule } from './frontend/space-frontend'
 import { GameFrontend } from './game/frontend'
 import { JoinSpaceFrontend } from './join-space/frontend'
 import { LeaveSpaceFrontend } from './leave-space/frontend'
@@ -26,7 +26,15 @@ import { ISpaceDb, SpaceDb } from './space/space-db'
 import { SpaceDbQueryCache } from './space/space-db-query-cache'
 import { StartSpaceFrontend } from './start-space/frontend'
 import { SyncFrontend } from './sync/frontend'
-import type { FrontendCtxModule, FrontendModule, ModelFrontend, rpcContract, topicContract } from './types'
+import {
+  isMsgFrontendBase,
+  type FrontendCtxModule,
+  type FrontendModule,
+  type ModelFrontend,
+  type MsgFrontend,
+  type rpcContract,
+  type topicContract,
+} from './types'
 
 const initCtx = async (input: {
   ctx: AppFrontendCtxBase
@@ -48,7 +56,9 @@ const initCtx = async (input: {
   }
 }
 
-const init: FrontendModule['init'] = (_input) => {
+const init = (_input: {}): {
+  model: ModelFrontend
+} => {
   const model: ModelFrontend = {
     spaces_games: {},
     spaces_opened: null,
@@ -60,29 +70,17 @@ const init: FrontendModule['init'] = (_input) => {
   }
 }
 
-const update: FrontendModule['update'] = (input) => {
-  return updateLoop(input, updateChild(input))
-}
-
-const updateLoop = (input: Input, acc: Output): Output => {
-  const [msgSpace, ...msgSpaceRest] = acc.msgSpace ?? []
-
-  if (msgSpace) {
-    const updated = updateChild({ ctx: input.ctx, model: acc.model, msgSpace: msgSpace })
-
-    return updateLoop(input, {
-      model: updated.model,
-      eff: Eff.batch(acc.eff, updated.eff),
-      msgSpace: Msg.batch(msgSpaceRest, updated.msgSpace),
-      msgOut: Msg.batch(acc.msgOut, updated.msgOut),
-    })
-  }
-
-  return acc
-}
-
-const updateChild: SpaceFrontendModule['update'] = (input) => {
-  return SpaceFrontendModule.andThen(
+const update = <T extends ModelFrontend>(input: {
+  ctx: FrontendCtxModule
+  model: T
+  msg?: unknown
+  msgIn?: unknown
+}): {
+  model: T
+  eff?: Eff<MsgFrontend>
+  msgOut?: unknown[]
+} => {
+  return andThen<T, MsgFrontend>(
     { model: input.model },
     (model) => EndSpaceFrontend.update({ ...input, model }),
     (model) => LeaveSpaceFrontend.update({ ...input, model }),
@@ -90,31 +88,36 @@ const updateChild: SpaceFrontendModule['update'] = (input) => {
     (model) => updateSpacesFromMsgSpace({ ...input, model }),
     (model) => SyncFrontend.update({ ...input, model }),
     (model) => StartSpaceFrontend.update({ ...input, model }),
-    // done
     (model) => JoinSpaceFrontend.update({ ...input, model }),
-    // done
     (model) => ListSpacesFrontend.update({ ...input, model }),
-    // done
     (model) => ExitSpaceAction.update({ ...input, model }),
-    // done
     (model) => CurrentSpaceMiniPlayer.update({ ...input, model: model }),
-    // done
     (model) => PeopleActionFrontend.update({ ...input, model }),
-    (model) => {
-      switch (input.msg?.t) {
-        case 'got-msg-out': {
-          return { model: input.model, msgOut: [input.msg.c] }
-        }
-        default: {
-          return { model }
-        }
-      }
-    },
+    (model) => updateFromMsgFrontendBase({ ...input, model }),
   )
 }
 
-const updateSpacesFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
-  const { msgSpace } = input
+const updateFromMsgFrontendBase: typeof update = (input) => {
+  if (!isMsgFrontendBase(input.msg)) return { model: input.model }
+  switch (input.msg?.t) {
+    case 'spaces_gotMsgOut': {
+      return { model: input.model, msgOut: [input.msg.c] }
+    }
+  }
+}
+
+const updateSpacesFromMsgSpace = <T extends ModelFrontend>(input: {
+  ctx: FrontendCtxModule
+  model: T
+  msgIn?: unknown
+}): {
+  model: T
+  msgOut?: unknown[]
+  eff?: Eff<MsgFrontend>
+} => {
+  if (!GotSpaceMsg.is(input.msgIn)) return { model: input.model }
+
+  const msgSpace = input.msgIn.c
 
   if (!msgSpace) return { model: input.model }
 
@@ -159,8 +162,8 @@ const upsertSpaceThrottled = throttleByKey({
   behavior: 'use-latest',
 })
 
-const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return Sub.batch([
+const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }) => {
+  return Sub.batch<MsgFrontend>([
     GameFrontend.subscriptions(input),
     SyncFrontend.subscriptions(input),
     ListSpacesFrontend.subscriptions(input),

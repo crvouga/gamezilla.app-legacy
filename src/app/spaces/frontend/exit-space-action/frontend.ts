@@ -5,8 +5,7 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { FrontendCtxModule, ModelFrontend } from '../../types'
-import type { SpaceFrontendModule } from '../space-frontend'
-import { isMsgFrontend } from './types'
+import { isMsgFrontend, MsgFrontend } from './types'
 
 const update = <T extends ModelFrontend>(input: {
   ctx: FrontendCtxModule
@@ -29,7 +28,7 @@ const update = <T extends ModelFrontend>(input: {
   }
 }
 
-const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction => {
+const viewAction = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFrontend) => void }): ScreenAction => {
   return {
     id: input.ctx.t('app.exit'),
     renderIcon: (iconProps) => h(IconDoorOpen, iconProps),

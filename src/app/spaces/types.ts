@@ -1,3 +1,4 @@
+import { isAnyMsg } from '~/@/msg/msg'
 import { RPC } from '~/@/rpc'
 import { ITopicClient } from '~/@/topic/topic-client/interface'
 import { TopicContract } from '~/@/topic/topic-contract'
@@ -33,8 +34,17 @@ type ModelFrontendBase = {
 
 export type ModelFrontend = ModelFrontendBase & GameTypes.ModelFrontend
 
+export type MsgFrontendBase = {
+  t: 'spaces_gotMsgOut'
+  c: unknown
+}
+
+export const isMsgFrontendBase = (msg: unknown): msg is MsgFrontendBase => {
+  return isAnyMsg(msg) && msg.t.startsWith('spaces_')
+}
+
 export type MsgFrontend =
-  | { t: 'got-msg-out'; c: unknown }
+  | MsgFrontendBase
   | ListSpacesTypes.MsgFrontend
   | PeopleActionTypes.MsgFrontend
   | LeaveSpaceTypes.MsgFrontend
@@ -49,8 +59,6 @@ export type MsgFrontend =
 export const topicContract = TopicContract.combine([SyncTypes.topicContract])
 
 export const rpcContract = RPC.combineContracts([SyncTypes.rpcContract])
-
-export type MsgBackend = SyncTypes.MsgBackend
 
 export type FrontendCtxModule = AppFrontendCtxBase & {
   topic: ITopicClient<typeof topicContract>

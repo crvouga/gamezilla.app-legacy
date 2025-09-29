@@ -226,13 +226,9 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
     ...settings.model,
   }
 
-  const eff = Eff.batch<MsgFrontend>([
-    Eff.tag('frontend', frontend.eff),
-    Eff.tag('settings', settings.eff),
-    Eff.tag('spaces', space.eff),
-  ])
+  const eff = Eff.batch<MsgFrontend>([Eff.tag('frontend', frontend.eff), Eff.tag('settings', settings.eff)])
 
-  const msgOut = Msg.batch(frontend.msgOut, settings.msgOut, space.msgOut)
+  const msgOut = Msg.batch(frontend.msgOut, settings.msgOut)
 
   return updateLoop(input.ctx, { model, eff, msgOut })
 }

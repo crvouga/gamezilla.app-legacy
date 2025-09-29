@@ -1,5 +1,10 @@
+import { isAnyMsg } from '~/@/msg/msg'
 import { SpaceId } from '~/app/@/data/space-id'
 
 export type MsgFrontend =
-  | { t: 'leave-space.clicked-leave-space-button'; spaceId: SpaceId }
-  | { t: 'leave-space.submitted-leave-space-button'; spaceId: SpaceId }
+  | { t: 'leaveSpace_clickedLeaveSpaceButton'; spaceId: SpaceId }
+  | { t: 'leaveSpace_submittedLeaveSpaceButton'; spaceId: SpaceId }
+
+export const isMsgFrontend = (msg: unknown): msg is MsgFrontend => {
+  return isAnyMsg(msg) && msg.t.startsWith('leaveSpace_')
+}

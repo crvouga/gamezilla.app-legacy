@@ -11,6 +11,7 @@ import { andThen } from '~/app/@/frontend/and-then'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
+import { ReplaceScreenCmd } from '~/app/@/frontend/replace-screen-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { FloatingLayout } from '~/app/@/ui/floating/layout/floating-layout'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
@@ -19,7 +20,6 @@ import { SpaceFrontendCtx } from '../@/frontend/ctx'
 import { GotSpaceMsg } from '../@/got-space-msg.$msg'
 import { SectionPeopleList } from '../@/ui/section-people-list'
 import { SectionPersonDetails } from '../@/ui/section-person-details'
-import { SpaceFrontendModule } from '../frontend/space-frontend'
 import { GameName } from '../game/games/@/game-name'
 import { GameCoverArt } from '../game/games/cover-art'
 import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
@@ -90,6 +90,13 @@ const updateFromJoinSpaceButton: typeof update = (input) => {
         msgOut: [PushScreenCmd.init({ n: 'profile', t: 'profile_profile', userId: input.msg.userId }, true)],
       }
     }
+
+    case 'joinSpace_clickedBackButton': {
+      return {
+        model: input.model,
+        msgOut: [ReplaceScreenCmd.init({ n: 'spaces', t: 'spaces_list' }, true)],
+      }
+    }
   }
 }
 
@@ -133,7 +140,7 @@ const updateFromMsgSpace: typeof update = (input) => {
   return input
 }
 
-const view: SpaceFrontendModule['View'] = (input) => {
+const view = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFrontend) => void; model: ModelFrontend }) => {
   const currentUser = input.ctx.currentUser
 
   if (!currentUser) return h(Text, { text: 'No current user' })
@@ -164,7 +171,7 @@ const view: SpaceFrontendModule['View'] = (input) => {
           })
         : null,
       back: {
-        onPress: () => input.dispatch({ t: 'exitSpaceAction_clicked' }),
+        onPress: () => input.dispatch({ t: 'joinSpace_clickedBackButton' }),
       },
     },
     renderBody: () =>

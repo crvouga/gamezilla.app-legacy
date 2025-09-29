@@ -1,3 +1,4 @@
+import { Sub } from '~/@/sub'
 import { EmptyState } from '~/@/ui/empty-state'
 import { IconGamepad } from '~/@/ui/icon'
 import { LoadingState } from '~/@/ui/spinner-block'
@@ -9,7 +10,6 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ActionCreateProps } from '~/app/@/ui/screen/layout/screen-layout-props'
-import type { SpaceFrontendModule } from '../frontend/space-frontend'
 import { Space } from '../space/space'
 import { SpaceDbQueryCache } from '../space/space-db-query-cache'
 import { SpaceDbQuery } from '../space/space-db/interface-query'
@@ -48,6 +48,12 @@ const update = <T extends ModelFrontend>(input: {
           PushScreenCmd.init({ n: 'spaces', t: 'spaces_space', spaceId: input.msg.spaceId }),
           PlaySoundCmd.init(APP_SOUND.navForwardMin),
         ],
+      }
+    }
+    case 'listSpaces_gotMsgOut': {
+      return {
+        model: input.model,
+        msgOut: [input.msg.msgOut],
       }
     }
   }
@@ -118,8 +124,8 @@ const View = (input: {
   })
 }
 
-const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
-  return SpaceDbQueryCache.sub(input.ctx.spaceDb, toQuery(), (c) => ({ t: 'got-msg-out', c }))
+const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<MsgFrontend> => {
+  return SpaceDbQueryCache.sub(input.ctx.spaceDb, toQuery(), (c) => ({ t: 'listSpaces_gotMsgOut', msgOut: c }))
 }
 
 export const ListSpacesFrontend = {
