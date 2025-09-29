@@ -1,1 +1,1 @@
-export * as ScreenProfileTypes from './types'
+export * as ScreenProfileFrontend from './frontend'

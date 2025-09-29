@@ -1,1 +1,1 @@
-export * as ScreenUpdateUsernameTypes from './types'
+export * as ScreenUpdateUsernameFrontend from './frontend'

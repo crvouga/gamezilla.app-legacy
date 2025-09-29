@@ -1,20 +1,16 @@
-import { AppFrontendModule } from '../@/frontend/app-frontend-module'
 import { UserId } from '../@/data/user-id'
 import { UserProfile } from '../@/data/user-profile'
+import { AppFrontendModule } from '../@/frontend/app-frontend-module'
 import { ProfileBackendCtx } from './@/backend/ctx'
 import { ProfileFrontendCtx } from './@/frontend/ctx'
-import { ScreenProfileTypes } from './screen-profile'
-import { ScreenUpdateUsernameTypes } from './screen-update-username'
+import { ScreenProfileFrontend } from './screen-profile'
+import { ScreenUpdateUsernameFrontend } from './screen-update-username'
 
-export type ModelFrontend = {
-  profiles_profilesByUserId: { [userId: UserId]: UserProfile }
-  profiles_screenProfile: ScreenProfileTypes.ModelFrontend
-  profiles_screenUpdateUsername: ScreenUpdateUsernameTypes.ModelFrontend
-}
+type ModelFrontendBase = { profiles_profilesByUserId: { [userId: UserId]: UserProfile } }
 
-export type MsgFrontend =
-  | { t: 'got-update-username-screen-msg'; c: ScreenUpdateUsernameTypes.MsgFrontend }
-  | { t: 'got-profile-screen-msg'; c: ScreenProfileTypes.MsgFrontend }
+export type ModelFrontend = ModelFrontendBase & ScreenProfileFrontend.ModelFrontend & ScreenUpdateUsernameFrontend.Model
+
+export type MsgFrontend = ScreenUpdateUsernameFrontend.Msg | ScreenProfileFrontend.Msg
 
 export type BackendCtxModule = ProfileBackendCtx
 

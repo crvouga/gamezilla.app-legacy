@@ -3,16 +3,20 @@ import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
 import { Clickable } from '~/@/ui/clickable'
 import { IconChevronRight } from '~/@/ui/icon'
-import { sx } from '~/@/vdom/style/sx'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
+import { sx } from '~/@/vdom/style/sx'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { FrontendCtxModule } from '../screen-update-username/types'
+import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import type { ModelFrontend, MsgFrontend } from '../types'
 
-export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFrontend) => void; model: ModelFrontend }) => {
+export const View = (input: {
+  ctx: AppFrontendCtxBase
+  dispatch: (msg: MsgFrontend) => void
+  model: ModelFrontend
+}) => {
   if (!input.ctx.currentUser?.userId) return null
 
   const profile = input.ctx.profilesByUserId[input.ctx.currentUser?.userId]

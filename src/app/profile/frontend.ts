@@ -1,4 +1,3 @@
-import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { h } from '~/@/vdom/h'
 import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
@@ -7,7 +6,7 @@ import { AddProfilesCmd } from '../@/frontend/add-profiles-cmd$msg'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { PushScreenCmd } from '../@/frontend/push-screen-cmd.$msg'
 import { ProfileDb } from './@/user-profile/user-profile-db'
-import { ScreenProfileFrontend } from './screen-profile/frontend'
+import { ScreenProfileFrontend } from './screen-profile'
 import { ScreenUpdateUsernameFrontend } from './screen-update-username/frontend'
 import { UpdateAvatarScreen } from './screen-update/update-avatar-screen'
 import { UpdateProfileScreen } from './screen-update/update-profile-screen'
@@ -30,8 +29,8 @@ const init: FrontendModule['init'] = ({ ctx }) => {
   const screenProfile = ScreenProfileFrontend.init({ ctx })
   const model: ModelFrontend = {
     profiles_profilesByUserId: {},
-    profiles_screenProfile: screenProfile.model,
-    profiles_screenUpdateUsername: screenUpdateUsername.model,
+    ...screenProfile.model,
+    ...screenUpdateUsername.model,
   }
 
   return { model }
@@ -68,64 +67,25 @@ const updateFromCmd: FrontendModule['update'] = (input) => {
 }
 
 const updateFromMsg: FrontendModule['update'] = (input): ReturnType<FrontendModule['update']> => {
-  const updated = ScreenProfileFrontend.update({
-    ctx: input.ctx,
-    msg: input.msg?.t === 'got-profile-screen-msg' ? input.msg.c : null,
-    model: input.model.profiles_screenProfile,
-    msgIn: input.msgIn,
-  })
-
-  return {
-    model: { ...input.model, profiles_screenProfile: updated.model },
-    eff: Eff.tag('got-profile-screen-msg', updated.eff),
-    msgOut: updated.msgOut,
-  }
+  return ScreenProfileFrontend.update(input)
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input): Sub<MsgFrontend> => {
-  const sub: Sub<MsgFrontend> = Sub.map(
-    ScreenProfileFrontend.subscriptions({
-      ctx: input.ctx,
-      model: input.model,
-    }),
-    (c): MsgFrontend => ({ t: 'got-profile-screen-msg', c }),
-  )
-
-  return sub
+  return ScreenProfileFrontend.subscriptions(input)
 }
 
 const View: FrontendModule['View'] = (input) => {
   switch (input.ctx.currentScreen.n) {
     case 'profile': {
       switch (input.ctx.currentScreen.t) {
-        case 'profile': {
-          return h(ScreenProfileFrontend.View, {
-            model: input.model,
-            ctx: input.ctx,
-            dispatch: (c) => input.dispatch({ t: 'got-profile-screen-msg', c }),
-          })
-        }
-
-        case 'profile-edit': {
+        case 'profile':
+          return h(ScreenProfileFrontend.View, input)
+        case 'profile-edit':
           return h(UpdateProfileScreen.View, input)
-        }
-
-        case 'profile-edit-avatar': {
-          return h(UpdateAvatarScreen.View, {
-            ctx: input.ctx,
-            model: input.model,
-            dispatch: input.dispatch,
-          })
-        }
-
-        case 'profile-edit-username': {
-          return h(ScreenUpdateUsernameFrontend.View, {
-            ctx: input.ctx,
-            model: input.model.profiles_screenUpdateUsername,
-            dispatch: (c) => input.dispatch({ t: 'got-update-username-screen-msg', c }),
-          })
-        }
-
+        case 'profile-edit-avatar':
+          return h(UpdateAvatarScreen.View, input)
+        case 'profile-edit-username':
+          return h(ScreenUpdateUsernameFrontend.View, input)
         default: {
           return null
         }

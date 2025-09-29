@@ -1,20 +1,22 @@
 import { TranslatedText } from '~/@/l18n'
+import { isAnyMsg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
 import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
 import { Gutter } from '~/@/ui/gutter'
 import { IconUserPen } from '~/@/ui/icon'
-import { sx } from '~/@/vdom/style/sx'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
+import { sx } from '~/@/vdom/style/sx'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ProfileFrontendCtx } from '../@/frontend/ctx'
 import { ProfileLoaderFrontend } from '../@/user-profile-loader/frontend'
-import { FrontendModule, MsgFrontend } from './types'
+
+export type ModelFrontend = {}
 
 const toUserId = (ctx: ProfileFrontendCtx): UserId | null => {
   const currentScreen = ctx.currentScreen
@@ -24,21 +26,34 @@ const toUserId = (ctx: ProfileFrontendCtx): UserId | null => {
   return null
 }
 
-const init: FrontendModule['init'] = (_) => {
+export const init = (_: {}): { model: ModelFrontend } => {
   return {
     model: {},
   }
 }
 
-const update: FrontendModule['update'] = (input) => {
-  if (!input.msg) return { model: input.model }
-  switch (input.msg.t) {
-    case 'got-msg-out': {
+export type Msg = { t: 'profiles_screenProfile_gotMsgOut'; c: unknown }
+
+const isMsg = (msg: unknown): msg is Msg => {
+  return isAnyMsg(msg) && msg.t.startsWith('profiles_screenProfile_')
+}
+
+export const update = <T extends ModelFrontend>(input: {
+  model: T
+  msg?: unknown
+}): {
+  model: T
+  msgOut?: unknown[]
+} => {
+  if (!isMsg(input.msg)) return { model: input.model }
+  switch (input.msg?.t) {
+    case 'profiles_screenProfile_gotMsgOut': {
       return { model: input.model, msgOut: [input.msg.c] }
     }
   }
 }
-const subscriptions: FrontendModule['subscriptions'] = (input) => {
+
+export const subscriptions = (input: { ctx: ProfileFrontendCtx; model: ModelFrontend }): Sub<Msg> => {
   const userId = toUserId(input.ctx)
   if (!userId) return Sub.none()
   return ProfileLoaderFrontend.watch(
@@ -48,11 +63,11 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
       pagination: { limit: 1, offset: 0 },
       whereAnd: { userId: { equals: userId } },
     },
-    (c): MsgFrontend => ({ t: 'got-msg-out', c: ProfileLoaderFrontend.gotMsg(c) }),
+    (c): Msg => ({ t: 'profiles_screenProfile_gotMsgOut', c: ProfileLoaderFrontend.gotMsg(c) }),
   )
 }
 
-const View: FrontendModule['View'] = (input) => {
+export const View = (input: { ctx: ProfileFrontendCtx; model: ModelFrontend; dispatch: (msg: Msg) => void }) => {
   return h(ScreenLayout, {
     ctx: input.ctx,
     parentScreen: input.ctx.parentScreen,
@@ -61,7 +76,7 @@ const View: FrontendModule['View'] = (input) => {
   })
 }
 
-const ViewBody: typeof View = (input) => {
+const ViewBody = (input: { ctx: ProfileFrontendCtx; model: ModelFrontend; dispatch: (msg: Msg) => void }) => {
   const userId = toUserId(input.ctx)
 
   if (!userId) return null
@@ -93,7 +108,10 @@ const ViewBody: typeof View = (input) => {
           [
             h(Button, {
               onPress: () =>
-                input.dispatch({ t: 'got-msg-out', c: PushScreenCmd.init({ t: 'profile-edit', n: 'profile' }) }),
+                input.dispatch({
+                  t: 'profiles_screenProfile_gotMsgOut',
+                  c: PushScreenCmd.init({ t: 'profile-edit', n: 'profile' }),
+                }),
               style: sx({ maxWidth: 64, flex: 1 }),
               renderIconStart: (iconInput) => h(IconUserPen, iconInput),
               text: input.ctx.t('profile.edit-profile'),
@@ -106,11 +124,4 @@ const ViewBody: typeof View = (input) => {
 
     h(Gutter, { variant: 'screen' }),
   ])
-}
-
-export const ScreenProfileFrontend = {
-  View,
-  subscriptions,
-  update,
-  init,
 }
