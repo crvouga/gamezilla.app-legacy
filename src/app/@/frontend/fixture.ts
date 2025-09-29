@@ -72,7 +72,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     logger,
     currentScreen: input?.currentScreen ?? {
       n: 'auth',
-      t: 'login',
+      t: 'auth_login',
     },
     viewportVisibility: 'visible',
     navigatorLanguage: 'en',

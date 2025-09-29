@@ -251,7 +251,7 @@ const watchForLogin = <T extends ModelFrontend>(input: {
     return {
       model: input.modelAfter,
       msgOut: [
-        PushScreenCmd.init({ n: 'spaces', t: 'space-list' }, false),
+        PushScreenCmd.init({ n: 'spaces', t: 'spaces_list' }, false),
         PlaySoundCmd.init(APP_SOUND.celebration),
         ShowToastCmd.init(input.ctx.t('auth.logged-in')),
       ],
@@ -264,7 +264,7 @@ const watchForLogin = <T extends ModelFrontend>(input: {
       msgOut: [
         ShowToastCmd.init(input.ctx.t('auth.current-user-logged-out')),
         PlaySoundCmd.init(APP_SOUND.navBackwardMin),
-        PushScreenCmd.init({ t: 'login', n: 'auth' }, false),
+        PushScreenCmd.init({ n: 'auth', t: 'auth_login' }, false),
       ],
     }
   }

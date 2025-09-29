@@ -5,15 +5,15 @@ import { PhoneNumber } from '~/@/phone-number'
 const Screen = s.or(
   s.obj({
     n: s.l('auth'),
-    t: s.l('login'),
+    t: s.l('auth_login'),
   }),
   s.obj({
     n: s.l('auth'),
-    t: s.l('send-code'),
+    t: s.l('auth_sendCode'),
   }),
   s.obj({
     n: s.l('auth'),
-    t: s.l('verify-code'),
+    t: s.l('auth_verifyCode'),
     phoneNumber: PhoneNumber,
   }),
 )

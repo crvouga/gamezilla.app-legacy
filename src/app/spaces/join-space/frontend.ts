@@ -71,7 +71,7 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
     case 'joinSpace_openedPersonDetails': {
       return {
         model: input.model,
-        msgOut: [PushScreenCmd.init({ t: 'profile', n: 'profile', userId: input.msg.userId }, true)],
+        msgOut: [PushScreenCmd.init({ n: 'profile', t: 'profile_profile', userId: input.msg.userId }, true)],
       }
     }
   }

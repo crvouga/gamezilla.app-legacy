@@ -154,7 +154,7 @@ const initCtx = async (config: {
     logger,
     now: UnixMs.now(),
     navigatorLanguage,
-    currentScreen: { t: 'login', n: 'auth' },
+    currentScreen: { n: 'auth', t: 'auth_login' },
     t: Translator(navigatorLanguage),
     viewportVisibility: 'visible',
     profilesByUserId: {},
@@ -195,7 +195,7 @@ const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): Fronten
     ...input.ctx,
     now: UnixMs.now(),
     t: Translator(input.model.settings_lang),
-    profilesByUserId: input.model.profiles_profilesByUserId,
+    profilesByUserId: input.model.profiles_profilesByUserId ?? {},
     viewportVisibility: input.model.viewport_visibility,
     currentScreen: input.model.currentScreen_screen,
     screenSize: input.model.screenSize_screenSize,
@@ -222,21 +222,17 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
   const settings = SettingsFrontend.init({ ctx })
   const wire = WireFrontend.init({ ctx })
   const space = SpacesFrontend.init({ ctx })
-  const profile = ProfileFrontend.init({ ctx })
 
   const model: ModelFrontend = {
     ...frontend.model,
     ...space.model,
     ...wire.model,
-    ...profile.model,
     ...settings.model,
   }
 
   const eff = Eff.batch<MsgFrontend>([
     Eff.tag('frontend', frontend.eff),
-
     Eff.tag('settings', settings.eff),
-    Eff.tag('profile', profile.eff),
     Eff.tag('spaces', space.eff),
     Eff.tag('wire', wire.eff),
   ])
@@ -447,7 +443,7 @@ const ViewScreenLoggedOut: typeof ViewScreen = (props) => {
             t: 'frontend',
             c: {
               t: 'currentScreen_clickedLink',
-              screen: { t: 'login', n: 'auth' },
+              screen: { n: 'auth', t: 'auth_login' },
             },
           }),
         buttonText: props.ctx.t('login'),
@@ -480,7 +476,7 @@ const ViewScreenLoggedIn: typeof ViewScreen = (props) => {
         onPress: () =>
           props.dispatch({
             t: 'frontend',
-            c: { t: 'currentScreen_clickedLink', screen: { t: 'space-list', n: 'spaces' } },
+            c: { t: 'currentScreen_clickedLink', screen: { n: 'spaces', t: 'spaces_list' } },
           }),
         buttonText: props.ctx.t('spaces.spaces'),
         text: props.ctx.t('spaces.spaces'),
@@ -495,8 +491,8 @@ const toScreenLayoutProps = (props: {
 }): ParentScreenProps | null => {
   const { ctx } = props
   if (!isAppFrontendCtx(ctx)) return null
-  const screenSpace: Screen = { n: 'spaces', t: 'space-list' }
-  const screenProfile: Screen = { n: 'profile', t: 'profile', userId: ctx.currentUser.userId }
+  const screenSpace: Screen = { n: 'spaces', t: 'spaces_list' }
+  const screenProfile: Screen = { n: 'profile', t: 'profile_profile', userId: ctx.currentUser.userId }
   const pushSpaceList = () =>
     props.dispatch({
       t: 'frontend',

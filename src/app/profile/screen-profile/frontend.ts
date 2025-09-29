@@ -20,7 +20,7 @@ export type ModelFrontend = {}
 
 const toUserId = (ctx: ProfileFrontendCtx): UserId | null => {
   const currentScreen = ctx.currentScreen
-  if (currentScreen.t === 'profile') {
+  if (currentScreen.t === 'profile_profile') {
     return currentScreen.userId
   }
   return null
@@ -110,7 +110,7 @@ const ViewBody = (input: { ctx: ProfileFrontendCtx; model: ModelFrontend; dispat
               onPress: () =>
                 input.dispatch({
                   t: 'profiles_screenProfile_gotMsgOut',
-                  c: PushScreenCmd.init({ t: 'profile-edit', n: 'profile' }),
+                  c: PushScreenCmd.init({ n: 'profile', t: 'profile_profileEdit' }),
                 }),
               style: sx({ maxWidth: 64, flex: 1 }),
               renderIconStart: (iconInput) => h(IconUserPen, iconInput),

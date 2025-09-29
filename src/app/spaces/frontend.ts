@@ -165,27 +165,20 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 }
 
 const View: FrontendModule['View'] = (input) => {
-  switch (input.ctx.currentScreen.n) {
-    case 'spaces': {
-      switch (input.ctx.currentScreen.t) {
-        case 'space-list': {
-          return h(ListSpacesFrontend.View, { dispatch: input.dispatch, ctx: input.ctx, model: input.model })
-        }
-        case 'space': {
-          if (isAppFrontendCtx(input.ctx)) {
-            return h(SpaceFrontend.View, {
-              spaceId: input.ctx.currentScreen.spaceId,
-              ctx: input.ctx,
-              dispatch: input.dispatch,
-              model: input.model,
-            })
-          }
-          return null
-        }
-        default: {
-          return null
-        }
+  switch (input.ctx.currentScreen.t) {
+    case 'spaces_list': {
+      return h(ListSpacesFrontend.View, { dispatch: input.dispatch, ctx: input.ctx, model: input.model })
+    }
+    case 'spaces_space': {
+      if (isAppFrontendCtx(input.ctx)) {
+        return h(SpaceFrontend.View, {
+          spaceId: input.ctx.currentScreen.spaceId,
+          ctx: input.ctx,
+          dispatch: input.dispatch,
+          model: input.model,
+        })
       }
+      return null
     }
     default: {
       return null

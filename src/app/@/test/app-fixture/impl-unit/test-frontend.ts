@@ -91,7 +91,7 @@ export const TestFrontend = async (config: {
     logger,
     now: UnixMs.now(),
     navigatorLanguage: 'en',
-    currentScreen: { t: 'login', n: 'auth' },
+    currentScreen: { n: 'auth', t: 'auth_login' },
     t: Translator('en'),
     viewportVisibility: 'visible',
     profilesByUserId: {},

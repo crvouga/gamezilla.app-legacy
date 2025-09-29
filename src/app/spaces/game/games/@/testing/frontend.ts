@@ -15,7 +15,7 @@ export async function testSpaceFrontendCtx(): Promise<SpaceFrontendCtx> {
     ...f.ctx,
     currentScreen: {
       n: 'spaces',
-      t: 'space',
+      t: 'spaces_space',
       spaceId: currentSpaceId,
     },
     viewportVisibility: 'visible',

@@ -5,11 +5,11 @@ import { SpaceId } from '~/app/@/data/space-id'
 export const Screen = s.or(
   s.obj({
     n: s.l('spaces'),
-    t: s.l('space-list'),
+    t: s.l('spaces_list'),
   }),
   s.obj({
     n: s.l('spaces'),
-    t: s.l('space'),
+    t: s.l('spaces_space'),
     spaceId: s.custom(SpaceId.is, 'Invalid space id'),
   }),
 )

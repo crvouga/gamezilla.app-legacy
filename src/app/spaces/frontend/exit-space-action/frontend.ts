@@ -11,7 +11,7 @@ const update: SpaceFrontendModule['update'] = ({ msg, model }) => {
     case 'exit-space-action.clicked-exit-space-button': {
       return {
         model,
-        msgOut: [PushScreenCmd.init({ n: 'spaces', t: 'space-list' }), PlaySoundCmd.init(APP_SOUND.navBackwardMin)],
+        msgOut: [PushScreenCmd.init({ n: 'spaces', t: 'spaces_list' }), PlaySoundCmd.init(APP_SOUND.navBackwardMin)],
       }
     }
   }

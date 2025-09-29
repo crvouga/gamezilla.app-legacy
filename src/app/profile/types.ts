@@ -6,7 +6,7 @@ import { ProfileFrontendCtx } from './@/frontend/ctx'
 import { ScreenProfileFrontend } from './screen-profile'
 import { ScreenUpdateUsernameFrontend } from './screen-update-username'
 
-type ModelFrontendBase = { profiles_profilesByUserId: { [userId: UserId]: UserProfile } }
+type ModelFrontendBase = { profiles_profilesByUserId?: { [userId: UserId]: UserProfile } }
 
 export type ModelFrontend = ModelFrontendBase & ScreenProfileFrontend.ModelFrontend & ScreenUpdateUsernameFrontend.Model
 

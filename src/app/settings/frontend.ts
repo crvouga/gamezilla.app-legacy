@@ -65,12 +65,12 @@ const updateBase: FrontendModule['update'] = ({ model, ctx, msg }) => {
     case 'settings.clicked-open-renderer': {
       return {
         model: { ...model, settings_isTopBarSurfaceOpen: false },
-        msgOut: [PushScreenCmd.init({ t: 'renderer', n: 'settings' }, true)],
+        msgOut: [PushScreenCmd.init({ n: 'settings', t: 'settings_renderer' }, true)],
       }
     }
 
     case 'settings.clicked-open-lang': {
-      if (ctx.currentScreen.n === 'settings' && ctx.currentScreen.t === 'choose-lang') {
+      if (ctx.currentScreen.n === 'settings' && ctx.currentScreen.t === 'settings_chooseLang') {
         return {
           model: { ...model, settings_isTopBarSurfaceOpen: false },
           msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)],
@@ -79,14 +79,14 @@ const updateBase: FrontendModule['update'] = ({ model, ctx, msg }) => {
 
       return {
         model: { ...model, settings_isTopBarSurfaceOpen: false },
-        msgOut: [PushScreenCmd.init({ t: 'choose-lang', n: 'settings' }, true)],
+        msgOut: [PushScreenCmd.init({ n: 'settings', t: 'settings_chooseLang' }, true)],
       }
     }
 
     case 'settings.clicked-open-settings': {
       return {
         model: { ...model, settings_isTopBarSurfaceOpen: false },
-        msgOut: [PushScreenCmd.init({ t: 'main', n: 'settings', back: ctx.currentScreen }, true)],
+        msgOut: [PushScreenCmd.init({ n: 'settings', t: 'settings_main', back: ctx.currentScreen }, true)],
       }
     }
 
@@ -122,11 +122,11 @@ const View: FrontendModule['View'] = (input) => {
   switch (input.ctx.currentScreen.n) {
     case 'settings':
       switch (input.ctx.currentScreen.t) {
-        case 'main':
+        case 'settings_main':
           return h(ViewMain, input)
-        case 'choose-lang':
+        case 'settings_chooseLang':
           return h(ScreenLangFrontend.View, input)
-        case 'renderer':
+        case 'settings_renderer':
           return h(ScreenRendererFrontend.View, input)
         default:
           return null

@@ -56,7 +56,7 @@ const update = <T extends Model>(input: {
     case 'profiles_updateUsername_clickedBack': {
       return {
         model: input.model,
-        msgOut: [PushScreenCmd.init({ t: 'profile-edit', n: 'profile' })],
+        msgOut: [PushScreenCmd.init({ n: 'profile', t: 'profile_profileEdit' })],
       }
     }
 

@@ -78,8 +78,8 @@ const updatePlaySound: SpaceFrontendModule['update'] = (input) => {
 }
 
 const updatePushScreen: SpaceFrontendModule['update'] = (input) => {
-  if (input.ctx.currentScreen.t === 'space' && input.ctx.currentScreen.spaceId === input.msgSpace?.spaceId) {
-    return { model: input.model, msgOut: [PushScreenCmd.init({ n: 'spaces', t: 'space-list' })] }
+  if (input.ctx.currentScreen.t === 'spaces_space' && input.ctx.currentScreen.spaceId === input.msgSpace?.spaceId) {
+    return { model: input.model, msgOut: [PushScreenCmd.init({ n: 'spaces', t: 'spaces_list' })] }
   }
 
   return { model: input.model, msgOut: [] }

@@ -33,7 +33,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
       return {
         model: input.model,
         msgOut: [
-          PushScreenCmd.init({ n: 'spaces', t: 'space', spaceId: input.msg.spaceId }),
+          PushScreenCmd.init({ n: 'spaces', t: 'spaces_space', spaceId: input.msg.spaceId }),
           PlaySoundCmd.init(APP_SOUND.navForwardMin),
         ],
       }

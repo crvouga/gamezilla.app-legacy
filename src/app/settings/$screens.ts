@@ -4,16 +4,16 @@ import { s } from '~/@/schema'
 const Screen = s.or(
   s.obj({
     n: s.l('settings'),
-    t: s.l('main'),
+    t: s.l('settings_main'),
     back: s.unknown,
   }),
   s.obj({
     n: s.l('settings'),
-    t: s.l('choose-lang'),
+    t: s.l('settings_chooseLang'),
   }),
   s.obj({
     n: s.l('settings'),
-    t: s.l('renderer'),
+    t: s.l('settings_renderer'),
   }),
 )
 

@@ -52,7 +52,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
           ShowToastCmd.init(input.ctx.t('spaces.current-user-left')),
           PushScreenCmd.init({
             n: 'spaces',
-            t: 'space-list',
+            t: 'spaces_list',
           }),
         ],
       }

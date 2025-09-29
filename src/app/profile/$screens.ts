@@ -5,20 +5,20 @@ import { UserId } from '~/app/@/data/user-id'
 const Screen = s.or(
   s.obj({
     n: s.l('profile'),
-    t: s.l('profile'),
+    t: s.l('profile_profile'),
     userId: UserId,
   }),
   s.obj({
     n: s.l('profile'),
-    t: s.l('profile-edit'),
+    t: s.l('profile_profileEdit'),
   }),
   s.obj({
     n: s.l('profile'),
-    t: s.l('profile-edit-avatar'),
+    t: s.l('profile_profileEditAvatar'),
   }),
   s.obj({
     n: s.l('profile'),
-    t: s.l('profile-edit-username'),
+    t: s.l('profile_profileEditUsername'),
   }),
 )
 

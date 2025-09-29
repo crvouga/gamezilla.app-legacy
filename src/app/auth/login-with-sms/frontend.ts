@@ -112,16 +112,16 @@ export const update = <T extends Model>(input: {
   if (!isMsg(input.msg)) return { model: input.model }
   switch (input.msg.t) {
     case 'loginWithSms_clickedBackButton': {
-      if (input.ctx.currentScreen.t === 'verify-code') {
+      if (input.ctx.currentScreen.t === 'auth_verifyCode') {
         return {
           model: input.model,
-          msgOut: [ReplaceScreenCmd.init({ n: 'auth', t: 'send-code' }, true)],
+          msgOut: [ReplaceScreenCmd.init({ n: 'auth', t: 'auth_sendCode' }, true)],
         }
       }
 
       return {
         model: input.model,
-        msgOut: [ReplaceScreenCmd.init({ n: 'auth', t: 'login' }, true)],
+        msgOut: [ReplaceScreenCmd.init({ n: 'auth', t: 'auth_login' }, true)],
       }
     }
 
@@ -199,7 +199,7 @@ export const update = <T extends Model>(input: {
           loginWithSms_code: '',
         },
         msgOut: [
-          PushScreenCmd.init({ n: 'auth', t: 'verify-code', phoneNumber }),
+          PushScreenCmd.init({ n: 'auth', t: 'auth_verifyCode', phoneNumber }),
           ShowToastCmd.init(input.ctx.t('auth-sms.sent-code-to', PhoneNumber.format(phoneNumber)), {
             duration: TimeSpan.seconds(4),
           }),
@@ -275,20 +275,13 @@ export const update = <T extends Model>(input: {
 }
 
 export const View = (input: { ctx: Ctx; model: Model; dispatch: (msg: MsgFrontend) => void }) => {
-  switch (input.ctx.currentScreen.n) {
-    case 'auth': {
-      switch (input.ctx.currentScreen.t) {
-        case 'send-code':
-          return h(ViewSendCode, input)
-        case 'verify-code':
-          return h(ViewVerifyCode, input)
-        default:
-          return null
-      }
-    }
-    default: {
+  switch (input.ctx.currentScreen.t) {
+    case 'auth_sendCode':
+      return h(ViewSendCode, input)
+    case 'auth_verifyCode':
+      return h(ViewVerifyCode, input)
+    default:
       return null
-    }
   }
 }
 
@@ -328,7 +321,7 @@ const ViewSendCode = (input: { ctx: Ctx; model: Model; dispatch: (msg: MsgFronte
 export const TEST_ID_VERIFY_CODE_SCREEN = 'auth/verify-code-screen'
 
 const ViewVerifyCode = (input: { ctx: Ctx; model: Model; dispatch: (msg: MsgFrontend) => void }) => {
-  if (input.ctx.currentScreen.t !== 'verify-code') return null
+  if (input.ctx.currentScreen.t !== 'auth_verifyCode') return null
 
   const phoneNumber = input.ctx.currentScreen.phoneNumber
 

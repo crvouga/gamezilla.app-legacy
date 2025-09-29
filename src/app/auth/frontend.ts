@@ -78,7 +78,7 @@ const updateFromMsg: typeof update = (input) => {
     case 'auth_clickedLoginWithPhone': {
       return {
         model: input.model,
-        msgOut: [PushScreenCmd.init({ n: 'auth', t: 'send-code' }, true)],
+        msgOut: [PushScreenCmd.init({ n: 'auth', t: 'auth_sendCode' }, true)],
       }
     }
   }
@@ -89,19 +89,14 @@ const subscriptions = (input: { ctx: Ctx; model: ModelFrontend }): Sub<MsgFronte
 }
 
 const View = (input: { ctx: Ctx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
-  switch (input.ctx.currentScreen.n) {
-    case 'auth': {
-      switch (input.ctx.currentScreen.t) {
-        case 'login':
-          return h(ViewLoginScreen, input)
-        case 'send-code':
-        case 'verify-code':
-          return h(LoginWithSMSFrontend.View, input)
-      }
-    }
-    default: {
+  switch (input.ctx.currentScreen.t) {
+    case 'auth_login':
+      return h(ViewLoginScreen, input)
+    case 'auth_sendCode':
+    case 'auth_verifyCode':
+      return h(LoginWithSMSFrontend.View, input)
+    default:
       return null
-    }
   }
 }
 

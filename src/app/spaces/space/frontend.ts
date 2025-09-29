@@ -106,7 +106,7 @@ const ViewSpaceNotFound = (input: { ctx: FrontendCtxModule; dispatch: (m: MsgFro
 }
 
 const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
-  const spaceId = input.ctx.currentScreen.t === 'space' ? input.ctx.currentScreen.spaceId : null
+  const spaceId = input.ctx.currentScreen.t === 'spaces_space' ? input.ctx.currentScreen.spaceId : null
   if (!spaceId) return Sub.none()
   return SpaceDbQueryCache.sub(input.ctx.spaceDb, toQuery(spaceId), (c): MsgFrontend => ({ t: 'got-msg-out', c }))
 }

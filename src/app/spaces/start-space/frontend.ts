@@ -27,7 +27,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = ({ model, msgSpace: ms
         return {
           model,
           msgOut: [
-            PushScreenCmd.init({ n: 'spaces', t: 'space', spaceId: msgSpace.spaceId }),
+            PushScreenCmd.init({ n: 'spaces', t: 'spaces_space', spaceId: msgSpace.spaceId }),
             PlaySoundCmd.init(APP_SOUND.navForward),
             ShowToastCmd.init(ctx.t('spaces.space-started')),
           ],

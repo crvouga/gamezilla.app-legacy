@@ -16,7 +16,7 @@ export type Model = {
 
 const FALLBACK: Screen = {
   n: 'auth',
-  t: 'login',
+  t: 'auth_login',
 }
 
 const encodeScreen = (screen: Screen): string => {
