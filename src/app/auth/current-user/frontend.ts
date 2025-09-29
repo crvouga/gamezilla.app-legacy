@@ -1,4 +1,5 @@
 import { QueryInput } from '~/@/db/interface/query-input/query-input'
+import { Eff } from '~/@/eff'
 import { Err, isErr, NotAsked, Ok, Result } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { ClientSessionId } from '~/@/wire/client-session-id'
@@ -18,7 +19,7 @@ import { UserAccountDbQueryCache } from '../@/user-account/user-account-db-query
 import { UserSession } from '../@/user-session/user-session'
 import { UserSessionDbQueryCache } from '../@/user-session/user-session-db-query-cache'
 import { UserSessionId } from '../@/user-session/user-session-id'
-import { FrontendModule, ModelFrontend, MsgFrontend } from './types'
+import { FrontendModule, isMsgFrontend, ModelFrontend, MsgFrontend } from './types'
 
 const init: ModelFrontend = {
   currentUser_status: NotAsked,
@@ -109,8 +110,19 @@ export const toCurrentUserState = (input: { model: ModelFrontend; ctx: AppFronte
   }
 }
 
-const update: FrontendModule['update'] = (input) => {
-  return AppFrontendModule.andThen(
+const update = <T extends ModelFrontend>(input: {
+  ctx: AuthFrontendCtx
+  model: T
+  msg?: unknown
+}): {
+  model: T
+  eff?: Eff<MsgFrontend>
+  msgOut?: unknown[]
+} => {
+  return AppFrontendModule.andThen<{
+    Model: T
+    Msg: MsgFrontend
+  }>(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => watchForLogin({ ...input, model, modelBefore: input.model, modelAfter: model }),
@@ -212,9 +224,15 @@ const ensureGuestRecords = async (input: { ctx: AuthFrontendCtx }): Promise<Resu
   return Ok(null)
 }
 
-const watchForLogin = (
-  input: Parameters<FrontendModule['update']>[0] & { modelBefore: ModelFrontend; modelAfter: ModelFrontend },
-): ReturnType<FrontendModule['update']> => {
+const watchForLogin = <T extends ModelFrontend>(input: {
+  ctx: AuthFrontendCtx
+  model: T
+  modelBefore: T
+  modelAfter: T
+}): {
+  model: T
+  msgOut?: unknown[]
+} => {
   const before = toCurrentUserState({ model: input.modelBefore, ctx: input.ctx })
   const after = toCurrentUserState({ model: input.modelAfter, ctx: input.ctx })
   if (before.t === 'logged-out' && after.t === 'logged-in') {
@@ -242,10 +260,12 @@ const watchForLogin = (
   return { model: input.modelAfter }
 }
 
-const updateFromMsg: FrontendModule['update'] = (input) => {
-  switch (input.msg?.t) {
-    case 'got-msg-out': {
-      return { model: input.model, msgOut: [input.msg.msgOut] }
+const updateFromMsg: typeof update = (input) => {
+  const { msg } = input
+  if (!isMsgFrontend(msg)) return { model: input.model }
+  switch (msg.t) {
+    case 'currentUser_gotMsgOut': {
+      return { model: input.model, msgOut: [msg.msgOut] }
     }
     default: {
       return { model: input.model }
@@ -261,7 +281,7 @@ const subscriptionsUserSession: FrontendModule['subscriptions'] = (input) => {
   return UserSessionDbQueryCache.watch(
     input.ctx.userSessionDb,
     toQueryUserSessionByClientSessionId(input.ctx),
-    (msgOut) => ({ t: 'got-msg-out', msgOut }),
+    (msgOut) => ({ t: 'currentUser_gotMsgOut', msgOut }),
   )
 }
 
@@ -273,7 +293,7 @@ const subscriptionsUserAccount: FrontendModule['subscriptions'] = (input) => {
   return UserAccountDbQueryCache.watch(
     input.ctx.userAccountDb,
     toQueryUserAccountByUserId({ userId: userSession.userId }),
-    (msgOut) => ({ t: 'got-msg-out', msgOut }),
+    (msgOut) => ({ t: 'currentUser_gotMsgOut', msgOut }),
   )
 }
 

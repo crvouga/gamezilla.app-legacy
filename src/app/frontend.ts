@@ -40,7 +40,7 @@ import { RedirectScreen } from './@/ui/redirect-screen'
 import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
 import { toCurrentUserState } from './auth/current-user/frontend'
 import { AuthFrontend } from './auth/frontend'
-import { LogoutFrontend } from './auth/logout/frontend'
+import { LogoutFrontend } from './auth/logout'
 import { FrontendFrontend } from './frontend/frontend'
 import { QueryCache } from './frontend/query-cache/query-cache'
 import { ToasterFrontend } from './frontend/toaster'
@@ -414,7 +414,7 @@ const ViewScreen = (props: { ctx: FrontendCtxModule; model: ModelFrontend; dispa
           menuItemsEnd() {
             return h(LogoutFrontend.ViewMenuItem, {
               ctx: props.ctx,
-              dispatch: (c) => props.dispatch({ t: 'auth', c: { t: 'got-logout-msg', c } }),
+              dispatch: (c) => props.dispatch({ t: 'auth', c }),
               model: props.model,
             })
           },

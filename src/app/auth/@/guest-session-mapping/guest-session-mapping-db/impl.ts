@@ -6,12 +6,9 @@ export type Config = ImplHashMap.Config | ImplSql.Config
 
 export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb => {
   switch (config.t) {
-    case 'hash-map': {
+    case 'hash-map':
       return ImplHashMap.GuestSessionMappingDb(config)
-    }
-
-    case 'sql': {
+    case 'sql':
       return ImplSql.GuestSessionMappingDb(config)
-    }
   }
 }

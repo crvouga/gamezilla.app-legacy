@@ -1,1 +1,1 @@
-export * as LogoutTypes from './types'
+export * as LogoutFrontend from './frontend'

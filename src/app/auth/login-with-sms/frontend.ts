@@ -1,6 +1,6 @@
 import { Iso3166Alpha2Code } from '~/@/country/iso-3166-alpha-2-code'
 import { PhoneNumber } from '~/@/phone-number'
-import { NotAsked, RemoteResult, isErr } from '~/@/result'
+import { isErr, NotAsked, Remote, RemoteResult } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
 import { IconMobilePhone } from '~/@/ui/icon'
 import { TextField } from '~/@/ui/text-field'
@@ -8,7 +8,6 @@ import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Frag } from '~/@/vdom/primitives/frag'
 import { Text } from '~/@/vdom/primitives/text'
-import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { FocusViewCmd } from '~/app/@/frontend/focus-view-cmd.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -17,10 +16,91 @@ import { ReplaceScreenCmd } from '~/app/@/frontend/replace-screen-cmd.$msg'
 import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { AuthScreenFormLayout } from '../@/frontend/ui/auth-screen-form-layout'
-import { FrontendModule, ModelFrontend, toSendErrorMessage, toVerifyErrorMessage } from './types'
-import { sx } from '~/@/vdom/style/sx'
 
-const init: ModelFrontend = {
+import { Eff } from '~/@/eff'
+import { Translator } from '~/@/l18n/generated'
+import { TranslatedText } from '~/@/l18n/translations'
+import { isAnyMsg } from '~/@/msg/msg'
+import { RPC } from '~/@/rpc'
+import { UnixMs } from '~/@/time/unix-ms'
+import { sx } from '~/@/vdom/style/sx'
+import { SendCodeProblem } from '../@/backend/verify-sms/send-code-problem'
+import { VerifyCodeProblem } from '../@/backend/verify-sms/verify-code-problem'
+import { AuthFrontendCtx } from '../@/frontend/ctx'
+import { rpcContract, Sent, Verified } from './types'
+
+export type ModelFrontend = {
+  loginWithSms_phone?: string
+  loginWithSms_phoneError?: TranslatedText | null
+  loginWithSms_countryCode?: Iso3166Alpha2Code
+  loginWithSms_code?: string
+  loginWithSms_codeError?: TranslatedText | null
+  loginWithSms_sent?: Remote | Sent
+  loginWithSms_sentCodeAt?: UnixMs | null
+  loginWithSms_verified?: Remote | Verified
+  loginWithSms_verifiedAt?: UnixMs | null
+}
+
+export const toSendErrorMessage = (input: { model: ModelFrontend; ctx: { t: Translator } }): TranslatedText | null => {
+  const send = input.model.loginWithSms_sent ?? NotAsked
+
+  if (send.t === 'loading' || send.t === 'not-asked') {
+    return null
+  }
+
+  if (send.t === 'err') {
+    return input.ctx.t('app.something-went-wrong')
+  }
+
+  if (send.value.t === 'err') {
+    return SendCodeProblem.toString({ problem: send.value.error, t: input.ctx.t })
+  }
+
+  return null
+}
+
+export const toVerifyErrorMessage = (input: {
+  model: ModelFrontend
+  ctx: { t: Translator }
+}): TranslatedText | null => {
+  const verified = input.model.loginWithSms_verified ?? NotAsked
+
+  if (verified.t === 'loading' || verified.t === 'not-asked') {
+    return null
+  }
+
+  if (verified.t === 'err') {
+    return input.ctx.t('app.something-went-wrong')
+  }
+
+  if (verified.value.t === 'err') {
+    return VerifyCodeProblem.toString({ problem: verified.value.error, t: input.ctx.t })
+  }
+
+  return null
+}
+
+export type MsgFrontend =
+  | { t: 'loginWithSms_clickedBackButton' }
+  | { t: 'loginWithSms_inputtedPhoneNumber'; phone: string }
+  | { t: 'loginWithSms_inputtedCountryCode'; countryCode: Iso3166Alpha2Code }
+  | { t: 'loginWithSms_clickedPhoneNumberClear' }
+  | { t: 'loginWithSms_clickedSendCodeButton' }
+  | { t: 'loginWithSms_inputtedCode'; code: string }
+  | { t: 'loginWithSms_clickedCodeClear' }
+  | { t: 'loginWithSms_clickedVerifyCodeButton'; phone: PhoneNumber; code: string }
+  | { t: 'loginWithSms_sentCode'; sent: Sent }
+  | { t: 'loginWithSms_verifiedCode'; verified: Verified }
+
+const isMsg = (msg: unknown): msg is MsgFrontend => {
+  return isAnyMsg(msg) && msg.t.startsWith('loginWithSms_')
+}
+
+export type Ctx = AuthFrontendCtx & {
+  rpc: RPC.Client<typeof rpcContract>
+}
+
+export const init: ModelFrontend = {
   loginWithSms_code: '',
   loginWithSms_codeError: null,
   loginWithSms_phone: '',
@@ -28,19 +108,24 @@ const init: ModelFrontend = {
   loginWithSms_phoneError: null,
   loginWithSms_sent: NotAsked,
   loginWithSms_verified: NotAsked,
+  loginWithSms_sentCodeAt: null,
+  loginWithSms_verifiedAt: null,
 }
 
 const CODE_INPUT_VIEW_ID = 'codeInput'
 
 const PHONE_NUMBER_INPUT_VIEW_ID = 'phoneNumberInput'
 
-const update: FrontendModule['update'] = (input) => {
-  return AppFrontendModule.andThen({ model: input.model }, (model) => updateFromMsg({ ...input, model }))
-}
-
-const updateFromMsg: FrontendModule['update'] = (input) => {
-  if (!input.msg) return { model: input.model }
-
+export const update = <T extends ModelFrontend>(input: {
+  ctx: Ctx
+  model: T
+  msg?: unknown
+}): {
+  model: T
+  msgOut?: unknown[]
+  eff?: Eff<MsgFrontend>
+} => {
+  if (!isMsg(input.msg)) return { model: input.model }
   switch (input.msg.t) {
     case 'loginWithSms_clickedBackButton': {
       if (input.ctx.currentScreen.t === 'verify-code') {
@@ -98,7 +183,11 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
     case 'loginWithSms_sentCode': {
       const { sent } = input.msg
 
-      const modelNew: ModelFrontend = { ...input.model, loginWithSms_sent: sent }
+      const modelNew: T = {
+        ...input.model,
+        loginWithSms_sent: sent,
+        loginWithSms_sentCodeAt: input.ctx.now,
+      }
 
       const error = toSendErrorMessage({ model: modelNew, ctx: input.ctx }) ?? input.ctx.t('app.something-went-wrong')
 
@@ -166,7 +255,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
         async eff(dispatch) {
           const verified = await input.ctx.rpc.loginWithSms_verifyCode({
             phoneNumber,
-            code: input.model.loginWithSms_code,
+            code: input.model.loginWithSms_code ?? '',
             preferredLanguage: input.ctx.navigatorLanguage,
           })
           dispatch({ t: 'loginWithSms_verifiedCode', verified })
@@ -176,7 +265,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
 
     case 'loginWithSms_verifiedCode': {
       const { verified } = input.msg
-      const modelNew: ModelFrontend = { ...input.model, loginWithSms_verified: verified }
+      const modelNew: T = { ...input.model, loginWithSms_verified: verified }
       const error = toVerifyErrorMessage({ model: modelNew, ctx: input.ctx }) ?? input.ctx.t('app.something-went-wrong')
 
       if (isErr(verified) || isErr(verified.value)) {
@@ -201,19 +290,16 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
   }
 }
 
-const View: FrontendModule['View'] = (input) => {
+export const View = (input: { ctx: Ctx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
   switch (input.ctx.currentScreen.n) {
     case 'auth': {
       switch (input.ctx.currentScreen.t) {
-        case 'send-code': {
+        case 'send-code':
           return h(ViewSendCode, input)
-        }
-        case 'verify-code': {
+        case 'verify-code':
           return h(ViewVerifyCode, input)
-        }
-        default: {
+        default:
           return null
-        }
       }
     }
     default: {
@@ -224,7 +310,7 @@ const View: FrontendModule['View'] = (input) => {
 
 export const TEST_ID_SEND_CODE_SCREEN = 'auth/send-code-screen'
 
-const ViewSendCode: FrontendModule['View'] = (input) => {
+const ViewSendCode = (input: { ctx: Ctx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
   return h(AuthScreenFormLayout, {
     testId: TEST_ID_SEND_CODE_SCREEN,
     ctx: input.ctx,
@@ -233,12 +319,12 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
       input.dispatch({ t: 'loginWithSms_clickedBackButton' })
     },
     submitText: input.ctx.t('auth-sms.send-code'),
-    submitLoading: input.model.loginWithSms_sent.t === 'loading',
+    submitLoading: input.model.loginWithSms_sent?.t === 'loading',
     submitDisabled: false,
     onSubmit: () => input.dispatch({ t: 'loginWithSms_clickedSendCodeButton' }),
     renderInputs: () =>
       h(Frag, {}, [
-        h(Text, { style: sx({ textColor: 'white' }), text: input.model.loginWithSms_phone }),
+        h(Text, { style: sx({ textColor: 'white' }), text: input.model.loginWithSms_phone ?? '' }),
         h(TextField, {
           id: 'phoneNumberInput',
           testId: 'phone-number-input',
@@ -246,7 +332,7 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
           type: 'tel',
           startIcon: h(IconMobilePhone, { style: sx({ size: 5 }) }),
           error: typeof input.model.loginWithSms_phoneError === 'string',
-          value: input.model.loginWithSms_phone,
+          value: input.model.loginWithSms_phone ?? '',
           helperText: input.model.loginWithSms_phoneError,
           onChangeText: (value: string) => input.dispatch({ t: 'loginWithSms_inputtedPhoneNumber', phone: value }),
           onClear: () => input.dispatch({ t: 'loginWithSms_clickedPhoneNumberClear' }),
@@ -257,7 +343,7 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
 
 export const TEST_ID_VERIFY_CODE_SCREEN = 'auth/verify-code-screen'
 
-const ViewVerifyCode: FrontendModule['View'] = (input) => {
+const ViewVerifyCode = (input: { ctx: Ctx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
   if (input.ctx.currentScreen.t !== 'verify-code') return null
 
   const phoneNumber = input.ctx.currentScreen.phoneNumber
@@ -270,13 +356,13 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
       input.dispatch({ t: 'loginWithSms_clickedBackButton' })
     },
     submitText: input.ctx.t('auth-sms.verify-code'),
-    submitLoading: input.model.loginWithSms_verified.t === 'loading',
+    submitLoading: input.model.loginWithSms_verified?.t === 'loading',
     submitDisabled: false,
     onSubmit: () =>
       input.dispatch({
         t: 'loginWithSms_clickedVerifyCodeButton',
         phone: phoneNumber,
-        code: input.model.loginWithSms_code,
+        code: input.model.loginWithSms_code ?? '',
       }),
     renderInputs: () =>
       h(Frag, {}, [
@@ -295,16 +381,10 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
             typeof input.model.loginWithSms_codeError === 'string' ? input.model.loginWithSms_codeError : null,
           autoFocus: true,
           type: 'tel',
-          value: input.model.loginWithSms_code,
+          value: input.model.loginWithSms_code ?? '',
           onChangeText: (value) => input.dispatch({ t: 'loginWithSms_inputtedCode', code: value }),
           onClear: () => input.dispatch({ t: 'loginWithSms_clickedCodeClear' }),
         }),
       ]),
   })
-}
-
-export const LoginWithSMSFrontend = {
-  init,
-  update,
-  View,
 }

@@ -4,20 +4,23 @@ import { s } from '~/@/schema'
 import { UserAccount } from '~/app/@/data/user-account'
 import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
+import { isAnyMsg } from '~/@/msg/msg'
 
 export type ModelFrontend = {
   currentUser_status: RemoteResult<string, null>
 }
 
 export type MsgFrontend = {
-  t: 'got-msg-out'
+  t: 'currentUser_gotMsgOut'
   msgOut: unknown
 }
 
-export type MsgToBackend = { t: 'noop' }
+export const isMsgFrontend = (msg: unknown): msg is MsgFrontend => {
+  return isAnyMsg(msg) && msg.t.startsWith('currentUser_')
+}
 
 export const rpcContract = RPC.initContract({
-  'auth/current-user/get-current-user': {
+  currentUser_getCurrentUser: {
     input: s.obj({}),
     output: s.obj({
       currentUser: s.maybe(UserAccount),

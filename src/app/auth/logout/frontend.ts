@@ -1,5 +1,7 @@
+import { Eff } from '~/@/eff'
 import { TranslatedText } from '~/@/l18n'
-import { NotAsked } from '~/@/result'
+import { isAnyMsg } from '~/@/msg/msg'
+import { NotAsked, RemoteResult } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'
 import { IconPowerOff } from '~/@/ui/icon'
 import { MenuItem } from '~/@/ui/menu-item'
@@ -10,16 +12,41 @@ import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { FloatingConfirmation } from '~/app/@/ui/floating/confirmation/floating-confirmation'
-import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
+import { AuthFrontendCtx } from '../@/frontend/ctx'
 
-const init: ModelFrontend = {
+export type ModelFrontend = {
+  logout_request: RemoteResult<string, null>
+  logout_opened: 'logged-out' | null
+}
+
+export const init: ModelFrontend = {
   logout_opened: null,
   logout_request: NotAsked,
 }
 
-const update: FrontendModule['update'] = (input) => {
+export type Msg =
+  | { t: 'logout_clickedLogoutMenuItem' }
+  | { t: 'logout_logoutDrawerClosed' }
+  | { t: 'logout_drawerClickedCancel' }
+  | { t: 'logout_drawerClickedConfirm' }
+
+export const isMsg = (msg: unknown): msg is Msg => {
+  return isAnyMsg(msg) && msg.t.startsWith('logout_')
+}
+
+export const update = <T extends ModelFrontend>(input: {
+  ctx: AuthFrontendCtx
+  model: T
+  msg?: unknown
+}): {
+  model: T
+  msgOut?: unknown[]
+  eff?: Eff<Msg>
+} => {
+  if (!isMsg(input.msg)) return { model: input.model }
+
   switch (input.msg?.t) {
-    case 'clicked-logout-menu-item': {
+    case 'logout_clickedLogoutMenuItem': {
       return {
         model: {
           ...input.model,
@@ -29,7 +56,7 @@ const update: FrontendModule['update'] = (input) => {
       }
     }
 
-    case 'logout-drawer-clicked-confirm': {
+    case 'logout_drawerClickedConfirm': {
       return {
         model: {
           ...input.model,
@@ -46,8 +73,8 @@ const update: FrontendModule['update'] = (input) => {
       }
     }
 
-    case 'logout-drawer-closed':
-    case 'logout-drawer-clicked-cancel': {
+    case 'logout_logoutDrawerClosed':
+    case 'logout_drawerClickedCancel': {
       return {
         model: {
           ...input.model,
@@ -57,17 +84,11 @@ const update: FrontendModule['update'] = (input) => {
       }
     }
   }
-
-  return { model: input.model }
 }
 
 export const TEST_ID_LOGOUT_CONFIRMATION = 'auth/logout-confirmation'
 
-const ViewConfirmation = (input: {
-  ctx: AppFrontendCtxBase
-  model: ModelFrontend
-  dispatch: (msg: MsgFrontend) => void
-}) => {
+const ViewConfirmation = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: (msg: Msg) => void }) => {
   return h(FloatingConfirmation, {
     ctx: input.ctx,
     testId: TEST_ID_LOGOUT_CONFIRMATION,
@@ -79,13 +100,17 @@ const ViewConfirmation = (input: {
     cancelText: input.ctx.t('app.cancel'),
     id: 'logout',
     position: 'bottom',
-    onClose: () => input.dispatch({ t: 'logout-drawer-closed' }),
-    onCancel: () => input.dispatch({ t: 'logout-drawer-clicked-cancel' }),
-    onConfirm: () => input.dispatch({ t: 'logout-drawer-clicked-confirm' }),
+    onClose: () => input.dispatch({ t: 'logout_logoutDrawerClosed' }),
+    onCancel: () => input.dispatch({ t: 'logout_drawerClickedCancel' }),
+    onConfirm: () => input.dispatch({ t: 'logout_drawerClickedConfirm' }),
   })
 }
 
-const ViewMenuItem: FrontendModule['View'] = (props) => {
+export const ViewMenuItem = (props: {
+  ctx: AppFrontendCtxBase
+  model: ModelFrontend
+  dispatch: (msg: Msg) => void
+}) => {
   const { currentUserState } = props.ctx
   switch (currentUserState.t) {
     case 'loading':
@@ -95,7 +120,7 @@ const ViewMenuItem: FrontendModule['View'] = (props) => {
     case 'logged-in': {
       return h(Frag, {}, [
         h(MenuItem, {
-          onPress: () => props.dispatch({ t: 'clicked-logout-menu-item' }),
+          onPress: () => props.dispatch({ t: 'logout_clickedLogoutMenuItem' }),
           renderIcon: (iconProps) => h(IconPowerOff, iconProps),
           primary: props.ctx.t('auth.logout'),
           renderEnd: (endProps) =>
@@ -109,10 +134,4 @@ const ViewMenuItem: FrontendModule['View'] = (props) => {
       ])
     }
   }
-}
-
-export const LogoutFrontend = {
-  init,
-  ViewMenuItem,
-  update,
 }

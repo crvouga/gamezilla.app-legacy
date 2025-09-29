@@ -1,3 +1,4 @@
+import { Eff } from '~/@/eff'
 import { Err, isErr, Loading, NotAsked, Ok, Result, unwrapOr } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Button } from '~/@/ui/button'
@@ -13,13 +14,22 @@ import { GuestSessionMapping } from '../@/guest-session-mapping/guest-session-ma
 import { GuestSessionMappingId } from '../@/guest-session-mapping/guest-session-mapping-id'
 import { UserSession } from '../@/user-session/user-session'
 import { UserSessionId } from '../@/user-session/user-session-id'
-import type { FrontendModule, ModelFrontend } from './types'
+import { isMsgFrontend, MsgFrontend, type FrontendModule, type ModelFrontend } from './types'
 
 const init: ModelFrontend = {
   loginAsGuest_request: NotAsked,
 }
 
-const update: FrontendModule['update'] = (input) => {
+const update = <T extends ModelFrontend>(input: {
+  ctx: AuthFrontendCtx
+  model: T
+  msg?: unknown
+}): {
+  model: T
+  msgOut?: unknown[]
+  eff?: Eff<MsgFrontend>
+} => {
+  if (!isMsgFrontend(input.msg)) return { model: input.model }
   switch (input.msg?.t) {
     case 'loginAsGuest_clickedContinueAsGuestButton': {
       return {
@@ -46,10 +56,6 @@ const update: FrontendModule['update'] = (input) => {
         },
       }
     }
-  }
-
-  return {
-    model: input.model,
   }
 }
 
