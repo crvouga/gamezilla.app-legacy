@@ -1,5 +1,5 @@
 import { Err, Ok } from '../../result/result'
-import { isSchema, type Schema } from './schema-types'
+import { isSchema, type Schema } from './schema'
 import { ParseErrorEntry } from './parse-error-entry'
 
 export type SchemaTuple<T> = Schema<T> & {

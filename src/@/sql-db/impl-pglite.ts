@@ -1,4 +1,5 @@
 import { Ok } from '~/@/result'
+import { s } from '~/@/schema'
 import type { ILogger } from '../logger/interface'
 import { IPglite } from '../pglite/types'
 import { ImplStandardSql } from './impl-standard-sql'
@@ -13,14 +14,16 @@ export type ImplPglite = {
 const init = (config: ImplPglite): ISqlDb => {
   const logger = config.logger.child(['pglite'])
 
-  const query = async (rawSql: string): Promise<unknown[]> => {
-    const pgliteClient = await config.pglite
-    const queried = await pgliteClient.query(rawSql)
-    const rows = queried.rows
-    return rows
-  }
-
-  const impl = ImplStandardSql.init({ t: 'standard-sql', query, logger })
+  const impl = ImplStandardSql.init({
+    t: 'standard-sql',
+    async query<TRow>(sql: string, _schema: s.Schema<TRow>) {
+      const pgliteClient = await config.pglite
+      const queried = await pgliteClient.query(sql)
+      const rows = queried.rows
+      return rows
+    },
+    logger,
+  })
 
   return {
     ...impl,

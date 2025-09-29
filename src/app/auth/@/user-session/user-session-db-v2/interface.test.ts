@@ -228,7 +228,7 @@ describe('UserSessionDb', () => {
     }
   })
 
-  test.skip('query equals userId', async () => {
+  test('query equals userId', async () => {
     for (const f of await Fixtures()) {
       const userId = UserId.generate()
       const before = await f.userSessionDb.query({
@@ -266,7 +266,7 @@ describe('UserSessionDb', () => {
     }
   })
 
-  test.skip('query equals userId with pagination', async () => {
+  test('query equals userId with pagination', async () => {
     for (const f of await Fixtures()) {
       const userId = UserId.generate()
       const before = await f.userSessionDb.query({
@@ -330,7 +330,7 @@ describe('UserSessionDb', () => {
     }
   })
 
-  test.skip('query equals sessionId', async () => {
+  test('query equals sessionId', async () => {
     for (const f of await Fixtures()) {
       const sessionId = SessionId.generate()
       const before = await f.userSessionDb.query({
@@ -434,7 +434,7 @@ describe('UserSessionDb', () => {
     }
   })
 
-  test.skip('query equals clientSessionId', async () => {
+  test('query equals clientSessionId', async () => {
     for (const f of await Fixtures()) {
       const clientSessionId = ClientSessionId.generate()
 

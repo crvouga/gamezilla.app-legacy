@@ -1,6 +1,6 @@
 import { Err, Ok } from '../../result/result'
 import { ParseErrorEntry } from './parse-error-entry'
-import { isSchema, type Schema } from './schema-types'
+import { isSchema, type Schema } from './schema'
 
 export type SchemaAnd<T> = Schema<T> & {
   t: 'and'
@@ -423,6 +423,6 @@ export function and(...schemas: Schema<unknown>[]): SchemaAnd<unknown> {
   }
 }
 
-export const isSchemaAnd = (input: unknown): input is SchemaAnd<unknown> => {
+export const isAnd = (input: unknown): input is SchemaAnd<unknown> => {
   return isSchema(input) && input.t === 'and'
 }

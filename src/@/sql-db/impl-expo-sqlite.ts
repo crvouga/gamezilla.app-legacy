@@ -1,8 +1,9 @@
 import * as SQLite from 'expo-sqlite'
+import { s } from '~/@/schema'
 import { ILogger } from '../logger'
-import { ImplStandardSql } from './impl-standard-sql'
-import type { ISqlDb } from './interface'
 import { TimeSpan } from '../time/time-span'
+import { ImplStandardSqlite } from './impl-standard-sqlite'
+import type { ISqlDb } from './interface'
 
 export type ImplExpoSqlite = {
   t: 'expo-sqlite'
@@ -13,44 +14,6 @@ export type ImplExpoSqlite = {
 
 const init = (config: ImplExpoSqlite): ISqlDb => {
   const db = SQLite.openDatabaseAsync(config.dbName)
-
-  const query = async (rawSql: string): Promise<unknown[]> => {
-    const dbInstance = await db
-    const trimmedSql = rawSql.trim().toLowerCase()
-    const isSelect = trimmedSql.startsWith('select') || trimmedSql.startsWith('with')
-
-    try {
-      if (isSelect) {
-        const result = await dbInstance.getAllAsync(rawSql)
-        return result || []
-      } else {
-        // Add retry logic for write operations to handle table locks
-        let retries = 3
-        let lastError: unknown
-        while (retries > 0) {
-          try {
-            await dbInstance.execAsync(rawSql)
-            return []
-          } catch (err) {
-            lastError = err
-            const isLocked = err instanceof Error && err.message.includes('database table is locked')
-            if (!isLocked) {
-              throw err
-            }
-            retries--
-            if (retries > 0) {
-              await new Promise((resolve) => setTimeout(resolve, 100)) // Wait 100ms before retry
-            }
-          }
-        }
-        config.logger.error('SQLite query failed after retries:', lastError, rawSql)
-        throw lastError
-      }
-    } catch (err) {
-      config.logger.error('SQLite query error:', err, rawSql)
-      throw err
-    }
-  }
 
   const initDb = async () => {
     const dbInstance = await db
@@ -69,11 +32,46 @@ const init = (config: ImplExpoSqlite): ISqlDb => {
   }
   initDb()
 
-  return ImplStandardSql.init({
-    t: 'standard-sql',
-    query,
-    logger: config.logger,
-    pollInterval: config.pollInterval,
+  return ImplStandardSqlite.init({
+    ...config,
+    t: 'standard-sqlite',
+    async query<TRow>(sql: string, _schema: s.Schema<TRow>): Promise<unknown[]> {
+      const dbInstance = await db
+      const trimmedSql = sql.trim().toLowerCase()
+      const isSelect = trimmedSql.startsWith('select') || trimmedSql.startsWith('with')
+
+      try {
+        if (isSelect) {
+          const result = await dbInstance.getAllAsync(sql)
+          return result || []
+        } else {
+          // Add retry logic for write operations to handle table locks
+          let retries = 3
+          let lastError: unknown
+          while (retries > 0) {
+            try {
+              await dbInstance.execAsync(sql)
+              return []
+            } catch (err) {
+              lastError = err
+              const isLocked = err instanceof Error && err.message.includes('database table is locked')
+              if (!isLocked) {
+                throw err
+              }
+              retries--
+              if (retries > 0) {
+                await new Promise((resolve) => setTimeout(resolve, 100)) // Wait 100ms before retry
+              }
+            }
+          }
+          config.logger.error('SQLite query failed after retries:', lastError, sql)
+          throw lastError
+        }
+      } catch (err) {
+        config.logger.error('SQLite query error:', err, sql)
+        throw err
+      }
+    },
   })
 }
 

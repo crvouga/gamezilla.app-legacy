@@ -1,6 +1,4 @@
-import { or } from '../schema/schema/schema-or'
-import { Schema } from '../schema/schema/schema-types'
-import { l, obj } from '../schema/schema/schema'
+import { Schema, l, obj, or } from '../schema/schema'
 import type { Loading, NotAsked, RemoteResultInternal, ResultInternal } from './result'
 
 export const schema = <TError, TValue>(

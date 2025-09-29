@@ -1,6 +1,6 @@
 import { Err } from '../../result/result'
 import { ParseErrorEntry } from './parse-error-entry'
-import { isSchema, type Schema } from './schema-types'
+import { isSchema, type Schema } from './schema'
 
 export type SchemaOr<T> = Schema<T> & {
   t: 'or'

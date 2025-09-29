@@ -1,4 +1,5 @@
 import { ascend } from '~/@/array/sorting'
+import { FileSystem } from '~/@/file-system'
 import { KeyValueDb } from '~/@/key-value-db'
 import { Logger } from '~/@/logger'
 import { Pglite } from '~/@/pglite/impl'
@@ -11,7 +12,6 @@ import { InferQueryInput } from '../interface/db'
 import { Todo } from './todo'
 import { TodoDb } from './todo-db/impl'
 import { ITodoDb } from './todo-db/interface'
-import { FileSystem } from '~/@/file-system'
 
 const Fixture = async (config: TodoDb) => {
   const todoDb = TodoDb.init(config)
@@ -33,8 +33,8 @@ const Fixtures = async () => {
   const kvDb = KeyValueDb.init({ t: 'in-memory' })
   const logger = Logger.init({ t: 'noop' })
   configs.push({ t: 'sql-db', sqlDb: sqlDbSqlite, logger, kvDb })
-  // configs.push({ t: 'sql-db', sqlDb: sqlDbPglite, logger, kvDb })
-  // configs.push({ t: 'hash-map', logger })
+  configs.push({ t: 'sql-db', sqlDb: sqlDbPglite, logger, kvDb })
+  configs.push({ t: 'hash-map', logger })
   return Promise.all(configs.map(Fixture))
 }
 

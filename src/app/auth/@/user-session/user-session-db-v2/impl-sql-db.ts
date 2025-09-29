@@ -20,7 +20,7 @@ export type ImplSqlDb = {
 const UP: string[] = [
   `
   CREATE TABLE IF NOT EXISTS user_session (
-    id TEXT NOT NULL,
+    id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
     session_id TEXT,
     client_session_id TEXT NOT NULL,
