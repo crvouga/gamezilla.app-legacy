@@ -8,6 +8,7 @@ import { Box } from '~/@/vdom/primitives/box'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { Text } from '~/@/vdom/primitives/text'
 import { sx } from '~/@/vdom/style/sx'
+import { VDom } from '~/@/vdom/vdom'
 import { VDomImplWeb } from '~/@/vdom/vdom-impl-web'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
@@ -18,15 +19,11 @@ import { BackScreenCmd } from '../@/frontend/back-screen-cmd.$msg'
 import { ScreenLangFrontend } from './screen-lang/frontend'
 import { ScreenRendererFrontend } from './screen-renderer/frontend'
 import { SoundFrontend } from './sound'
-import {
-  isMsgFrontendBase,
-  type FrontendCtxModule,
-  type FrontendModule,
-  type ModelFrontend,
-  type MsgFrontend,
-} from './types'
+import { isMsgFrontendBase, type FrontendCtxModule, type ModelFrontend, type MsgFrontend } from './types'
 
-const init: FrontendModule['init'] = (input) => {
+const init = (input: {
+  ctx: FrontendCtxModule
+}): { model: ModelFrontend; eff?: Eff<MsgFrontend>; msgOut?: unknown[] } => {
   const lang = ScreenLangFrontend.init(input)
   const renderer = ScreenRendererFrontend.init(input)
   const sound = SoundFrontend.init(input)
@@ -122,11 +119,18 @@ const updateBase: typeof update = ({ model, ctx, msg }) => {
   }
 }
 
-const subscriptions: FrontendModule['subscriptions'] = (input) => {
+const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<MsgFrontend> => {
   return Sub.batch<MsgFrontend>([ScreenLangFrontend.subscriptions(input)])
 }
 
-const View: FrontendModule['View'] = (input) => {
+const View = (input: {
+  ctx: FrontendCtxModule
+  model: ModelFrontend
+  dispatch: (msg: MsgFrontend) => void
+  slots?: {
+    menuItemsEnd: (input: {}) => VDom
+  }
+}) => {
   switch (input.ctx.currentScreen.n) {
     case 'settings':
       switch (input.ctx.currentScreen.t) {
@@ -146,7 +150,7 @@ const View: FrontendModule['View'] = (input) => {
 
 export const TEST_ID_SETTINGS_SCREEN = 'settings-screen'
 
-const ViewMain: FrontendModule['View'] = (props) => {
+const ViewMain: typeof View = (props) => {
   return h(ScreenLayout, {
     id: 'setting-main',
     dataTestId: TEST_ID_SETTINGS_SCREEN,
