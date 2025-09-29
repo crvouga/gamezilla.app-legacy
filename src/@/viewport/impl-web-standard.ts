@@ -46,6 +46,9 @@ const init = (_config: ImplWebStandard): IViewport => {
   }
 
   if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', () => {
+      documentVisibilityState.pub(document.visibilityState)
+    })
     document.addEventListener('visibilitychange', () => {
       documentVisibilityState.pub(document.visibilityState)
     })

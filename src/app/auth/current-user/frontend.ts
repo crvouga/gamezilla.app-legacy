@@ -13,6 +13,7 @@ import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
+import { ViewportVisibilityChangedEvt } from '~/app/@/frontend/viewport-visibility-changed-evt.$msg'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
 import { UserAccountDbQueryCache } from '../@/user-account/user-account-db-query-cache'
 import { UserSession } from '../@/user-session/user-session'
@@ -37,57 +38,72 @@ export type CurrentUserState =
       userProfile: UserProfile
     }
 
+const toQueryUserSessionByClientSessionId = (input: { clientSessionId: ClientSessionId }): QueryInput<UserSession> => {
+  return {
+    where: {
+      op: '=',
+      column: 'clientSessionId',
+      value: input.clientSessionId,
+    },
+    orderBy: [{ column: 'createdAt', direction: 'desc' }],
+    limit: 10,
+    offset: 0,
+  }
+}
+
+const toQueryUserAccountByUserId = (input: { userId: UserId }): QueryInput<UserAccount> => {
+  return {
+    where: {
+      op: '=',
+      column: 'userId',
+      value: input.userId,
+    },
+    orderBy: [{ column: 'createdAt', direction: 'desc' }],
+    limit: 1,
+    offset: 0,
+  }
+}
+
 export const toCurrentUserState = (input: { model: ModelFrontend; ctx: AppFrontendCtxBase }): CurrentUserState => {
-  switch (input.model.status.t) {
-    case 'not-asked':
-    case 'loading': {
-      return { t: 'loading' }
-    }
-    case 'err': {
-      return { t: 'logged-out' }
-    }
-    case 'ok': {
-      const userSessions = UserSessionDbQueryCache.query(input.ctx, toQueryUserSessionByClientSessionId(input.ctx))
-      const maybeUserSession = userSessions.find(
-        (userSession) => userSession.clientSessionId === input.ctx.clientSessionId,
-      )
+  const userSessions = UserSessionDbQueryCache.query(input.ctx, toQueryUserSessionByClientSessionId(input.ctx))
 
-      if (!maybeUserSession) return { t: 'logged-out' }
+  const maybeUserSession = userSessions.find((userSession) => userSession.clientSessionId === input.ctx.clientSessionId)
 
-      const userAccounts = UserAccountDbQueryCache.query(
-        input.ctx,
-        toQueryUserAccountByUserId({ userId: maybeUserSession.userId }),
-      )
-      const maybeUserAccount = userAccounts.find((userAccount) => userAccount.userId === maybeUserSession.userId)
+  if (!maybeUserSession) return { t: 'loading' }
 
-      const userAccountFallback: UserAccount = {
-        createdAt: input.ctx.now,
-        phoneNumber: null,
-        role: 'normal',
-        userId: maybeUserSession.userId,
-      }
+  const userAccounts = UserAccountDbQueryCache.query(
+    input.ctx,
+    toQueryUserAccountByUserId({ userId: maybeUserSession.userId }),
+  )
 
-      const userAccount: UserAccount = maybeUserAccount ?? userAccountFallback
+  const maybeUserAccount = userAccounts.find((userAccount) => userAccount.userId === maybeUserSession.userId)
 
-      const maybeUserProfile = input.ctx.profilesByUserId[maybeUserSession.userId]
+  const userAccountFallback: UserAccount = {
+    createdAt: input.ctx.now,
+    phoneNumber: null,
+    role: 'normal',
+    userId: maybeUserSession.userId,
+  }
 
-      const userProfile: UserProfile = maybeUserProfile ?? {
-        id: UserProfileId.generate(),
-        userId: maybeUserSession.userId,
-        username: Username.of(''),
-        avatarSeed: null,
-        avatarStyle: null,
-        createdAt: input.ctx.now,
-        updatedAt: input.ctx.now,
-      }
+  const userAccount: UserAccount = maybeUserAccount ?? userAccountFallback
 
-      return {
-        t: 'logged-in',
-        userSession: maybeUserSession,
-        userAccount,
-        userProfile,
-      }
-    }
+  const maybeUserProfile = input.ctx.profilesByUserId[maybeUserSession.userId]
+
+  const userProfile: UserProfile = maybeUserProfile ?? {
+    id: UserProfileId.generate(),
+    userId: maybeUserSession.userId,
+    username: Username.of(''),
+    avatarSeed: null,
+    avatarStyle: null,
+    createdAt: input.ctx.now,
+    updatedAt: input.ctx.now,
+  }
+
+  return {
+    t: 'logged-in',
+    userSession: maybeUserSession,
+    userAccount,
+    userProfile,
   }
 }
 
@@ -106,6 +122,14 @@ const update: FrontendModule['update'] = (input) => {
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => watchForLogin({ ...input, model, modelBefore: input.model, modelAfter: model }),
+    (model) => {
+      if (ViewportVisibilityChangedEvt.is(input.msg)) {
+        return {
+          model,
+        }
+      }
+      return { model: input.model }
+    },
   )
 }
 
@@ -147,32 +171,6 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
     default: {
       return { model: input.model }
     }
-  }
-}
-
-const toQueryUserSessionByClientSessionId = (input: { clientSessionId: ClientSessionId }): QueryInput<UserSession> => {
-  return {
-    where: {
-      op: '=',
-      column: 'clientSessionId',
-      value: input.clientSessionId,
-    },
-    orderBy: [{ column: 'createdAt', direction: 'desc' }],
-    limit: 10,
-    offset: 0,
-  }
-}
-
-const toQueryUserAccountByUserId = (input: { userId: UserId }): QueryInput<UserAccount> => {
-  return {
-    where: {
-      op: '=',
-      column: 'userId',
-      value: input.userId,
-    },
-    orderBy: [{ column: 'createdAt', direction: 'desc' }],
-    limit: 1,
-    offset: 0,
   }
 }
 

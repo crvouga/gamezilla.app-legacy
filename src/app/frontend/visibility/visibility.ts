@@ -2,6 +2,7 @@ import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { ViewportVisibility } from '~/@/viewport'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
+import { ViewportVisibilityChangedEvt } from '~/app/@/frontend/viewport-visibility-changed-evt.$msg'
 
 export type Model = {
   visibility: ViewportVisibility
@@ -26,6 +27,7 @@ export const update = ({
 }): {
   model: Model
   eff?: Eff<Msg>
+  msgOut?: unknown[]
 } => {
   if (msg) return updateFromMsg({ msg, model })
 
@@ -37,11 +39,17 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
 
   switch (msg.t) {
     case 'viewport-became-hidden': {
-      return { model: { ...model, visibility: 'hidden' } }
+      return {
+        model: { ...model, visibility: 'hidden' },
+        msgOut: [ViewportVisibilityChangedEvt.init('hidden')],
+      }
     }
 
     case 'viewport-became-visible': {
-      return { model: { ...model, visibility: 'visible' } }
+      return {
+        model: { ...model, visibility: 'visible' },
+        msgOut: [ViewportVisibilityChangedEvt.init('visible')],
+      }
     }
   }
 }

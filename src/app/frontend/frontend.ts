@@ -108,7 +108,7 @@ const update = (input: {
       screenSize: screenSize.model,
       copyToClipboard: copyToClipboard.model,
     },
-    msgOut: Msg.batch(screen.msgOut, toast.msgOut),
+    msgOut: Msg.batch(screen.msgOut, toast.msgOut, visibility.msgOut),
     eff: Eff.batch<MsgFrontend>([
       Eff.tag('visibility', visibility.eff),
       Eff.tag('current-screen', screen.eff),
