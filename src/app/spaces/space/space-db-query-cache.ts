@@ -27,19 +27,19 @@ const sub = <TMsg>(spaceDb: ISpaceDb, query: SpaceDbQuery, mapper: (m: unknown) 
 
 const read = (ctx: { queryCache: QueryCache }, query: SpaceDbQuery): Space[] => {
   const queryKey = deterministicJsonStringify(query)
-  const results = ctx.queryCache.results[queryKey]
-  const entities = (results?.map((id) => ctx.queryCache.entities.byType['space']?.byId[id] as Space) ?? []).filter(
-    (space) => {
-      const spaceProjection = Space.toSpaceProjection(space)
-      return spaceProjection?.type === 'started'
-    },
-  )
+  const results = ctx.queryCache.queryCache_results[queryKey]
+  const entities = (
+    results?.map((id) => ctx.queryCache.queryCache_entities.byType['space']?.byId[id] as Space) ?? []
+  ).filter((space) => {
+    const spaceProjection = Space.toSpaceProjection(space)
+    return spaceProjection?.type === 'started'
+  })
   return entities
 }
 
 const isLoading = (ctx: { queryCache: QueryCache }, query: SpaceDbQuery): boolean => {
   const queryKey = deterministicJsonStringify(query)
-  return ctx.queryCache.results[queryKey] === undefined
+  return ctx.queryCache.queryCache_results[queryKey] === undefined
 }
 
 const isEmpty = (ctx: { queryCache: QueryCache }, query: SpaceDbQuery): boolean => {
@@ -48,7 +48,7 @@ const isEmpty = (ctx: { queryCache: QueryCache }, query: SpaceDbQuery): boolean 
 }
 
 const entity = (ctx: { queryCache: QueryCache }, spaceId: SpaceId): Space | null => {
-  return ctx.queryCache.entities.byType[ENTITY_TYPE]?.byId[spaceId] as Space | null
+  return ctx.queryCache.queryCache_entities.byType[ENTITY_TYPE]?.byId[spaceId] as Space | null
 }
 
 const gotEntity = (spaceId: SpaceId, spaceNew: Space): GotQueryCacheMsg => {

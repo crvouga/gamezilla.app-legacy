@@ -16,16 +16,16 @@ import { UserSessionId } from '../@/user-session/user-session-id'
 import type { FrontendModule, ModelFrontend } from './types'
 
 const init: ModelFrontend = {
-  request: NotAsked,
+  loginAsGuest_request: NotAsked,
 }
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
-    case 'clicked-continue-as-guest-button': {
+    case 'loginAsGuest_clickedContinueAsGuestButton': {
       return {
         model: {
           ...input.model,
-          request: Loading,
+          loginAsGuest_request: Loading,
         },
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
         async eff(dispatch) {
@@ -34,15 +34,15 @@ const update: FrontendModule['update'] = (input) => {
             clientSessionId: input.ctx.clientSessionId,
             now: input.ctx.now,
           })
-          dispatch({ t: 'continue-as-guest-result', result })
+          dispatch({ t: 'loginAsGuest_continueAsGuestResult', result })
         },
       }
     }
-    case 'continue-as-guest-result': {
+    case 'loginAsGuest_continueAsGuestResult': {
       return {
         model: {
           ...input.model,
-          request: input.msg.result,
+          loginAsGuest_request: input.msg.result,
         },
       }
     }
@@ -119,7 +119,7 @@ export const TEST_ID_CONTINUE_AS_GUEST_BUTTON = 'auth/continue-as-guest-button'
 
 const ViewButton: FrontendModule['View'] = (input) => {
   return h(Button, {
-    onPress: () => input.dispatch({ t: 'clicked-continue-as-guest-button' }),
+    onPress: () => input.dispatch({ t: 'loginAsGuest_clickedContinueAsGuestButton' }),
     renderIconStart: (iconInput) => h(IconUserCircle, iconInput),
     text: input.ctx.t('auth.continue-as-guest'),
     width: 'full',

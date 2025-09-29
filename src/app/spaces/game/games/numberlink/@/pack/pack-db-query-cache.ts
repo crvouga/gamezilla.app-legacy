@@ -27,14 +27,14 @@ const sub = <TMsg>(packDb: IPackDb, query: PackQuery, mapper: (m: unknown) => TM
 
 const read = (ctx: { queryCache: QueryCache }, query: PackQuery): Pack[] => {
   const queryKey = deterministicJsonStringify(query)
-  const results = ctx.queryCache.results[queryKey]
-  const entities = results?.map((id) => ctx.queryCache.entities.byType[ENTITY_TYPE]?.byId[id] as Pack) ?? []
+  const results = ctx.queryCache.queryCache_results[queryKey]
+  const entities = results?.map((id) => ctx.queryCache.queryCache_entities.byType[ENTITY_TYPE]?.byId[id] as Pack) ?? []
   return entities
 }
 
 const isLoading = (ctx: { queryCache: QueryCache }, query: PackQuery): boolean => {
   const queryKey = deterministicJsonStringify(query)
-  return ctx.queryCache.results[queryKey] === undefined
+  return ctx.queryCache.queryCache_results[queryKey] === undefined
 }
 
 const isEmpty = (ctx: { queryCache: QueryCache }, query: PackQuery): boolean => {

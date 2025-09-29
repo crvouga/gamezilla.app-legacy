@@ -6,7 +6,7 @@ import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
 
 export type ModelFrontend = {
-  status: RemoteResult<string, null>
+  currentUser_status: RemoteResult<string, null>
 }
 
 export type MsgFrontend = {

@@ -34,19 +34,20 @@ const init = <TEntity extends Record<string, unknown>, TRelated extends Record<s
 
   const query = (ctx: { queryCache: QueryCache }, queryInput: QueryInput<TEntity>): TEntity[] => {
     const queryKey = deterministicJsonStringify(queryInput)
-    const results = ctx.queryCache.results[queryKey]
-    const entities = results?.map((id) => ctx.queryCache.entities.byType[config.entityType]?.byId[id] as TEntity) ?? []
+    const results = ctx.queryCache.queryCache_results[queryKey]
+    const entities =
+      results?.map((id) => ctx.queryCache.queryCache_entities.byType[config.entityType]?.byId[id] as TEntity) ?? []
     return entities
   }
 
   const toEntity = (ctx: { queryCache: QueryCache }, id: string): TEntity | null => {
-    const entity = ctx.queryCache.entities.byType[config.entityType]?.byId[id] as TEntity
+    const entity = ctx.queryCache.queryCache_entities.byType[config.entityType]?.byId[id] as TEntity
     return entity ?? null
   }
 
   const isLoading = (ctx: { queryCache: QueryCache }, queryInput: QueryInput<TEntity>): boolean => {
     const queryKey = deterministicJsonStringify(queryInput)
-    return ctx.queryCache.results[queryKey] === undefined
+    return ctx.queryCache.queryCache_results[queryKey] === undefined
   }
 
   const isEmpty = (ctx: { queryCache: QueryCache }, queryInput: QueryInput<TEntity>): boolean => {

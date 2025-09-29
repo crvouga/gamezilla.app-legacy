@@ -1,55 +1,62 @@
 import { Eff } from '~/@/eff'
+import { AnyMsg, isAnyMsg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
 import { ViewportVisibility } from '~/@/viewport'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { ViewportVisibilityChangedEvt } from '~/app/@/frontend/viewport-visibility-changed-evt.$msg'
 
 export type Model = {
-  visibility: ViewportVisibility
+  viewport_visibility: ViewportVisibility
 }
 
 export const init = (input: { ctx: AppFrontendCtxBase }): { model: Model } => {
   return {
     model: {
-      visibility: input.ctx.viewport.visibility.get(),
+      viewport_visibility: input.ctx.viewport.visibility.get(),
     },
   }
 }
 
-export type Msg = { t: 'viewport-became-hidden' } | { t: 'viewport-became-visible' }
+export type Msg = { t: 'viewport_becameHidden' } | { t: 'viewport_becameVisible' }
 
-export const update = ({
-  msg,
-  model,
-}: {
-  msg?: Msg | null
-  model: Model
+const isMsg = (msg: unknown): msg is Msg => {
+  return isAnyMsg(msg) && msg.t.startsWith('viewport_')
+}
+
+export const update = <TModel extends Model>(input: {
+  msg?: AnyMsg | null
+  msgIn?: unknown
+  model: TModel
 }): {
-  model: Model
+  model: TModel
   eff?: Eff<Msg>
   msgOut?: unknown[]
 } => {
-  if (msg) return updateFromMsg({ msg, model })
+  if (input.msg) return updateFromMsg(input)
 
-  return { model }
+  return { model: input.model }
 }
 
-const updateFromMsg: typeof update = ({ msg, model }) => {
-  if (!msg) return { model }
+const updateFromMsg: typeof update = (input) => {
+  if (!isMsg(input.msg)) return { model: input.model }
 
-  switch (msg.t) {
-    case 'viewport-became-hidden': {
+  switch (input.msg.t) {
+    case 'viewport_becameHidden': {
       return {
-        model: { ...model, visibility: 'hidden' },
+        model: { ...input.model, viewport_visibility: 'hidden' },
         msgOut: [ViewportVisibilityChangedEvt.init('hidden')],
       }
     }
 
-    case 'viewport-became-visible': {
+    case 'viewport_becameVisible': {
       return {
-        model: { ...model, visibility: 'visible' },
+        model: { ...input.model, viewport_visibility: 'visible' },
         msgOut: [ViewportVisibilityChangedEvt.init('visible')],
       }
+    }
+
+    default: {
+      return { model: input.model }
     }
   }
 }
@@ -59,13 +66,13 @@ const visibilityStateSubscriptions = (input: { ctx: AppFrontendCtxBase }): Sub<M
     switch (state) {
       case 'hidden': {
         return {
-          t: 'viewport-became-hidden',
+          t: 'viewport_becameHidden',
         }
       }
 
       case 'visible': {
         return {
-          t: 'viewport-became-visible',
+          t: 'viewport_becameVisible',
         }
       }
     }

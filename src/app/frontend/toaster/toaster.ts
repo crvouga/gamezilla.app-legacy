@@ -1,17 +1,18 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
+import { isAnyMsg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { IconXMark } from '~/@/ui/icon'
 import { PAPER_STYLE } from '~/@/ui/paper'
-import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Pressable } from '~/@/vdom/primitives/pressable'
 import { SafeAreaBox } from '~/@/vdom/primitives/safe-area-box'
 import { Text } from '~/@/vdom/primitives/text'
+import { sx } from '~/@/vdom/style/sx'
 import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
@@ -24,19 +25,13 @@ type Ctx = {
   screenSize: ScreenSize
 }
 
-type Module = AppFrontendModule<{
-  Model: Model
-  Msg: Msg
-  Ctx: Ctx
-}>
-
 export type Model = {
-  runningId: number
-  toast?: Toast | null
-  hold: {
+  toaster_runningId: number
+  toaster_toast?: Toast | null
+  toaster_hold: {
     [toastId: number]: Toast
   }
-  errorModal?: { errorMsg: string; toastId: number } | null
+  toaster_errorModal?: { errorMsg: string; toastId: number } | null
 }
 
 export type Toast = {
@@ -48,71 +43,88 @@ export type Toast = {
   errorMsg?: string | null
 }
 
-export const init: Module['init'] = () => {
-  return { model: { runningId: 0, hold: {} } }
+export const init = (_input: {}): { model: Model } => {
+  return { model: { toaster_runningId: 0, toaster_hold: {} } }
 }
 
 export type Msg =
-  | { t: 'time-passed' }
-  | { t: 'pressed-down-on-toast'; toast: Toast }
-  | { t: 'pressed-up-on-toast'; toast: Toast }
-  | { t: 'clicked-dismiss-button'; toastId: number }
-  | { t: 'clicked-see-error'; errorMsg: string; toastId: number }
+  | { t: 'toaster_timePassed' }
+  | { t: 'toaster_pressedDownOnToast'; toast: Toast }
+  | { t: 'toaster_pressedUpOnToast'; toast: Toast }
+  | { t: 'toaster_clickedDismissButton'; toastId: number }
+  | { t: 'toaster_clickedSeeError'; errorMsg: string; toastId: number }
 
-export const update: Module['update'] = (input) => {
-  return AppFrontendModule.andThen(
+const isMsg = (msg: unknown): msg is Msg => isAnyMsg(msg) && msg.t.startsWith('toaster_')
+
+export const update = <TModel extends Model>(input: { model: TModel; msg?: unknown; msgIn?: unknown; ctx: Ctx }) => {
+  return AppFrontendModule.andThen<{ Model: TModel; Msg: Msg }>(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromCmd({ ...input, model }),
   )
 }
 
-const updateFromMsg: Module['update'] = (input) => {
-  if (!input.msg) return { model: input.model }
+const updateFromMsg = <TModel extends Model>(input: {
+  model: TModel
+  msg?: unknown
+  msgIn?: unknown
+  ctx: Ctx
+}): {
+  model: TModel
+  msgOut?: unknown[]
+} => {
+  if (!isMsg(input.msg)) return { model: input.model }
 
   switch (input.msg.t) {
-    case 'clicked-dismiss-button': {
-      return { model: { ...input.model, toast: null }, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
+    case 'toaster_clickedDismissButton': {
+      return { model: { ...input.model, toaster_toast: null }, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
     }
 
-    case 'time-passed': {
-      if (!input.model.toast) return { model: input.model }
+    case 'toaster_timePassed': {
+      if (!input.model.toaster_toast) return { model: input.model }
 
       const isToastActive = TimeSpan.lte(
-        UnixMs.diff(input.model.toast.createdAt, input.ctx.now),
-        input.model.toast.duration,
+        UnixMs.diff(input.model.toaster_toast.createdAt, input.ctx.now),
+        input.model.toaster_toast.duration,
       )
 
       if (isToastActive) return { model: input.model }
 
-      return { model: { ...input.model, toast: null } }
+      return { model: { ...input.model, toaster_toast: null } }
     }
 
-    case 'pressed-down-on-toast': {
+    case 'toaster_pressedDownOnToast': {
       return {
-        model: { ...input.model, hold: { ...input.model.hold, [input.msg.toast.toastId]: input.msg.toast } },
+        model: {
+          ...input.model,
+          toaster_hold: { ...input.model.toaster_hold, [input.msg.toast.toastId]: input.msg.toast },
+        },
       }
     }
 
-    case 'pressed-up-on-toast': {
-      const holdNew = { ...input.model.hold }
+    case 'toaster_pressedUpOnToast': {
+      const holdNew = { ...input.model.toaster_hold }
       delete holdNew[input.msg.toast.toastId]
-      return { model: { ...input.model, hold: holdNew } }
+      return { model: { ...input.model, toaster_hold: holdNew } }
     }
 
-    case 'clicked-see-error': {
+    case 'toaster_clickedSeeError': {
       return {
-        model: { ...input.model, errorModal: { errorMsg: input.msg.errorMsg, toastId: input.msg.toastId } },
+        model: { ...input.model, toaster_errorModal: { errorMsg: input.msg.errorMsg, toastId: input.msg.toastId } },
       }
     }
   }
 }
 
-const updateFromCmd: Module['update'] = (input) => {
+const updateFromCmd = <TModel extends Model>(input: {
+  model: TModel
+  msgIn?: unknown
+  ctx: Ctx
+}): { model: TModel } => {
   const { msgIn } = input
   if (ShowToastCmd.is(msgIn)) {
     const toastNew: Toast = {
-      toastId: input.model.runningId,
+      toastId: input.model.toaster_runningId,
       text: msgIn.text,
       duration: msgIn.duration ?? TimeSpan.seconds(2),
       variant: msgIn.toastVariant ?? 'info',
@@ -121,28 +133,28 @@ const updateFromCmd: Module['update'] = (input) => {
     }
 
     return {
-      model: { ...input.model, runningId: input.model.runningId + 1, toast: toastNew },
+      model: { ...input.model, toaster_runningId: input.model.toaster_runningId + 1, toaster_toast: toastNew },
     }
   }
 
   return { model: input.model }
 }
 
-export const subscriptions: Module['subscriptions'] = ({ model }) => {
-  if (!model.toast) return Sub.none()
-  return Time.interval('toasts', model.toast.duration, (): Msg => ({ t: 'time-passed' }))
+export const subscriptions = (input: { model: Model }): Sub<Msg> => {
+  if (!input.model.toaster_toast) return Sub.none()
+  return Time.interval('toasts', input.model.toaster_toast.duration, (): Msg => ({ t: 'toaster_timePassed' }))
 }
 
-export const View: Module['View'] = (input) => {
+export const View = (input: { model: Model; ctx: Ctx; dispatch: (m: Msg) => void }) => {
   return h(ViewToast, input)
 }
 
-const ViewToast: Module['View'] = (input) => {
-  if (!input.model.toast) return null
+const ViewToast = (input: { model: Model; ctx: Ctx; dispatch: (m: Msg) => void }) => {
+  if (!input.model.toaster_toast) return null
   return h(Toast, {
-    key: input.model.toast.toastId,
+    key: input.model.toaster_toast.toastId,
     ctx: input.ctx,
-    toast: input.model.toast,
+    toast: input.model.toaster_toast,
     dispatch: input.dispatch,
   })
 }
@@ -172,8 +184,8 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
         paddingTop: 4,
       }),
       edges: ['top'],
-      onPress: () => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast }),
-      onPressOut: () => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast }),
+      onPress: () => input.dispatch({ t: 'toaster_pressedDownOnToast', toast: input.toast }),
+      onPressOut: () => input.dispatch({ t: 'toaster_pressedUpOnToast', toast: input.toast }),
     },
     [
       h(
@@ -207,7 +219,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
               {
                 style: sx({ fontWeight: 'bold' }),
                 onPress: () =>
-                  input.dispatch({ t: 'clicked-see-error', errorMsg: errorMsg, toastId: input.toast.toastId }),
+                  input.dispatch({ t: 'toaster_clickedSeeError', errorMsg: errorMsg, toastId: input.toast.toastId }),
               },
               [h(Text, { text: 'See Error', style: sx({ textColor: 'white' }) })],
             ),
@@ -216,7 +228,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
             {
               role: 'button',
               'aria-label': input.ctx.t('app.dismiss'),
-              onPress: () => input.dispatch({ t: 'clicked-dismiss-button', toastId: input.toast.toastId }),
+              onPress: () => input.dispatch({ t: 'toaster_clickedDismissButton', toastId: input.toast.toastId }),
             },
             [h(IconXMark, { style: sx({ size: 5, textColor: 'white' }) })],
           ),

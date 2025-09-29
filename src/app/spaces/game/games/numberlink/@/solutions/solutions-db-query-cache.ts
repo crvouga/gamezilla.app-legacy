@@ -40,16 +40,18 @@ const sub = <TMsg>(
 const read = (ctx: { queryCache: QueryCache }, solutionHash: SolutionHash | null): Solution[] => {
   const query = initQuery(solutionHash)
   const queryKey = deterministicJsonStringify(query)
-  const results = ctx.queryCache.results[queryKey] as SolutionHash[]
+  const results = ctx.queryCache.queryCache_results[queryKey] as SolutionHash[]
   if (!results) return []
-  return results.map((solutionHash) => ctx.queryCache.entities.byType[ENTITY_TYPE]?.byId[solutionHash] as Solution)
+  return results.map(
+    (solutionHash) => ctx.queryCache.queryCache_entities.byType[ENTITY_TYPE]?.byId[solutionHash] as Solution,
+  )
 }
 
 const entity = (ctx: { queryCache: QueryCache }, solutionHash: SolutionHash | null): Solution | null => {
   if (!solutionHash) return null
   const query = initQuery(solutionHash)
   const queryKey = deterministicJsonStringify(query)
-  const entity = ctx.queryCache.entities.byType[ENTITY_TYPE]?.byId[queryKey] as Solution
+  const entity = ctx.queryCache.queryCache_entities.byType[ENTITY_TYPE]?.byId[queryKey] as Solution
   if (!entity) return null
   return entity
 }
@@ -57,7 +59,7 @@ const entity = (ctx: { queryCache: QueryCache }, solutionHash: SolutionHash | nu
 const isLoading = (ctx: { queryCache: QueryCache }, solutionHash: SolutionHash | null): boolean => {
   const query = initQuery(solutionHash)
   const queryKey = deterministicJsonStringify(query)
-  return ctx.queryCache.results[queryKey] === undefined
+  return ctx.queryCache.queryCache_results[queryKey] === undefined
 }
 
 const isEmpty = (ctx: { queryCache: QueryCache }, solutionHash: SolutionHash | null): boolean => {

@@ -1,4 +1,5 @@
 import { Eff } from '~/@/eff'
+import { AnyMsg, isAnyMsg } from '~/@/msg/msg'
 import type { Screen } from '~/@/screens/generated/screens'
 import { Sub } from '~/@/sub'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
@@ -10,7 +11,7 @@ import { ReplaceScreenCmd } from '~/app/@/frontend/replace-screen-cmd.$msg'
 import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt.$msg'
 
 export type Model = {
-  currentScreen: Screen
+  currentScreen_screen: Screen
 }
 
 const FALLBACK: Screen = {
@@ -44,7 +45,7 @@ export const init = (input: {
   const currentScreen = decodeScreen(input.ctx.navigation.get(SCREEN_QUERY_PARAM_NAME)) ?? FALLBACK
 
   return {
-    model: { currentScreen },
+    model: { currentScreen_screen: currentScreen },
     async eff() {
       await input.ctx.navigation.replace(SCREEN_QUERY_PARAM_NAME, encodeScreen(currentScreen))
     },
@@ -52,17 +53,21 @@ export const init = (input: {
 }
 
 export type Msg =
-  | { t: 'screen-changed'; screen: Screen | null }
-  | { t: 'clicked-link'; screen: Screen }
-  | { t: 'clicked-back' }
+  | { t: 'currentScreen_screenChanged'; screen: Screen | null }
+  | { t: 'currentScreen_clickedLink'; screen: Screen }
+  | { t: 'currentScreen_clickedBack' }
 
-export const update = (input: {
-  msg?: Msg | null
+const isMsg = (msg: unknown): msg is Msg => {
+  return isAnyMsg(msg) && msg.t.startsWith('currentScreen_')
+}
+
+export const update = <TModel extends Model>(input: {
+  msg?: AnyMsg | null
   msgIn?: unknown
-  model: Model
+  model: TModel
   ctx: AppFrontendCtxBase
 }): {
-  model: Model
+  model: TModel
   eff?: Eff<Msg>
   msgOut?: unknown[]
 } => {
@@ -71,12 +76,12 @@ export const update = (input: {
   return { model: input.model }
 }
 
-const updateFromMsgIn = (input: {
+const updateFromMsgIn = <TModel extends Model>(input: {
   ctx: AppFrontendCtxBase
   msgIn?: unknown
-  model: Model
+  model: TModel
 }): {
-  model: Model
+  model: TModel
   eff?: Eff<Msg>
   msgOut?: unknown[]
 } => {
@@ -87,7 +92,8 @@ const updateFromMsgIn = (input: {
   if (PushScreenCmd.is(msgIn)) {
     return {
       model: {
-        currentScreen: msgIn.screen,
+        ...input.model,
+        currentScreen_screen: msgIn.screen,
       },
       async eff() {
         await input.ctx.navigation.push(SCREEN_QUERY_PARAM_NAME, encodeScreen(msgIn.screen))
@@ -99,7 +105,8 @@ const updateFromMsgIn = (input: {
   if (ReplaceScreenCmd.is(msgIn)) {
     return {
       model: {
-        currentScreen: msgIn.screen,
+        ...input.model,
+        currentScreen_screen: msgIn.screen,
       },
       async eff() {
         await input.ctx.navigation.replace(SCREEN_QUERY_PARAM_NAME, encodeScreen(msgIn.screen))
@@ -110,7 +117,10 @@ const updateFromMsgIn = (input: {
 
   if (BackScreenCmd.is(msgIn)) {
     return {
-      model: input.model,
+      model: {
+        ...input.model,
+        // currentScreen_screen: msgIn.screen,
+      },
       async eff() {
         await input.ctx.navigation.back()
       },
@@ -122,11 +132,11 @@ const updateFromMsgIn = (input: {
 }
 
 const updateFromMsg: typeof update = (input) => {
-  if (!input.msg) return { model: input.model }
   const { msg } = input
+  if (!isMsg(msg)) return { model: input.model }
 
   switch (msg.t) {
-    case 'clicked-back': {
+    case 'currentScreen_clickedBack': {
       return {
         model: input.model,
         async eff() {
@@ -135,23 +145,34 @@ const updateFromMsg: typeof update = (input) => {
       }
     }
 
-    case 'clicked-link': {
+    case 'currentScreen_clickedLink': {
+      const { screen } = msg
       return {
-        model: { currentScreen: msg.screen },
+        model: {
+          ...input.model,
+          currentScreen_screen: screen,
+        },
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
         async eff() {
-          await input.ctx.navigation.push(SCREEN_QUERY_PARAM_NAME, encodeScreen(msg.screen))
+          await input.ctx.navigation.push(SCREEN_QUERY_PARAM_NAME, encodeScreen(screen))
         },
       }
     }
 
-    case 'screen-changed': {
+    case 'currentScreen_screenChanged': {
       const screen = msg.screen ?? FALLBACK
 
       return {
-        model: { currentScreen: screen },
+        model: {
+          ...input.model,
+          currentScreen_screen: screen,
+        },
         msgOut: [ScreenChangedEvt.init(screen)],
       }
+    }
+
+    default: {
+      return { model: input.model }
     }
   }
 }
@@ -160,7 +181,7 @@ export const subscriptions = (input: { ctx: AppFrontendCtxBase }): Sub<Msg> => {
   return Sub.map(
     input.ctx.navigation.sub(SCREEN_QUERY_PARAM_NAME),
     (value): Msg => ({
-      t: 'screen-changed',
+      t: 'currentScreen_screenChanged',
       screen: decodeScreen(value),
     }),
   )

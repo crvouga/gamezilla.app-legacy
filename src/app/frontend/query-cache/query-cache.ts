@@ -2,13 +2,13 @@ import { deterministicJsonStringify } from '~/@/json/deterministic-stringify'
 import { GotQueryCacheMsg } from './got-query-cache-msg.$msg'
 
 export type QueryCache = {
-  queries: {
+  queryCache_queries: {
     [queryKey: string]: Record<string, unknown>
   }
-  results: {
+  queryCache_results: {
     [queryKey: string]: string[]
   }
-  entities: {
+  queryCache_entities: {
     byType: {
       [entityType: string]: {
         byId: {
@@ -19,12 +19,16 @@ export type QueryCache = {
   }
 }
 
-const init: QueryCache = {
-  queries: {},
-  results: {},
-  entities: {
-    byType: {},
-  },
+const init = (_input: {}): { model: QueryCache } => {
+  return {
+    model: {
+      queryCache_queries: {},
+      queryCache_results: {},
+      queryCache_entities: {
+        byType: {},
+      },
+    },
+  }
 }
 
 const mergeEntities = (
@@ -40,72 +44,72 @@ const mergeEntities = (
   return { ...existing, ...incoming }
 }
 
-const update = (input: {
-  model: QueryCache
-  msgIn: unknown
+const update = <TModel extends QueryCache>(input: {
+  model: TModel
+  msgIn?: unknown
 }): {
-  model: QueryCache
+  model: TModel
 } => {
-  if (!GotQueryCacheMsg.is(input.msgIn)) {
-    return { model: input.model }
-  }
+  const { msgIn } = input
 
-  switch (input.msgIn.c.t) {
+  if (!GotQueryCacheMsg.is(msgIn)) return { model: input.model }
+
+  switch (msgIn.c.t) {
     case 'got-entities': {
-      const entityType = input.msgIn.c.entityType
-      const existingEntities = input.model.entities.byType[entityType]?.byId ?? {}
+      const entityType = msgIn.c.entityType
+      const existingEntities = input.model.queryCache_entities.byType[entityType]?.byId ?? {}
       const entitiesNew = { byId: { ...existingEntities } }
 
-      for (const entityId in input.msgIn.c.entities) {
+      for (const entityId in msgIn.c.entities) {
         entitiesNew.byId[entityId] = mergeEntities(
-          input.msgIn.c.lastUpdatedAtKey,
+          msgIn.c.lastUpdatedAtKey,
           entitiesNew.byId[entityId] ?? {},
-          input.msgIn.c.entities[entityId] ?? {},
+          msgIn.c.entities[entityId] ?? {},
         )
       }
 
-      const queryKey = deterministicJsonStringify(input.msgIn.c.query)
+      const queryKey = deterministicJsonStringify(msgIn.c.query)
       const queriesNew = {
-        ...input.model.queries,
-        [queryKey]: input.msgIn.c.query,
+        ...input.model.queryCache_queries,
+        [queryKey]: msgIn.c.query,
       }
       const resultsNew = {
-        ...input.model.results,
-        [queryKey]: input.msgIn.c.results,
+        ...input.model.queryCache_results,
+        [queryKey]: msgIn.c.results,
       }
 
       return {
         model: {
           ...input.model,
-          entities: {
+          queryCache_entities: {
             byType: {
-              ...input.model.entities.byType,
+              ...input.model.queryCache_entities.byType,
               [entityType]: entitiesNew,
             },
           },
-          queries: queriesNew,
-          results: resultsNew,
+          queryCache_queries: queriesNew,
+          queryCache_results: resultsNew,
         },
       }
     }
 
     case 'got-entity': {
-      const entityType = input.msgIn.c.entityType
-      const existingEntities = input.model.entities.byType[entityType]?.byId ?? {}
+      const entityType = msgIn.c.entityType
+      const existingEntities = input.model.queryCache_entities.byType[entityType]?.byId ?? {}
 
       return {
         model: {
           ...input.model,
-          entities: {
+          queryCache_entities: {
             byType: {
-              ...input.model.entities.byType,
+              ...input.model.queryCache_entities.byType,
               [entityType]: {
                 byId: {
                   ...existingEntities,
-                  [input.msgIn.c.id]: mergeEntities(
-                    input.msgIn.c.lastUpdatedAtKey,
-                    existingEntities[input.msgIn.c.id] ?? {},
-                    input.msgIn.c.entity,
+                  [msgIn.c.id]: mergeEntities(
+                    msgIn.c.lastUpdatedAtKey,
+                    existingEntities[msgIn.c.id] ?? {},
+                    msgIn.c.entity,
                   ),
                 },
               },

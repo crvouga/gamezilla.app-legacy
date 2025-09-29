@@ -27,7 +27,7 @@ export type Msg = {
 }
 
 export type AnyMsg = Record<string, unknown> & {
-  t: string
+  t: string & {}
   c?: unknown
 }
 
@@ -74,4 +74,8 @@ export const Msg = {
   isAny,
   toType,
   toPayload,
+}
+
+export const isAnyMsg = (msg: unknown): msg is AnyMsg => {
+  return isAny(msg)
 }

@@ -13,8 +13,8 @@ import { FloatingConfirmation } from '~/app/@/ui/floating/confirmation/floating-
 import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
 
 const init: ModelFrontend = {
-  opened: null,
-  request: NotAsked,
+  logout_opened: null,
+  logout_request: NotAsked,
 }
 
 const update: FrontendModule['update'] = (input) => {
@@ -23,7 +23,7 @@ const update: FrontendModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          opened: 'logged-out',
+          logout_opened: 'logged-out',
         },
         msgOut: [PlaySoundCmd.init(APP_SOUND.alertErrorSm)],
       }
@@ -33,7 +33,7 @@ const update: FrontendModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          opened: null,
+          logout_opened: null,
         },
         async eff(_dispatch) {
           await input.ctx.userSessionDb.update({
@@ -51,7 +51,7 @@ const update: FrontendModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          opened: null,
+          logout_opened: null,
         },
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
       }
@@ -72,7 +72,7 @@ const ViewConfirmation = (input: {
     ctx: input.ctx,
     testId: TEST_ID_LOGOUT_CONFIRMATION,
     ariaLabel: input.ctx.t('auth.logout-of-gamezilla.app'),
-    open: input.model.opened === 'logged-out',
+    open: input.model.logout_opened === 'logged-out',
     title: input.ctx.t('auth.logout-of-gamezilla.app'),
     body: input.ctx.t('auth.logout-of-gamezilla.app-body'),
     confirmText: input.ctx.t('auth.logout'),

@@ -167,7 +167,7 @@ const initCtx = async (config: {
     httpClient,
     backendConnectionStatus: { t: 'connecting' },
     keyValueDb: config.keyValueDb,
-    queryCache: QueryCache.init,
+    queryCache: QueryCache.init({}).model,
   }
 
   const auth = await AuthFrontend.initCtx({ ctx, rpc })
@@ -189,21 +189,21 @@ const initCtx = async (config: {
 }
 
 const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): FrontendCtxModule => {
-  const currentUserState = toCurrentUserState({ model: input.model.auth.currentUser, ctx: input.ctx })
+  const currentUserState = toCurrentUserState({ model: input.model.auth, ctx: input.ctx })
 
   const baseCtx: FrontendCtxModule = {
     ...input.ctx,
     now: UnixMs.now(),
     t: Translator(input.model.settings.lang),
     profilesByUserId: input.model.profile.profilesByUserId,
-    viewportVisibility: input.model.frontend.visibility.visibility,
-    currentScreen: input.model.frontend.currentScreen.currentScreen,
-    screenSize: input.model.frontend.screenSize.screenSize,
+    viewportVisibility: input.model.frontend.viewport_visibility,
+    currentScreen: input.model.frontend.currentScreen_screen,
+    screenSize: input.model.frontend.screenSize_screenSize,
     parentScreen: null,
     currentUserState,
     currentUser: currentUserState.t === 'logged-in' ? currentUserState.userAccount : null,
     backendConnectionStatus: toBackendConnectionStatus(input.model.wire.backendConnection),
-    queryCache: input.model.frontend.queryCache,
+    queryCache: input.model.frontend,
   }
 
   return baseCtx
@@ -214,9 +214,9 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
 
   const ctx: FrontendCtxModule = {
     ...input.ctx,
-    currentScreen: frontend.model.currentScreen.currentScreen,
-    viewportVisibility: frontend.model.visibility.visibility,
-    screenSize: frontend.model.screenSize.screenSize,
+    currentScreen: frontend.model.currentScreen_screen,
+    viewportVisibility: frontend.model.viewport_visibility,
+    screenSize: frontend.model.screenSize_screenSize,
   }
 
   const settings = SettingsFrontend.init({ ctx })
@@ -405,14 +405,14 @@ const View = (props: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
 
     h(ToasterFrontend.View, {
       ctx: frontendCtx,
-      model: props.model.frontend.toast,
-      dispatch: (c) => props.dispatch({ t: 'frontend', c: { t: 'toast', c } }),
+      model: props.model.frontend,
+      dispatch: (c) => props.dispatch({ t: 'frontend', c }),
     }),
   ])
 }
 
 const ViewScreen = (props: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (m: MsgFrontend) => void }) => {
-  switch (props.model.frontend.currentScreen.currentScreen.n) {
+  switch (props.model.frontend.currentScreen_screen.n) {
     case 'settings':
       return h(SettingsFrontend.View, {
         ctx: props.ctx,
@@ -423,13 +423,13 @@ const ViewScreen = (props: { ctx: FrontendCtxModule; model: ModelFrontend; dispa
             return h(LogoutFrontend.ViewMenuItem, {
               ctx: props.ctx,
               dispatch: (c) => props.dispatch({ t: 'auth', c: { t: 'got-logout-msg', c } }),
-              model: props.model.auth.logout,
+              model: props.model.auth,
             })
           },
         },
       })
     default: {
-      const currentUser = toCurrentUserState({ model: props.model.auth.currentUser, ctx: props.ctx })
+      const currentUser = toCurrentUserState({ model: props.model.auth, ctx: props.ctx })
       switch (currentUser.t) {
         case 'loading':
           return h(SplashScreen, {})
@@ -455,7 +455,10 @@ const ViewScreenLoggedOut: typeof ViewScreen = (props) => {
         onPress: () =>
           props.dispatch({
             t: 'frontend',
-            c: { t: 'current-screen', c: { t: 'clicked-link', screen: { t: 'login', n: 'auth' } } },
+            c: {
+              t: 'currentScreen_clickedLink',
+              screen: { t: 'login', n: 'auth' },
+            },
           }),
         buttonText: props.ctx.t('login'),
         text: props.ctx.t('login'),
@@ -487,7 +490,7 @@ const ViewScreenLoggedIn: typeof ViewScreen = (props) => {
         onPress: () =>
           props.dispatch({
             t: 'frontend',
-            c: { t: 'current-screen', c: { t: 'clicked-link', screen: { t: 'space-list', n: 'spaces' } } },
+            c: { t: 'currentScreen_clickedLink', screen: { t: 'space-list', n: 'spaces' } },
           }),
         buttonText: props.ctx.t('spaces.spaces'),
         text: props.ctx.t('spaces.spaces'),
@@ -505,7 +508,10 @@ const toScreenLayoutProps = (props: {
   const screenSpace: Screen = { n: 'spaces', t: 'space-list' }
   const screenProfile: Screen = { n: 'profile', t: 'profile', userId: ctx.currentUser.userId }
   const pushSpaceList = () =>
-    props.dispatch({ t: 'frontend', c: { t: 'current-screen', c: { t: 'clicked-link', screen: screenSpace } } })
+    props.dispatch({
+      t: 'frontend',
+      c: { t: 'currentScreen_clickedLink', screen: screenSpace },
+    })
   return {
     id: 'app-screen-layout',
     parentScreen: null,
@@ -524,18 +530,18 @@ const toScreenLayoutProps = (props: {
           {
             label: ctx.t('spaces.spaces'),
             renderIcon: (iconProps) => h(IconGamepad, iconProps),
-            color: props.model.frontend.currentScreen.currentScreen.n === 'spaces' ? 'selected' : 'inherit',
+            color: props.model.frontend.currentScreen_screen.n === 'spaces' ? 'selected' : 'inherit',
             onPress: pushSpaceList,
             id: ctx.t('spaces.spaces'),
           },
           {
             label: ctx.t('profile.profile'),
             renderIcon: (iconProps) => h(IconUser, iconProps),
-            color: props.model.frontend.currentScreen.currentScreen.n === 'profile' ? 'selected' : 'inherit',
+            color: props.model.frontend.currentScreen_screen.n === 'profile' ? 'selected' : 'inherit',
             onPress() {
               props.dispatch({
                 t: 'frontend',
-                c: { t: 'current-screen', c: { t: 'clicked-link', screen: screenProfile } },
+                c: { t: 'currentScreen_clickedLink', screen: screenProfile },
               })
             },
             id: ctx.t('profile.profile'),

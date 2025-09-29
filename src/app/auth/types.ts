@@ -7,15 +7,13 @@ import type { ContinueAsGuest } from './login-as-guest'
 import { LoginWithSMSTypes } from './login-with-sms'
 import type { LogoutTypes } from './logout'
 
-export type ModelFrontend = {
-  logout: LogoutTypes.ModelFrontend
-  continueWithSms: LoginWithSMSTypes.ModelFrontend
-  continueAsGuest: ContinueAsGuest.ModelFrontend
-  currentUser: CurrentUserTypes.ModelFrontend
-}
+export type ModelFrontend = LogoutTypes.ModelFrontend &
+  LoginWithSMSTypes.ModelFrontend &
+  ContinueAsGuest.ModelFrontend &
+  CurrentUserTypes.ModelFrontend
 
 export type MsgFrontend =
-  | { t: 'clicked-login-with-phone' }
+  | { t: 'loginWithSms_clickedLoginWithPhone' }
   | { t: 'got-login-as-guest-msg'; c: ContinueAsGuest.MsgFrontend }
   | { t: 'got-login-with-sms-msg'; c: LoginWithSMSTypes.MsgFrontend }
   | { t: 'got-logout-msg'; c: LogoutTypes.MsgFrontend }

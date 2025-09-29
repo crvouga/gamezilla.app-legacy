@@ -35,19 +35,12 @@ describe('LoginWithSMSBackend', () => {
 
     const before = unwrap(
       await f.ctx.userAccountDb.query({
-        where: {
-          op: '=',
-          column: 'phoneNumber',
-          value: phoneNumber,
-        },
+        where: { op: '=', column: 'phoneNumber', value: phoneNumber },
         limit: 1,
         offset: 0,
       }),
     )
-    const result = unwrap(
-      //
-      await LoginWithSMSBackend.verifyCode({ ...f, phoneNumber, code: '123' }),
-    )
+    const result = unwrap(await LoginWithSMSBackend.verifyCode({ ...f, phoneNumber, code: '123' }))
     const userAccountQuery = unwrap(
       await f.ctx.userAccountDb.query({
         where: {

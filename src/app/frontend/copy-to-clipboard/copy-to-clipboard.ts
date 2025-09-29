@@ -1,63 +1,67 @@
 import { Eff } from '~/@/eff'
+import { isAnyMsg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
+import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { CopyToClipboardCmd } from '~/app/@/frontend/copy-to-clipboard-cmd.$msg'
 
-export type Model = {
-  t: 'noop'
-}
+export type Model = {}
 
-export const init = (): { model: Model } => {
+export const init = (_input: {}): { model: Model } => {
   return {
-    model: {
-      t: 'noop',
-    },
+    model: {},
   }
 }
 
-export type Msg = { t: 'copied-to-clipboard'; text: string }
+export type Msg = { t: 'copyToClipboard_copiedToClipboard'; text: string }
 
-export const update = ({
-  msg,
-  model,
-  msgIn,
-}: {
-  msg?: Msg | null
-  model: Model
+const isMsg = (msg: unknown): msg is Msg => isAnyMsg(msg) && msg.t.startsWith('copyToClipboard_')
+
+export const update = <TModel extends Model>(input: {
+  msg?: unknown
+  model: TModel
   msgIn?: unknown
 }): {
-  model: Model
+  model: TModel
   eff?: Eff<Msg>
+  msgOut?: unknown[]
 } => {
-  if (msg) return updateFromMsg({ msg, model })
-  if (msgIn) return updateFromCmd({ msgIn, model })
-  return { model }
+  return AppFrontendModule.andThen<{ Model: TModel; Msg: Msg }>(
+    { model: input.model },
+    (model) => updateFromMsg({ ...input, model }),
+    (model) => updateFromCmd({ ...input, model }),
+  )
 }
 
-const updateFromMsg: typeof update = ({ msg, model }) => {
-  if (!msg) return { model }
+const updateFromMsg = <TModel extends Model>(input: { model: TModel; msg?: unknown }) => {
+  if (!isMsg(input.msg)) return { model: input.model }
 
-  switch (msg.t) {
-    case 'copied-to-clipboard': {
-      return { model }
+  switch (input.msg.t) {
+    case 'copyToClipboard_copiedToClipboard': {
+      return { model: input.model, msgOut: [input.msg.text] }
     }
   }
 }
 
-const updateFromCmd: typeof update = ({ msgIn, model }) => {
+const updateFromCmd = <TModel extends Model>(input: {
+  model: TModel
+  msgIn?: unknown
+}): {
+  model: TModel
+  eff?: Eff<Msg>
+  msgOut?: unknown[]
+} => {
+  const { msgIn } = input
   if (CopyToClipboardCmd.is(msgIn)) {
     return {
-      model,
+      model: input.model,
       eff: async (dispatch) => {
         await navigator.clipboard.writeText(msgIn.text)
-        dispatch({
-          t: 'copied-to-clipboard',
-          text: msgIn.text,
-        })
+        dispatch({ t: 'copyToClipboard_copiedToClipboard', text: msgIn.text })
       },
     }
   }
 
-  return { model }
+  return { model: input.model }
 }
 
 export const subscriptions: Sub<Msg> = Sub.none()

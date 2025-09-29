@@ -56,8 +56,8 @@ const init = <TEntity extends Record<string, unknown>, TRelated extends Record<s
     const paginatedEntities: Paginated<TEntity> = {
       items: queried,
       total: queried.length,
-      offset: queryInput.offset,
-      limit: queryInput.limit,
+      offset: queryInput.offset ?? 0,
+      limit: queryInput.limit ?? queried.length,
     }
 
     const output: QueryOutput<TEntity, TRelated> = Ok({

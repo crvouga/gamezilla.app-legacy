@@ -3,8 +3,8 @@ import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
 
 export type ModelFrontend = {
-  request: RemoteResult<string, null>
-  opened: 'logged-out' | null
+  logout_request: RemoteResult<string, null>
+  logout_opened: 'logged-out' | null
 }
 
 export type MsgFrontend =

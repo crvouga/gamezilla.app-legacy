@@ -1,5 +1,5 @@
 import { QueryInput } from '~/@/db/interface/query-input/query-input'
-import { NotAsked } from '~/@/result'
+import { Err, isErr, NotAsked, Ok, Result } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { UserAccount } from '~/app/@/data/user-account'
@@ -13,15 +13,15 @@ import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
-import { ViewportVisibilityChangedEvt } from '~/app/@/frontend/viewport-visibility-changed-evt.$msg'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
 import { UserAccountDbQueryCache } from '../@/user-account/user-account-db-query-cache'
 import { UserSession } from '../@/user-session/user-session'
 import { UserSessionDbQueryCache } from '../@/user-session/user-session-db-query-cache'
+import { UserSessionId } from '../@/user-session/user-session-id'
 import { FrontendModule, ModelFrontend, MsgFrontend } from './types'
 
 const init: ModelFrontend = {
-  status: NotAsked,
+  currentUser_status: NotAsked,
 }
 
 export type CurrentUserState =
@@ -66,7 +66,9 @@ const toQueryUserAccountByUserId = (input: { userId: UserId }): QueryInput<UserA
 
 export const toCurrentUserState = (input: { model: ModelFrontend; ctx: AppFrontendCtxBase }): CurrentUserState => {
   const userSessions = UserSessionDbQueryCache.query(input.ctx, toQueryUserSessionByClientSessionId(input.ctx))
-
+  if (userSessions.length > 0) {
+    debugger
+  }
   const maybeUserSession = userSessions.find((userSession) => userSession.clientSessionId === input.ctx.clientSessionId)
 
   if (!maybeUserSession) return { t: 'loading' }
@@ -107,30 +109,107 @@ export const toCurrentUserState = (input: { model: ModelFrontend; ctx: AppFronte
   }
 }
 
-export const toCurrentUserId = (input: { model: ModelFrontend; ctx: AuthFrontendCtx }): UserId | null => {
-  const currentUserState = toCurrentUserState({ model: input.model, ctx: input.ctx })
-  switch (currentUserState.t) {
-    case 'logged-in':
-      return currentUserState.userSession.userId
-    default:
-      return null
-  }
-}
-
 const update: FrontendModule['update'] = (input) => {
   return AppFrontendModule.andThen(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => watchForLogin({ ...input, model, modelBefore: input.model, modelAfter: model }),
     (model) => {
-      if (ViewportVisibilityChangedEvt.is(input.msg)) {
+      const flag = false
+      if (flag) {
         return {
           model,
+          async eff() {
+            await ensureGuestRecords(input)
+          },
         }
       }
       return { model: input.model }
     },
   )
+}
+
+const ensureGuestRecords = async (input: { ctx: AuthFrontendCtx }): Promise<Result<string, null>> => {
+  const logger = input.ctx.logger.child(['ensure-guest-records'])
+  logger.info('querying sessions')
+  const sessions = await input.ctx.userSessionDb.query({
+    where: {
+      op: 'and',
+      clauses: [
+        {
+          op: '=',
+          column: 'clientSessionId',
+          value: input.ctx.clientSessionId,
+        },
+        {
+          op: '=',
+          column: 'endedAt',
+          value: null,
+        },
+      ],
+    },
+  })
+  if (isErr(sessions)) {
+    logger.error('error querying sessions', { error: sessions.error })
+    return Err(sessions.error.message)
+  }
+  logger.info('found sessions', { count: sessions.value.entities.items.length })
+
+  logger.info('querying guest accounts')
+  const guestAccounts = await input.ctx.userAccountDb.query({
+    where: {
+      op: 'and',
+      clauses: [
+        {
+          op: '=',
+          column: 'role',
+          value: 'guest',
+        },
+        {
+          op: 'in',
+          column: 'userId',
+          value: sessions.value.entities.items.map((s) => s.userId),
+        },
+      ],
+    },
+  })
+  if (isErr(guestAccounts)) {
+    logger.error('error querying guest accounts', { error: guestAccounts.error })
+    return Err(guestAccounts.error.message)
+  }
+  logger.info('found guest accounts', { count: guestAccounts.value.entities.items.length })
+
+  const maybeGuestAccount = guestAccounts.value.entities.items.find((a) => a.role === 'guest')
+  const newGuestAccount: UserAccount = {
+    role: 'guest',
+    userId: UserId.generate(),
+    createdAt: input.ctx.now,
+    phoneNumber: null,
+  }
+  const guestAccount: UserAccount = maybeGuestAccount ?? newGuestAccount
+  logger.info('using guest account', { isNew: !maybeGuestAccount, userId: guestAccount.userId })
+
+  const guestSessions = sessions.value.entities.items.filter((s) =>
+    guestAccounts.value.entities.items.some((a) => a.userId === s.userId),
+  )
+  const maybeGuestSession = guestSessions[0]
+  const newGuestSession: UserSession = {
+    userSessionId: UserSessionId.generate(),
+    sessionId: null,
+    clientSessionId: input.ctx.clientSessionId,
+    userId: guestAccount.userId,
+    createdAt: input.ctx.now,
+    endedAt: null,
+  }
+  const guestSession: UserSession = maybeGuestSession ?? newGuestSession
+  logger.info('using guest session', { isNew: !maybeGuestSession, sessionId: guestSession.userSessionId })
+
+  logger.info('upserting records')
+  await input.ctx.userSessionDb.upsert({ entities: [guestSession] })
+  await input.ctx.userAccountDb.upsert({ entities: [guestAccount] })
+  logger.info('finished upserting records')
+
+  return Ok(null)
 }
 
 const watchForLogin = (

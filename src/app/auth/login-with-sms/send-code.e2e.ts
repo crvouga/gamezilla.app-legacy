@@ -1,6 +1,6 @@
 import { difference } from '~/@/array/difference'
 import { Iso3166Alpha2Code } from '~/@/country/iso-3166-alpha-2-code'
-import { describe, expect, test, TestRunnerEnv } from '~/@/test-runner'
+import { describe, expect, test } from '~/@/test-runner'
 import { eventually } from '~/@/test/eventually'
 import { FixtureAppE2E } from '~/app/@/test/app-fixture/impl'
 import { doClickBackButton } from '~/app/@/test/flows/do-click-back-button'
@@ -11,15 +11,10 @@ import { TEST_ID_SEND_CODE_SCREEN, TEST_ID_VERIFY_CODE_SCREEN } from './frontend
 import { doOpenSendCodeScreen } from './test/do-open-send-code-screen'
 import { doSendCode } from './test/do-send-code'
 
-export const Fixture = async (e: TestRunnerEnv) => {
-  const f = await FixtureAppE2E(e)
-  await doOpenSendCodeScreen(f)
-  return { ...f }
-}
-
 describe('send code', () => {
   test.skip('country should match navigator country', async (e) => {
-    await using f = await Fixture(e)
+    await using f = await FixtureAppE2E(e)
+    await doOpenSendCodeScreen(f)
     const [countryCodeSelect] = await f.frontend.find(
       `[data-testid='auth/country-code-select'] option[data-selected='true']`,
     )
@@ -30,7 +25,8 @@ describe('send code', () => {
   })
 
   test('send code screen back button', async (e) => {
-    await using f = await Fixture(e)
+    await using f = await FixtureAppE2E(e)
+    await doOpenSendCodeScreen(f)
     const sendCodeScreen = await f.frontend.findByTestId(TEST_ID_SEND_CODE_SCREEN)
     expect(sendCodeScreen).toBeTruthy()
     await doClickBackButton(f)
@@ -39,27 +35,31 @@ describe('send code', () => {
   })
 
   test('go to verify code screen', async (e) => {
-    await using f = await Fixture(e)
+    await using f = await FixtureAppE2E(e)
+    await doOpenSendCodeScreen(f)
     await doSendCode(f)
     const screen = await f.frontend.findByTestId(TEST_ID_VERIFY_CODE_SCREEN)
     expect(screen).toBeTruthy()
   })
 
   test('show alert on sending code', async (e) => {
-    await using f = await Fixture(e)
+    await using f = await FixtureAppE2E(e)
+    await doOpenSendCodeScreen(f)
     await doSendCode(f)
     await doDismissAlert(f.frontend, 'info')
   })
 
   test('should error alert when phone number is invalid', async (e) => {
-    await using f = await Fixture(e)
+    await using f = await FixtureAppE2E(e)
+    await doOpenSendCodeScreen(f)
     await doSendCode(f, { phoneNumber: '123' })
     await doExpectAlert(f.frontend, 'error')
   })
 
   test('play sound on sending code', async (e) => {
     if (e.e2e) return
-    await using f = await Fixture(e)
+    await using f = await FixtureAppE2E(e)
+    await doOpenSendCodeScreen(f)
     const before = await f.frontend.audio()
     await doSendCode(f)
     await eventually(async () => {

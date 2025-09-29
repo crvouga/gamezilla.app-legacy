@@ -4,12 +4,12 @@ import { UserAccount } from '~/app/@/data/user-account'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
 
 export type ModelFrontend = {
-  request: RemoteResult<string, UserAccount>
+  loginAsGuest_request: RemoteResult<string, UserAccount>
 }
 
 export type MsgFrontend =
-  | { t: 'clicked-continue-as-guest-button' }
-  | { t: 'continue-as-guest-result'; result: Result<string, UserAccount> }
+  | { t: 'loginAsGuest_clickedContinueAsGuestButton' }
+  | { t: 'loginAsGuest_continueAsGuestResult'; result: Result<string, UserAccount> }
 
 export type MsgToBackend = { t: 'noop' }
 

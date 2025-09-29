@@ -6,8 +6,8 @@ import { Where } from './where'
 export type QueryInput<TEntity extends Record<string, unknown>> = {
   where?: Where<TEntity> | undefined | null
   orderBy?: OrderBy<TEntity> | undefined | null
-  limit: number
-  offset: number
+  limit?: number | undefined | null
+  offset?: number | undefined | null
   _key?: string | null | undefined
 }
 
@@ -15,8 +15,8 @@ const schema = <TEntity extends Record<string, unknown>>(column: s.Schema<TEntit
   return s.obj({
     where: s.maybe(Where.schema(column)),
     orderBy: s.maybe(OrderBy.schema(column)),
-    limit: s.num(),
-    offset: s.num(),
+    limit: s.maybe(s.num()),
+    offset: s.maybe(s.num()),
     _key: s.maybe(s.str()),
   })
 }

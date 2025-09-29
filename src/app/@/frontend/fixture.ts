@@ -95,7 +95,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     httpClient: HttpClient.init({
       t: 'fetch',
     }),
-    queryCache: QueryCache.init,
+    queryCache: QueryCache.init({}).model,
     vdomImpl,
   }
 

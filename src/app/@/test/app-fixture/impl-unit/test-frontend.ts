@@ -107,7 +107,7 @@ export const TestFrontend = async (config: {
       averagePing: TimeSpan.milliseconds(100),
       latestPing: TimeSpan.milliseconds(100),
     },
-    queryCache: QueryCache.init,
+    queryCache: QueryCache.init({}).model,
   }
 
   const auth = await AuthFrontend.initCtx({ ctx: ctxBase, rpc })

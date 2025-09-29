@@ -98,15 +98,19 @@ const init = <
     sql: string
     vars: Sql.Vars
   } => {
-    const vars: Sql.Vars = {
-      limit: queryInput.limit,
-      offset: queryInput.offset,
-    }
+    const vars: Sql.Vars = {}
+
     const whereClause = queryInput.where ? toWhereSql(queryInput.where, self) : ''
 
     const orderByClause = queryInput.orderBy ? toOrderBySql(queryInput.orderBy, self) : ''
 
-    const sql = ['SELECT *', `FROM ${self.viewName}`, whereClause, orderByClause, 'LIMIT :limit', 'OFFSET :offset']
+    const limitClause = queryInput.limit ? 'LIMIT :limit' : ''
+    if (limitClause) vars.limit = queryInput.limit
+
+    const offsetClause = queryInput.offset ? 'OFFSET :offset' : ''
+    if (offsetClause) vars.offset = queryInput.offset
+
+    const sql = ['SELECT *', `FROM ${self.viewName}`, whereClause, orderByClause, limitClause, offsetClause]
       .filter(Boolean)
       .join('\n')
 

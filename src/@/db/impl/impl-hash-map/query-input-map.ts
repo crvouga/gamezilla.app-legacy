@@ -19,7 +19,10 @@ export const queryMap = <TEntity extends Record<string, unknown>>(
     ? sortArray(Array.from(filtered.values()), queryInput.orderBy)
     : Array.from(filtered.values())
 
-  const paginated = Pagination.paginate(sorted, queryInput)
+  const paginated = Pagination.paginate(sorted, {
+    offset: queryInput.offset ?? 0,
+    limit: queryInput.limit ?? sorted.length,
+  })
 
   return paginated
 }

@@ -24,17 +24,17 @@ export type VerifyCodeOutput = s.Infer<typeof VerifyCodeOutput>
 export type Verified = Result<RPCError, VerifyCodeOutput>
 
 export type ModelFrontend = {
-  phone: string
-  phoneError: TranslatedText | null
-  countryCode: Iso3166Alpha2Code
-  code: string
-  codeError: TranslatedText | null
-  sent: Remote | Sent
-  verified: Remote | Verified
+  loginWithSms_phone: string
+  loginWithSms_phoneError: TranslatedText | null
+  loginWithSms_countryCode: Iso3166Alpha2Code
+  loginWithSms_code: string
+  loginWithSms_codeError: TranslatedText | null
+  loginWithSms_sent: Remote | Sent
+  loginWithSms_verified: Remote | Verified
 }
 
 export const toSendErrorMessage = (input: { model: ModelFrontend; ctx: { t: Translator } }): TranslatedText | null => {
-  const send = input.model.sent
+  const send = input.model.loginWithSms_sent
 
   if (send.t === 'loading' || send.t === 'not-asked') {
     return null
@@ -55,7 +55,7 @@ export const toVerifyErrorMessage = (input: {
   model: ModelFrontend
   ctx: { t: Translator }
 }): TranslatedText | null => {
-  const verified = input.model.verified
+  const verified = input.model.loginWithSms_verified
 
   if (verified.t === 'loading' || verified.t === 'not-asked') {
     return null
@@ -73,16 +73,16 @@ export const toVerifyErrorMessage = (input: {
 }
 
 export type MsgFrontend =
-  | { t: 'clicked-back-button' }
-  | { t: 'inputted-phone-number'; phone: string }
-  | { t: 'inputted-country-code'; countryCode: Iso3166Alpha2Code }
-  | { t: 'clicked-phone-number-clear' }
-  | { t: 'user-clicked-send-code-button' }
-  | { t: 'inputted-code'; code: string }
-  | { t: 'clicked-code-clear' }
-  | { t: 'user-clicked-verify-code-button'; phone: PhoneNumber; code: string }
-  | { t: 'sent-code'; sent: Sent }
-  | { t: 'verified-code'; verified: Verified }
+  | { t: 'loginWithSms_clickedBackButton' }
+  | { t: 'loginWithSms_inputtedPhoneNumber'; phone: string }
+  | { t: 'loginWithSms_inputtedCountryCode'; countryCode: Iso3166Alpha2Code }
+  | { t: 'loginWithSms_clickedPhoneNumberClear' }
+  | { t: 'loginWithSms_clickedSendCodeButton' }
+  | { t: 'loginWithSms_inputtedCode'; code: string }
+  | { t: 'loginWithSms_clickedCodeClear' }
+  | { t: 'loginWithSms_clickedVerifyCodeButton'; phone: PhoneNumber; code: string }
+  | { t: 'loginWithSms_sentCode'; sent: Sent }
+  | { t: 'loginWithSms_verifiedCode'; verified: Verified }
 
 export type MsgBackend = { t: 'noop' }
 
@@ -101,11 +101,11 @@ export type FrontendModule = AppFrontendModule<{
 }>
 
 export const rpcContract = RPC.initContract({
-  'auth/login-with-sms/send-code': {
+  loginWithSms_sendCode: {
     input: SendCodeInput,
     output: SendCodeOutput,
   },
-  'auth/login-with-sms/verify-code': {
+  loginWithSms_verifyCode: {
     input: VerifyCodeInput,
     output: VerifyCodeOutput,
   },

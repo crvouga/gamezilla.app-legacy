@@ -58,10 +58,10 @@ const initCtx = async (input: {
 
 const init: FrontendModule['init'] = () => {
   const model: ModelFrontend = {
-    logout: LogoutFrontend.init,
-    currentUser: CurrentUserFrontend.init,
-    continueWithSms: LoginWithSMSFrontend.init,
-    continueAsGuest: ContinueAsGuestFrontend.init,
+    ...LogoutFrontend.init,
+    ...CurrentUserFrontend.init,
+    ...LoginWithSMSFrontend.init,
+    ...ContinueAsGuestFrontend.init,
   }
   return {
     model,
@@ -90,11 +90,11 @@ const update: FrontendModule['update'] = (input) => {
 const updateContinueAsGuest: FrontendModule['update'] = (input) => {
   const updated = ContinueAsGuestFrontend.update({
     ...input,
-    model: input.model.continueAsGuest,
+    model: input.model,
     msg: input.msg?.t === 'got-login-as-guest-msg' ? input.msg.c : null,
   })
   return {
-    model: { ...input.model, continueAsGuest: updated.model },
+    model: { ...input.model, ...updated.model },
     eff: Eff.tag('got-login-as-guest-msg', updated.eff),
     msgOut: updated.msgOut,
   }
@@ -103,11 +103,11 @@ const updateContinueAsGuest: FrontendModule['update'] = (input) => {
 const updateLogout: FrontendModule['update'] = (input) => {
   const updated = LogoutFrontend.update({
     ...input,
-    model: input.model.logout,
+    model: input.model,
     msg: input.msg?.t === 'got-logout-msg' ? input.msg.c : null,
   })
   return {
-    model: { ...input.model, logout: updated.model },
+    model: { ...input.model, ...updated.model },
     eff: Eff.tag('got-logout-msg', updated.eff),
     msgOut: updated.msgOut,
   }
@@ -117,11 +117,11 @@ const updateCurrentUser: FrontendModule['update'] = (input) => {
   const updated = CurrentUserFrontend.update({
     msgIn: input.msgIn,
     ctx: input.ctx,
-    model: input.model.currentUser,
+    model: input.model,
     msg: input.msg?.t === 'got-current-user-msg' ? input.msg.c : null,
   })
   return {
-    model: { ...input.model, currentUser: updated.model },
+    model: { ...input.model, ...updated.model },
     eff: Eff.tag('got-current-user-msg', updated.eff),
     msgOut: updated.msgOut,
   }
@@ -130,13 +130,13 @@ const updateCurrentUser: FrontendModule['update'] = (input) => {
 const updateSMS: FrontendModule['update'] = (input) => {
   const updated = LoginWithSMSFrontend.update({
     ctx: input.ctx,
-    model: input.model.continueWithSms,
+    model: input.model,
     msg: input.msg?.t === 'got-login-with-sms-msg' ? input.msg.c : null,
     msgIn: input.msgIn,
   })
 
   return {
-    model: { ...input.model, continueWithSms: updated.model },
+    model: { ...input.model, ...updated.model },
     eff: Eff.tag('got-login-with-sms-msg', updated.eff),
     msgOut: updated.msgOut,
   }
@@ -146,7 +146,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
   if (!input.msg) return { model: input.model }
 
   switch (input.msg.t) {
-    case 'clicked-login-with-phone': {
+    case 'loginWithSms_clickedLoginWithPhone': {
       return {
         model: input.model,
         msgOut: [PushScreenCmd.init({ n: 'auth', t: 'send-code' }, true)],
@@ -170,7 +170,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   return Sub.batch<MsgFrontend>([
     Sub.map(
-      CurrentUserFrontend.subscriptions({ ...input, ctx: input.ctx, model: input.model.currentUser }),
+      CurrentUserFrontend.subscriptions({ ...input, ctx: input.ctx, model: input.model }),
       (c): MsgFrontend => ({ t: 'got-current-user-msg', c }),
     ),
   ])
@@ -196,7 +196,7 @@ const View: FrontendModule['View'] = (input) => {
           return h(LoginWithSMSFrontend.View, {
             ctx: input.ctx,
             dispatch: (c) => input.dispatch({ t: 'got-login-with-sms-msg', c }),
-            model: input.model.continueWithSms,
+            model: input.model,
           })
         }
       }
@@ -232,7 +232,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
 
           h(Box, { style: sx({ flexDirection: 'col', width: 'full' }) }, [
             h(Button, {
-              onPress: () => input.dispatch({ t: 'clicked-login-with-phone' }),
+              onPress: () => input.dispatch({ t: 'loginWithSms_clickedLoginWithPhone' }),
               size: 'lg',
               width: 'full',
               renderIconStart: (iconInput) => h(IconMobilePhone, iconInput),
@@ -265,7 +265,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
             h(ContinueAsGuestFrontend.ViewButton, {
               ctx: input.ctx,
               dispatch: (c) => input.dispatch({ t: 'got-login-as-guest-msg', c }),
-              model: input.model.continueAsGuest,
+              model: input.model,
             }),
           ]),
         ],
@@ -279,7 +279,7 @@ const ViewCurrentUserMenuItem = (input: {
   ctx: AppFrontendCtxBase
   dispatch: (msg: MsgFrontend) => void
 }) => {
-  const currentUser = toCurrentUserState({ model: input.model.currentUser, ctx: input.ctx })
+  const currentUser = toCurrentUserState({ model: input.model, ctx: input.ctx })
   switch (currentUser.t) {
     case 'loading': {
       return h(MenuItem, {

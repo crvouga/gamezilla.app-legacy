@@ -27,14 +27,15 @@ const sub = <TMsg>(puzzleDb: IPuzzleDb, query: PuzzleQuery, mapper: (m: unknown)
 
 const read = (ctx: { queryCache: QueryCache }, query: PuzzleQuery): Puzzle[] => {
   const queryKey = deterministicJsonStringify(query)
-  const results = ctx.queryCache.results[queryKey]
-  const entities = results?.map((id) => ctx.queryCache.entities.byType[ENTITY_TYPE]?.byId[id] as Puzzle) ?? []
+  const results = ctx.queryCache.queryCache_results[queryKey]
+  const entities =
+    results?.map((id) => ctx.queryCache.queryCache_entities.byType[ENTITY_TYPE]?.byId[id] as Puzzle) ?? []
   return entities
 }
 
 const entity = (ctx: { queryCache: QueryCache }, id: PuzzleId | undefined | null): Puzzle | null => {
   if (!id) return null
-  const entity = ctx.queryCache.entities.byType[ENTITY_TYPE]?.byId[id]
+  const entity = ctx.queryCache.queryCache_entities.byType[ENTITY_TYPE]?.byId[id]
   if (!entity) return null
   return entity as Puzzle
 }
@@ -51,7 +52,7 @@ const gotEntity = (puzzleId: PuzzleId, puzzleNew: Puzzle): GotQueryCacheMsg => {
 
 const isLoading = (ctx: { queryCache: QueryCache }, query: PuzzleQuery): boolean => {
   const queryKey = deterministicJsonStringify(query)
-  return !Boolean(ctx.queryCache.results[queryKey])
+  return !Boolean(ctx.queryCache.queryCache_results[queryKey])
 }
 
 const isEmpty = (ctx: { queryCache: QueryCache }, query: PuzzleQuery): boolean => {

@@ -23,11 +23,11 @@ import { ILogger } from '~/@/logger'
 const rpc = (config: { ctx: AuthBackendCtx }) => {
   const logger = config.ctx.logger.child(['login-with-sms'])
   return RPC.initServer(rpcContract, {
-    'auth/login-with-sms/send-code': async (input) => {
+    async loginWithSms_sendCode(input) {
       const sent = await sendCode({ ...input, ctx: config.ctx, logger })
       return sent
     },
-    'auth/login-with-sms/verify-code': async (input, reqCtx) => {
+    async loginWithSms_verifyCode(input, reqCtx) {
       const verified = await verifyCode({
         ...input,
         sessionId: reqCtx.sessionId,
