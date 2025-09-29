@@ -18,25 +18,16 @@ export type ModelFrontend = FrontendTypes.ModelFrontend &
   SettingsTypes.ModelFrontend
 
 export type MsgFrontend =
-  | { t: 'wire'; c: WireTypes.MsgFrontend }
-  | { t: 'spaces'; c: SpacesTypes.MsgFrontend }
-  | { t: 'auth'; c: AuthTypes.MsgFrontend }
-  | { t: 'profile'; c: ProfileTypes.MsgFrontend }
-  | { t: 'settings'; c: SettingsTypes.MsgFrontend }
-  | { t: 'frontend'; c: FrontendTypes.MsgFrontend }
+  | WireTypes.MsgFrontend
+  | SpacesTypes.MsgFrontend
+  | AuthTypes.MsgFrontend
+  | ProfileTypes.MsgFrontend
+  | SettingsTypes.MsgFrontend
+  | FrontendTypes.MsgFrontend
 
-export const rpcContract = RPC.combineContracts([
-  //
+export const rpcContract = RPC.combineContracts([AuthTypes.rpcContract, SpacesTypes.rpcContract])
 
-  AuthTypes.rpcContract,
-  SpacesTypes.rpcContract,
-])
-
-export const topicContract = TopicContract.combine([
-  //
-  WireTypes.topicContract,
-  SpacesTypes.topicContract,
-])
+export const topicContract = TopicContract.combine([WireTypes.topicContract, SpacesTypes.topicContract])
 
 export type BackendCtxModule = AppBackendCtxBase &
   WireTypes.BackendCtxModule &
