@@ -10,14 +10,12 @@ import { SettingsTypes } from './settings'
 import { SpacesTypes } from './spaces'
 import { WireTypes } from './wire'
 
-export type ModelFrontend = {
-  frontend: FrontendTypes.ModelFrontend
-  auth: AuthTypes.ModelFrontend
-  spaces: SpacesTypes.ModelFrontend
-  profile: ProfileTypes.ModelFrontend
-  wire: WireTypes.ModelFrontend
-  settings: SettingsTypes.ModelFrontend
-}
+export type ModelFrontend = FrontendTypes.ModelFrontend &
+  AuthTypes.ModelFrontend &
+  SpacesTypes.ModelFrontend &
+  ProfileTypes.ModelFrontend &
+  WireTypes.ModelFrontend &
+  SettingsTypes.ModelFrontend
 
 export type MsgFrontend =
   | { t: 'wire'; c: WireTypes.MsgFrontend }

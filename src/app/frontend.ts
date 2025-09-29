@@ -189,21 +189,21 @@ const initCtx = async (config: {
 }
 
 const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): FrontendCtxModule => {
-  const currentUserState = toCurrentUserState({ model: input.model.auth, ctx: input.ctx })
+  const currentUserState = toCurrentUserState({ model: input.model, ctx: input.ctx })
 
   const baseCtx: FrontendCtxModule = {
     ...input.ctx,
     now: UnixMs.now(),
-    t: Translator(input.model.settings.settings_lang),
-    profilesByUserId: input.model.profile.profiles_profilesByUserId,
-    viewportVisibility: input.model.frontend.viewport_visibility,
-    currentScreen: input.model.frontend.currentScreen_screen,
-    screenSize: input.model.frontend.screenSize_screenSize,
+    t: Translator(input.model.settings_lang),
+    profilesByUserId: input.model.profiles_profilesByUserId,
+    viewportVisibility: input.model.viewport_visibility,
+    currentScreen: input.model.currentScreen_screen,
+    screenSize: input.model.screenSize_screenSize,
     parentScreen: null,
     currentUserState,
     currentUser: currentUserState.t === 'logged-in' ? currentUserState.userAccount : null,
-    backendConnectionStatus: toBackendConnectionStatus(input.model.wire.wire_backendConnection),
-    queryCache: input.model.frontend,
+    backendConnectionStatus: toBackendConnectionStatus(input.model.wire_backendConnection),
+    queryCache: input.model,
   }
 
   return baseCtx
@@ -226,12 +226,12 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
   const profile = ProfileFrontend.init({ ctx })
 
   const model: ModelFrontend = {
-    frontend: frontend.model,
-    spaces: space.model,
-    wire: wire.model,
-    auth: auth.model,
-    profile: profile.model,
-    settings: settings.model,
+    ...frontend.model,
+    ...space.model,
+    ...wire.model,
+    ...auth.model,
+    ...profile.model,
+    ...settings.model,
   }
 
   const eff = Eff.batch<MsgFrontend>([
@@ -287,62 +287,63 @@ const updateChild = (input: {
 } => {
   const ctx = toCtx(input)
 
-  const space = SpacesFrontend.update({
+  const spaces = SpacesFrontend.update({
     ctx,
-    model: input.model.spaces,
+    model: input.model,
     msg: input.msg?.t === 'spaces' ? input.msg.c : null,
     msgIn: input.msgIn,
   })
 
   const profile = ProfileFrontend.update({
     ctx,
-    model: input.model.profile,
+    model: { ...input.model, ...spaces.model },
     msg: input.msg?.t === 'profile' ? input.msg.c : null,
     msgIn: input.msgIn,
   })
 
   const auth = AuthFrontend.update({
     ctx,
-    model: input.model.auth,
+    model: { ...input.model, ...profile.model },
     msg: input.msg?.t === 'auth' ? input.msg.c : null,
     msgIn: input.msgIn,
   })
 
   const wire = WireFrontend.update({
     ctx,
-    model: input.model.wire,
+    model: { ...input.model, ...auth.model },
     msg: input.msg?.t === 'wire' ? input.msg.c : null,
     msgIn: input.msgIn,
   })
 
   const settings = SettingsFrontend.update({
     ctx,
-    model: input.model.settings,
+    model: { ...input.model, ...wire.model },
     msg: input.msg?.t === 'settings' ? input.msg.c : null,
     msgIn: input.msgIn,
   })
 
   const frontend = FrontendFrontend.update({
     ctx,
-    model: input.model.frontend,
+    model: { ...input.model, ...settings.model },
     msg: input.msg?.t === 'frontend' ? input.msg.c : undefined,
     msgIn: input.msgIn,
   })
 
   return {
     model: {
-      frontend: frontend.model,
-      auth: auth.model,
-      profile: profile.model,
-      spaces: space.model,
-      wire: wire.model,
-      settings: settings.model,
+      ...input.model,
+      ...auth.model,
+      ...profile.model,
+      ...spaces.model,
+      ...wire.model,
+      ...settings.model,
+      ...frontend.model,
     },
-    msgOut: Msg.batch(auth.msgOut, profile.msgOut, space.msgOut, settings.msgOut, frontend.msgOut),
+    msgOut: Msg.batch(auth.msgOut, profile.msgOut, spaces.msgOut, settings.msgOut, frontend.msgOut),
     eff: Eff.batch<MsgFrontend>([
       Eff.tag('auth', auth.eff),
       Eff.tag('profile', profile.eff),
-      Eff.tag('spaces', space.eff),
+      Eff.tag('spaces', spaces.eff),
       Eff.tag('wire', wire.eff),
       Eff.tag('settings', settings.eff),
       Eff.tag('frontend', frontend.eff),
@@ -354,21 +355,12 @@ const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }):
   const ctx = toCtx(input)
 
   return Sub.batch<MsgFrontend>([
-    Sub.map(
-      FrontendFrontend.subscriptions({ ctx, model: input.model.frontend }),
-      (c): MsgFrontend => ({ t: 'frontend', c }),
-    ),
-    Sub.map(WireFrontend.subscriptions({ ctx, model: input.model.wire }), (c): MsgFrontend => ({ t: 'wire', c })),
-    Sub.map(
-      SettingsFrontend.subscriptions({ ctx, model: input.model.settings }),
-      (c): MsgFrontend => ({ t: 'settings', c }),
-    ),
-    Sub.map(AuthFrontend.subscriptions({ ctx, model: input.model.auth }), (c): MsgFrontend => ({ t: 'auth', c })),
-    Sub.map(
-      ProfileFrontend.subscriptions({ ctx, model: input.model.profile }),
-      (c): MsgFrontend => ({ t: 'profile', c }),
-    ),
-    Sub.map(SpacesFrontend.subscriptions({ ctx, model: input.model.spaces }), (c): MsgFrontend => ({ t: 'spaces', c })),
+    Sub.map(FrontendFrontend.subscriptions({ ctx, model: input.model }), (c): MsgFrontend => ({ t: 'frontend', c })),
+    Sub.map(WireFrontend.subscriptions({ ctx, model: input.model }), (c): MsgFrontend => ({ t: 'wire', c })),
+    Sub.map(SettingsFrontend.subscriptions({ ctx, model: input.model }), (c): MsgFrontend => ({ t: 'settings', c })),
+    Sub.map(AuthFrontend.subscriptions({ ctx, model: input.model }), (c): MsgFrontend => ({ t: 'auth', c })),
+    Sub.map(ProfileFrontend.subscriptions({ ctx, model: input.model }), (c): MsgFrontend => ({ t: 'profile', c })),
+    Sub.map(SpacesFrontend.subscriptions({ ctx, model: input.model }), (c): MsgFrontend => ({ t: 'spaces', c })),
   ])
 }
 
@@ -377,7 +369,7 @@ const View = (props: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
 
   return h(AppRoot, {}, [
     h(SettingsTopBar.View, {
-      model: props.model.settings,
+      model: props.model,
       dispatch: (c) => props.dispatch({ t: 'settings', c }),
       ctx: frontendCtx,
     }),
@@ -405,31 +397,31 @@ const View = (props: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
 
     h(ToasterFrontend.View, {
       ctx: frontendCtx,
-      model: props.model.frontend,
+      model: props.model,
       dispatch: (c) => props.dispatch({ t: 'frontend', c }),
     }),
   ])
 }
 
 const ViewScreen = (props: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (m: MsgFrontend) => void }) => {
-  switch (props.model.frontend.currentScreen_screen.n) {
+  switch (props.model.currentScreen_screen.n) {
     case 'settings':
       return h(SettingsFrontend.View, {
         ctx: props.ctx,
         dispatch: (c) => props.dispatch({ t: 'settings', c }),
-        model: props.model.settings,
+        model: props.model,
         slots: {
           menuItemsEnd() {
             return h(LogoutFrontend.ViewMenuItem, {
               ctx: props.ctx,
               dispatch: (c) => props.dispatch({ t: 'auth', c: { t: 'got-logout-msg', c } }),
-              model: props.model.auth,
+              model: props.model,
             })
           },
         },
       })
     default: {
-      const currentUser = toCurrentUserState({ model: props.model.auth, ctx: props.ctx })
+      const currentUser = toCurrentUserState({ model: props.model, ctx: props.ctx })
       switch (currentUser.t) {
         case 'loading':
           return h(SplashScreen, {})
@@ -446,7 +438,7 @@ const ViewScreenLoggedOut: typeof ViewScreen = (props) => {
   switch (props.ctx.currentScreen.n) {
     case 'auth':
       return h(AuthFrontend.View, {
-        model: props.model.auth,
+        model: props.model,
         ctx: props.ctx,
         dispatch: (c) => props.dispatch({ t: 'auth', c }),
       })
@@ -473,14 +465,14 @@ const ViewScreenLoggedIn: typeof ViewScreen = (props) => {
     case 'profile':
       return h(ProfileFrontend.View, {
         dispatch: (m) => props.dispatch({ t: 'profile', c: m }),
-        model: props.model.profile,
+        model: props.model,
         ctx,
       })
 
     case 'spaces':
       return h(SpacesFrontend.View, {
         dispatch: (m) => props.dispatch({ t: 'spaces', c: m }),
-        model: props.model.spaces,
+        model: props.model,
         ctx,
       })
 
@@ -519,7 +511,7 @@ const toScreenLayoutProps = (props: {
       return h(SpacesFrontend.ViewCurrentSpaceMiniPlayer, {
         ctx,
         key: propsMiniPlayer.key,
-        model: props.model.spaces,
+        model: props.model,
         dispatch: (c) => props.dispatch({ t: 'spaces', c }),
       })
     },
@@ -530,14 +522,14 @@ const toScreenLayoutProps = (props: {
           {
             label: ctx.t('spaces.spaces'),
             renderIcon: (iconProps) => h(IconGamepad, iconProps),
-            color: props.model.frontend.currentScreen_screen.n === 'spaces' ? 'selected' : 'inherit',
+            color: props.model.currentScreen_screen.n === 'spaces' ? 'selected' : 'inherit',
             onPress: pushSpaceList,
             id: ctx.t('spaces.spaces'),
           },
           {
             label: ctx.t('profile.profile'),
             renderIcon: (iconProps) => h(IconUser, iconProps),
-            color: props.model.frontend.currentScreen_screen.n === 'profile' ? 'selected' : 'inherit',
+            color: props.model.currentScreen_screen.n === 'profile' ? 'selected' : 'inherit',
             onPress() {
               props.dispatch({
                 t: 'frontend',
