@@ -34,7 +34,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
 
 const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
-    case 'join-space.clicked-person-menu-item': {
+    case 'joinSpace_clickedPersonMenuItem': {
       const isOpen = input.model.spaces_opened === 'join-space.person-preview-surface'
       if (isOpen) {
         return {
@@ -47,7 +47,7 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
       }
     }
-    case 'join-space.submitted-join-space-form': {
+    case 'joinSpace_submittedJoinSpaceForm': {
       if (!input.ctx.currentUser?.userId) return { model: input.model }
 
       return {
@@ -61,14 +61,14 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
         ],
       }
     }
-    case 'join-space.closed-person-item-surface': {
+    case 'joinSpace_closedPersonItemSurface': {
       if (input.model.spaces_opened === 'join-space.person-preview-surface') {
         return { model: { ...input.model, spaces_opened: null }, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
       }
       return { model: input.model }
     }
 
-    case 'join-space.opened-person-details': {
+    case 'joinSpace_openedPersonDetails': {
       return {
         model: input.model,
         msgOut: [PushScreenCmd.init({ t: 'profile', n: 'profile', userId: input.msg.userId }, true)],
@@ -132,7 +132,7 @@ const view: SpaceFrontendModule['View'] = (input) => {
     parentScreen: input.ctx.parentScreen,
     ctx: input.ctx,
     actionCreate: {
-      onSubmit: () => input.dispatch({ t: 'join-space.submitted-join-space-form', spaceId: space.spaceId }),
+      onSubmit: () => input.dispatch({ t: 'joinSpace_submittedJoinSpaceForm', spaceId: space.spaceId }),
       submitText: input.ctx.t('spaces.join-space'),
       submitLoading: false,
       submitDisabled: false,
@@ -163,13 +163,13 @@ const view: SpaceFrontendModule['View'] = (input) => {
 
           h(SectionPeopleList, {
             ctx: spaceCtx,
-            onPressItem: (userId) => input.dispatch({ t: 'join-space.clicked-person-menu-item', userId }),
+            onPressItem: (userId) => input.dispatch({ t: 'joinSpace_clickedPersonMenuItem', userId }),
             renderItem: (profile, vDom) =>
               h(FloatingLayout, {
                 ctx: spaceCtx,
                 ariaLabel: input.ctx.t('?'),
                 open: input.model.spaces_opened === 'join-space.person-preview-surface',
-                onClose: () => input.dispatch({ t: 'join-space.closed-person-item-surface' }),
+                onClose: () => input.dispatch({ t: 'joinSpace_closedPersonItemSurface' }),
                 drawer: {
                   position: 'bottom',
                 },
@@ -185,7 +185,7 @@ const view: SpaceFrontendModule['View'] = (input) => {
                   render: () =>
                     h(SectionPersonDetails, {
                       onOpenDetails: () =>
-                        input.dispatch({ t: 'join-space.opened-person-details', userId: profile.userId }),
+                        input.dispatch({ t: 'joinSpace_openedPersonDetails', userId: profile.userId }),
                       ctx: spaceCtx,
                       profile: profile,
                     }),

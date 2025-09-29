@@ -110,7 +110,7 @@ describe('SpacesSyncFrontend', () => {
 //   //       },
 //   //     },
 //   //     {
-//   //       msg: { t: 'join-space.submitted-join-space-form', spaceId },
+//   //       msg: { t: 'joinSpace_submittedJoinSpaceForm', spaceId },
 //   //     },
 //   //   ])
 //   //   expect(

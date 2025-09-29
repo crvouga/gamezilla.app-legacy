@@ -18,9 +18,9 @@ import { SectionPersonDetails } from '../../@/ui/section-person-details'
 import { SpaceFrontendModule } from '../space-frontend'
 
 export type FrontendMsg =
-  | { t: 'people-action.closed-surface' }
-  | { t: 'people-action.clicked-people-action' }
-  | { t: 'people-action.clicked-person-menu-item'; userId: UserId }
+  | { t: 'peopleAction_closedSurface' }
+  | { t: 'peopleAction_clickedPeopleAction' }
+  | { t: 'peopleAction_clickedPersonMenuItem'; userId: UserId }
 
 const update: SpaceFrontendModule['update'] = (input) => {
   const { model } = input
@@ -35,7 +35,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
 
 const updateUserPreview: SpaceFrontendModule['update'] = ({ msg, model }) => {
   switch (msg?.t) {
-    case 'people-action.clicked-preview-user-link': {
+    case 'peopleAction_clickedPreviewUserLink': {
       if (!model.spaces_openedPreviewUserId) return { model }
 
       return {
@@ -49,11 +49,11 @@ const updateUserPreview: SpaceFrontendModule['update'] = ({ msg, model }) => {
 
 const updatePeopleModals: SpaceFrontendModule['update'] = ({ msg, model }) => {
   switch (msg?.t) {
-    case 'people-action.closed-surface': {
+    case 'peopleAction_closedSurface': {
       return { model: { ...model, spaces_opened: null }, msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)] }
     }
 
-    case 'people-action.clicked-people-action': {
+    case 'peopleAction_clickedPeopleAction': {
       const isOpen = model.spaces_opened === 'people.people-surface'
       if (isOpen) {
         return { model: { ...model, spaces_opened: null }, msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)] }
@@ -64,7 +64,7 @@ const updatePeopleModals: SpaceFrontendModule['update'] = ({ msg, model }) => {
       }
     }
 
-    case 'people-action.clicked-person-menu-item': {
+    case 'peopleAction_clickedPersonMenuItem': {
       return {
         model: { ...model, spaces_openedPreviewUserId: msg.userId, spaces_opened: 'people.person-preview-surface' },
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
@@ -137,12 +137,12 @@ const ViewSurfaces = (
             ctx: input.ctx,
             ariaLabel: input.ctx.t('app.people'),
             open: input.model.spaces_opened === 'people.people-surface',
-            onClose: () => input.dispatch({ t: 'people-action.closed-surface' }),
+            onClose: () => input.dispatch({ t: 'peopleAction_closedSurface' }),
             body: {
               render: () =>
                 h(SectionPeopleList, {
                   ctx: spaceCtx,
-                  onPressItem: (userId) => input.dispatch({ t: 'people-action.clicked-person-menu-item', userId }),
+                  onPressItem: (userId) => input.dispatch({ t: 'peopleAction_clickedPersonMenuItem', userId }),
                 }),
             },
           }),
@@ -151,13 +151,13 @@ const ViewSurfaces = (
     ariaLabel: input.ctx.t('app.see-profile'),
     id: 'user-preview',
     open: input.model.spaces_opened === 'people.person-preview-surface',
-    onClose: () => input.dispatch({ t: 'people-action.closed-surface' }),
+    onClose: () => input.dispatch({ t: 'peopleAction_closedSurface' }),
     body: {
       render: () =>
         h(SectionPersonDetails, {
           ctx: spaceCtx,
           profile: modalProfile ?? null,
-          onOpenDetails: () => input.dispatch({ t: 'people-action.clicked-preview-user-link' }),
+          onOpenDetails: () => input.dispatch({ t: 'peopleAction_clickedPreviewUserLink' }),
         }),
     },
   })
@@ -173,7 +173,7 @@ const view = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction |
     id: input.ctx.t('app.people'),
     renderIcon: (iconProps) => h(IconUserGroup, iconProps),
     label: input.ctx.t('spaces.people-count', peopleCount),
-    onPress: () => input.dispatch({ t: 'people-action.clicked-people-action' }),
+    onPress: () => input.dispatch({ t: 'peopleAction_clickedPeopleAction' }),
     badge: peopleCount > 1 ? peopleCount : undefined,
     renderSurface: ({ dropDown }) => h(ViewSurfaces, { ...input, dropDown }),
   }
