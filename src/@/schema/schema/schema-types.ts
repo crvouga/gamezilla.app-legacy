@@ -3,6 +3,7 @@ import { ParseError } from './parse-error'
 
 export type Schema<T> = {
   parse: (input: unknown) => ResultInternal<ParseError, T>
+  t: string
 }
 
 export const isSchema = <T>(input: unknown): input is Schema<T> => {

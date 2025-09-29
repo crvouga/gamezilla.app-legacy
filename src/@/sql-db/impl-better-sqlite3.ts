@@ -2,7 +2,7 @@ import DatabaseNamespace from 'better-sqlite3'
 import type { IFileSystem } from '../file-system/interface'
 import type { ILogger } from '../logger/interface'
 import { TimeSpan } from '../time/time-span'
-import { ImplStandardSql } from './impl-standard-sql'
+import { ImplStandardSqlite } from './impl-standard-sqlite'
 import type { ISqlDb } from './interface'
 const Database = (DatabaseNamespace as any).default || DatabaseNamespace
 
@@ -56,8 +56,8 @@ const init = (config: ImplBetterSqlite3): ISqlDb => {
     }
   }
 
-  return ImplStandardSql.init({
-    t: 'standard-sql',
+  return ImplStandardSqlite.init({
+    t: 'standard-sqlite',
     query,
     logger: config.logger,
     pollInterval: config.pollInterval,

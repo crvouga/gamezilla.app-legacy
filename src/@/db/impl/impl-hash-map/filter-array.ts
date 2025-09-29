@@ -6,7 +6,7 @@ export const filterArray = <TEntity extends Record<string, unknown>>(
 ): TEntity[] => {
   switch (where.op) {
     case 'in': {
-      return entities.filter((entity) => where.value.includes(String(entity[where.column])))
+      return entities.filter((entity) => where.value.includes(entity[where.column]))
     }
     case '=': {
       return entities.filter((entity) => String(entity[where.column]) === where.value)

@@ -1,4 +1,4 @@
-import { quoteIfPostgresKeyword } from './postgres-keywords'
+import { quoteIfKeyword } from './keywords'
 import { OrderBy } from '../../interface/query-input/order-by'
 
 export const toOrderBySql = <TEntity extends Record<string, unknown>>(
@@ -9,7 +9,7 @@ export const toOrderBySql = <TEntity extends Record<string, unknown>>(
     .flatMap((o): string[] => {
       const sqlColumn = fieldToSqlColumn(o.column)
       if (!sqlColumn) return []
-      return [`${quoteIfPostgresKeyword(sqlColumn)} ${o.direction.toUpperCase()}`]
+      return [`${quoteIfKeyword(sqlColumn)} ${o.direction.toUpperCase()}`]
     })
     .join(', ')
   return sql ? `ORDER BY ${sql}` : ''

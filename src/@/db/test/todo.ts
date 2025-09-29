@@ -4,6 +4,7 @@ import { s } from '~/@/schema'
 const schema = s.obj({
   id: s.str(),
   title: s.str(),
+  deletedAt: s.maybe(s.num()),
   completed: s.bool,
   createdAt: s.num(),
   updatedAt: s.num(),
@@ -17,6 +18,7 @@ const random = async (override?: Partial<Todo>): Promise<Todo> => {
   return {
     id: Uuid.generate(),
     title: 'title',
+    deletedAt: null,
     completed: false,
     createdAt: now,
     updatedAt: now,

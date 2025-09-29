@@ -12,7 +12,7 @@ import { queryMap } from './query-input-map'
 export type ImplHashMap<TEntity extends Record<string, unknown>, TRelated extends Record<string, unknown>> = {
   t: 'hash-map'
   parser: IDb.Parser<TEntity, TRelated>
-  toPrimaryKey: (entity: TEntity) => string
+  toPrimaryKey: (entity: TEntity) => keyof TEntity
   map?: (entity: TEntity) => TEntity
   getRelated: (entities: TEntity[]) => Promise<TRelated>
   logger: ILogger
@@ -25,8 +25,8 @@ const init = <TEntity extends Record<string, unknown>, TRelated extends Record<s
 ): IDb.IDb<TEntity, TRelated> => {
   const pubSubsByQueryKey = new Map<string, PubSub<QueryOutput<TEntity, TRelated>>>()
   const liveQueriesByQueryKey = new Map<string, QueryInput<TEntity>>()
-  const entities = new Map<string, TEntity>()
-  const indexes: Indexes = new Map()
+  const entities = new Map<TEntity[keyof TEntity], TEntity>()
+  const indexes: Indexes<TEntity> = new Map()
 
   const nextTick = () => new Promise((resolve) => setTimeout(resolve, 0))
 
@@ -113,7 +113,8 @@ const init = <TEntity extends Record<string, unknown>, TRelated extends Record<s
       for (const unmappedEntity of input.entities) {
         const e = config.map ? config.map(unmappedEntity) : unmappedEntity
         const primaryKey = config.toPrimaryKey(e)
-        entities.set(primaryKey, e)
+        const primaryKeyValue = e[primaryKey]
+        entities.set(primaryKeyValue, e)
         Indexes.populate(indexes, e, primaryKey)
       }
       enqueuePublish()

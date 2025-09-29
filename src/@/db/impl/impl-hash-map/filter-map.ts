@@ -1,19 +1,19 @@
-import { EntityField } from '../../interface/query-input/field'
 import { Where } from '../../interface/query-input/where'
+import { Indexes } from './indexes'
 
 export const filterMap = <TEntity extends Record<string, unknown>>(
-  entities: Map<EntityField, TEntity>,
-  indexes: Map<EntityField, Map<string, Set<EntityField>>>,
+  entities: Map<TEntity[keyof TEntity], TEntity>,
+  indexes: Indexes<TEntity>,
   where: Where<TEntity>,
-): Map<EntityField, TEntity> => {
+): Map<TEntity[keyof TEntity], TEntity> => {
   switch (where.op) {
     case 'in': {
-      const result = new Map<EntityField, TEntity>()
+      const result = new Map<TEntity[keyof TEntity], TEntity>()
       const columnIndex = indexes.get(String(where.column))
 
       if (!columnIndex) return result
 
-      const pksMatchingCriteria = new Set<EntityField>()
+      const pksMatchingCriteria = new Set<TEntity[keyof TEntity]>()
       for (const value of where.value) {
         const pksForValue = columnIndex.get(value)
         if (!pksForValue) continue
@@ -30,7 +30,7 @@ export const filterMap = <TEntity extends Record<string, unknown>>(
       return result
     }
     case '=': {
-      const result = new Map<EntityField, TEntity>()
+      const result = new Map<TEntity[keyof TEntity], TEntity>()
       const columnIndex = indexes.get(where.column)
 
       if (!columnIndex) return result

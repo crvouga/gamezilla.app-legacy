@@ -6,7 +6,7 @@ import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { ISqlDb } from '~/@/sql-db/interface'
 import { ITodoDb } from './interface'
 
-export type TodoDb = {
+export type ImplSql = {
   t: 'sql-db'
   sqlDb: ISqlDb
   logger: ILogger
@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS todo (
     title TEXT NOT NULL,
     completed BOOLEAN NOT NULL,
     created_at_unix_ms BIGINT NOT NULL,
-    updated_at_unix_ms BIGINT NULL
+    updated_at_unix_ms BIGINT NULL,
+    deleted_at_unix_ms BIGINT NULL
 )
 `,
 ]
@@ -31,7 +32,7 @@ DROP TABLE IF EXISTS todo
 `,
 ]
 
-const init = (config: TodoDb): ITodoDb => {
+const init = (config: ImplSql): ITodoDb => {
   return Db.init({
     t: 'sql-db',
     logger: config.logger,
@@ -46,7 +47,9 @@ const init = (config: TodoDb): ITodoDb => {
       up: UP,
       down: DOWN,
     },
-    getRelated: async () => ({}),
+    async getRelated() {
+      return {}
+    },
     viewName: 'todo',
     primaryKey: 'id',
     schema: s.obj({
@@ -55,8 +58,9 @@ const init = (config: TodoDb): ITodoDb => {
       completed: s.bool,
       created_at_unix_ms: s.num(),
       updated_at_unix_ms: s.num(),
+      deleted_at_unix_ms: s.maybe(s.num()),
     }),
-    entityKeyToSqlColumn: (key) => {
+    entityKeyToSqlColumn(key) {
       switch (key) {
         case 'id':
           return 'id'
@@ -68,6 +72,8 @@ const init = (config: TodoDb): ITodoDb => {
           return 'created_at_unix_ms'
         case 'updatedAt':
           return 'updated_at_unix_ms'
+        case 'deletedAt':
+          return 'deleted_at_unix_ms'
       }
     },
     rowToEntity(row) {
@@ -77,6 +83,7 @@ const init = (config: TodoDb): ITodoDb => {
         completed: row.completed,
         createdAt: row.created_at_unix_ms,
         updatedAt: row.updated_at_unix_ms,
+        deletedAt: row.deleted_at_unix_ms,
       }
     },
     entityToRow(entity) {
@@ -86,11 +93,12 @@ const init = (config: TodoDb): ITodoDb => {
         completed: entity.completed,
         created_at_unix_ms: entity.createdAt,
         updated_at_unix_ms: entity.updatedAt,
+        deleted_at_unix_ms: entity.deletedAt,
       }
     },
   })
 }
 
-export const TodoDb = {
+export const ImplSql = {
   init,
 }

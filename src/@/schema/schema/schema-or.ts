@@ -1,18 +1,22 @@
 import { Err } from '../../result/result'
-import type { Schema } from './schema-types'
 import { ParseErrorEntry } from './parse-error-entry'
+import { isSchema, type Schema } from './schema-types'
 
-export function or<A>(a: Schema<A>): Schema<A>
-export function or<A, B>(a: Schema<A>, b: Schema<B>): Schema<A | B>
-export function or<A, B, C>(a: Schema<A>, b: Schema<B>, c: Schema<C>): Schema<A | B | C>
-export function or<A, B, C, D>(a: Schema<A>, b: Schema<B>, c: Schema<C>, d: Schema<D>): Schema<A | B | C | D>
+export type SchemaOr<T> = Schema<T> & {
+  t: 'or'
+}
+
+export function or<A>(a: Schema<A>): SchemaOr<A>
+export function or<A, B>(a: Schema<A>, b: Schema<B>): SchemaOr<A | B>
+export function or<A, B, C>(a: Schema<A>, b: Schema<B>, c: Schema<C>): SchemaOr<A | B | C>
+export function or<A, B, C, D>(a: Schema<A>, b: Schema<B>, c: Schema<C>, d: Schema<D>): SchemaOr<A | B | C | D>
 export function or<A, B, C, D, E>(
   a: Schema<A>,
   b: Schema<B>,
   c: Schema<C>,
   d: Schema<D>,
   e: Schema<E>,
-): Schema<A | B | C | D | E>
+): SchemaOr<A | B | C | D | E>
 export function or<A, B, C, D, E, F>(
   a: Schema<A>,
   b: Schema<B>,
@@ -20,7 +24,7 @@ export function or<A, B, C, D, E, F>(
   d: Schema<D>,
   e: Schema<E>,
   f: Schema<F>,
-): Schema<A | B | C | D | E | F>
+): SchemaOr<A | B | C | D | E | F>
 export function or<A, B, C, D, E, F, G>(
   a: Schema<A>,
   b: Schema<B>,
@@ -29,7 +33,7 @@ export function or<A, B, C, D, E, F, G>(
   e: Schema<E>,
   f: Schema<F>,
   g: Schema<G>,
-): Schema<A | B | C | D | E | F | G>
+): SchemaOr<A | B | C | D | E | F | G>
 export function or<A, B, C, D, E, F, G, H>(
   a: Schema<A>,
   b: Schema<B>,
@@ -39,7 +43,7 @@ export function or<A, B, C, D, E, F, G, H>(
   f: Schema<F>,
   g: Schema<G>,
   h: Schema<H>,
-): Schema<A | B | C | D | E | F | G | H>
+): SchemaOr<A | B | C | D | E | F | G | H>
 export function or<A, B, C, D, E, F, G, H, I>(
   a: Schema<A>,
   b: Schema<B>,
@@ -50,7 +54,7 @@ export function or<A, B, C, D, E, F, G, H, I>(
   g: Schema<G>,
   h: Schema<H>,
   i: Schema<I>,
-): Schema<A | B | C | D | E | F | G | H | I>
+): SchemaOr<A | B | C | D | E | F | G | H | I>
 export function or<A, B, C, D, E, F, G, H, I, J>(
   a: Schema<A>,
   b: Schema<B>,
@@ -62,7 +66,7 @@ export function or<A, B, C, D, E, F, G, H, I, J>(
   h: Schema<H>,
   i: Schema<I>,
   j: Schema<J>,
-): Schema<A | B | C | D | E | F | G | H | I | J>
+): SchemaOr<A | B | C | D | E | F | G | H | I | J>
 export function or<A, B, C, D, E, F, G, H, I, J, K>(
   a: Schema<A>,
   b: Schema<B>,
@@ -75,7 +79,7 @@ export function or<A, B, C, D, E, F, G, H, I, J, K>(
   i: Schema<I>,
   j: Schema<J>,
   k: Schema<K>,
-): Schema<A | B | C | D | E | F | G | H | I | J | K>
+): SchemaOr<A | B | C | D | E | F | G | H | I | J | K>
 export function or<A, B, C, D, E, F, G, H, I, J, K, L>(
   a: Schema<A>,
   b: Schema<B>,
@@ -89,7 +93,7 @@ export function or<A, B, C, D, E, F, G, H, I, J, K, L>(
   j: Schema<J>,
   k: Schema<K>,
   l: Schema<L>,
-): Schema<A | B | C | D | E | F | G | H | I | J | K | L>
+): SchemaOr<A | B | C | D | E | F | G | H | I | J | K | L>
 export function or<A, B, C, D, E, F, G, H, I, J, K, L, M>(
   a: Schema<A>,
   b: Schema<B>,
@@ -104,7 +108,7 @@ export function or<A, B, C, D, E, F, G, H, I, J, K, L, M>(
   k: Schema<K>,
   l: Schema<L>,
   m: Schema<M>,
-): Schema<A | B | C | D | E | F | G | H | I | J | K | L | M>
+): SchemaOr<A | B | C | D | E | F | G | H | I | J | K | L | M>
 export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N>(
   a: Schema<A>,
   b: Schema<B>,
@@ -120,7 +124,7 @@ export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N>(
   l: Schema<L>,
   m: Schema<M>,
   n: Schema<N>,
-): Schema<A | B | C | D | E | F | G | H | I | J | K | L | M | N>
+): SchemaOr<A | B | C | D | E | F | G | H | I | J | K | L | M | N>
 export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O>(
   a: Schema<A>,
   b: Schema<B>,
@@ -137,7 +141,7 @@ export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O>(
   m: Schema<M>,
   n: Schema<N>,
   o: Schema<O>,
-): Schema<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O>
+): SchemaOr<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O>
 export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P>(
   a: Schema<A>,
   b: Schema<B>,
@@ -155,7 +159,7 @@ export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P>(
   n: Schema<N>,
   o: Schema<O>,
   p: Schema<P>,
-): Schema<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P>
+): SchemaOr<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P>
 export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q>(
   a: Schema<A>,
   b: Schema<B>,
@@ -174,7 +178,7 @@ export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q>(
   o: Schema<O>,
   p: Schema<P>,
   q: Schema<Q>,
-): Schema<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q>
+): SchemaOr<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q>
 export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R>(
   a: Schema<A>,
   b: Schema<B>,
@@ -194,7 +198,7 @@ export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R>(
   p: Schema<P>,
   q: Schema<Q>,
   r: Schema<R>,
-): Schema<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R>
+): SchemaOr<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R>
 export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>(
   a: Schema<A>,
   b: Schema<B>,
@@ -215,7 +219,7 @@ export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>(
   q: Schema<Q>,
   r: Schema<R>,
   s: Schema<S>,
-): Schema<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S>
+): SchemaOr<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S>
 export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T>(
   a: Schema<A>,
   b: Schema<B>,
@@ -237,7 +241,7 @@ export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T>(
   r: Schema<R>,
   s: Schema<S>,
   t: Schema<T>,
-): Schema<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T>
+): SchemaOr<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T>
 export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U>(
   a: Schema<A>,
   b: Schema<B>,
@@ -260,7 +264,7 @@ export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U
   s: Schema<S>,
   t: Schema<T>,
   u: Schema<U>,
-): Schema<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U>
+): SchemaOr<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U>
 export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V>(
   a: Schema<A>,
   b: Schema<B>,
@@ -284,7 +288,7 @@ export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U
   t: Schema<T>,
   u: Schema<U>,
   v: Schema<V>,
-): Schema<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V>
+): SchemaOr<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V>
 export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W>(
   a: Schema<A>,
   b: Schema<B>,
@@ -309,7 +313,7 @@ export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U
   u: Schema<U>,
   v: Schema<V>,
   w: Schema<W>,
-): Schema<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W>
+): SchemaOr<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W>
 export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X>(
   a: Schema<A>,
   b: Schema<B>,
@@ -335,7 +339,7 @@ export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U
   v: Schema<V>,
   w: Schema<W>,
   x: Schema<X>,
-): Schema<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X>
+): SchemaOr<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X>
 export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y>(
   a: Schema<A>,
   b: Schema<B>,
@@ -362,7 +366,7 @@ export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U
   w: Schema<W>,
   x: Schema<X>,
   y: Schema<Y>,
-): Schema<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y>
+): SchemaOr<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y>
 export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z>(
   a: Schema<A>,
   b: Schema<B>,
@@ -390,9 +394,10 @@ export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U
   x: Schema<X>,
   y: Schema<Y>,
   z: Schema<Z>,
-): Schema<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z>
-export function or(...schemas: Schema<unknown>[]): Schema<unknown> {
+): SchemaOr<A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z>
+export function or(...schemas: Schema<unknown>[]): SchemaOr<unknown> {
   return {
+    t: 'or',
     parse(input) {
       const errors: ParseErrorEntry[] = []
 
@@ -412,4 +417,8 @@ export function or(...schemas: Schema<unknown>[]): Schema<unknown> {
       return Err({ entries: errors })
     },
   }
+}
+
+export const isOr = (input: unknown): input is SchemaOr<unknown> => {
+  return isSchema(input) && input.t === 'or'
 }

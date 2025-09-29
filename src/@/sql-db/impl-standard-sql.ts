@@ -9,7 +9,7 @@ import type { ISqlDb, SqlDbNotification } from './interface'
 
 export type ImplStandardSql = {
   t: 'standard-sql'
-  query: (rawSql: string) => Promise<unknown[]>
+  query: (rawSql: string, schema: s.Schema<unknown>) => Promise<unknown[]>
   logger: ILogger
   pollInterval?: TimeSpan
   garbageCollectionInterval?: TimeSpan
@@ -26,7 +26,7 @@ const init = (config: ImplStandardSql): ISqlDb => {
 
     try {
       const start = Date.now()
-      const rows = await config.query(sql)
+      const rows = await config.query(sql, input.schema)
       const end = Date.now()
       const durationMs = end - start
       const durationFormatted = `${durationMs.toFixed(2)}ms`

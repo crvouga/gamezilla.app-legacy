@@ -1,10 +1,9 @@
-import { EntityField } from '../../interface/query-input/field'
 import { Where } from '../../interface/query-input/where'
 import { Indexes } from './indexes'
 
 export const filterMapInPlace = <TEntity extends Record<string, unknown>>(
-  entities: Map<EntityField, TEntity>,
-  indexes: Indexes,
+  entities: Map<TEntity[keyof TEntity], TEntity>,
+  indexes: Indexes<TEntity>,
   where: Where<TEntity>,
 ): void => {
   switch (where.op) {
@@ -16,13 +15,12 @@ export const filterMapInPlace = <TEntity extends Record<string, unknown>>(
         return
       }
 
-      const pksMatchingCriteria = new Set<EntityField>()
+      const pksMatchingCriteria = new Set<TEntity[keyof TEntity]>()
       for (const value of where.value) {
         const pksForValue = columnIndex.get(value)
-        if (pksForValue) {
-          for (const pk of pksForValue) {
-            pksMatchingCriteria.add(pk)
-          }
+        if (!pksForValue) continue
+        for (const pk of pksForValue) {
+          pksMatchingCriteria.add(pk)
         }
       }
 

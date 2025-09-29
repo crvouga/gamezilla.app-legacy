@@ -11,7 +11,7 @@ import { IDb } from '../../interface'
 import { QueryInput } from '../../interface/query-input/query-input'
 import { QueryOutput } from '../../interface/query-output/query-output'
 import { toOrderBySql } from './order-by-sql'
-import { quoteIfPostgresKeyword } from './postgres-keywords'
+import { quoteIfKeyword } from './keywords'
 import { toWhereSql } from './where-sql'
 
 export type ImplSqlDb<
@@ -120,7 +120,11 @@ const init = <
           // Return a sync result for now - the related data will be empty
           // In a real implementation, this would need to be handled differently
           const mockDbOutput = Ok(entities.map(self.entityToRow))
-          return mapOutput({ queryInput, related: {} as TRelated, dbOutput: mockDbOutput })
+          return mapOutput({
+            queryInput,
+            related: {} as TRelated,
+            dbOutput: mockDbOutput,
+          })
         },
       )
     },
@@ -165,12 +169,12 @@ const init = <
 
       const sql = `
 INSERT INTO ${self.viewName} (
-${sqlColumns.map((column) => `\t${quoteIfPostgresKeyword(column)}`).join(',\n')}
+${sqlColumns.map((column) => `\t${quoteIfKeyword(column)}`).join(',\n')}
 )
 VALUES ${values}
 ON CONFLICT (${self.primaryKey}) 
 DO UPDATE SET
-${sqlColumns.map((column) => `\t${quoteIfPostgresKeyword(column)} = EXCLUDED.${quoteIfPostgresKeyword(column)}`).join(',\n')}
+${sqlColumns.map((column) => `\t${quoteIfKeyword(column)} = EXCLUDED.${quoteIfKeyword(column)}`).join(',\n')}
 `
 
       const queried = await self.sqlDb.query({ sql, vars, schema: s.unknown })

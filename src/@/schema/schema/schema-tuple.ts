@@ -1,18 +1,22 @@
 import { Err, Ok } from '../../result/result'
-import type { Schema } from './schema-types'
+import { isSchema, type Schema } from './schema-types'
 import { ParseErrorEntry } from './parse-error-entry'
 
-export function tuple<A>(a: Schema<A>): Schema<[A]>
-export function tuple<A, B>(a: Schema<A>, b: Schema<B>): Schema<[A, B]>
-export function tuple<A, B, C>(a: Schema<A>, b: Schema<B>, c: Schema<C>): Schema<[A, B, C]>
-export function tuple<A, B, C, D>(a: Schema<A>, b: Schema<B>, c: Schema<C>, d: Schema<D>): Schema<[A, B, C, D]>
+export type SchemaTuple<T> = Schema<T> & {
+  t: 'tuple'
+}
+
+export function tuple<A>(a: Schema<A>): SchemaTuple<[A]>
+export function tuple<A, B>(a: Schema<A>, b: Schema<B>): SchemaTuple<[A, B]>
+export function tuple<A, B, C>(a: Schema<A>, b: Schema<B>, c: Schema<C>): SchemaTuple<[A, B, C]>
+export function tuple<A, B, C, D>(a: Schema<A>, b: Schema<B>, c: Schema<C>, d: Schema<D>): SchemaTuple<[A, B, C, D]>
 export function tuple<A, B, C, D, E>(
   a: Schema<A>,
   b: Schema<B>,
   c: Schema<C>,
   d: Schema<D>,
   e: Schema<E>,
-): Schema<[A, B, C, D, E]>
+): SchemaTuple<[A, B, C, D, E]>
 export function tuple<A, B, C, D, E, F>(
   a: Schema<A>,
   b: Schema<B>,
@@ -20,7 +24,7 @@ export function tuple<A, B, C, D, E, F>(
   d: Schema<D>,
   e: Schema<E>,
   f: Schema<F>,
-): Schema<[A, B, C, D, E, F]>
+): SchemaTuple<[A, B, C, D, E, F]>
 export function tuple<A, B, C, D, E, F, G>(
   a: Schema<A>,
   b: Schema<B>,
@@ -29,7 +33,7 @@ export function tuple<A, B, C, D, E, F, G>(
   e: Schema<E>,
   f: Schema<F>,
   g: Schema<G>,
-): Schema<[A, B, C, D, E, F, G]>
+): SchemaTuple<[A, B, C, D, E, F, G]>
 export function tuple<A, B, C, D, E, F, G, H>(
   a: Schema<A>,
   b: Schema<B>,
@@ -39,7 +43,7 @@ export function tuple<A, B, C, D, E, F, G, H>(
   f: Schema<F>,
   g: Schema<G>,
   h: Schema<H>,
-): Schema<[A, B, C, D, E, F, G, H]>
+): SchemaTuple<[A, B, C, D, E, F, G, H]>
 export function tuple<A, B, C, D, E, F, G, H, I>(
   a: Schema<A>,
   b: Schema<B>,
@@ -50,7 +54,7 @@ export function tuple<A, B, C, D, E, F, G, H, I>(
   g: Schema<G>,
   h: Schema<H>,
   i: Schema<I>,
-): Schema<[A, B, C, D, E, F, G, H, I]>
+): SchemaTuple<[A, B, C, D, E, F, G, H, I]>
 export function tuple<A, B, C, D, E, F, G, H, I, J>(
   a: Schema<A>,
   b: Schema<B>,
@@ -62,7 +66,7 @@ export function tuple<A, B, C, D, E, F, G, H, I, J>(
   h: Schema<H>,
   i: Schema<I>,
   j: Schema<J>,
-): Schema<[A, B, C, D, E, F, G, H, I, J]>
+): SchemaTuple<[A, B, C, D, E, F, G, H, I, J]>
 export function tuple<A, B, C, D, E, F, G, H, I, J, K>(
   a: Schema<A>,
   b: Schema<B>,
@@ -75,7 +79,7 @@ export function tuple<A, B, C, D, E, F, G, H, I, J, K>(
   i: Schema<I>,
   j: Schema<J>,
   k: Schema<K>,
-): Schema<[A, B, C, D, E, F, G, H, I, J, K]>
+): SchemaTuple<[A, B, C, D, E, F, G, H, I, J, K]>
 export function tuple<A, B, C, D, E, F, G, H, I, J, K, L>(
   a: Schema<A>,
   b: Schema<B>,
@@ -89,7 +93,7 @@ export function tuple<A, B, C, D, E, F, G, H, I, J, K, L>(
   j: Schema<J>,
   k: Schema<K>,
   l: Schema<L>,
-): Schema<[A, B, C, D, E, F, G, H, I, J, K, L]>
+): SchemaTuple<[A, B, C, D, E, F, G, H, I, J, K, L]>
 export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M>(
   a: Schema<A>,
   b: Schema<B>,
@@ -104,7 +108,7 @@ export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M>(
   k: Schema<K>,
   l: Schema<L>,
   m: Schema<M>,
-): Schema<[A, B, C, D, E, F, G, H, I, J, K, L, M]>
+): SchemaTuple<[A, B, C, D, E, F, G, H, I, J, K, L, M]>
 export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N>(
   a: Schema<A>,
   b: Schema<B>,
@@ -120,7 +124,7 @@ export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N>(
   l: Schema<L>,
   m: Schema<M>,
   n: Schema<N>,
-): Schema<[A, B, C, D, E, F, G, H, I, J, K, L, M, N]>
+): SchemaTuple<[A, B, C, D, E, F, G, H, I, J, K, L, M, N]>
 export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O>(
   a: Schema<A>,
   b: Schema<B>,
@@ -137,7 +141,7 @@ export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O>(
   m: Schema<M>,
   n: Schema<N>,
   o: Schema<O>,
-): Schema<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O]>
+): SchemaTuple<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O]>
 export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P>(
   a: Schema<A>,
   b: Schema<B>,
@@ -155,7 +159,7 @@ export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P>(
   n: Schema<N>,
   o: Schema<O>,
   p: Schema<P>,
-): Schema<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P]>
+): SchemaTuple<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P]>
 export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q>(
   a: Schema<A>,
   b: Schema<B>,
@@ -174,7 +178,7 @@ export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q>(
   o: Schema<O>,
   p: Schema<P>,
   q: Schema<Q>,
-): Schema<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q]>
+): SchemaTuple<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q]>
 export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R>(
   a: Schema<A>,
   b: Schema<B>,
@@ -194,7 +198,7 @@ export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R>(
   p: Schema<P>,
   q: Schema<Q>,
   r: Schema<R>,
-): Schema<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R]>
+): SchemaTuple<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R]>
 export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>(
   a: Schema<A>,
   b: Schema<B>,
@@ -215,7 +219,7 @@ export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>(
   q: Schema<Q>,
   r: Schema<R>,
   s: Schema<S>,
-): Schema<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S]>
+): SchemaTuple<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S]>
 export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T>(
   a: Schema<A>,
   b: Schema<B>,
@@ -237,7 +241,7 @@ export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T
   r: Schema<R>,
   s: Schema<S>,
   t: Schema<T>,
-): Schema<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T]>
+): SchemaTuple<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T]>
 export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U>(
   a: Schema<A>,
   b: Schema<B>,
@@ -260,7 +264,7 @@ export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T
   s: Schema<S>,
   t: Schema<T>,
   u: Schema<U>,
-): Schema<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U]>
+): SchemaTuple<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U]>
 export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V>(
   a: Schema<A>,
   b: Schema<B>,
@@ -284,7 +288,7 @@ export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T
   t: Schema<T>,
   u: Schema<U>,
   v: Schema<V>,
-): Schema<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V]>
+): SchemaTuple<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V]>
 export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W>(
   a: Schema<A>,
   b: Schema<B>,
@@ -309,7 +313,7 @@ export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T
   u: Schema<U>,
   v: Schema<V>,
   w: Schema<W>,
-): Schema<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W]>
+): SchemaTuple<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W]>
 export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X>(
   a: Schema<A>,
   b: Schema<B>,
@@ -335,7 +339,7 @@ export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T
   v: Schema<V>,
   w: Schema<W>,
   x: Schema<X>,
-): Schema<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X]>
+): SchemaTuple<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X]>
 export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y>(
   a: Schema<A>,
   b: Schema<B>,
@@ -362,7 +366,7 @@ export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T
   w: Schema<W>,
   x: Schema<X>,
   y: Schema<Y>,
-): Schema<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y]>
+): SchemaTuple<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y]>
 export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z>(
   a: Schema<A>,
   b: Schema<B>,
@@ -390,9 +394,10 @@ export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T
   x: Schema<X>,
   y: Schema<Y>,
   z: Schema<Z>,
-): Schema<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z]>
-export function tuple(...schemas: Schema<unknown>[]): Schema<unknown> {
+): SchemaTuple<[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z]>
+export function tuple(...schemas: Schema<unknown>[]): SchemaTuple<unknown> {
   return {
+    t: 'tuple',
     parse(input) {
       const errors: ParseErrorEntry[] = []
       const tuple: any[] = []
@@ -418,4 +423,8 @@ export function tuple(...schemas: Schema<unknown>[]): Schema<unknown> {
       return Err({ entries: errors })
     },
   }
+}
+
+export const isTuple = (input: unknown): input is SchemaTuple<unknown> => {
+  return isSchema(input) && input.t === 'tuple'
 }

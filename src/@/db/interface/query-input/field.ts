@@ -1,1 +1,1 @@
-export type EntityField = string | number | symbol
+export type EntityField = string | number | symbol | boolean | null | undefined
