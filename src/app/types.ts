@@ -15,6 +15,7 @@ import { ProfileTypes } from './profile'
 import { SettingsTypes } from './settings'
 import { SpacesTypes } from './spaces'
 import { WireTypes } from './wire'
+import { isAnyMsg } from '~/@/msg/msg'
 
 export type ModelFrontend = CurrentScreenFrontend.Model &
   ToasterFrontend.Model &
@@ -29,7 +30,14 @@ export type ModelFrontend = CurrentScreenFrontend.Model &
   WireTypes.ModelFrontend &
   SettingsTypes.ModelFrontend
 
+export type MsgFrontendBase = {
+  t: 'app_gotMsgOut'
+  c: unknown
+}
+export const isMsgFrontendBase = (msg: unknown): msg is MsgFrontendBase => isAnyMsg(msg) && msg.t.startsWith('app_')
+
 export type MsgFrontend =
+  | MsgFrontendBase
   | CurrentScreenFrontend.Msg
   | ToasterFrontend.Msg
   | ViewportFrontend.Msg

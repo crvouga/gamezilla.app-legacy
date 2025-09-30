@@ -50,7 +50,7 @@ import { ProfileFrontend } from './profile/frontend'
 import { SettingsFrontend } from './settings/frontend'
 import { SettingsTopBar } from './settings/settings-top-bar'
 import { SpacesFrontend } from './spaces/frontend'
-import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract, topicContract } from './types'
+import { FrontendCtxModule, isMsgFrontendBase, ModelFrontend, MsgFrontend, rpcContract, topicContract } from './types'
 import { toBackendConnectionStatus } from './wire/backend-connection/backend-connection-status'
 import { WireFrontend } from './wire/frontend'
 
@@ -259,11 +259,11 @@ const update = (input: {
   eff?: Eff<MsgFrontend>
 } => {
   const ctx = toCtx(input)
-  const result = updatedMain({ ...input, ctx })
+  const result = updateMain({ ...input, ctx })
   const allEffects = [result.eff]
   while (result.msgOut?.length) {
     const msgOut = result.msgOut.shift()!
-    const updated = updatedMain({ ctx, model: result.model, msgIn: msgOut })
+    const updated = updateMain({ ctx, model: result.model, msgIn: msgOut })
     result.model = updated.model
     if (updated.eff) allEffects.push(updated.eff)
     if (updated.msgOut) result.msgOut.push(...updated.msgOut)
@@ -274,7 +274,7 @@ const update = (input: {
   }
 }
 
-const updatedMain = (input: {
+const updateMain = (input: {
   ctx: FrontendCtxModule
   model: ModelFrontend
   msg?: unknown
@@ -298,13 +298,26 @@ const updatedMain = (input: {
     (model) => CopyToClipboardFrontend.update({ ...input, model }),
     (model) => FocusFrontend.update({ ...input, model }),
     (model) => QueryCache.update({ ...input, model }),
+    (model) => updateFromMsgFrontendBase({ ...input, model }),
   )
+}
+
+const externalMsgs = Sub.init<unknown>()
+
+const updateFromMsgFrontendBase: typeof updateMain = (input) => {
+  if (!isMsgFrontendBase(input.msg)) return { model: input.model }
+  switch (input.msg?.t) {
+    case 'app_gotMsgOut': {
+      return { model: input.model, msgOut: [input.msg.c] }
+    }
+  }
 }
 
 const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<MsgFrontend> => {
   const ctx = toCtx(input)
   const inputNew = { ...input, ctx }
   return Sub.batch<MsgFrontend>([
+    Sub.map(externalMsgs, (c) => ({ t: 'app_gotMsgOut', c })),
     ViewportFrontend.subscriptions(inputNew),
     FocusFrontend.subscriptions,
     CopyToClipboardFrontend.subscriptions,
@@ -497,6 +510,7 @@ const toScreenLayoutProps = (props: {
 }
 
 export const AppFrontend = {
+  externalMsgs,
   initCtx,
   init,
   update,

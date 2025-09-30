@@ -11,6 +11,7 @@ import { UserProfile } from '~/app/@/data/user-profile'
 import { UserProfileId } from '~/app/@/data/user-profile-id'
 import { Username } from '~/app/@/data/username'
 import { andThen } from '~/app/@/frontend/and-then'
+import { AppReadyEvt } from '~/app/@/frontend/app-ready-evt.$msg'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -129,6 +130,7 @@ export const update = <T extends ModelFrontend>(input: {
   ctx: AuthFrontendCtx
   model: T
   msg?: unknown
+  msgIn?: unknown
 }): {
   model: T
   eff?: Eff<MsgFrontend>
@@ -139,8 +141,7 @@ export const update = <T extends ModelFrontend>(input: {
     (model) => updateFromMsg({ ...input, model }),
     (model) => watchForLogin({ ...input, model, modelBefore: input.model, modelAfter: model }),
     (model) => {
-      const flag = false
-      if (flag) {
+      if (AppReadyEvt.is(input.msgIn)) {
         return {
           model,
           async eff() {
