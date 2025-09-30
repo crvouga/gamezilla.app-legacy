@@ -1,8 +1,8 @@
 import { indexBy } from '~/@/array/index-by'
 import { deterministicJsonStringify } from '~/@/json/deterministic-stringify'
 import { Sub } from '~/@/sub'
+import { QueryCache } from '~/app/frontend/query-cache'
 import { GotQueryCacheMsg } from '~/app/frontend/query-cache/got-query-cache-msg.$msg'
-import { QueryCache } from '~/app/frontend/query-cache/query-cache'
 import { Solution } from './solution'
 import { SolutionHash } from './solution-hash/solution-hash'
 import { ISolutionsDb } from './solutions-db/interface'
@@ -37,7 +37,7 @@ const sub = <TMsg>(
   })
 }
 
-const read = (ctx: { queryCache: QueryCache }, solutionHash: SolutionHash | null): Solution[] => {
+const read = (ctx: { queryCache: QueryCache.Model }, solutionHash: SolutionHash | null): Solution[] => {
   const query = initQuery(solutionHash)
   const queryKey = deterministicJsonStringify(query)
   const results = ctx.queryCache.queryCache_results[queryKey] as SolutionHash[]
@@ -47,7 +47,7 @@ const read = (ctx: { queryCache: QueryCache }, solutionHash: SolutionHash | null
   )
 }
 
-const entity = (ctx: { queryCache: QueryCache }, solutionHash: SolutionHash | null): Solution | null => {
+const entity = (ctx: { queryCache: QueryCache.Model }, solutionHash: SolutionHash | null): Solution | null => {
   if (!solutionHash) return null
   const query = initQuery(solutionHash)
   const queryKey = deterministicJsonStringify(query)
@@ -56,13 +56,13 @@ const entity = (ctx: { queryCache: QueryCache }, solutionHash: SolutionHash | nu
   return entity
 }
 
-const isLoading = (ctx: { queryCache: QueryCache }, solutionHash: SolutionHash | null): boolean => {
+const isLoading = (ctx: { queryCache: QueryCache.Model }, solutionHash: SolutionHash | null): boolean => {
   const query = initQuery(solutionHash)
   const queryKey = deterministicJsonStringify(query)
   return ctx.queryCache.queryCache_results[queryKey] === undefined
 }
 
-const isEmpty = (ctx: { queryCache: QueryCache }, solutionHash: SolutionHash | null): boolean => {
+const isEmpty = (ctx: { queryCache: QueryCache.Model }, solutionHash: SolutionHash | null): boolean => {
   const solutions = read(ctx, solutionHash)
   return !isLoading(ctx, solutionHash) && solutions.length === 0
 }

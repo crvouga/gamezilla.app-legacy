@@ -6,7 +6,7 @@ import { isOk } from '~/@/result'
 import { s } from '~/@/schema'
 import { Sub } from '~/@/sub'
 import { GotQueryCacheMsg } from '~/app/frontend/query-cache/got-query-cache-msg.$msg'
-import { QueryCache } from '~/app/frontend/query-cache/query-cache'
+import { QueryCache } from '.'
 
 const init = <TEntity extends Record<string, unknown>, TRelated extends Record<string, unknown>>(config: {
   entityType: string
@@ -32,7 +32,7 @@ const init = <TEntity extends Record<string, unknown>, TRelated extends Record<s
     })
   }
 
-  const query = (ctx: { queryCache: QueryCache }, queryInput: QueryInput<TEntity>): TEntity[] => {
+  const query = (ctx: { queryCache: QueryCache.Model }, queryInput: QueryInput<TEntity>): TEntity[] => {
     const queryKey = deterministicJsonStringify(queryInput)
     const results = ctx.queryCache.queryCache_results[queryKey]
     const entities =
@@ -40,17 +40,17 @@ const init = <TEntity extends Record<string, unknown>, TRelated extends Record<s
     return entities
   }
 
-  const toEntity = (ctx: { queryCache: QueryCache }, id: string): TEntity | null => {
+  const toEntity = (ctx: { queryCache: QueryCache.Model }, id: string): TEntity | null => {
     const entity = ctx.queryCache.queryCache_entities.byType[config.entityType]?.byId[id] as TEntity
     return entity ?? null
   }
 
-  const isLoading = (ctx: { queryCache: QueryCache }, queryInput: QueryInput<TEntity>): boolean => {
+  const isLoading = (ctx: { queryCache: QueryCache.Model }, queryInput: QueryInput<TEntity>): boolean => {
     const queryKey = deterministicJsonStringify(queryInput)
     return ctx.queryCache.queryCache_results[queryKey] === undefined
   }
 
-  const isEmpty = (ctx: { queryCache: QueryCache }, queryInput: QueryInput<TEntity>): boolean => {
+  const isEmpty = (ctx: { queryCache: QueryCache.Model }, queryInput: QueryInput<TEntity>): boolean => {
     const entities = query(ctx, queryInput)
     return !isLoading(ctx, queryInput) && entities.length === 0
   }

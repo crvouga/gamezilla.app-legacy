@@ -2,7 +2,8 @@ import { indexBy } from '~/@/array/index-by'
 import { deterministicJsonStringify } from '~/@/json/deterministic-stringify'
 import { Sub } from '~/@/sub'
 import { GotQueryCacheMsg } from '~/app/frontend/query-cache/got-query-cache-msg.$msg'
-import { QueryCache } from '~/app/frontend/query-cache/query-cache'
+
+import { QueryCache } from '~/app/frontend/query-cache'
 import { Puzzle } from './puzzle'
 import { IPuzzleDb } from './puzzle-db/interface'
 import { PuzzleQuery } from './puzzle-db/interface-query'
@@ -25,7 +26,7 @@ const sub = <TMsg>(puzzleDb: IPuzzleDb, query: PuzzleQuery, mapper: (m: unknown)
   })
 }
 
-const read = (ctx: { queryCache: QueryCache }, query: PuzzleQuery): Puzzle[] => {
+const read = (ctx: { queryCache: QueryCache.Model }, query: PuzzleQuery): Puzzle[] => {
   const queryKey = deterministicJsonStringify(query)
   const results = ctx.queryCache.queryCache_results[queryKey]
   const entities =
@@ -33,7 +34,7 @@ const read = (ctx: { queryCache: QueryCache }, query: PuzzleQuery): Puzzle[] => 
   return entities
 }
 
-const entity = (ctx: { queryCache: QueryCache }, id: PuzzleId | undefined | null): Puzzle | null => {
+const entity = (ctx: { queryCache: QueryCache.Model }, id: PuzzleId | undefined | null): Puzzle | null => {
   if (!id) return null
   const entity = ctx.queryCache.queryCache_entities.byType[ENTITY_TYPE]?.byId[id]
   if (!entity) return null
@@ -50,12 +51,12 @@ const gotEntity = (puzzleId: PuzzleId, puzzleNew: Puzzle): GotQueryCacheMsg => {
   })
 }
 
-const isLoading = (ctx: { queryCache: QueryCache }, query: PuzzleQuery): boolean => {
+const isLoading = (ctx: { queryCache: QueryCache.Model }, query: PuzzleQuery): boolean => {
   const queryKey = deterministicJsonStringify(query)
   return !Boolean(ctx.queryCache.queryCache_results[queryKey])
 }
 
-const isEmpty = (ctx: { queryCache: QueryCache }, query: PuzzleQuery): boolean => {
+const isEmpty = (ctx: { queryCache: QueryCache.Model }, query: PuzzleQuery): boolean => {
   return !isLoading(ctx, query) && read(ctx, query).length === 0
 }
 

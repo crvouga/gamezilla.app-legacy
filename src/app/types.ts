@@ -4,13 +4,25 @@ import { TopicContract } from '~/@/topic/topic-contract'
 import { AppBackendCtxBase } from './@/backend/ctx'
 import { AppFrontendCtxBase } from './@/frontend/ctx'
 import { AuthTypes } from './auth'
-import { FrontendTypes } from './frontend/index'
+import { CopyToClipboardFrontend } from './frontend/copy-to-clipboard'
+import { CurrentScreenFrontend } from './frontend/current-screen'
+import { FocusFrontend } from './frontend/focus'
+import { QueryCache } from './frontend/query-cache'
+import { ScreenSizeFrontend } from './frontend/screen-size'
+import { ToasterFrontend } from './frontend/toaster'
+import { ViewportFrontend } from './frontend/viewport'
 import { ProfileTypes } from './profile'
 import { SettingsTypes } from './settings'
 import { SpacesTypes } from './spaces'
 import { WireTypes } from './wire'
 
-export type ModelFrontend = FrontendTypes.ModelFrontend &
+export type ModelFrontend = CurrentScreenFrontend.Model &
+  ToasterFrontend.Model &
+  ViewportFrontend.Model &
+  ScreenSizeFrontend.Model &
+  CopyToClipboardFrontend.Model &
+  QueryCache.Model &
+  FocusFrontend.Model &
   AuthTypes.ModelFrontend &
   SpacesTypes.ModelFrontend &
   ProfileTypes.ModelFrontend &
@@ -18,12 +30,17 @@ export type ModelFrontend = FrontendTypes.ModelFrontend &
   SettingsTypes.ModelFrontend
 
 export type MsgFrontend =
+  | CurrentScreenFrontend.Msg
+  | ToasterFrontend.Msg
+  | ViewportFrontend.Msg
+  | ScreenSizeFrontend.Msg
+  | FocusFrontend.Msg
+  | CopyToClipboardFrontend.Msg
   | WireTypes.MsgFrontend
   | SpacesTypes.MsgFrontend
   | AuthTypes.MsgFrontend
   | ProfileTypes.MsgFrontend
   | SettingsTypes.MsgFrontend
-  | FrontendTypes.MsgFrontend
 
 export const rpcContract = RPC.combineContracts([AuthTypes.rpcContract, SpacesTypes.rpcContract])
 

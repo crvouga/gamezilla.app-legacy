@@ -1,8 +1,8 @@
 import { indexBy } from '~/@/array/index-by'
 import { deterministicJsonStringify } from '~/@/json/deterministic-stringify'
 import { Sub } from '~/@/sub'
+import { QueryCache } from '~/app/frontend/query-cache'
 import { GotQueryCacheMsg } from '~/app/frontend/query-cache/got-query-cache-msg.$msg'
-import { QueryCache } from '~/app/frontend/query-cache/query-cache'
 import { Pack } from './pack'
 import { IPackDb } from './pack-db/interface'
 import { PackQuery } from './pack-db/interface-query'
@@ -25,19 +25,19 @@ const sub = <TMsg>(packDb: IPackDb, query: PackQuery, mapper: (m: unknown) => TM
   })
 }
 
-const read = (ctx: { queryCache: QueryCache }, query: PackQuery): Pack[] => {
+const read = (ctx: { queryCache: QueryCache.Model }, query: PackQuery): Pack[] => {
   const queryKey = deterministicJsonStringify(query)
   const results = ctx.queryCache.queryCache_results[queryKey]
   const entities = results?.map((id) => ctx.queryCache.queryCache_entities.byType[ENTITY_TYPE]?.byId[id] as Pack) ?? []
   return entities
 }
 
-const isLoading = (ctx: { queryCache: QueryCache }, query: PackQuery): boolean => {
+const isLoading = (ctx: { queryCache: QueryCache.Model }, query: PackQuery): boolean => {
   const queryKey = deterministicJsonStringify(query)
   return ctx.queryCache.queryCache_results[queryKey] === undefined
 }
 
-const isEmpty = (ctx: { queryCache: QueryCache }, query: PackQuery): boolean => {
+const isEmpty = (ctx: { queryCache: QueryCache.Model }, query: PackQuery): boolean => {
   const packs = read(ctx, query)
   return !isLoading(ctx, query) && packs.length === 0
 }

@@ -39,9 +39,13 @@ import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
 import { toCurrentUserState } from './auth/current-user/frontend'
 import { AuthFrontend } from './auth/frontend'
 import { LogoutFrontend } from './auth/logout'
-import { FrontendFrontend } from './frontend/frontend'
-import { QueryCache } from './frontend/query-cache/query-cache'
+import { CopyToClipboardFrontend } from './frontend/copy-to-clipboard'
+import { CurrentScreenFrontend } from './frontend/current-screen'
+import { FocusFrontend } from './frontend/focus'
+import { QueryCache } from './frontend/query-cache'
+import { ScreenSizeFrontend } from './frontend/screen-size'
 import { ToasterFrontend } from './frontend/toaster'
+import { ViewportFrontend } from './frontend/viewport'
 import { ProfileFrontend } from './profile/frontend'
 import { SettingsFrontend } from './settings/frontend'
 import { SettingsTopBar } from './settings/settings-top-bar'
@@ -208,29 +212,42 @@ const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): Fronten
 }
 
 const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
-  const frontend = FrontendFrontend.init(input)
+  const currentScreen = CurrentScreenFrontend.init(input)
+  const viewport = ViewportFrontend.init(input)
+  const screenSize = ScreenSizeFrontend.init(input)
+  const toast = ToasterFrontend.init(input)
+  const focus = FocusFrontend.init(input)
+  const copyToClipboard = CopyToClipboardFrontend.init(input)
+  const queryCache = QueryCache.init(input)
 
   const ctx: FrontendCtxModule = {
     ...input.ctx,
-    currentScreen: frontend.model.currentScreen_screen,
-    viewportVisibility: frontend.model.viewport_visibility,
-    screenSize: frontend.model.screenSize_screenSize,
+    currentScreen: currentScreen.model.currentScreen_screen,
+    viewportVisibility: viewport.model.viewport_visibility,
+    screenSize: screenSize.model.screenSize_screenSize,
   }
 
   const settings = SettingsFrontend.init({ ctx })
   const space = SpacesFrontend.init({ ctx })
 
   const model: ModelFrontend = {
-    ...frontend.model,
+    ...focus.model,
+    ...currentScreen.model,
+    ...toast.model,
+    ...viewport.model,
+    ...screenSize.model,
+    ...copyToClipboard.model,
+    ...queryCache.model,
     ...space.model,
     ...settings.model,
   }
 
-  const eff = Eff.batch<MsgFrontend>([frontend.eff, settings.eff])
+  const eff = Eff.batch<MsgFrontend>([currentScreen.eff, settings.eff])
 
-  // const msgOut = Msg.batch(frontend.msgOut, settings.msgOut)
-
-  return { model, eff }
+  return {
+    model,
+    eff,
+  }
 }
 
 const update = (input: {
@@ -244,7 +261,6 @@ const update = (input: {
   const ctx = toCtx(input)
   const result = updatedMain({ ...input, ctx })
   const allEffects = [result.eff]
-
   while (result.msgOut?.length) {
     const msgOut = result.msgOut.shift()!
     const updated = updatedMain({ ctx, model: result.model, msgIn: msgOut })
@@ -252,7 +268,6 @@ const update = (input: {
     if (updated.eff) allEffects.push(updated.eff)
     if (updated.msgOut) result.msgOut.push(...updated.msgOut)
   }
-
   return {
     model: result.model,
     eff: Eff.batch(allEffects),
@@ -276,7 +291,13 @@ const updatedMain = (input: {
     (model) => AuthFrontend.update({ ...input, model }),
     (model) => WireFrontend.update({ ...input, model }),
     (model) => SettingsFrontend.update({ ...input, model }),
-    (model) => FrontendFrontend.update({ ...input, model }),
+    (model) => CurrentScreenFrontend.update({ ...input, model }),
+    (model) => ViewportFrontend.update({ ...input, model }),
+    (model) => ToasterFrontend.update({ ...input, model }),
+    (model) => ScreenSizeFrontend.update({ ...input, model }),
+    (model) => CopyToClipboardFrontend.update({ ...input, model }),
+    (model) => FocusFrontend.update({ ...input, model }),
+    (model) => QueryCache.update({ ...input, model }),
   )
 }
 
@@ -284,7 +305,12 @@ const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }):
   const ctx = toCtx(input)
   const inputNew = { ...input, ctx }
   return Sub.batch<MsgFrontend>([
-    FrontendFrontend.subscriptions(inputNew),
+    ViewportFrontend.subscriptions(inputNew),
+    FocusFrontend.subscriptions,
+    CopyToClipboardFrontend.subscriptions,
+    ScreenSizeFrontend.subscriptions(inputNew),
+    CurrentScreenFrontend.subscriptions(inputNew),
+    ToasterFrontend.subscriptions(inputNew),
     WireFrontend.subscriptions(inputNew),
     SettingsFrontend.subscriptions(inputNew),
     AuthFrontend.subscriptions(inputNew),

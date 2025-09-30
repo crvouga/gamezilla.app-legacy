@@ -1,7 +1,7 @@
 import { deterministicJsonStringify } from '~/@/json/deterministic-stringify'
 import { GotQueryCacheMsg } from './got-query-cache-msg.$msg'
 
-export type QueryCache = {
+export type Model = {
   queryCache_queries: {
     [queryKey: string]: Record<string, unknown>
   }
@@ -19,7 +19,7 @@ export type QueryCache = {
   }
 }
 
-const init = (_input: {}): { model: QueryCache } => {
+export const init = (_input: {}): { model: Model } => {
   return {
     model: {
       queryCache_queries: {},
@@ -44,7 +44,7 @@ const mergeEntities = (
   return { ...existing, ...incoming }
 }
 
-const update = <TModel extends QueryCache>(input: {
+export const update = <TModel extends Model>(input: {
   model: TModel
   msgIn?: unknown
 }): {
@@ -119,9 +119,4 @@ const update = <TModel extends QueryCache>(input: {
       }
     }
   }
-}
-
-export const QueryCache = {
-  init,
-  update,
 }

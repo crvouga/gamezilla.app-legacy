@@ -12,17 +12,17 @@ import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
 import { ISqlDb } from '~/@/sql-db/interface'
 import { ISyncEngine } from '~/@/sync-engine/sync-engine-server'
 import { UnixMs } from '~/@/time/unix-ms'
+import { VDomImplWeb } from '~/@/vdom/vdom-impl-web'
 import { IViewport, ViewportVisibility } from '~/@/viewport'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { BackendConnectionStatus } from '~/app/@/wire/backend-connection-status'
 import { UserSession } from '~/app/auth/@/user-session/user-session'
-import { QueryCache } from '~/app/frontend/query-cache/query-cache'
+import { QueryCache } from '~/app/frontend/query-cache'
 import { UserAccount } from '../data/user-account'
 import { UserId } from '../data/user-id'
 import { UserProfile } from '../data/user-profile'
 import { ParentScreenProps } from '../ui/screen/layout/screen-layout-props'
 import { ScreenSize } from '../ui/screen/screen-size'
-import { VDomImplWeb } from '~/@/vdom/vdom-impl-web'
 
 export type CurrentUser =
   | { t: 'loading' }
@@ -55,7 +55,7 @@ export type AppFrontendCtxBase = {
   navigation: INavigation
   backendConnectionStatus: BackendConnectionStatus
   syncEngine: ISyncEngine
-  queryCache: QueryCache
+  queryCache: QueryCache.Model
   vdomImpl: VDomImplWeb
 }
 
