@@ -160,4 +160,72 @@ describe('Db', () => {
       expect(unwrap(after).entities.items[0]?.completed).toEqual(true)
     }
   })
+
+  test('should filter with in clause', async () => {
+    for (const f of await Fixtures()) {
+      const matchingTodos = [await Todo.random(), await Todo.random(), await Todo.random()]
+      const nonMatchingTodo = await Todo.random()
+
+      unwrap(await f.todoDb.upsert({ entities: [...matchingTodos, nonMatchingTodo] }))
+
+      const result = await f.todoDb.query({
+        where: {
+          op: 'in',
+          column: 'id',
+          value: matchingTodos.map((t) => t.id),
+        },
+        orderBy: [{ column: 'id', direction: 'asc' }],
+        limit: 100,
+        offset: 0,
+      })
+
+      const items = unwrap(result).entities.items
+      items.sort(ascend((t) => t.id))
+      matchingTodos.sort(ascend((t) => t.id))
+
+      expect(items).toEqual(matchingTodos)
+      expect(items.some((item) => item.id === nonMatchingTodo.id)).toEqual(false)
+      expect(unwrap(result).entities.total).toEqual(matchingTodos.length)
+    }
+  })
+
+  test('should return empty result when in clause value is empty', async () => {
+    for (const f of await Fixtures()) {
+      const todo = await Todo.random()
+      unwrap(await f.todoDb.upsert({ entities: [todo] }))
+
+      const result = await f.todoDb.query({
+        where: { op: 'in', column: 'id', value: [] },
+        orderBy: [{ column: 'id', direction: 'asc' }],
+        limit: 100,
+        offset: 0,
+      })
+
+      expect(unwrap(result).entities.items).toEqual([])
+      expect(unwrap(result).entities.total).toEqual(0)
+    }
+  })
+
+  test('should return empty result when in clause value is empty', async () => {
+    for (const f of await Fixtures()) {
+      const todo = await Todo.random({ completed: false })
+      unwrap(await f.todoDb.upsert({ entities: [todo] }))
+
+      const result = await f.todoDb.query({
+        where: {
+          op: 'and',
+          clauses: [
+            { op: '=', column: 'completed', value: false },
+            { op: 'in', column: 'id', value: [] },
+          ],
+        },
+        orderBy: [{ column: 'id', direction: 'asc' }],
+        limit: 100,
+        offset: 0,
+      })
+
+      expect(unwrap(result).entities.items).toEqual([])
+      expect(unwrap(result).entities.total).toEqual(0)
+    }
+  })
 })

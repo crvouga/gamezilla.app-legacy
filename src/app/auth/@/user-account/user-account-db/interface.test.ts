@@ -190,4 +190,37 @@ describe('UserAccountDb', () => {
       expect(unwrap(after).entities.items).toEqual([accountNew])
     }
   })
+
+  test('query should filter by role', async () => {
+    for (const f of await Fixtures()) {
+      const guestAccount = UserAccount.random({ role: 'guest' })
+      const userAccount = UserAccount.random({ role: 'normal' })
+      await f.userAccountDb.upsert({ entities: [guestAccount, userAccount] })
+
+      const result = await f.userAccountDb.query({
+        where: {
+          op: 'and',
+          clauses: [
+            {
+              op: '=',
+              column: 'role',
+              value: 'guest',
+            },
+            {
+              op: 'in',
+              column: 'userId',
+              value: [guestAccount.userId, userAccount.userId],
+            },
+          ],
+        },
+        orderBy: [],
+        limit: 100,
+        offset: 0,
+      })
+
+      expect(isOk(result)).toEqual(true)
+      expect(unwrap(result).entities.items).toEqual([guestAccount])
+      expect(unwrap(result).entities.total).toEqual(1)
+    }
+  })
 })
