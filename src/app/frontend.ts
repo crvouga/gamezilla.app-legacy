@@ -33,8 +33,6 @@ import { andThen } from './@/frontend/and-then'
 import { AppFrontendCtx, AppFrontendCtxBase, isAppFrontendCtx } from './@/frontend/ctx'
 import { topicMsgCodec } from './@/topic-msg-codec'
 import { AppRoot } from './@/ui/app-root/app-root'
-import { SplashScreen } from './@/ui/logo/splash-screen'
-import { RedirectScreen } from './@/ui/redirect-screen'
 import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
 import { toCurrentUserState } from './auth/current-user/frontend'
 import { AuthFrontend } from './auth/frontend'
@@ -263,7 +261,7 @@ const update = (input: {
   const allEffects = [result.eff]
   while (result.msgOut?.length) {
     const msgOut = result.msgOut.shift()!
-    const updated = updateMain({ ctx, model: result.model, msgIn: msgOut })
+    const updated = updateMain({ ctx, model: result.model, msgIn: msgOut, msg: msgOut })
     result.model = updated.model
     if (updated.eff) allEffects.push(updated.eff)
     if (updated.msgOut) result.msgOut.push(...updated.msgOut)
@@ -372,6 +370,11 @@ const View = (props: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
 }
 
 const ViewScreen = (props: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (m: MsgFrontend) => void }) => {
+  const ctx = {
+    ...props.ctx,
+    parentScreen: toScreenLayoutProps(props),
+  }
+
   switch (props.model.currentScreen_screen.n) {
     case 'settings':
       return h(SettingsFrontend.View, {
@@ -388,45 +391,14 @@ const ViewScreen = (props: { ctx: FrontendCtxModule; model: ModelFrontend; dispa
           },
         },
       })
-    default: {
-      const currentUser = toCurrentUserState({ model: props.model, ctx: props.ctx })
-      switch (currentUser.t) {
-        case 'loading':
-          return h(SplashScreen, {})
-        case 'logged-out':
-          return h(ViewScreenLoggedOut, { model: props.model, dispatch: props.dispatch, ctx: props.ctx })
-        case 'logged-in':
-          return h(ViewScreenLoggedIn, { model: props.model, dispatch: props.dispatch, ctx: props.ctx })
-      }
-    }
-  }
-}
 
-const ViewScreenLoggedOut: typeof ViewScreen = (props) => {
-  switch (props.ctx.currentScreen.n) {
     case 'auth':
       return h(AuthFrontend.View, {
         model: props.model,
         ctx: props.ctx,
         dispatch: (c) => props.dispatch(c),
       })
-    default:
-      return h(RedirectScreen, {
-        onPress: () =>
-          props.dispatch({
-            t: 'currentScreen_clickedLink',
-            screen: { n: 'auth', t: 'auth_login' },
-          }),
-        buttonText: props.ctx.t('login'),
-        text: props.ctx.t('login'),
-      })
-  }
-}
 
-const ViewScreenLoggedIn: typeof ViewScreen = (props) => {
-  const ctx = { ...props.ctx, parentScreen: toScreenLayoutProps(props) }
-
-  switch (props.ctx.currentScreen.n) {
     case 'profile':
       return h(ProfileFrontend.View, {
         dispatch: (m) => props.dispatch(m),
@@ -439,18 +411,6 @@ const ViewScreenLoggedIn: typeof ViewScreen = (props) => {
         dispatch: (m) => props.dispatch(m),
         model: props.model,
         ctx,
-      })
-
-    case 'settings':
-    case 'auth':
-      return h(RedirectScreen, {
-        onPress: () =>
-          props.dispatch({
-            t: 'currentScreen_clickedLink',
-            screen: { n: 'spaces', t: 'spaces_list' },
-          }),
-        buttonText: props.ctx.t('spaces.spaces'),
-        text: props.ctx.t('spaces.spaces'),
       })
   }
 }

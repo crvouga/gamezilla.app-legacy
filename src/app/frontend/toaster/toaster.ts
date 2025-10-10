@@ -1,3 +1,4 @@
+import { Eff } from '~/@/eff'
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { isAnyMsg } from '~/@/msg/msg'
@@ -13,11 +14,11 @@ import { Pressable } from '~/@/vdom/primitives/pressable'
 import { SafeAreaBox } from '~/@/vdom/primitives/safe-area-box'
 import { Text } from '~/@/vdom/primitives/text'
 import { sx } from '~/@/vdom/style/sx'
-import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
+import { andThen } from '~/app/@/frontend/and-then'
+import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
-import { APP_SOUND } from '../../@/frontend/app-sound'
 
 type Ctx = {
   now: UnixMs
@@ -56,9 +57,17 @@ export type Msg =
 
 const isMsg = (msg: unknown): msg is Msg => isAnyMsg(msg) && msg.t.startsWith('toaster_')
 
-export const update = <TModel extends Model>(input: { model: TModel; msg?: unknown; msgIn?: unknown; ctx: Ctx }) => {
-  return AppFrontendModule.andThen<{ Model: TModel; Msg: Msg }>(
-    { model: input.model },
+export const update = <TModel extends Model>(input: {
+  model: TModel
+  msg?: unknown
+  ctx: Ctx
+}): {
+  model: TModel
+  msgOut?: unknown[]
+  eff?: Eff<Msg>
+} => {
+  return andThen(
+    input,
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromCmd({ ...input, model }),
   )
@@ -67,7 +76,6 @@ export const update = <TModel extends Model>(input: { model: TModel; msg?: unkno
 const updateFromMsg = <TModel extends Model>(input: {
   model: TModel
   msg?: unknown
-  msgIn?: unknown
   ctx: Ctx
 }): {
   model: TModel
@@ -116,24 +124,24 @@ const updateFromMsg = <TModel extends Model>(input: {
   }
 }
 
-const updateFromCmd = <TModel extends Model>(input: {
-  model: TModel
-  msgIn?: unknown
-  ctx: Ctx
-}): { model: TModel } => {
-  const { msgIn } = input
-  if (ShowToastCmd.is(msgIn)) {
+const updateFromCmd: typeof update = (input) => {
+  const { msg } = input
+  if (ShowToastCmd.is(msg)) {
     const toastNew: Toast = {
       toastId: input.model.toaster_runningId,
-      text: msgIn.text,
-      duration: msgIn.duration ?? TimeSpan.seconds(2),
-      variant: msgIn.toastVariant ?? 'info',
+      text: msg.text,
+      duration: msg.duration ?? TimeSpan.seconds(2),
+      variant: msg.toastVariant ?? 'info',
       createdAt: input.ctx.now,
-      errorMsg: msgIn.errorMsg ?? null,
+      errorMsg: msg.errorMsg ?? null,
     }
 
     return {
-      model: { ...input.model, toaster_runningId: input.model.toaster_runningId + 1, toaster_toast: toastNew },
+      model: {
+        ...input.model,
+        toaster_runningId: input.model.toaster_runningId + 1,
+        toaster_toast: toastNew,
+      },
     }
   }
 

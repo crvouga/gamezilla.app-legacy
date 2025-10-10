@@ -30,7 +30,7 @@ export type Mode = s.Infer<typeof Mode>
 
 export const MsgSpace = s.or(
   s.obj({
-    t: s.l('user-changed-mode'),
+    t: s.l('numberlink_userChangedMode'),
     mode: s.or(Mode, s.l('none')),
     userId: UserId,
   }),
@@ -46,9 +46,9 @@ export const MsgSpace = s.or(
 export type MsgSpace = s.Infer<typeof MsgSpace>
 
 export const ModelSpace = s.obj({
-  mode: s.or(Mode, s.l('none')),
-  screenPlay: PlayTypes.ModelSpace,
-  screenBuild: BuildTypes.ModelSpace,
+  numberlink_mode: s.or(Mode, s.l('none')),
+  numberlink_screenPlay: PlayTypes.ModelSpace,
+  numberlink_screenBuild: BuildTypes.ModelSpace,
 })
 export type ModelSpace = s.Infer<typeof ModelSpace>
 

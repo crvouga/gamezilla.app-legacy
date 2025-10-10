@@ -12,15 +12,15 @@ export type FindSolutionRequest = {
 }
 
 export type ModelFrontend = {
-  open: 'find-solutions-confirmation' | null
-  requests: {
+  hintCalculator_open: 'find-solutions-confirmation' | null
+  hintCalculator_requests: {
     [hash: SolutionHash]: FindSolutionRequest
   }
 }
 
 export const initFrontend: ModelFrontend = {
-  open: null,
-  requests: {},
+  hintCalculator_open: null,
+  hintCalculator_requests: {},
 }
 
 export const FoundSolutionResult = Result.schema(s.str(), s.obj({ solutions: Solutions }))

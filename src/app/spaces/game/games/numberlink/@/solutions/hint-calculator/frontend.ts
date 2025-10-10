@@ -26,21 +26,21 @@ const update: FrontendModule['update'] = (input) => {
 
   switch (input.msg?.t) {
     case 'dialog.clicked-open': {
-      const isOpen = input.model.open === 'find-solutions-confirmation'
+      const isOpen = input.model.hintCalculator_open === 'find-solutions-confirmation'
       if (isOpen) {
         return {
-          model: { ...input.model, open: null },
+          model: { ...input.model, hintCalculator_open: null },
           msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)],
         }
       }
       return {
-        model: { ...input.model, open: 'find-solutions-confirmation' },
+        model: { ...input.model, hintCalculator_open: 'find-solutions-confirmation' },
         msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceOpened)],
       }
     }
     case 'dialog.clicked-close': {
       return {
-        model: { ...input.model, open: null },
+        model: { ...input.model, hintCalculator_open: null },
         msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)],
       }
     }
@@ -54,8 +54,8 @@ const update: FrontendModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          requests: {
-            ...input.model.requests,
+          hintCalculator_requests: {
+            ...input.model.hintCalculator_requests,
             [hash]: requestNew,
           },
         },
@@ -81,7 +81,11 @@ const update: FrontendModule['update'] = (input) => {
       const hash = SolutionHash.init(input.msg.numberlink)
       const requestNew: FindSolutionRequest = { hash, result }
       return {
-        model: { ...input.model, requests: { ...input.model.requests, [hash]: requestNew }, open: null },
+        model: {
+          ...input.model,
+          hintCalculator_requests: { ...input.model.hintCalculator_requests, [hash]: requestNew },
+          hintCalculator_open: null,
+        },
         msgOut: isErr(result)
           ? ShowErrorSmall.init(input.ctx.t('app.something-went-wrong'), result.error)
           : Solutions.isEmpty(result.value.solutions)
@@ -122,7 +126,7 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
           id: TEST_ID_HINT_CALCULATOR_ACTION,
           ariaLabel: input.ctx.t('game.numberlink.no-hints-available'),
           onClose: () => input.dispatch({ t: 'dialog.clicked-close' }),
-          open: input.model.open === 'find-solutions-confirmation',
+          open: input.model.hintCalculator_open === 'find-solutions-confirmation',
           onCancel: () => input.dispatch({ t: 'dialog.clicked-close' }),
           cancelText: input.ctx.t('app.cancel'),
           position: 'bottom',
@@ -135,7 +139,7 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
 }
 
 const isLoading = (model: ModelFrontend, hash: SolutionHash): boolean => {
-  return model.requests[hash]?.result.t === 'loading'
+  return model.hintCalculator_requests[hash]?.result.t === 'loading'
 }
 
 const TestView: FrontendModule['View'] = (input) => {

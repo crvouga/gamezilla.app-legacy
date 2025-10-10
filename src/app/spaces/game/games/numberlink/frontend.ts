@@ -16,7 +16,7 @@ import { SolutionsDb } from './@/solutions/solutions-db/impl'
 import { ISolutionsDb } from './@/solutions/solutions-db/interface'
 import { ScreenBuildFrontend } from './screen-build/frontend'
 import { ScreenPlayFrontend } from './screen-play/frontend'
-import type { FrontendModule, MsgFrontend } from './types'
+import { type FrontendModule, type MsgFrontend } from './types'
 
 const init: FrontendModule['init'] = {
   screenBuild: ScreenBuildFrontend.init,
@@ -89,7 +89,7 @@ const updateScreenPlay: FrontendModule['update'] = (input) => {
 
   const updated = ScreenPlayFrontend.update({
     ctx,
-    modelSpace: input.modelSpace.screenPlay,
+    modelSpace: input.modelSpace.numberlink_screenPlay,
     model: input.model.screenPlay,
     msgIn: input.msgIn,
     msgSpace: input.msgSpace?.t === 'got-screen-play-msg' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
@@ -109,7 +109,7 @@ const updateScreenBuild: FrontendModule['update'] = (input) => {
 
   const updated = ScreenBuildFrontend.update({
     ctx,
-    modelSpace: input.modelSpace.screenBuild,
+    modelSpace: input.modelSpace.numberlink_screenBuild,
     model: input.model.screenBuild,
     msgIn: input.msgIn,
     msgSpace: input.msgSpace?.t === 'got-screen-build-msg' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
@@ -126,7 +126,7 @@ const updateScreenBuild: FrontendModule['update'] = (input) => {
 
 const updateFromMsgSpace: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
-    case 'user-changed-mode': {
+    case 'numberlink_userChangedMode': {
       return {
         model: {
           ...input.model,
@@ -163,13 +163,13 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  switch (input.modelSpace.mode) {
+  switch (input.modelSpace.numberlink_mode) {
     case 'build': {
       const ctx = toFrontendCtx(input)
       return Sub.map(
         ScreenBuildFrontend.subscriptions({
           ctx,
-          modelSpace: input.modelSpace.screenBuild,
+          modelSpace: input.modelSpace.numberlink_screenBuild,
           model: input.model.screenBuild,
         }),
         (c): MsgFrontend => ({ t: 'got-screen-build-msg', c }),
@@ -181,7 +181,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
       return Sub.map(
         ScreenPlayFrontend.subscriptions({
           ctx,
-          modelSpace: input.modelSpace.screenPlay,
+          modelSpace: input.modelSpace.numberlink_screenPlay,
           model: input.model.screenPlay,
         }),
         (c): MsgFrontend => ({ t: 'got-screen-play-msg', c }),
@@ -201,7 +201,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 //
 
 const View: FrontendModule['View'] = (input) => {
-  switch (input.modelSpace.mode) {
+  switch (input.modelSpace.numberlink_mode) {
     case 'none': {
       return h(ViewMainMenu, input)
     }
@@ -212,7 +212,7 @@ const View: FrontendModule['View'] = (input) => {
       return h(ScreenBuildFrontend.View, {
         ctx,
         dispatch: (c) => input.dispatch({ t: 'got-screen-build-msg', c }),
-        modelSpace: input.modelSpace.screenBuild,
+        modelSpace: input.modelSpace.numberlink_screenBuild,
         model: input.model.screenBuild,
       })
     }
@@ -222,7 +222,7 @@ const View: FrontendModule['View'] = (input) => {
       return h(ScreenPlayFrontend.View, {
         ctx,
         dispatch: (c) => input.dispatch({ t: 'got-screen-play-msg', c }),
-        modelSpace: input.modelSpace.screenPlay,
+        modelSpace: input.modelSpace.numberlink_screenPlay,
         model: input.model.screenPlay,
       })
     }
@@ -249,7 +249,7 @@ const ViewMainMenu: FrontendModule['View'] = (input) => {
         onPress: () => {
           input.dispatch({
             t: 'got-msg-space',
-            c: { t: 'user-changed-mode', mode: 'play', userId: input.ctx.currentUser.userId },
+            c: { t: 'numberlink_userChangedMode', mode: 'play', userId: input.ctx.currentUser.userId },
           })
         },
       },
@@ -260,7 +260,7 @@ const ViewMainMenu: FrontendModule['View'] = (input) => {
         onPress: () => {
           input.dispatch({
             t: 'got-msg-space',
-            c: { t: 'user-changed-mode', mode: 'build', userId: input.ctx.currentUser.userId },
+            c: { t: 'numberlink_userChangedMode', mode: 'build', userId: input.ctx.currentUser.userId },
           })
         },
       },

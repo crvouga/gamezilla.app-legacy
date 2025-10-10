@@ -5,6 +5,7 @@ type Output<TModel, TMsg> = {
   model: TModel
   eff?: Eff<TMsg>
   msgOut?: unknown[]
+  msg?: unknown[]
 }
 
 /**
@@ -38,6 +39,7 @@ export const andThen = <TModel, TMsg>(
     output.model = updated.model
     output.eff = Eff.batch(output.eff, updated.eff)
     output.msgOut = Msg.batch(output.msgOut, updated.msgOut)
+    output.msg = Msg.batch(output.msg, updated.msg)
   }
 
   return output

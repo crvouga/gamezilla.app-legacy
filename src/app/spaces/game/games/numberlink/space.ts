@@ -8,9 +8,9 @@ import type { ModelSpace, MsgSpace } from './types'
 const initSpace = (input: { ctx: SpaceCtx }): ModelSpace => {
   const ctx: NumberlinkSpaceCtx = input.ctx
   return {
-    mode: 'none',
-    screenBuild: BuildSpace.initSpace({ ctx }),
-    screenPlay: PlaySpace.initSpace({ ctx }),
+    numberlink_mode: 'none',
+    numberlink_screenBuild: BuildSpace.initSpace({ ctx }),
+    numberlink_screenPlay: PlaySpace.initSpace({ ctx }),
   }
 }
 
@@ -25,15 +25,15 @@ const updateSpace = (input: {
       const updated = PlaySpace.updateSpace({
         ctx,
         msgSpace: input.msgSpace.c,
-        modelSpace: input.modelSpace.screenPlay,
+        modelSpace: input.modelSpace.numberlink_screenPlay,
       })
 
       switch (updated.event?.t) {
         case 'user-clicked-exit-mode-button': {
-          return { ...input.modelSpace, screenPlay: updated, mode: 'none' }
+          return { ...input.modelSpace, numberlink_screenPlay: updated, numberlink_mode: 'none' }
         }
         default: {
-          return { ...input.modelSpace, screenPlay: updated }
+          return { ...input.modelSpace, numberlink_screenPlay: updated }
         }
       }
     }
@@ -42,29 +42,29 @@ const updateSpace = (input: {
       const updated = BuildSpace.updateSpace({
         ctx,
         msgSpace: input.msgSpace.c,
-        modelSpace: input.modelSpace.screenBuild,
+        modelSpace: input.modelSpace.numberlink_screenBuild,
       })
 
       switch (updated.event?.t) {
         case 'user-clicked-exit-mode-button': {
-          return { ...input.modelSpace, screenBuild: updated, mode: 'none' }
+          return { ...input.modelSpace, numberlink_screenBuild: updated, numberlink_mode: 'none' }
         }
         default: {
-          return { ...input.modelSpace, screenBuild: updated }
+          return { ...input.modelSpace, numberlink_screenBuild: updated }
         }
       }
     }
 
-    case 'user-changed-mode': {
+    case 'numberlink_userChangedMode': {
       if (input.msgSpace.userId !== ctx.space.hostId) {
         return input.modelSpace
       }
 
       return {
         ...input.modelSpace,
-        mode: input.msgSpace.mode,
-        screenPlay: PlaySpace.initSpace({ ctx }),
-        screenBuild: BuildSpace.initSpace({ ctx }),
+        numberlink_mode: input.msgSpace.mode,
+        numberlink_screenPlay: PlaySpace.initSpace({ ctx }),
+        numberlink_screenBuild: BuildSpace.initSpace({ ctx }),
       }
     }
   }
