@@ -2,6 +2,8 @@ import { s } from '~/@/schema'
 import { Sub } from '~/@/sub'
 import { QueryInput } from './query-input/query-input'
 import { QueryOutput } from './query-output/query-output'
+import { DeleteInput } from './delete-input/delete-input'
+import { DeleteOutput } from './delete-output/delete-output'
 import { UpdateInput } from './update-input/update-input'
 import { UpdateOutput } from './update-output/update-output'
 import { UpsertInput } from './upsert-input/upsert-input'
@@ -50,5 +52,6 @@ export type IDb<TEntity extends Record<string, unknown>, TRelated extends Record
   liveQuery: <TMsg>(query: QueryInput<TEntity>, map: (output: QueryOutput<TEntity, TRelated>) => TMsg) => Sub<TMsg>
   upsert: (input: UpsertInput<TEntity>) => Promise<UpsertOutput<TEntity>>
   update: (input: UpdateInput<TEntity>) => Promise<UpdateOutput<TEntity>>
+  delete: (input: DeleteInput<TEntity>) => Promise<DeleteOutput<TEntity>>
   extra: unknown
 }

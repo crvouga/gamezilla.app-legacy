@@ -27,6 +27,7 @@ const BASE_STYLE = {
   textDecoration: 'none',
   zIndex: 0,
   userSelect: UserSelect.of('none'),
+  cursor: 'pointer',
 }
 
 export const Pressable = ({ children, ...props }: PressableProps) => {

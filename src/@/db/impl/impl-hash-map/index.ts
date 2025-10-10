@@ -139,6 +139,19 @@ const init = <TEntity extends Record<string, unknown>, TRelated extends Record<s
       enqueuePublish()
       return Ok(null)
     },
+    async delete(input) {
+      const filtered = input.where
+        ? filterArray(Array.from(entities.values()), input.where)
+        : Array.from(entities.values())
+      const toDelete = filtered.slice(input.offset, input.offset + input.limit)
+      for (const entity of toDelete) {
+        const primaryKey = config.toPrimaryKey(entity)
+        const primaryKeyValue = entity[primaryKey]
+        entities.delete(primaryKeyValue)
+      }
+      enqueuePublish()
+      return Ok({ entities: toDelete })
+    },
   }
 }
 
