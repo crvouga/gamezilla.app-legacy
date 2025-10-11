@@ -172,6 +172,7 @@ const updateFromMsg: typeof update = (input) => {
 export const subscriptions = (input: { ctx: AppFrontendCtxBase }): Sub<Msg> => {
   return Sub.map(
     input.ctx.navigation.sub(SCREEN_QUERY_PARAM_NAME),
+    // Sub.map(currentScreenCmd, (cmd) => ({ t: 'currentScreen_goCmd', cmd })),
     (value): Msg => ({
       t: 'currentScreen_screenChanged',
       screen: decodeScreen(value),
