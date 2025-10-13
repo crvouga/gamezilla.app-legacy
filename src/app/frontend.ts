@@ -51,7 +51,6 @@ import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtxModule, isMsgFrontendBase, ModelFrontend, MsgFrontend, rpcContract, topicContract } from './types'
 import { toBackendConnectionStatus } from './wire/backend-connection/backend-connection-status'
 import { WireFrontend } from './wire/frontend'
-import { isAnyMsg } from '~/@/msg/msg'
 
 const initCtx = async (config: {
   serverRegistrySrcUrl: Url
@@ -257,9 +256,6 @@ const update = (input: {
   model: ModelFrontend
   eff?: Eff<MsgFrontend>
 } => {
-  if (isAnyMsg(input.msg) && input.msg.t === 'loginAsGuest_clickedContinueAsGuestButton') {
-    debugger
-  }
   const ctx = toCtx(input)
   const result = updateMain({ ...input, ctx })
 

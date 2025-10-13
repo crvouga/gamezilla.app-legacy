@@ -8,7 +8,7 @@ services:
       args:
         NODE_ENV: development
     ports:
-      - "5173:80"
+      - '5173:80'
     profiles:
       - e2e
       - all
@@ -21,9 +21,9 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
       - NODE_ENV=development
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - 'host.docker.internal:host-gateway'
     ports:
-      - "5002:5002"
+      - '5002:5002'
     profiles:
       - e2e
       - all
@@ -36,9 +36,9 @@ services:
       - NATS_USER=nats
       - NATS_PASS=nats
     ports:
-      - "4222:4222"
-      - "8080:8080"
-      - "9222:9222"
+      - '4222:4222'
+      - '8080:8080'
+      - '9222:9222'
     profiles:
       - e2e
       - int
@@ -56,11 +56,11 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_PORT: 5432
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -p 5432"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres -p 5432']
       interval: 10s
       timeout: 5s
       retries: 5
