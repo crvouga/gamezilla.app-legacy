@@ -16,8 +16,9 @@ import { Text } from '~/@/vdom/primitives/text'
 import { sx } from '~/@/vdom/style/sx'
 import { andThen } from '~/app/@/frontend/and-then'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
+import { playSound } from '~/app/@/frontend/sound-cmd'
+import { ToasterCmd, toasterCmds } from '~/app/@/frontend/toaster-cmd'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 
 type Ctx = {
@@ -35,11 +36,13 @@ export type Model = {
   toaster_errorModal?: { errorMsg: string; toastId: number } | null
 }
 
+export type ToastVariant = 'error' | 'info' | 'success'
+
 export type Toast = {
   toastId: number
   text: TranslatedText
   duration: TimeSpan
-  variant: 'error' | 'info' | 'success'
+  variant: ToastVariant
   createdAt: UnixMs
   errorMsg?: string | null
 }
@@ -54,6 +57,7 @@ export type Msg =
   | { t: 'toaster_pressedUpOnToast'; toast: Toast }
   | { t: 'toaster_clickedDismissButton'; toastId: number }
   | { t: 'toaster_clickedSeeError'; errorMsg: string; toastId: number }
+  | { t: 'toaster_gotCmd'; c: ToasterCmd }
 
 const isMsg = (msg: unknown): msg is Msg => isAnyMsg(msg) && msg.t.startsWith('toaster_')
 
@@ -80,12 +84,40 @@ const updateFromMsg = <TModel extends Model>(input: {
 }): {
   model: TModel
   msgOut?: unknown[]
+  eff?: Eff<Msg>
 } => {
   if (!isMsg(input.msg)) return { model: input.model }
 
   switch (input.msg.t) {
+    case 'toaster_gotCmd': {
+      switch (input.msg.c.t) {
+        case 'showToast': {
+          const cmd = input.msg.c
+          const toastNew: Toast = {
+            toastId: input.model.toaster_runningId,
+            text: cmd.text,
+            duration: cmd.duration ?? TimeSpan.seconds(2),
+            variant: cmd.variant ?? 'info',
+            createdAt: input.ctx.now,
+            errorMsg: cmd.errorMsg ?? null,
+          }
+
+          return {
+            model: {
+              ...input.model,
+              toaster_runningId: input.model.toaster_runningId + 1,
+              toaster_toast: toastNew,
+            },
+          }
+        }
+      }
+    }
+
     case 'toaster_clickedDismissButton': {
-      return { model: { ...input.model, toaster_toast: null }, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
+      return {
+        model: { ...input.model, toaster_toast: null },
+        eff: playSound(APP_SOUND.tap),
+      }
     }
 
     case 'toaster_timePassed': {
@@ -149,6 +181,14 @@ const updateFromCmd: typeof update = (input) => {
 }
 
 export const subscriptions = (input: { model: Model }): Sub<Msg> => {
+  return Sub.batch([
+    //
+    subscriptionsTimePassed(input),
+    Sub.map(toasterCmds, (c) => ({ t: 'toaster_gotCmd', c })),
+  ])
+}
+
+const subscriptionsTimePassed = (input: { model: Model }): Sub<Msg> => {
   if (!input.model.toaster_toast) return Sub.none()
   return Time.interval('toasts', input.model.toaster_toast.duration, (): Msg => ({ t: 'toaster_timePassed' }))
 }

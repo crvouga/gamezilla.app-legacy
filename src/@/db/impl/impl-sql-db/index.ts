@@ -133,6 +133,10 @@ const init = <
       return output
     },
 
+    async delete(_input) {
+      return Ok({ entities: [] })
+    },
+
     liveQuery(queryInput, map) {
       const { sql, vars } = toSql(queryInput)
       const subOut: Sub<QueryOutput<TEntity, TRelated>> = Sub.map(

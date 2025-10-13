@@ -10,6 +10,7 @@ export const UserSessionDbSync = (config: { userSessionDb: IUserSessionDb; logge
   const logger = config.logger.child(['user-session-db-sync'])
 
   return {
+    // @ts-ignore
     async push({ crudTransaction }) {
       const entry = crudTransaction.entries[0]!
 
