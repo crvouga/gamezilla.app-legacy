@@ -5,7 +5,7 @@ import { OpenProfileCmd } from '~/app/@/frontend/open-profile-cmd.$msg'
 import { AddProfilesCmd } from '../@/frontend/add-profiles-cmd$msg'
 import { andThen } from '../@/frontend/and-then'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
-import { PushScreenCmd } from '../@/frontend/push-screen-cmd.$msg'
+import { pushScreen, PushScreenCmd } from '../@/frontend/push-screen-cmd.$msg'
 import { ProfileDb } from './@/user-profile/user-profile-db'
 import { ScreenProfileFrontend } from './screen-profile'
 import { ScreenUpdateUsernameFrontend } from './screen-update-username/frontend'
@@ -58,6 +58,7 @@ const updateFromCmd: typeof update = (input) => {
   if (OpenProfileCmd.is(msgIn)) {
     return {
       model: input.model,
+      eff: Eff.batch(pushScreen({ n: 'profile', t: 'profile_profile', userId: msgIn.userId })),
       msgOut: [PushScreenCmd.init({ n: 'profile', t: 'profile_profile', userId: msgIn.userId })],
     }
   }

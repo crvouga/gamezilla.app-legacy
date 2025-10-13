@@ -1,6 +1,8 @@
 import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 import { Screen, toScreen } from '~/@/screens/generated/screens'
+import { Sub } from '~/@/sub'
+import { Eff } from '~/@/eff'
 
 export const schema = s.or(
   s.obj({
@@ -38,6 +40,14 @@ const did = (output?: { msgOut?: unknown[] | null }, predicate?: (s: Screen) => 
     }),
   )
 }
+
+export const pushScreenCmd = Sub.init<PushScreenCmd>()
+
+export const pushScreen =
+  (screen: Screen, playSound?: boolean, causedBy?: string): Eff =>
+  () => {
+    pushScreenCmd.pub(init(screen, playSound, causedBy))
+  }
 
 export const PushScreenCmd = {
   is,
