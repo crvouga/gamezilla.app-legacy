@@ -9,19 +9,19 @@
   - dependencies: nats
   - infra: [cloudflare pages](https://dash.cloudflare.com/2698e76355a8c8d1ee21e15fa9fd44f7/workers-and-pages)
 
-- backend (internal)
+- backend
   - stateless rpc/worker server. single region. many replicas. next to database
   - single region replicas
   - dependencies: nats, postgres
   - infra: fly.io
 
-- postgres (internal)
+- postgres
   - stateful database
   - managed
   - no dependencies
   - infra: [neon](https://console.neon.tech/app/projects/divine-sky-66973925)
 
-- nats (nats.gamezilla.app)
+- nats
   - stateless message broker for distributing messages. all communication between backend and frontend go through here. including RPC and topic based pub sub.
   - deploy to many regions in a super cluster. stateless no jetstream
   - managed
