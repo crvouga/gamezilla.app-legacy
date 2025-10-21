@@ -8,7 +8,9 @@ import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ReplaceScreenCmd } from '~/app/@/frontend/replace-screen-cmd.$msg'
-import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt.$msg'
+import { playSound } from '~/app/@/frontend/sound-cmd'
+import { CurrentScreenCmd, currentScreenCmds } from './current-screen-cmd'
+import { currentScreenEvts } from './current-screen-evt'
 
 export type Model = {
   currentScreen_screen: Screen
@@ -56,6 +58,7 @@ export type Msg =
   | { t: 'currentScreen_screenChanged'; screen: Screen | null }
   | { t: 'currentScreen_clickedLink'; screen: Screen }
   | { t: 'currentScreen_clickedBack' }
+  | { t: 'currentScreen_gotCmd'; cmd: CurrentScreenCmd }
 
 const isMsg = (msg: unknown): msg is Msg => {
   return isAnyMsg(msg) && msg.t.startsWith('currentScreen_')
@@ -144,9 +147,9 @@ const updateFromMsg: typeof update = (input) => {
           ...input.model,
           currentScreen_screen: screen,
         },
-        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
-        async eff() {
+        async eff(dispatch) {
           await input.ctx.navigation.push(SCREEN_QUERY_PARAM_NAME, encodeScreen(screen))
+          playSound(APP_SOUND.tap)(dispatch)
         },
       }
     }
@@ -159,7 +162,40 @@ const updateFromMsg: typeof update = (input) => {
           ...input.model,
           currentScreen_screen: screen,
         },
-        msgOut: [ScreenChangedEvt.init(screen)],
+        eff: () => {
+          currentScreenEvts.pub({ t: 'screenChanged', screen })
+        },
+      }
+    }
+
+    case 'currentScreen_gotCmd': {
+      const { cmd } = msg
+      switch (cmd.t) {
+        case 'push': {
+          return {
+            model: input.model,
+            eff: Eff.batch([
+              cmd.playSound ? playSound(APP_SOUND.navForwardMin) : null,
+              () => input.ctx.navigation.push(SCREEN_QUERY_PARAM_NAME, encodeScreen(cmd.screen)),
+            ]),
+          }
+        }
+        case 'replace': {
+          return {
+            model: input.model,
+            async eff() {
+              await input.ctx.navigation.replace(SCREEN_QUERY_PARAM_NAME, encodeScreen(cmd.screen))
+            },
+          }
+        }
+        case 'back': {
+          return {
+            model: input.model,
+            async eff() {
+              await input.ctx.navigation.back()
+            },
+          }
+        }
       }
     }
 
@@ -170,12 +206,11 @@ const updateFromMsg: typeof update = (input) => {
 }
 
 export const subscriptions = (input: { ctx: AppFrontendCtxBase }): Sub<Msg> => {
-  return Sub.map(
-    input.ctx.navigation.sub(SCREEN_QUERY_PARAM_NAME),
-    // Sub.map(currentScreenCmd, (cmd) => ({ t: 'currentScreen_goCmd', cmd })),
-    (value): Msg => ({
+  return Sub.batch<Msg>([
+    Sub.map(currentScreenCmds, (cmd) => ({ t: 'currentScreen_gotCmd', cmd })),
+    Sub.map(input.ctx.navigation.sub(SCREEN_QUERY_PARAM_NAME), (value) => ({
       t: 'currentScreen_screenChanged',
       screen: decodeScreen(value),
-    }),
-  )
+    })),
+  ])
 }
