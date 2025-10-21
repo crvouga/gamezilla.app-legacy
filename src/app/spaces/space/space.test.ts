@@ -10,9 +10,7 @@ describe('Space', () => {
     const spaceId = SpaceId.generate()
     const hostId = UserId.generate()
     const before = Space.init
-    const after = pipe(before, (m) =>
-      Space.append(m, withEventId({ t: 'user-started-space', spaceId, userId: hostId })),
-    )
+    const after = pipe(before, (m) => Space.append(m, withEventId({ t: 'userStartedSpace', spaceId, userId: hostId })))
     const beforeProjection = Space.toSpaceProjection(before)
     const afterProjection = Space.toSpaceProjection(after)
     expect(beforeProjection.type).toEqual('initial')
@@ -31,8 +29,8 @@ describe('Space', () => {
     const before = Space.init
     const after = pipe(
       before,
-      (m) => Space.append(m, withEventId({ t: 'user-started-space', spaceId, userId: hostId })),
-      (m) => Space.append(m, withEventId({ t: 'user-joined-space', spaceId, userId: guestId })),
+      (m) => Space.append(m, withEventId({ t: 'userStartedSpace', spaceId, userId: hostId })),
+      (m) => Space.append(m, withEventId({ t: 'userJoinedSpace', spaceId, userId: guestId })),
     )
     const beforeProjection = Space.toSpaceProjection(before)
     const afterProjection = Space.toSpaceProjection(after)
@@ -52,9 +50,9 @@ describe('Space', () => {
     const before = Space.init
     const after = pipe(
       before,
-      (m) => Space.append(m, withEventId({ t: 'user-started-space', spaceId, userId: hostId })),
-      (m) => Space.append(m, withEventId({ t: 'user-joined-space', spaceId, userId: guestId })),
-      (m) => Space.append(m, withEventId({ t: 'user-left-space', spaceId, userId: guestId })),
+      (m) => Space.append(m, withEventId({ t: 'userStartedSpace', spaceId, userId: hostId })),
+      (m) => Space.append(m, withEventId({ t: 'userJoinedSpace', spaceId, userId: guestId })),
+      (m) => Space.append(m, withEventId({ t: 'userLeftSpace', spaceId, userId: guestId })),
     )
     const beforeProjection = Space.toSpaceProjection(before)
     const afterProjection = Space.toSpaceProjection(after)

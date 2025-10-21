@@ -147,13 +147,13 @@ export const translations: Text = {
   'l18n.settings': 'الإعدادات',
   'sound.sound-off': 'الصوت معطل',
   'sound.sound-on': 'الصوت مفعل',
-  'spaces.current-user-joined-space': 'انضمت إلى المساحة',
-  'spaces.other-user-joined-space': (username) =>
+  'spaces.current-userJoinedSpace': 'انضمت إلى المساحة',
+  'spaces.other-userJoinedSpace': (username) =>
     `${username} \u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0645\u0633\u0627\u062D\u0629`,
   'spaces.space-not-found': 'الفضاء غير موجود',
   'spaces.exit-space': 'اذهب إلى الصفحة الرئيسية',
-  'spaces.current-user-ended-space': 'انتهى الفضاء',
-  'spaces.other-user-ended-space': (username) =>
+  'spaces.current-userEndedSpace': 'انتهى الفضاء',
+  'spaces.other-userEndedSpace': (username) =>
     username
       ? `${username} \u0627\u0646\u062A\u0647\u0649 \u0627\u0644\u0641\u0636\u0627\u0621`
       : '\u0627\u0646\u062A\u0647\u0649 \u0627\u0644\u0641\u0636\u0627\u0621',

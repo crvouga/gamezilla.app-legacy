@@ -44,7 +44,7 @@ describe('SpaceDb', () => {
       const modifiedSpace = pipe(f.space, (model) =>
         Space.append(
           model,
-          withEventId({ t: 'user-joined-space', spaceId: f.spaceId, userId: UserId.generate() } as const),
+          withEventId({ t: 'userJoinedSpace', spaceId: f.spaceId, userId: UserId.generate() } as const),
         ),
       )
 

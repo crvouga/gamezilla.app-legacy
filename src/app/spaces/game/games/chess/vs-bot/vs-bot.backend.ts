@@ -113,7 +113,7 @@ export const updateFromEvent = ({
   model: Model
   eff?: Eff
 } => {
-  if (msg.t === 'space-evt.user-left-space') {
+  if (msg.t === 'space-evt.userLeftSpace') {
     if (model.userId === msg.userId) {
       const modelNew: Model = {
         type: 'setup',

@@ -61,7 +61,7 @@
 //   model: Model
 //   eff?: Eff<Msg>
 // } => {
-//   if (msg.t === 'space-evt.user-left-space') {
+//   if (msg.t === 'space-evt.userLeftSpace') {
 //     return { model: init(model) }
 //   }
 

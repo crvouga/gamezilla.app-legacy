@@ -139,7 +139,7 @@
 // }): {
 //   model: Model
 // } => {
-//   if (msg.t === 'space-evt.user-left-space') {
+//   if (msg.t === 'space-evt.userLeftSpace') {
 //     if (model.player !== msg.userId) {
 //       return {
 //         model,

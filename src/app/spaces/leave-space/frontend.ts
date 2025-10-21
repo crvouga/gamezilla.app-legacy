@@ -13,19 +13,21 @@ import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
 import { MsgSpace } from '../space/msg-space'
 import { Space } from '../space/space'
 import { FrontendCtxModule, ModelFrontend } from '../types'
-import { isMsgFrontend, MsgFrontend } from './types'
+import { SpaceId } from '~/app/@/data/space-id'
 
-const update = <T extends ModelFrontend>(input: {
+export type Msg =
+  | { t: 'leaveSpace_clickedLeaveSpaceButton'; spaceId: SpaceId }
+  | { t: 'leaveSpace_submittedLeaveSpaceButton'; spaceId: SpaceId }
+
+const update = (input: {
   ctx: FrontendCtxModule
-  model: T
-  msg?: unknown
-  msgIn?: unknown
+  model: ModelFrontend
+  msg: Msg
 }): {
-  model: T
-  msgOut?: unknown[]
-  eff?: Eff<MsgFrontend>
+  model: ModelFrontend
+  eff?: Eff<Msg>
 } => {
-  return andThen<T, MsgFrontend>(
+  return andThen(
     input,
     (model) => updateFromMsgSpace({ ...input, model }),
     (model) => updateLeaveSpaceButton({ ...input, model }),
@@ -37,7 +39,7 @@ const updateFromMsgSpace: typeof update = (input) => {
   const msgSpace = input.msgIn.c
 
   switch (msgSpace?.t) {
-    case 'user-left-space': {
+    case 'userLeftSpace': {
       if (!input.ctx.currentUser?.userId) return input
 
       const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
@@ -93,7 +95,7 @@ const updateLeaveSpaceButton: typeof update = (input) => {
       if (!currentUserSpaceId) return input
 
       const spaceEventNew = withEventMeta<MsgSpace>({
-        t: 'user-left-space',
+        t: 'userLeftSpace',
         spaceId: currentUserSpaceId,
         userId: input.ctx.currentUser.userId,
       })

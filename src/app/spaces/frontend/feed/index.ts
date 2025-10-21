@@ -63,12 +63,12 @@ const ViewFeedItem = ({
       })
     }
 
-    case 'user-ended-space': {
+    case 'userEndedSpace': {
       const profile = ctx.profilesByUserId[msgEvt.userId]
       return h(FeedItem.Info, { text: `${profile?.username ?? 'Someone'} ended the space` })
     }
 
-    case 'user-inputted-game': {
+    case 'userInputtedGame': {
       const profile = ctx.profilesByUserId[msgEvt.userId]
       if (!msgEvt.game) {
         return h(FeedItem.Info, { text: `${profile?.username ?? 'Someone'} quit the game` })
@@ -76,17 +76,17 @@ const ViewFeedItem = ({
       return h(FeedItem.Info, { text: `${profile?.username ?? 'Someone'} started a game` })
     }
 
-    case 'user-joined-space': {
+    case 'userJoinedSpace': {
       const profile = ctx.profilesByUserId[msgEvt.userId]
       return h(FeedItem.Info, { text: `${profile?.username ?? 'Someone'} joined the space` })
     }
 
-    case 'user-left-space': {
+    case 'userLeftSpace': {
       const profile = ctx.profilesByUserId[msgEvt.userId]
       return h(FeedItem.Info, { text: `${profile?.username ?? 'Someone'} left the space` })
     }
 
-    case 'user-started-space': {
+    case 'userStartedSpace': {
       const profile = ctx.profilesByUserId[msgEvt.userId]
       return h(FeedItem.Info, { text: `${profile?.username ?? 'Someone'} started the space` })
     }

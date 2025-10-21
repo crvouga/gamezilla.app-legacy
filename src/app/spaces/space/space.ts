@@ -37,7 +37,7 @@ const random = (input?: { hostId?: UserId; spaceId?: SpaceId; guestIds?: UserId[
     init,
     (model) =>
       EventSourced.appendEvent(config, model, {
-        t: 'user-started-space',
+        t: 'userStartedSpace',
         eventId: EventId.generate(),
         spaceId,
         userId: hostId,
@@ -46,7 +46,7 @@ const random = (input?: { hostId?: UserId; spaceId?: SpaceId; guestIds?: UserId[
       guestIds.reduce(
         (model, guestId) =>
           EventSourced.appendEvent(config, model, {
-            t: 'user-joined-space',
+            t: 'userJoinedSpace',
             eventId: EventId.generate(),
             spaceId,
             userId: guestId,

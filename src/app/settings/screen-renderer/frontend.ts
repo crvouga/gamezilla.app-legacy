@@ -5,13 +5,13 @@ import { h } from '~/@/vdom/h'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { sx } from '~/@/vdom/style/sx'
 import { VDomImplWeb } from '~/@/vdom/vdom-impl-web'
-import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd.$msg'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
+import { playSound } from '~/app/@/frontend/sound-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
+import { back } from '~/app/frontend/current-screen/current-screen-cmd'
 import { APP_SOUND } from '../../@/frontend/app-sound'
 import type { FrontendModule } from '../types'
-import { isMsgFrontend, ModelFrontend, MsgFrontend } from './types'
+import { ModelFrontend, MsgFrontend } from './types'
 
 const init = (input: { ctx: AppFrontendCtxBase }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
   return {
@@ -22,21 +22,17 @@ const init = (input: { ctx: AppFrontendCtxBase }): { model: ModelFrontend; eff?:
   }
 }
 
-const update = <T extends ModelFrontend>(input: {
+const update = (input: {
   ctx: AppFrontendCtxBase
-  model: T
-  msg?: unknown
-  msgIn?: unknown
+  model: ModelFrontend
+  msg: MsgFrontend
 }): {
-  model: T
+  model: ModelFrontend
   eff?: Eff<MsgFrontend>
-  msgOut?: unknown[]
 } => {
-  if (!isMsgFrontend(input.msg)) return { model: input.model }
-
   switch (input.msg?.t) {
     case 'renderer_clickedBackButton': {
-      return { model: input.model, msgOut: [BackScreenCmd.init()] }
+      return { model: input.model, eff: back() }
     }
 
     case 'renderer_clickedRenderer': {
@@ -46,10 +42,12 @@ const update = <T extends ModelFrontend>(input: {
           ...input.model,
           render_vDomImpl: vDomImpl,
         },
-        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
-        async eff() {
-          VDomImplWeb.swapVDomEngine.pub(vDomImpl)
-        },
+        eff: Eff.batch([
+          playSound(APP_SOUND.tap),
+          () => {
+            VDomImplWeb.swapVDomEngine.pub(vDomImpl)
+          },
+        ]),
       }
     }
 
@@ -72,7 +70,7 @@ const View: FrontendModule['View'] = (input) => {
     navBar: {
       title: input.ctx.t('l18n.renderer'),
       back: {
-        onPress: () => input.dispatch({ t: 'renderer_clickedBackButton' }),
+        onPress: () => input.dispatch({ t: 'renderer', c: { t: 'renderer_clickedBackButton' } }),
       },
     },
     renderBody: () =>
@@ -80,13 +78,13 @@ const View: FrontendModule['View'] = (input) => {
         ScrollBox,
         { style: sx({ flexDirection: 'col', flex: 1 }) },
         VDomImplWeb.VISIBLE.map((vDomImpl) => {
-          const isSelected = vDomImpl === input.model.render_vDomImpl
-          const isDefault = vDomImpl === input.model.render_vDomImplInitial
+          const isSelected = vDomImpl === input.model.renderer.render_vDomImpl
+          const isDefault = vDomImpl === input.model.renderer.render_vDomImplInitial
           return h(MenuItem, {
             key: vDomImpl,
             primary: VDomImplWeb.toName(vDomImpl),
             secondary: isDefault && false ? input.ctx.t('l18n.default') : undefined,
-            onPress: () => input.dispatch({ t: 'renderer_clickedRenderer', vDomImpl }),
+            onPress: () => input.dispatch({ t: 'renderer', c: { t: 'renderer_clickedRenderer', vDomImpl } }),
             renderEnd: () =>
               h(RadioInputIcon, {
                 style: sx({ size: 7, textColor: 'white' }),

@@ -142,12 +142,12 @@ export const translations: Text = {
   'l18n.settings': '设置',
   'sound.sound-off': '关闭声音',
   'sound.sound-on': '打开声音',
-  'spaces.current-user-joined-space': '加入空间',
-  'spaces.other-user-joined-space': (username) => `${username} \u52A0\u5165\u4E86\u7A7A\u95F4`,
+  'spaces.current-userJoinedSpace': '加入空间',
+  'spaces.other-userJoinedSpace': (username) => `${username} \u52A0\u5165\u4E86\u7A7A\u95F4`,
   'spaces.space-not-found': '找不到空间',
   'spaces.exit-space': '回家',
-  'spaces.current-user-ended-space': '结束空间',
-  'spaces.other-user-ended-space': (username) =>
+  'spaces.current-userEndedSpace': '结束空间',
+  'spaces.other-userEndedSpace': (username) =>
     username ? `${username}\u7ED3\u675F\u7A7A\u95F4` : '\u7ED3\u675F\u7A7A\u95F4',
   'spaces.games': '游戏',
   'spaces.current-space': ({ hostUsername }) => `${hostUsername} \u7684\u7A7A\u95F4`,

@@ -1,4 +1,3 @@
-import { isAnyMsg } from '~/@/msg/msg'
 import { RPC } from '~/@/rpc'
 import { ITopicClient } from '~/@/topic/topic-client/interface'
 import { TopicContract } from '~/@/topic/topic-contract'
@@ -6,7 +5,7 @@ import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { UserId } from '~/app/@/data/user-id'
 import type { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
-import { EndSpaceTypes } from './end-space'
+import { EndSpaceFrontend } from './end-space'
 import { CurrentSpaceMiniPlayerTypes } from './frontend/current-space-mini-player'
 import { ExitSpaceActionTypes } from './frontend/exit-space-action'
 import { PeopleActionTypes } from './frontend/people-action'
@@ -32,29 +31,20 @@ type ModelFrontendBase = {
   spaces_opened: Opened
 }
 
-export type ModelFrontend = ModelFrontendBase & GameTypes.ModelFrontend
-
-export type MsgFrontendBase = {
-  t: 'spaces_gotMsgOut'
-  c: unknown
-}
-
-export const isMsgFrontendBase = (msg: unknown): msg is MsgFrontendBase => {
-  return isAnyMsg(msg) && msg.t.startsWith('spaces_')
-}
+export type ModelFrontend = ModelFrontendBase & GameTypes.ModelFrontend & EndSpaceFrontend.Model
 
 export type MsgFrontend =
-  | MsgFrontendBase
-  | ListSpacesTypes.MsgFrontend
-  | PeopleActionTypes.MsgFrontend
-  | LeaveSpaceTypes.MsgFrontend
-  | EndSpaceTypes.MsgFrontend
-  | GameTypes.MsgFrontend
-  | JoinSpaceTypes.MsgFrontend
-  | ExitSpaceActionTypes.MsgFrontend
-  | StartSpaceTypes.MsgFrontend
-  | CurrentSpaceMiniPlayerTypes.MsgFrontend
-  | SyncTypes.MsgFrontend
+  | { t: 'spaces_gotMsgOut'; c: unknown }
+  | { t: 'listSpaces'; c: ListSpacesTypes.MsgFrontend }
+  | { t: 'peopleAction'; c: PeopleActionTypes.MsgFrontend }
+  | { t: 'leaveSpace'; c: LeaveSpaceTypes.MsgFrontend }
+  | { t: 'endSpace'; c: EndSpaceFrontend.Msg }
+  | { t: 'game'; c: GameTypes.MsgFrontend }
+  | { t: 'joinSpace'; c: JoinSpaceTypes.MsgFrontend }
+  | { t: 'exitSpaceAction'; c: ExitSpaceActionTypes.MsgFrontend }
+  | { t: 'startSpace'; c: StartSpaceTypes.MsgFrontend }
+  | { t: 'currentSpaceMiniPlayer'; c: CurrentSpaceMiniPlayerTypes.MsgFrontend }
+  | { t: 'sync'; c: SyncTypes.MsgFrontend }
 
 export const topicContract = TopicContract.combine([SyncTypes.topicContract])
 

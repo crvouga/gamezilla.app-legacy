@@ -6,7 +6,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { PingId } from './ping-id'
 import { toPingRate } from './ping-rate'
-import { FrontendCtxModule, INITIAL_PINGS, isMsgFrontend, ModelFrontend, MsgFrontend, PingItem } from './types'
+import { FrontendCtxModule, INITIAL_PINGS, ModelFrontend, MsgFrontend, PingItem } from './types'
 
 export const init = (_input: {}): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
   return {
@@ -16,19 +16,15 @@ export const init = (_input: {}): { model: ModelFrontend; eff?: Eff<MsgFrontend>
   }
 }
 
-export const update = <T extends ModelFrontend>(input: {
+export const update = (input: {
   ctx: FrontendCtxModule
-  model: T
-  msg?: unknown
-  msgIn?: unknown
+  model: ModelFrontend
+  msg: MsgFrontend
 }): {
-  model: T
+  model: ModelFrontend
   eff?: Eff<MsgFrontend>
-  msgOut?: unknown[]
 } => {
   const { msg, model } = input
-
-  if (!isMsgFrontend(msg)) return { model }
 
   switch (msg.t) {
     case 'backendConnection_ping': {
@@ -38,7 +34,7 @@ export const update = <T extends ModelFrontend>(input: {
 
       const pingsNew = CappedOrderedDict.add(pings, msg.pingId, pingNew)
 
-      const modelNew: T = { ...model, backendConnection_pings: pingsNew }
+      const modelNew: ModelFrontend = { ...model, backendConnection_pings: pingsNew }
 
       return {
         model: modelNew,
@@ -59,7 +55,7 @@ export const update = <T extends ModelFrontend>(input: {
 
       const pingsNew = CappedOrderedDict.set(pings, msg.pingId, pingNew)
 
-      const modelNew: T = { ...model, backendConnection_pings: pingsNew }
+      const modelNew: ModelFrontend = { ...model, backendConnection_pings: pingsNew }
 
       return { model: modelNew }
     }

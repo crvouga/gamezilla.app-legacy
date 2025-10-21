@@ -69,7 +69,7 @@ const updateFromJoinSpaceButton: typeof update = (input) => {
         msgOut: [
           GotSpaceMsg.init(
             withEventMeta<MsgSpace>({
-              t: 'user-joined-space',
+              t: 'userJoinedSpace',
               spaceId: input.msg.spaceId,
               userId: input.ctx.currentUser.userId,
             }),
@@ -106,7 +106,7 @@ const updateFromMsgSpace: typeof update = (input) => {
   const msgSpace = input.msgIn.c
 
   switch (msgSpace.t) {
-    case 'user-joined-space': {
+    case 'userJoinedSpace': {
       const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
 
       if (!currentUserSpace) return input
@@ -122,8 +122,8 @@ const updateFromMsgSpace: typeof update = (input) => {
           msgOut: [
             PlaySoundCmd.init(APP_SOUND.navForward),
             username
-              ? ShowToastCmd.init(input.ctx.t('spaces.other-user-joined-space', username))
-              : ShowToastCmd.init(input.ctx.t('spaces.current-user-joined-space')),
+              ? ShowToastCmd.init(input.ctx.t('spaces.other-userJoinedSpace', username))
+              : ShowToastCmd.init(input.ctx.t('spaces.current-userJoinedSpace')),
           ],
         }
       }
@@ -132,7 +132,7 @@ const updateFromMsgSpace: typeof update = (input) => {
         model: input.model,
         msgOut: [
           PlaySoundCmd.init(APP_SOUND.navForward),
-          ShowToastCmd.init(input.ctx.t('spaces.current-user-joined-space')),
+          ShowToastCmd.init(input.ctx.t('spaces.current-userJoinedSpace')),
         ],
       }
     }

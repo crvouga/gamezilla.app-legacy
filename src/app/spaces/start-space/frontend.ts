@@ -36,7 +36,7 @@ const updateFromMsgSpace: typeof update = (input) => {
   const msgSpace = input.msgIn.c
 
   switch (msgSpace?.t) {
-    case 'user-started-space': {
+    case 'userStartedSpace': {
       if (msgSpace.userId === input.ctx.currentUser?.userId) {
         return {
           model: input.model,
@@ -68,7 +68,7 @@ const updateStartSpaceButton: typeof update = (input) => {
       }
 
       const spaceEventNew = withEventMeta<MsgSpace>({
-        t: 'user-started-space',
+        t: 'userStartedSpace',
         spaceId: input.msg.spaceId,
         userId: input.ctx.currentUser.userId,
       })

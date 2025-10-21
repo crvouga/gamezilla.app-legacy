@@ -193,7 +193,7 @@ const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): Fronten
   const baseCtx: FrontendCtxModule = {
     ...input.ctx,
     now: UnixMs.now(),
-    t: Translator(input.model.settings.lang_lang ?? 'en'),
+    t: Translator(input.model.settings.lang.lang_lang ?? 'en'),
     profilesByUserId: input.model.profile.profiles_profilesByUserId ?? {},
     viewportVisibility: input.model.viewport.viewport_visibility,
     currentScreen: input.model.currentScreen.currentScreen_screen,

@@ -258,7 +258,7 @@
 // }): {
 //   model: Model
 // } => {
-//   if (msg.t === 'space-evt.user-left-space') {
+//   if (msg.t === 'space-evt.userLeftSpace') {
 //     const { userId } = msg
 
 //     const player: PlayerType | 'none' = model.O === userId ? 'O' : model.X === userId ? 'X' : 'none'

@@ -48,7 +48,7 @@ export const updateFromEvent = ({
   model: ModelBackend
   eff?: Eff<MsgBackend>
 } => {
-  if (msg.t === 'space-evt.user-left-space') {
+  if (msg.t === 'space-evt.userLeftSpace') {
     switch (model.type) {
       case 'setup': {
         const { userId } = msg

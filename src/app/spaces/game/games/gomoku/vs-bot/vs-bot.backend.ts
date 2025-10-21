@@ -81,7 +81,7 @@
 //   model: Model
 //   eff?: Eff<Msg>
 // } => {
-//   if (msg.t === 'space-evt.user-joined-space') {
+//   if (msg.t === 'space-evt.userJoinedSpace') {
 //     return {
 //       model: init({
 //         userId: model.userId,

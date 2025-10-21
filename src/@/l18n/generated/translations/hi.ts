@@ -148,13 +148,13 @@ export const translations: Text = {
   'l18n.settings': 'सेटिंग्स',
   'sound.sound-off': 'ध्वनि बंद',
   'sound.sound-on': 'ध्वनि चालू',
-  'spaces.current-user-joined-space': 'स्थान जुड़ गया',
-  'spaces.other-user-joined-space': (username) =>
+  'spaces.current-userJoinedSpace': 'स्थान जुड़ गया',
+  'spaces.other-userJoinedSpace': (username) =>
     `${username} \u0928\u0947 \u0938\u094D\u0925\u093E\u0928 \u091C\u094B\u0921\u093C\u093E`,
   'spaces.space-not-found': 'स्थान नहीं मिला',
   'spaces.exit-space': 'घर जा',
-  'spaces.current-user-ended-space': 'स्थान समाप्त',
-  'spaces.other-user-ended-space': (username) =>
+  'spaces.current-userEndedSpace': 'स्थान समाप्त',
+  'spaces.other-userEndedSpace': (username) =>
     username
       ? `${username} \u0938\u094D\u0925\u093E\u0928 \u0938\u092E\u093E\u092A\u094D\u0924`
       : '\u0938\u094D\u0925\u093E\u0928 \u0938\u092E\u093E\u092A\u094D\u0924',

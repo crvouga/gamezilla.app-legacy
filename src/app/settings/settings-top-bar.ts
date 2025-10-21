@@ -43,7 +43,7 @@ const View: FrontendModule['View'] = (props) => {
                 ctx: props.ctx,
               }),
               h(SoundFrontend.ViewIcon, {
-                model: props.model,
+                model: props.model.sound,
                 style: { ...iconSize, ...sx({ textColor: 'white' }) },
               }),
               h(IconGear, {
@@ -66,21 +66,19 @@ const View: FrontendModule['View'] = (props) => {
             h(BackendConnectionStatus.ViewMenuItem, {
               ctx: props.ctx,
               model: props.ctx.backendConnectionStatus,
-              onPress: () => {},
+              onPress: () => props.dispatch({ t: 'sound', c: { t: 'sound_toggleMute' } }),
             }),
 
             h(SoundFrontend.ViewSoundMenuItem, {
               ctx: props.ctx,
-              model: props.model,
-              dispatch(c) {
-                props.dispatch(c)
-              },
+              model: props.model.sound,
+              dispatch: (c) => props.dispatch({ t: 'sound', c }),
             }),
 
             h(MenuItem, {
               renderIcon: (iconProps) => h(IconLanguage, iconProps),
               primary: props.ctx.t('l18n.language'),
-              renderEnd: () => h(Text, { text: props.ctx.t(props.model.lang_lang ?? 'en') }),
+              renderEnd: () => h(Text, { text: props.ctx.t(props.model.lang.lang_lang ?? 'en') }),
               onPress: () => {
                 props.dispatch({ t: 'settings_clickedOpenLang' })
               },

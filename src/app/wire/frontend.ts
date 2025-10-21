@@ -52,7 +52,7 @@ const update = (input: {
       const updated = BackendConnectionFrontend.update({
         ...input,
         model: input.model.backendConnection,
-        msg: input.msg,
+        msg: input.msg.c,
       })
       return {
         model: { ...input.model, backendConnection: updated.model },

@@ -49,7 +49,7 @@ const updateFromMsg: typeof update = (input) => {
         msgOut: [
           GotSpaceMsg.init(
             withEventMeta({
-              t: 'user-inputted-game',
+              t: 'userInputtedGame',
               game: input.msg.gameName,
               spaceId: input.msg.spaceId,
               userId: input.ctx.currentUser.userId,
@@ -76,7 +76,7 @@ const updateFromCmd: typeof update = (input) => {
       model: input.model,
       msgSpace: [
         withEventId({
-          t: 'user-inputted-game',
+          t: 'userInputtedGame',
           game: null,
           spaceId: currentUserSpaceId,
           userId: currentUserId,
@@ -94,7 +94,7 @@ const updateFromMsgSpace: typeof update = (input) => {
   const msgSpace = input.msgIn.c
 
   switch (msgSpace?.t) {
-    case 'user-inputted-game': {
+    case 'userInputtedGame': {
       if (!input.ctx.currentUser?.userId) return input
 
       const currentUserSpaceId = CurrentUserSpaceLoader.toCurrentUserSpaceId(input.ctx)

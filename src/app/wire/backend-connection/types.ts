@@ -8,7 +8,6 @@ import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { PingId } from './ping-id'
-import { isAnyMsg } from '~/@/msg/msg'
 
 export type PingItem = {
   pingId: PingId
@@ -32,10 +31,6 @@ export type PingPongMsg = s.Infer<typeof PingPongMsg>
 export type MsgFrontend =
   | { n: 'backendConnection'; t: 'backendConnection_ping'; pingId: PingId; now: UnixMs }
   | { n: 'backendConnection'; t: 'backendConnection_pong'; pingId: PingId; now: UnixMs }
-
-export const isMsgFrontend = (msg: unknown): msg is MsgFrontend => {
-  return isAnyMsg(msg) && msg.t.startsWith('backendConnection_')
-}
 
 export const topicContract = TopicContract.init({
   backendConnection_ping: {

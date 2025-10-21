@@ -143,12 +143,12 @@ export const translations: Text = {
   'l18n.settings': '설정',
   'sound.sound-off': '소리 끄기',
   'sound.sound-on': '소리 켜기',
-  'spaces.current-user-joined-space': '공간에 참여함',
-  'spaces.other-user-joined-space': (username) => `${username} \uAC00 \uACF5\uAC04\uC5D0 \uCC38\uC5EC\uD568`,
+  'spaces.current-userJoinedSpace': '공간에 참여함',
+  'spaces.other-userJoinedSpace': (username) => `${username} \uAC00 \uACF5\uAC04\uC5D0 \uCC38\uC5EC\uD568`,
   'spaces.space-not-found': '공간을 찾을 수 없습니다',
   'spaces.exit-space': '집으로 가기',
-  'spaces.current-user-ended-space': '공간 종료',
-  'spaces.other-user-ended-space': (username) =>
+  'spaces.current-userEndedSpace': '공간 종료',
+  'spaces.other-userEndedSpace': (username) =>
     username
       ? `${username}\uAC00 \uACF5\uAC04\uC744 \uC885\uB8CC\uD588\uC2B5\uB2C8\uB2E4`
       : '\uACF5\uAC04 \uC885\uB8CC',

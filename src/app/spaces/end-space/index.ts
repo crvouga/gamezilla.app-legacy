@@ -1,1 +1,1 @@
-export * as EndSpaceTypes from './types'
+export * as EndSpaceFrontend from './frontend'

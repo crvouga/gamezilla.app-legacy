@@ -70,31 +70,49 @@ const init = (_input: {}): {
   }
 }
 
-const update = <T extends ModelFrontend>(input: {
+const update = (input: {
   ctx: FrontendCtxModule
-  model: T
-  msg?: unknown
-  msgIn?: unknown
+  model: ModelFrontend
+  msg: MsgFrontend
 }): {
-  model: T
+  model: ModelFrontend
   eff?: Eff<MsgFrontend>
-  msgOut?: unknown[]
 } => {
-  return andThen<T, MsgFrontend>(
-    { model: input.model },
-    (model) => EndSpaceFrontend.update({ ...input, model }),
-    (model) => LeaveSpaceFrontend.update({ ...input, model }),
-    (model) => GameFrontend.update({ ...input, model }),
-    (model) => updateSpacesFromMsgSpace({ ...input, model }),
-    (model) => SyncFrontend.update({ ...input, model }),
-    (model) => StartSpaceFrontend.update({ ...input, model }),
-    (model) => JoinSpaceFrontend.update({ ...input, model }),
-    (model) => ListSpacesFrontend.update({ ...input, model }),
-    (model) => ExitSpaceAction.update({ ...input, model }),
-    (model) => CurrentSpaceMiniPlayer.update({ ...input, model: model }),
-    (model) => PeopleActionFrontend.update({ ...input, model }),
-    (model) => updateFromMsgFrontendBase({ ...input, model }),
-  )
+  switch (input.msg.t) {
+    case 'endSpace': {
+      return EndSpaceFrontend.update({ ...input, model })
+    }
+    case 'leaveSpace': {
+      return LeaveSpaceFrontend.update({ ...input, model })
+    }
+    case 'game': {
+      return GameFrontend.update({ ...input, model })
+    }
+    case 'joinSpace': {
+      return JoinSpaceFrontend.update({ ...input, model })
+    }
+    case 'listSpaces': {
+      return ListSpacesFrontend.update({ ...input, model })
+    }
+    case 'exitSpaceAction': {
+      return ExitSpaceAction.update({ ...input, model })
+    }
+    case 'currentSpaceMiniPlayer': {
+      return CurrentSpaceMiniPlayer.update({ ...input, model })
+    }
+    case 'peopleAction': {
+      return PeopleActionFrontend.update({ ...input, model })
+    }
+    case 'sync': {
+      return SyncFrontend.update({ ...input, model })
+    }
+    case 'startSpace': {
+      return StartSpaceFrontend.update({ ...input, model })
+    }
+    default: {
+      return { model: input.model }
+    }
+  }
 }
 
 const updateFromMsgFrontendBase: typeof update = (input) => {

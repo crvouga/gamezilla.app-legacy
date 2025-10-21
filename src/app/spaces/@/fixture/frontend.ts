@@ -107,10 +107,10 @@
 //   const space = pipe(
 //     Space.init,
 //     (model) =>
-//       Space.append(model, withEventId({ t: 'user-started-space', spaceId, userId: currentUser.userId } as const)),
-//     (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userA.userId } as const)),
-//     (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userB.userId } as const)),
-//     (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userC.userId } as const)),
+//       Space.append(model, withEventId({ t: 'userStartedSpace', spaceId, userId: currentUser.userId } as const)),
+//     (model) => Space.append(model, withEventId({ t: 'userJoinedSpace', spaceId, userId: userA.userId } as const)),
+//     (model) => Space.append(model, withEventId({ t: 'userJoinedSpace', spaceId, userId: userB.userId } as const)),
+//     (model) => Space.append(model, withEventId({ t: 'userJoinedSpace', spaceId, userId: userC.userId } as const)),
 //     (model) => Space.toSpaceStarted(model),
 //     (space) => {
 //       if (!space) throw new Error('Invalid fixture. Space is not started.')
@@ -227,7 +227,7 @@
 //     msg: {
 //       t: 'sync.got-msg-space',
 //       c: withEventMetaAt(happenedAt, {
-//         t: 'user-started-space',
+//         t: 'userStartedSpace',
 //         spaceId,
 //         userId,
 //       }),
@@ -240,7 +240,7 @@
 //     msg: {
 //       t: 'sync.got-msg-space',
 //       c: withEventMetaAt(happenedAt, {
-//         t: 'user-left-space',
+//         t: 'userLeftSpace',
 //         spaceId,
 //         userId,
 //       }),
@@ -253,7 +253,7 @@
 //     msg: {
 //       t: 'sync.got-msg-space',
 //       c: withEventMetaAt(happenedAt, {
-//         t: 'user-joined-space',
+//         t: 'userJoinedSpace',
 //         spaceId,
 //         userId,
 //       }),

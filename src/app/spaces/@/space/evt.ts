@@ -3,12 +3,12 @@ import { SpaceId } from '~/app/@/data/space-id'
 
 export type SpaceEvt =
   | {
-      t: 'space-evt.user-left-space'
+      t: 'space-evt.userLeftSpace'
       spaceId: SpaceId
       userId: UserId
     }
   | {
-      t: 'space-evt.user-joined-space'
+      t: 'space-evt.userJoinedSpace'
       spaceId: SpaceId
       userId: UserId
     }

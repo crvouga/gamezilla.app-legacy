@@ -144,13 +144,13 @@ export const translations: Text = {
   'l18n.settings': '設定',
   'sound.sound-off': 'サウンドオフ',
   'sound.sound-on': 'サウンドオン',
-  'spaces.current-user-joined-space': 'スペースに参加しました',
-  'spaces.other-user-joined-space': (username) =>
+  'spaces.current-userJoinedSpace': 'スペースに参加しました',
+  'spaces.other-userJoinedSpace': (username) =>
     `${username} \u304C\u30B9\u30DA\u30FC\u30B9\u306B\u53C2\u52A0\u3057\u307E\u3057\u305F`,
   'spaces.space-not-found': 'スペースが見つかりません',
   'spaces.exit-space': '家に帰る',
-  'spaces.current-user-ended-space': 'スペース終了',
-  'spaces.other-user-ended-space': (username) =>
+  'spaces.current-userEndedSpace': 'スペース終了',
+  'spaces.other-userEndedSpace': (username) =>
     username
       ? `${username}\u304C\u30B9\u30DA\u30FC\u30B9\u3092\u7D42\u4E86\u3057\u307E\u3057\u305F`
       : '\u30B9\u30DA\u30FC\u30B9\u7D42\u4E86',

@@ -1,4 +1,3 @@
-import { isAnyMsg } from '~/@/msg/msg'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
@@ -26,7 +25,3 @@ export type MsgFrontend =
       userId: UserId
       spaceId: SpaceId
     }
-
-export const isMsgFrontend = (msg: unknown): msg is MsgFrontend => {
-  return isAnyMsg(msg) && msg.t.startsWith('game_')
-}

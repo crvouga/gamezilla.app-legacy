@@ -30,9 +30,9 @@ export const FixtureSpaceBackend = async () => {
 
   const space = pipe(
     Space.init,
-    (model) => Space.append(model, withEventId({ t: 'user-started-space', spaceId, userId: userA.userId } as const)),
-    (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userB.userId } as const)),
-    (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userC.userId } as const)),
+    (model) => Space.append(model, withEventId({ t: 'userStartedSpace', spaceId, userId: userA.userId } as const)),
+    (model) => Space.append(model, withEventId({ t: 'userJoinedSpace', spaceId, userId: userB.userId } as const)),
+    (model) => Space.append(model, withEventId({ t: 'userJoinedSpace', spaceId, userId: userC.userId } as const)),
   )
 
   const spaceState = Space.toSpaceStarted(space)

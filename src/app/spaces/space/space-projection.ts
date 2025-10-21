@@ -82,7 +82,7 @@ const updateSpace = (state: SpaceProjection, msgSpace: WithEventMeta<MsgSpace>):
 
     case 'initial': {
       switch (msgSpace.t) {
-        case 'user-started-space': {
+        case 'userStartedSpace': {
           return {
             type: 'started',
             game: null,
@@ -128,7 +128,7 @@ const updateSpace = (state: SpaceProjection, msgSpace: WithEventMeta<MsgSpace>):
             game: gameNew,
           }
         }
-        case 'user-ended-space': {
+        case 'userEndedSpace': {
           if (msgSpace.userId !== state.hostId) {
             return state
           }
@@ -139,7 +139,7 @@ const updateSpace = (state: SpaceProjection, msgSpace: WithEventMeta<MsgSpace>):
           }
         }
 
-        case 'user-inputted-game': {
+        case 'userInputtedGame': {
           return {
             ...state,
             latestEventId: msgSpace.eventId,
@@ -147,7 +147,7 @@ const updateSpace = (state: SpaceProjection, msgSpace: WithEventMeta<MsgSpace>):
           }
         }
 
-        case 'user-joined-space': {
+        case 'userJoinedSpace': {
           return {
             ...state,
             latestEventId: msgSpace.eventId,
@@ -158,7 +158,7 @@ const updateSpace = (state: SpaceProjection, msgSpace: WithEventMeta<MsgSpace>):
           }
         }
 
-        case 'user-left-space': {
+        case 'userLeftSpace': {
           if (msgSpace.userId === state.hostId) {
             return state
           }
@@ -173,7 +173,7 @@ const updateSpace = (state: SpaceProjection, msgSpace: WithEventMeta<MsgSpace>):
           }
         }
 
-        case 'user-started-space': {
+        case 'userStartedSpace': {
           return {
             ...state,
             latestEventId: msgSpace.eventId,
