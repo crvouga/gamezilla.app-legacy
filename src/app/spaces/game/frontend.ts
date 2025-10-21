@@ -1,65 +1,95 @@
 import { Eff } from '~/@/eff'
 import { withEventId, withEventMeta } from '~/@/event-sourced/event'
-import { Msg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
 import { h } from '~/@/vdom/h'
 import { SpaceId } from '~/app/@/data/space-id'
-import { andThen } from '~/app/@/frontend/and-then'
+import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
-import { ExitGameCmd } from '../@/frontend/exit-game-cmd'
 import { GotSpaceMsg } from '../@/got-space-msg.$msg'
 import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
+import { MsgSpace, spaceMsgs } from '../space/msg-space'
 import { Space } from '../space/space'
 import { SpaceDbQueryCache } from '../space/space-db-query-cache'
-import type { FrontendCtxModule, ModelFrontend, MsgFrontend } from '../types'
+import type { FrontendCtxModule } from '../types'
 import { ScreenNotInGameFrontend } from './frontend/screen-not-in-game'
+import { GamesTypes } from './games'
+import { ExitGameCmd, exitGameCmds } from './games/@/exit-game-cmd'
+import { GameName } from './games/@/game-name'
 import { GamesFrontend } from './games/frontend'
-import { isMsgFrontend } from './types'
 
-const update = <T extends ModelFrontend>(input: {
-  ctx: FrontendCtxModule
-  model: T
-  msg?: unknown
-  msgIn?: unknown
-}): {
-  model: T
-  msgOut?: unknown[]
-  eff?: Eff<MsgFrontend>
-} => {
-  return andThen<T, MsgFrontend>(
-    input,
-    (model) => updateGame({ ...input, model }),
-    (model) => updateFromMsgSpace({ ...input, model }),
-    (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromCmd({ ...input, model }),
-  )
+export type Model = {
+  spaces_games: {
+    [spaceId: SpaceId]: GamesTypes.ModelFrontend
+  }
 }
 
-const updateFromMsg: typeof update = (input) => {
-  if (!isMsgFrontend(input.msg)) return input
+export type Msg =
+  | {
+      t: 'game_gotGameMsg'
+      spaceId: SpaceId
+      c: GamesTypes.MsgFrontend
+    }
+  | {
+      t: 'game_clickedGameTile'
+      gameName: GameName
+      userId: UserId
+      spaceId: SpaceId
+    }
+  | {
+      t: 'game_gotExitGameCmd'
+      c: ExitGameCmd
+    }
 
-  switch (input.msg?.t) {
+const update = (input: {
+  ctx: FrontendCtxModule
+  model: Model
+  msg: Msg
+}): {
+  model: Model
+  eff?: Eff<Msg>
+} => {
+  switch (input.msg.t) {
     case 'game_clickedGameTile': {
       if (!input.ctx.currentUser) return input
+      const msgSpace = withEventMeta<MsgSpace>({
+        t: 'userInputtedGame',
+        game: input.msg.gameName,
+        spaceId: input.msg.spaceId,
+        userId: input.ctx.currentUser.userId,
+      })
+      return {
+        model: input.model,
+        eff: () => {
+          spaceMsgs.pub(msgSpace)
+        },
+      }
+    }
+    case 'game_gotExitGameCmd': {
+      const currentUserId = input.ctx.currentUser?.userId
+
+      if (!currentUserId) return input
+
+      const currentUserSpaceId = CurrentUserSpaceLoader.toCurrentUserSpaceId(input.ctx)
+
+      if (!currentUserSpaceId) return input
 
       return {
         model: input.model,
-        msgOut: [
-          GotSpaceMsg.init(
-            withEventMeta({
+        eff: () => {
+          spaceMsgs.pub(
+            withEventId({
               t: 'userInputtedGame',
-              game: input.msg.gameName,
-              spaceId: input.msg.spaceId,
-              userId: input.ctx.currentUser.userId,
+              game: null,
+              spaceId: currentUserSpaceId,
+              userId: currentUserId,
             }),
-          ),
-        ],
+          )
+        },
       }
     }
   }
-  return input
 }
 
 const updateFromCmd: typeof update = (input) => {
@@ -110,16 +140,18 @@ const updateFromMsgSpace: typeof update = (input) => {
   return input
 }
 
-const inputToSpaceId = (input: { msgIn?: unknown; msg?: unknown; ctx: FrontendCtxModule }): SpaceId | null => {
-  if (isMsgFrontend(input.msg) && 'spaceId' in input.msg) {
-    return input.msg.spaceId
+const inputToSpaceId = (input: { msg: Msg; ctx: FrontendCtxModule }): SpaceId | null => {
+  switch (input.msg.t) {
+    case 'game_gotExitGameCmd': {
+      return CurrentUserSpaceLoader.toCurrentUserSpaceId(input.ctx)
+    }
+    case 'game_gotGameMsg': {
+      return input.msg.spaceId
+    }
+    case 'game_clickedGameTile': {
+      return input.msg.spaceId
+    }
   }
-
-  if (GotSpaceMsg.is(input.msgIn)) {
-    return input.msgIn.c.spaceId
-  }
-
-  return CurrentUserSpaceLoader.toCurrentUserSpaceId(input.ctx)
 }
 
 const updateGame: typeof update = (input) => {
@@ -171,8 +203,11 @@ const updateGame: typeof update = (input) => {
   }
 }
 
-const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<MsgFrontend> => {
-  return subscriptionsCurrentUserGame(input)
+const subscriptions = (input: { ctx: FrontendCtxModule; model: Model }): Sub<Msg> => {
+  return Sub.batch<Msg>([
+    subscriptionsCurrentUserGame(input),
+    Sub.map(exitGameCmds, (c): Msg => ({ t: 'game_gotExitGameCmd', c })),
+  ])
 }
 
 const subscriptionsCurrentUserGame: typeof subscriptions = (input) => {

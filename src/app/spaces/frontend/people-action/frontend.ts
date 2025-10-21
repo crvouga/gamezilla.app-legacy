@@ -1,93 +1,108 @@
+import { Eff } from '~/@/eff'
+import { Sub } from '~/@/sub'
 import { DropDownAlignment } from '~/@/ui/drop-down/drop-down-alignment'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { DropDownPosition } from '~/@/ui/drop-down/drop-down-position'
 import { IconUserGroup } from '~/@/ui/icon'
 import { DrawerPosition } from '~/@/ui/surface-drawer/drawer-position'
 import { h } from '~/@/vdom/h'
-import { andThen } from '~/app/@/frontend/and-then'
+import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
-import { OpenProfileCmd } from '~/app/@/frontend/open-profile-cmd.$msg'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
-import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt.$msg'
+import { playSound } from '~/app/@/frontend/sound-cmd'
 import { FloatingLayout } from '~/app/@/ui/floating/layout/floating-layout'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
+import { CurrentScreenEvt, currentScreenEvts } from '~/app/frontend/current-screen/current-screen-evt'
+import { profileCmds } from '~/app/profile/profile-cmd'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { OpenUserDetailsCmd } from '../../@/frontend/open-user-details-cmd'
 import { SectionPeopleList } from '../../@/ui/section-people-list'
 import { SectionPersonDetails } from '../../@/ui/section-person-details'
 import { FrontendCtxModule, ModelFrontend } from '../../types'
-import { MsgFrontend, isMsgFrontend } from './types'
+import { OpenUserDetailsCmd, openUserDetailsCmds } from './open-user-details-cmd'
 
-const update = <T extends ModelFrontend>(input: {
+export type Msg =
+  | { t: 'peopleAction_closedSurface' }
+  | { t: 'peopleAction_clickedPeopleAction' }
+  | { t: 'peopleAction_clickedPersonMenuItem'; userId: UserId }
+  | { t: 'peopleAction_clickedPreviewUserLink' }
+  | { t: 'peopleActions_gotCurrentScreenEvt'; c: CurrentScreenEvt }
+  | { t: 'peopleActions_gotOpenUserDetailsCmd'; c: OpenUserDetailsCmd }
+
+const update = (input: {
   ctx: FrontendCtxModule
-  model: T
-  msg?: unknown
-  msgIn?: unknown
+  model: ModelFrontend
+  msg: Msg
 }): {
-  model: T
-  msgOut?: unknown[]
+  model: ModelFrontend
+  eff?: Eff<Msg>
 } => {
-  return andThen<T, MsgFrontend>(
-    input,
-    (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromMsgIn({ ...input, model }),
-  )
-}
-
-const updateFromMsg: typeof update = ({ msg, model }) => {
-  if (!isMsgFrontend(msg)) return { model }
-
-  switch (msg?.t) {
+  switch (input.msg.t) {
     case 'peopleAction_clickedPreviewUserLink': {
-      if (!model.spaces_openedPreviewUserId) return { model }
-
+      const userId = input.ctx.currentUser?.userId
+      if (!userId) return { model: input.model }
       return {
-        model,
-        msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin), OpenProfileCmd.init(model.spaces_openedPreviewUserId)],
+        model: input.model,
+        eff: Eff.batch([playSound(APP_SOUND.tap), () => profileCmds.pub({ t: 'openProfile', userId })]),
       }
     }
 
     case 'peopleAction_closedSurface': {
-      return { model: { ...model, spaces_opened: null }, msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)] }
+      return {
+        model: { ...input.model, spaces_opened: null },
+        eff: playSound(APP_SOUND.surfaceClosed),
+      }
     }
 
     case 'peopleAction_clickedPeopleAction': {
-      const isOpen = model.spaces_opened === 'people.people-surface'
+      const isOpen = input.model.spaces_opened === 'people.people-surface'
       if (isOpen) {
-        return { model: { ...model, spaces_opened: null }, msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)] }
+        return { model: { ...input.model, spaces_opened: null }, eff: playSound(APP_SOUND.surfaceClosed) }
       }
       return {
-        model: { ...model, spaces_opened: 'people.people-surface' },
-        msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceOpened)],
+        model: { ...input.model, spaces_opened: 'people.people-surface' },
+        eff: playSound(APP_SOUND.surfaceOpened),
       }
     }
 
     case 'peopleAction_clickedPersonMenuItem': {
       return {
-        model: { ...model, spaces_openedPreviewUserId: msg.userId, spaces_opened: 'people.person-preview-surface' },
-        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
+        model: {
+          ...input.model,
+          spaces_openedPreviewUserId: input.msg.userId,
+          spaces_opened: 'people.person-preview-surface',
+        },
+        eff: playSound(APP_SOUND.tap),
+      }
+    }
+    case 'peopleActions_gotCurrentScreenEvt': {
+      switch (input.msg.c.t) {
+        case 'screenChanged': {
+          return { model: { ...input.model, spaces_opened: null } }
+        }
+      }
+    }
+    case 'peopleActions_gotOpenUserDetailsCmd': {
+      switch (input.msg.c.t) {
+        case 'openUserDetails': {
+          return {
+            model: {
+              ...input.model,
+              spaces_openedPreviewUserId: input.msg.c.userId,
+              spaces_opened: 'people.person-preview-surface',
+            },
+            eff: playSound(APP_SOUND.tap),
+          }
+        }
       }
     }
   }
 }
 
-const updateFromMsgIn: typeof update = ({ msgIn, model }) => {
-  if (OpenUserDetailsCmd.is(msgIn)) {
-    return {
-      model: {
-        ...model,
-        spaces_openedPreviewUserId: msgIn.userId,
-        spaces_opened: 'people.person-preview-surface',
-      },
-      msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
-    }
-  }
-
-  if (ScreenChangedEvt.is(msgIn)) {
-    return { model: { ...model, spaces_opened: null } }
-  }
-
-  return { model }
+export const subscriptions = (_input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<Msg> => {
+  return Sub.batch<Msg>([
+    //
+    Sub.map(currentScreenEvts, (c): Msg => ({ t: 'peopleActions_gotCurrentScreenEvt', c })),
+    Sub.map(openUserDetailsCmds, (c): Msg => ({ t: 'peopleActions_gotOpenUserDetailsCmd', c })),
+  ])
 }
 
 const DRAWER_POSITION: DrawerPosition = 'top'
@@ -97,7 +112,7 @@ const DROPDOWN_ALIGNMENT: DropDownAlignment = 'starting'
 const ViewSurfaces = (input: {
   ctx: FrontendCtxModule
   model: ModelFrontend
-  dispatch: (msg: MsgFrontend) => void
+  dispatch: (msg: Msg) => void
   dropDown: DropDownConfig
 }) => {
   if (!input.ctx.space) return null
@@ -160,7 +175,7 @@ const ViewSurfaces = (input: {
 const view = (input: {
   ctx: FrontendCtxModule
   model: ModelFrontend
-  dispatch: (msg: MsgFrontend) => void
+  dispatch: (msg: Msg) => void
 }): ScreenAction | null => {
   if (!input.ctx.space) return null
   if (!input.ctx.currentUser?.userId) return null

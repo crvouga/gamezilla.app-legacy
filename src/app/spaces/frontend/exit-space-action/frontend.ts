@@ -1,34 +1,33 @@
+import { Eff } from '~/@/eff'
 import { IconDoorOpen } from '~/@/ui/icon'
 import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
-import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
+import { pushScreen } from '~/app/@/frontend/push-screen-cmd.$msg'
+import { playSound } from '~/app/@/frontend/sound-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { FrontendCtxModule, ModelFrontend } from '../../types'
-import { isMsgFrontend, MsgFrontend } from './types'
 
-const update = <T extends ModelFrontend>(input: {
+export type Msg = { t: 'exitSpaceAction_clicked' }
+
+const update = (input: {
   ctx: FrontendCtxModule
-  model: T
-  msg?: unknown
-  msgIn?: unknown
+  model: ModelFrontend
+  msg: Msg
 }): {
-  model: T
-  msgOut?: unknown[]
+  model: ModelFrontend
+  eff: Eff<Msg>
 } => {
-  if (!isMsgFrontend(input.msg)) return input
-
-  switch (input.msg?.t) {
+  switch (input.msg.t) {
     case 'exitSpaceAction_clicked': {
       return {
         model: input.model,
-        msgOut: [PushScreenCmd.init({ n: 'spaces', t: 'spaces_list' }), PlaySoundCmd.init(APP_SOUND.navBackwardMin)],
+        eff: Eff.batch([pushScreen({ n: 'spaces', t: 'spaces_list' }), playSound(APP_SOUND.navBackwardMin)]),
       }
     }
   }
 }
 
-const viewAction = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFrontend) => void }): ScreenAction => {
+const viewAction = (input: { ctx: FrontendCtxModule; dispatch: (msg: Msg) => void }): ScreenAction => {
   return {
     id: input.ctx.t('app.exit'),
     renderIcon: (iconProps) => h(IconDoorOpen, iconProps),

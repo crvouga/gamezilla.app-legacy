@@ -25,7 +25,7 @@ export type Msg =
   | { n: 'endSpace'; t: 'clickedBackButton' }
   | { n: 'endSpace'; t: 'gotMsgSpace'; c: MsgSpace }
 
-const update = (input: {
+export const update = (input: {
   ctx: FrontendCtxModule
   model: ModelFrontend
   msg: Msg

@@ -1,33 +1,22 @@
 import { Eff } from '~/@/eff'
-import { EventSourced } from '~/@/event-sourced'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
-import { throttleByKey } from '~/@/throttle/throttle'
-import { TimeSpan } from '~/@/time/time-span'
 import { ITopicClient } from '~/@/topic/topic-client/interface'
 import { h } from '~/@/vdom'
-import { SpaceId } from '~/app/@/data/space-id'
-import { andThen } from '../@/frontend/and-then'
 import { AppFrontendCtxBase, isAppFrontendCtx } from '../@/frontend/ctx'
-import { GotQueryCacheMsg } from '../frontend/query-cache/got-query-cache-msg.$msg'
-import { GotSpaceMsg } from './@/got-space-msg.$msg'
-import { EndSpaceFrontend } from './end-space/frontend'
-import { CurrentSpaceMiniPlayer } from './frontend/current-space-mini-player/frontend'
+import { EndSpaceFrontend } from './end-space'
 import { ExitSpaceAction } from './frontend/exit-space-action/frontend'
 import { PeopleActionFrontend } from './frontend/people-action/frontend'
 import { GameFrontend } from './game/frontend'
-import { JoinSpaceFrontend } from './join-space/frontend'
+import { JoinSpaceFrontend } from './join-space'
 import { LeaveSpaceFrontend } from './leave-space/frontend'
 import { ListSpacesFrontend } from './list-spaces/frontend'
 import { CurrentUserSpaceLoader } from './space/current-user-space-loader'
 import { SpaceFrontend } from './space/frontend'
-import { Space } from './space/space'
-import { ISpaceDb, SpaceDb } from './space/space-db'
-import { SpaceDbQueryCache } from './space/space-db-query-cache'
-import { StartSpaceFrontend } from './start-space/frontend'
-import { SyncFrontend } from './sync/frontend'
+import { SpaceDb } from './space/space-db'
+import { StartSpaceFrontend } from './start-space'
+import { SyncFrontend } from './sync'
 import {
-  isMsgFrontendBase,
   type FrontendCtxModule,
   type FrontendModule,
   type ModelFrontend,
@@ -35,6 +24,7 @@ import {
   type rpcContract,
   type topicContract,
 } from './types'
+import { CurrentSpaceMiniPlayerFrontend } from './frontend/current-space-mini-player'
 
 const initCtx = async (input: {
   ctx: AppFrontendCtxBase
@@ -80,111 +70,83 @@ const update = (input: {
 } => {
   switch (input.msg.t) {
     case 'endSpace': {
-      return EndSpaceFrontend.update({ ...input, model })
+      const updated = EndSpaceFrontend.update({ ctx: input.ctx, model: input.model, msg: input.msg.c })
+      return {
+        model: updated.model,
+        eff: Eff.tag('endSpace', updated.eff),
+      }
     }
     case 'leaveSpace': {
-      return LeaveSpaceFrontend.update({ ...input, model })
+      const updated = LeaveSpaceFrontend.update({ ctx: input.ctx, model: input.model, msg: input.msg.c })
+      return {
+        model: updated.model,
+        eff: Eff.tag('leaveSpace', updated.eff),
+      }
     }
     case 'game': {
-      return GameFrontend.update({ ...input, model })
+      const updated = GameFrontend.update({ ctx: input.ctx, model: input.model, msg: input.msg.c })
+      return {
+        model: updated.model,
+        eff: Eff.tag('game', updated.eff),
+      }
     }
     case 'joinSpace': {
-      return JoinSpaceFrontend.update({ ...input, model })
+      const updated = JoinSpaceFrontend.update({ ctx: input.ctx, model: input.model, msg: input.msg.c })
+      return {
+        model: updated.model,
+        eff: Eff.tag('joinSpace', updated.eff),
+      }
     }
     case 'listSpaces': {
-      return ListSpacesFrontend.update({ ...input, model })
+      const updated = ListSpacesFrontend.update({ ctx: input.ctx, model: input.model, msg: input.msg.c })
+      return {
+        model: updated.model,
+        eff: Eff.tag('listSpaces', updated.eff),
+      }
     }
     case 'exitSpaceAction': {
-      return ExitSpaceAction.update({ ...input, model })
+      const updated = ExitSpaceAction.update({ ctx: input.ctx, model: input.model, msg: input.msg.c })
+      return {
+        model: updated.model,
+        eff: Eff.tag('exitSpaceAction', updated.eff),
+      }
     }
     case 'currentSpaceMiniPlayer': {
-      return CurrentSpaceMiniPlayer.update({ ...input, model })
+      const updated = CurrentSpaceMiniPlayerFrontend.update({ ctx: input.ctx, model: input.model, msg: input.msg.c })
+      return {
+        model: updated.model,
+        eff: Eff.tag('currentSpaceMiniPlayer', updated.eff),
+      }
     }
     case 'peopleAction': {
-      return PeopleActionFrontend.update({ ...input, model })
+      const updated = PeopleActionFrontend.update({ ctx: input.ctx, model: input.model, msg: input.msg.c })
+      return {
+        model: updated.model,
+        eff: Eff.tag('peopleAction', updated.eff),
+      }
     }
     case 'sync': {
-      return SyncFrontend.update({ ...input, model })
+      const updated = SyncFrontend.update({ ctx: input.ctx, model: input.model, msg: input.msg.c })
+      return {
+        model: updated.model,
+        eff: Eff.tag('sync', updated.eff),
+      }
     }
     case 'startSpace': {
-      return StartSpaceFrontend.update({ ...input, model })
-    }
-    default: {
-      return { model: input.model }
-    }
-  }
-}
-
-const updateFromMsgFrontendBase: typeof update = (input) => {
-  if (!isMsgFrontendBase(input.msg)) return { model: input.model }
-  switch (input.msg?.t) {
-    case 'spaces_gotMsgOut': {
-      return { model: input.model, msgOut: [input.msg.c] }
-    }
-  }
-}
-
-const updateSpacesFromMsgSpace = <T extends ModelFrontend>(input: {
-  ctx: FrontendCtxModule
-  model: T
-  msgIn?: unknown
-}): {
-  model: T
-  msgOut?: unknown[]
-  eff?: Eff<MsgFrontend>
-} => {
-  if (!GotSpaceMsg.is(input.msgIn)) return { model: input.model }
-
-  const msgSpace = input.msgIn.c
-
-  if (!msgSpace) return { model: input.model }
-
-  const space = SpaceDbQueryCache.entity(input.ctx, msgSpace.spaceId) ?? Space.init
-
-  const spaceNew = Space.append(space, msgSpace)
-
-  return {
-    model: input.model,
-    msgOut: [
-      GotQueryCacheMsg.init({
-        t: 'got-entity',
-        id: msgSpace.spaceId,
-        entityType: 'space',
-        entity: spaceNew,
-        lastUpdatedAtKey: Space.key('lastUpdatedAt'),
-      }),
-    ],
-    async eff() {
-      switch (msgSpace.t) {
-        case 'game': {
-          upsertSpaceThrottled(input.ctx.spaceDb, msgSpace.spaceId, spaceNew)
-          return
-        }
-        default: {
-          upsertSpace(input.ctx.spaceDb, msgSpace.spaceId, spaceNew)
-          return
-        }
+      const updated = StartSpaceFrontend.update({ ctx: input.ctx, model: input.model, msg: input.msg.c })
+      return {
+        model: updated.model,
+        eff: Eff.tag('startSpace', updated.eff),
       }
-    },
+    }
   }
 }
-
-const upsertSpace = async (spaceDb: ISpaceDb, _spaceId: SpaceId, space: Space) => {
-  await spaceDb.upsert(EventSourced.startFromLatestSnapshot(space))
-}
-
-const upsertSpaceThrottled = throttleByKey({
-  fn: upsertSpace,
-  keyFn: (_spaceDb, spaceId, _space) => spaceId,
-  throttle: TimeSpan.seconds(3),
-  behavior: 'use-latest',
-})
 
 const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }) => {
   return Sub.batch<MsgFrontend>([
     GameFrontend.subscriptions(input),
-    SyncFrontend.subscriptions(input),
-    ListSpacesFrontend.subscriptions(input),
+    Sub.map(SyncFrontend.subscriptions(input), (c) => ({ t: 'sync', c })),
+    Sub.map(ListSpacesFrontend.subscriptions(input), (c) => ({ t: 'listSpaces', c })),
     CurrentUserSpaceLoader.subscriptions(input),
     SpaceFrontend.subscriptions(input),
   ])
@@ -195,8 +157,12 @@ const View: FrontendModule['View'] = (input) => {
     case 'spaces_list': {
       return h(ListSpacesFrontend.View, {
         ...input,
+        dispatch: (msg) => input.dispatch({ t: 'listSpaces', c: msg }),
         slots: {
-          actionCreate: StartSpaceFrontend.viewStartSpaceButton(input),
+          actionCreate: StartSpaceFrontend.viewStartSpaceButton({
+            ...input,
+            dispatch: (msg) => input.dispatch({ t: 'startSpace', c: msg }),
+          }),
         },
       })
     }
@@ -212,13 +178,10 @@ const View: FrontendModule['View'] = (input) => {
   }
 }
 
-const ViewCurrentSpaceMiniPlayer = CurrentSpaceMiniPlayer.View
-
 export const SpacesFrontend = {
   initCtx,
   init,
   update,
   subscriptions,
   View,
-  ViewCurrentSpaceMiniPlayer,
 }

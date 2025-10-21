@@ -31,46 +31,6 @@ type Ctx = AuthFrontendCtx & {
   rpc: RPC.Client<typeof rpcContract>
 }
 
-export type CurrentUserState =
-  | {
-      t: 'loading'
-    }
-  | {
-      t: 'logged-out'
-    }
-  | {
-      t: 'logged-in'
-      userAccount: UserAccount
-      userSession: UserSession
-      userProfile: UserProfile
-    }
-
-const toQueryUserSessionByClientSessionId = (input: { clientSessionId: ClientSessionId }): QueryInput<UserSession> => {
-  return {
-    where: {
-      op: '=',
-      column: 'clientSessionId',
-      value: input.clientSessionId,
-    },
-    orderBy: [{ column: 'createdAt', direction: 'desc' }],
-    limit: 10,
-    offset: 0,
-  }
-}
-
-const toQueryUserAccountByUserId = (input: { userId: UserId }): QueryInput<UserAccount> => {
-  return {
-    where: {
-      op: '=',
-      column: 'userId',
-      value: input.userId,
-    },
-    orderBy: [{ column: 'createdAt', direction: 'desc' }],
-    limit: 1,
-    offset: 0,
-  }
-}
-
 export const init = (input: { ctx: AuthFrontendCtx }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
   return {
     model: {
@@ -79,49 +39,6 @@ export const init = (input: { ctx: AuthFrontendCtx }): { model: ModelFrontend; e
     async eff() {
       await ensureGuestRecords(input.ctx)
     },
-  }
-}
-
-export const toCurrentUserState = (input: { model: ModelFrontend; ctx: AppFrontendCtxBase }): CurrentUserState => {
-  const userSessions = UserSessionDbQueryCache.query(input.ctx, toQueryUserSessionByClientSessionId(input.ctx))
-
-  const maybeUserSession = userSessions.find((userSession) => userSession.clientSessionId === input.ctx.clientSessionId)
-
-  if (!maybeUserSession) return { t: 'loading' }
-
-  const userAccounts = UserAccountDbQueryCache.query(
-    input.ctx,
-    toQueryUserAccountByUserId({ userId: maybeUserSession.userId }),
-  )
-
-  const maybeUserAccount = userAccounts.find((userAccount) => userAccount.userId === maybeUserSession.userId)
-
-  const userAccountFallback: UserAccount = {
-    createdAt: input.ctx.now,
-    phoneNumber: null,
-    role: 'normal',
-    userId: maybeUserSession.userId,
-  }
-
-  const userAccount: UserAccount = maybeUserAccount ?? userAccountFallback
-
-  const maybeUserProfile = input.ctx.profilesByUserId[maybeUserSession.userId]
-
-  const userProfile: UserProfile = maybeUserProfile ?? {
-    id: UserProfileId.generate(),
-    userId: maybeUserSession.userId,
-    username: Username.of(''),
-    avatarSeed: null,
-    avatarStyle: null,
-    createdAt: input.ctx.now,
-    updatedAt: input.ctx.now,
-  }
-
-  return {
-    t: 'logged-in',
-    userSession: maybeUserSession,
-    userAccount,
-    userProfile,
   }
 }
 
@@ -169,4 +86,87 @@ const subscriptionsUserAccount: typeof subscriptions = (input) => {
     toQueryUserAccountByUserId({ userId: userSession.userId }),
     (c) => ({ t: 'gotQueryCacheMsg', c }),
   )
+}
+
+export type CurrentUserState =
+  | {
+      t: 'loading'
+    }
+  | {
+      t: 'logged-out'
+    }
+  | {
+      t: 'logged-in'
+      userAccount: UserAccount
+      userSession: UserSession
+      userProfile: UserProfile
+    }
+
+const toQueryUserSessionByClientSessionId = (input: { clientSessionId: ClientSessionId }): QueryInput<UserSession> => {
+  return {
+    where: {
+      op: '=',
+      column: 'clientSessionId',
+      value: input.clientSessionId,
+    },
+    orderBy: [{ column: 'createdAt', direction: 'desc' }],
+    limit: 10,
+    offset: 0,
+  }
+}
+
+const toQueryUserAccountByUserId = (input: { userId: UserId }): QueryInput<UserAccount> => {
+  return {
+    where: {
+      op: '=',
+      column: 'userId',
+      value: input.userId,
+    },
+    orderBy: [{ column: 'createdAt', direction: 'desc' }],
+    limit: 1,
+    offset: 0,
+  }
+}
+
+export const toCurrentUserState = (input: { model: ModelFrontend; ctx: AppFrontendCtxBase }): CurrentUserState => {
+  const userSessions = UserSessionDbQueryCache.query(input.ctx, toQueryUserSessionByClientSessionId(input.ctx))
+
+  const maybeUserSession = userSessions.find((userSession) => userSession.clientSessionId === input.ctx.clientSessionId)
+
+  if (!maybeUserSession) return { t: 'loading' }
+
+  const userAccounts = UserAccountDbQueryCache.query(
+    input.ctx,
+    toQueryUserAccountByUserId({ userId: maybeUserSession.userId }),
+  )
+
+  const maybeUserAccount = userAccounts.find((userAccount) => userAccount.userId === maybeUserSession.userId)
+
+  const userAccountFallback: UserAccount = {
+    createdAt: input.ctx.now,
+    phoneNumber: null,
+    role: 'normal',
+    userId: maybeUserSession.userId,
+  }
+
+  const userAccount: UserAccount = maybeUserAccount ?? userAccountFallback
+
+  const maybeUserProfile = input.ctx.profilesByUserId[maybeUserSession.userId]
+
+  const userProfile: UserProfile = maybeUserProfile ?? {
+    id: UserProfileId.generate(),
+    userId: maybeUserSession.userId,
+    username: Username.of(''),
+    avatarSeed: null,
+    avatarStyle: null,
+    createdAt: input.ctx.now,
+    updatedAt: input.ctx.now,
+  }
+
+  return {
+    t: 'logged-in',
+    userSession: maybeUserSession,
+    userAccount,
+    userProfile,
+  }
 }

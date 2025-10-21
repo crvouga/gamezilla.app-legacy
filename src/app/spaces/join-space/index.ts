@@ -1,1 +1,1 @@
-export * as JoinSpaceTypes from './types'
+export * as JoinSpaceFrontend from './frontend'

@@ -1,64 +1,30 @@
+import { Eff } from '~/@/eff'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { IconPlus } from '~/@/ui/icon'
 import { h } from '~/@/vdom/h'
 import { SpaceId } from '~/app/@/data/space-id'
-import { andThen } from '~/app/@/frontend/and-then'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
-import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
-import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
+import { pushScreen } from '~/app/@/frontend/push-screen-cmd.$msg'
+import { playSound } from '~/app/@/frontend/sound-cmd'
+import { showToast } from '~/app/@/frontend/toaster-cmd'
 import { ActionCreateProps } from '~/app/@/ui/screen/layout/screen-layout-props'
-import { GotSpaceMsg } from '../@/got-space-msg.$msg'
 import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
-import { MsgSpace } from '../space/msg-space'
+import { MsgSpace, spaceMsgs } from '../space/msg-space'
 import { Space } from '../space/space'
 import { FrontendCtxModule, ModelFrontend } from '../types'
-import { isMsgFrontend, MsgFrontend } from './types'
 
-const update = <T extends ModelFrontend>(input: {
+export type MsgFrontend =
+  | { t: 'startSpace_clickedStartSpaceButton'; spaceId: SpaceId }
+  | { t: 'startSpace_gotMsgSpace'; c: MsgSpace }
+
+export const update = (input: {
   ctx: FrontendCtxModule
-  model: T
-  msg?: unknown
-  msgIn?: unknown
+  model: ModelFrontend
+  msg: MsgFrontend
 }): {
-  model: T
-  msgOut?: unknown[]
+  model: ModelFrontend
+  eff?: Eff<MsgFrontend>
 } => {
-  return andThen<T, MsgFrontend>(
-    { model: input.model },
-    (model) => updateFromMsgSpace({ ...input, model }),
-    (model) => updateStartSpaceButton({ ...input, model }),
-  )
-}
-
-const updateFromMsgSpace: typeof update = (input) => {
-  if (!GotSpaceMsg.is(input.msgIn)) return input
-  const msgSpace = input.msgIn.c
-
-  switch (msgSpace?.t) {
-    case 'userStartedSpace': {
-      if (msgSpace.userId === input.ctx.currentUser?.userId) {
-        return {
-          model: input.model,
-          msgOut: [
-            PushScreenCmd.init({ n: 'spaces', t: 'spaces_space', spaceId: msgSpace.spaceId }),
-            PlaySoundCmd.init(APP_SOUND.navForward),
-            ShowToastCmd.init(input.ctx.t('spaces.space-started')),
-          ],
-        }
-      }
-
-      return input
-    }
-    default: {
-      return input
-    }
-  }
-}
-
-const updateStartSpaceButton: typeof update = (input) => {
-  if (!isMsgFrontend(input.msg)) return input
-
   switch (input.msg?.t) {
     case 'startSpace_clickedStartSpaceButton': {
       if (!input.ctx.currentUser?.userId) {
@@ -75,7 +41,31 @@ const updateStartSpaceButton: typeof update = (input) => {
 
       return {
         model: input.model,
-        msgOut: [GotSpaceMsg.init(spaceEventNew)],
+        eff: () => {
+          spaceMsgs.pub(spaceEventNew)
+        },
+      }
+    }
+    case 'startSpace_gotMsgSpace': {
+      const msgSpace = input.msg.c
+      switch (msgSpace.t) {
+        case 'userStartedSpace': {
+          if (msgSpace.userId === input.ctx.currentUser?.userId) {
+            return {
+              model: input.model,
+              eff: Eff.batch([
+                pushScreen({ n: 'spaces', t: 'spaces_space', spaceId: msgSpace.spaceId }),
+                playSound(APP_SOUND.navForward),
+                showToast(input.ctx.t('spaces.space-started')),
+              ]),
+            }
+          }
+
+          return input
+        }
+        default: {
+          return input
+        }
       }
     }
     default: {
@@ -100,9 +90,4 @@ export const viewStartSpaceButton = (input: {
     submitDisabled: false,
     submitLoading: false,
   }
-}
-
-export const StartSpaceFrontend = {
-  viewStartSpaceButton,
-  update,
 }

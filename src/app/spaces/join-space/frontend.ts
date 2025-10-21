@@ -1,146 +1,157 @@
+import { Eff } from '~/@/eff'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { Translator } from '~/@/l18n/generated'
 import { IPlatform } from '~/@/platform/platform'
+import { Sub } from '~/@/sub'
 import { IconArrowRightOnRect } from '~/@/ui/icon'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
 import { sx } from '~/@/vdom/style/sx'
-import { andThen } from '~/app/@/frontend/and-then'
+import { SpaceId } from '~/app/@/data/space-id'
+import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
-import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
-import { ReplaceScreenCmd } from '~/app/@/frontend/replace-screen-cmd.$msg'
-import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
+import { pushScreen } from '~/app/@/frontend/push-screen-cmd.$msg'
+import { playSound } from '~/app/@/frontend/sound-cmd'
+import { showToast } from '~/app/@/frontend/toaster-cmd'
 import { FloatingLayout } from '~/app/@/ui/floating/layout/floating-layout'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SectionTitle } from '~/app/@/ui/section/section-title'
+import { replaceScreen } from '~/app/frontend/current-screen/current-screen-cmd'
 import { SpaceFrontendCtx } from '../@/frontend/ctx'
-import { GotSpaceMsg } from '../@/got-space-msg.$msg'
 import { SectionPeopleList } from '../@/ui/section-people-list'
 import { SectionPersonDetails } from '../@/ui/section-person-details'
 import { GameName } from '../game/games/@/game-name'
 import { GameCoverArt } from '../game/games/cover-art'
 import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
-import { MsgSpace } from '../space/msg-space'
+import { MsgSpace, spaceMsgs } from '../space/msg-space'
 import { Space } from '../space/space'
 import { FrontendCtxModule, ModelFrontend } from '../types'
-import { isMsgFrontend, MsgFrontend } from './types'
 
-const update = <T extends ModelFrontend>(input: {
+export type Msg =
+  | { t: 'joinSpace_submittedJoinSpaceForm'; spaceId: SpaceId }
+  | { t: 'joinSpace_clickedPersonMenuItem'; userId: UserId }
+  | { t: 'joinSpace_closedPersonItemSurface' }
+  | { t: 'joinSpace_openedPersonDetails'; userId: UserId }
+  | { t: 'joinSpace_clickedBackButton' }
+  | { t: 'joinSpace_gotMsgSpace'; c: MsgSpace }
+
+export const update = (input: {
   ctx: FrontendCtxModule
-  model: T
-  msg?: unknown
-  msgIn?: unknown
+  model: ModelFrontend
+  msg: Msg
 }): {
-  model: T
-  msgOut?: unknown[]
+  model: ModelFrontend
+  eff?: Eff<Msg>
 } => {
-  return andThen<T, MsgFrontend>(
-    input,
-    (model) => updateFromMsgSpace({ ...input, model }),
-    (model) => updateFromJoinSpaceButton({ ...input, model }),
-  )
-}
-
-const updateFromJoinSpaceButton: typeof update = (input) => {
-  if (!isMsgFrontend(input.msg)) return input
-
-  switch (input.msg?.t) {
+  switch (input.msg.t) {
     case 'joinSpace_clickedPersonMenuItem': {
       const isOpen = input.model.spaces_opened === 'join-space.person-preview-surface'
       if (isOpen) {
         return {
           model: { ...input.model, spaces_opened: null },
-          msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
+          eff: playSound(APP_SOUND.tap),
         }
       }
       return {
         model: { ...input.model, spaces_opened: 'join-space.person-preview-surface' },
-        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
+        eff: playSound(APP_SOUND.tap),
       }
     }
     case 'joinSpace_submittedJoinSpaceForm': {
-      if (!input.ctx.currentUser?.userId) return input
+      const currentUser = input.ctx.currentUser
+      const spaceId = input.msg.spaceId
+
+      if (!currentUser) return input
 
       return {
         model: input.model,
-        msgOut: [
-          GotSpaceMsg.init(
+        eff: () => {
+          spaceMsgs.pub(
             withEventMeta<MsgSpace>({
               t: 'userJoinedSpace',
-              spaceId: input.msg.spaceId,
-              userId: input.ctx.currentUser.userId,
+              spaceId,
+              userId: currentUser.userId,
             }),
-          ),
-        ],
+          )
+        },
       }
     }
     case 'joinSpace_closedPersonItemSurface': {
       if (input.model.spaces_opened === 'join-space.person-preview-surface') {
-        return { model: { ...input.model, spaces_opened: null }, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
+        return {
+          model: {
+            ...input.model,
+            spaces_opened: null,
+          },
+          eff: playSound(APP_SOUND.tap),
+        }
       }
       return input
     }
 
     case 'joinSpace_openedPersonDetails': {
+      const userId = input.msg.userId
       return {
         model: input.model,
-        msgOut: [PushScreenCmd.init({ n: 'profile', t: 'profile_profile', userId: input.msg.userId }, true)],
+        eff: pushScreen({ n: 'profile', t: 'profile_profile', userId }, true),
       }
     }
 
     case 'joinSpace_clickedBackButton': {
       return {
         model: input.model,
-        msgOut: [ReplaceScreenCmd.init({ n: 'spaces', t: 'spaces_list' }, true)],
+        eff: replaceScreen({ n: 'spaces', t: 'spaces_list' }, true),
       }
     }
-  }
-}
+    case 'joinSpace_gotMsgSpace': {
+      const msgSpace = input.msg.c
 
-const updateFromMsgSpace: typeof update = (input) => {
-  if (!GotSpaceMsg.is(input.msgIn)) return input
+      switch (msgSpace.t) {
+        case 'userJoinedSpace': {
+          const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
 
-  const msgSpace = input.msgIn.c
+          if (!currentUserSpace) return input
 
-  switch (msgSpace.t) {
-    case 'userJoinedSpace': {
-      const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
+          const currentUserSpaceId = Space.toSpaceId(currentUserSpace)
 
-      if (!currentUserSpace) return input
+          if (msgSpace.spaceId !== currentUserSpaceId) return input
 
-      const currentUserSpaceId = Space.toSpaceId(currentUserSpace)
+          if (msgSpace.userId !== input.ctx.currentUser?.userId) {
+            const username = input.ctx.profilesByUserId[msgSpace.userId]?.username ?? null
+            return {
+              model: input.model,
+              eff: Eff.batch([
+                playSound(APP_SOUND.navForward),
+                username
+                  ? showToast(input.ctx.t('spaces.other-userJoinedSpace', username))
+                  : showToast(input.ctx.t('spaces.current-userJoinedSpace')),
+              ]),
+            }
+          }
 
-      if (msgSpace.spaceId !== currentUserSpaceId) return input
+          return {
+            model: input.model,
+            eff: Eff.batch([playSound(APP_SOUND.navForward), showToast(input.ctx.t('spaces.current-userJoinedSpace'))]),
+          }
+        }
 
-      if (msgSpace.userId !== input.ctx.currentUser?.userId) {
-        const username = input.ctx.profilesByUserId[msgSpace.userId]?.username ?? null
-        return {
-          model: input.model,
-          msgOut: [
-            PlaySoundCmd.init(APP_SOUND.navForward),
-            username
-              ? ShowToastCmd.init(input.ctx.t('spaces.other-userJoinedSpace', username))
-              : ShowToastCmd.init(input.ctx.t('spaces.current-userJoinedSpace')),
-          ],
+        default: {
+          return input
         }
       }
-
-      return {
-        model: input.model,
-        msgOut: [
-          PlaySoundCmd.init(APP_SOUND.navForward),
-          ShowToastCmd.init(input.ctx.t('spaces.current-userJoinedSpace')),
-        ],
-      }
     }
   }
-  return input
 }
 
-const view = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFrontend) => void; model: ModelFrontend }) => {
+const joinSpaceMsgs = Sub.where(spaceMsgs, (msg) => msg.t === 'userJoinedSpace')
+
+export const subscriptions = (_input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<Msg> => {
+  return Sub.map(joinSpaceMsgs, (c): Msg => ({ t: 'joinSpace_gotMsgSpace', c }))
+}
+
+export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: Msg) => void; model: ModelFrontend }) => {
   const currentUser = input.ctx.currentUser
 
   if (!currentUser) return h(Text, { text: 'No current user' })
@@ -185,7 +196,7 @@ const view = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFrontend) => v
           }),
         },
         [
-          space.game && h(SectionGame, { ctx: input.ctx, gameName: space.game.t }),
+          space.game && h(ViewSectionGame, { ctx: input.ctx, gameName: space.game.t }),
 
           h(SectionPeopleList, {
             ctx: spaceCtx,
@@ -223,7 +234,7 @@ const view = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFrontend) => v
   })
 }
 
-const SectionGame = (props: {
+const ViewSectionGame = (props: {
   ctx: {
     t: Translator
     platform: IPlatform
@@ -271,9 +282,4 @@ const SectionGame = (props: {
       ),
     ],
   )
-}
-
-export const JoinSpaceFrontend = {
-  view,
-  update,
 }

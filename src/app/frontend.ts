@@ -47,6 +47,7 @@ import { ProfileFrontend } from './profile/frontend'
 import { SettingsFrontend } from './settings/frontend'
 import { SettingsTopBar } from './settings/settings-top-bar'
 import { SpacesFrontend } from './spaces/frontend'
+import { CurrentSpaceMiniPlayerFrontend } from './spaces/frontend/current-space-mini-player'
 import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract, topicContract } from './types'
 import { toBackendConnectionStatus } from './wire/backend-connection/backend-connection-status'
 import { WireFrontend } from './wire/frontend'
@@ -512,11 +513,11 @@ const toScreenLayoutProps = (props: {
     id: 'app-screen-layout',
     parentScreen: null,
     renderMiniPlayer: (propsMiniPlayer) => {
-      return h(SpacesFrontend.ViewCurrentSpaceMiniPlayer, {
+      return h(CurrentSpaceMiniPlayerFrontend.View, {
         ctx,
         key: propsMiniPlayer.key,
         model: props.model.spaces,
-        dispatch: (c) => props.dispatch({ t: 'spaces', c }),
+        dispatch: (c) => props.dispatch({ t: 'spaces', c: { t: 'currentSpaceMiniPlayer', c } }),
       })
     },
     actionBar: {

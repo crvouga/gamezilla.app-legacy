@@ -1,1 +1,1 @@
-export * as ExitSpaceActionTypes from './types'
+export * as ExitSpaceActionFrontend from './frontend'

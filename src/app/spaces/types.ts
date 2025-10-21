@@ -16,7 +16,7 @@ import { ListSpacesTypes } from './list-spaces'
 import { ISpaceDb } from './space/space-db/interface'
 import { SpaceProjectionStarted } from './space/space-projection'
 import { StartSpaceTypes } from './start-space'
-import { SyncTypes } from './sync'
+import { SyncFrontend, SyncTypes } from './sync'
 
 type Opened =
   | null
@@ -34,7 +34,6 @@ type ModelFrontendBase = {
 export type ModelFrontend = ModelFrontendBase & GameTypes.ModelFrontend & EndSpaceFrontend.Model
 
 export type MsgFrontend =
-  | { t: 'spaces_gotMsgOut'; c: unknown }
   | { t: 'listSpaces'; c: ListSpacesTypes.MsgFrontend }
   | { t: 'peopleAction'; c: PeopleActionTypes.MsgFrontend }
   | { t: 'leaveSpace'; c: LeaveSpaceTypes.MsgFrontend }
@@ -44,7 +43,7 @@ export type MsgFrontend =
   | { t: 'exitSpaceAction'; c: ExitSpaceActionTypes.MsgFrontend }
   | { t: 'startSpace'; c: StartSpaceTypes.MsgFrontend }
   | { t: 'currentSpaceMiniPlayer'; c: CurrentSpaceMiniPlayerTypes.MsgFrontend }
-  | { t: 'sync'; c: SyncTypes.MsgFrontend }
+  | { t: 'sync'; c: SyncFrontend.Msg }
 
 export const topicContract = TopicContract.combine([SyncTypes.topicContract])
 
