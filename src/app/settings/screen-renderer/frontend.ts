@@ -13,7 +13,7 @@ import { APP_SOUND } from '../../@/frontend/app-sound'
 import type { FrontendModule } from '../types'
 import { isMsgFrontend, ModelFrontend, MsgFrontend } from './types'
 
-const init = (input: { ctx: AppFrontendCtxBase }): { model: ModelFrontend } => {
+const init = (input: { ctx: AppFrontendCtxBase }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
   return {
     model: {
       render_vDomImpl: input.ctx.vdomImpl,

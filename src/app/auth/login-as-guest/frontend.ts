@@ -8,44 +8,48 @@ import { ClientSessionId } from '~/@/wire/client-session-id'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
+import { playSound } from '~/app/@/frontend/sound-cmd'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
 import { GuestSessionMapping } from '../@/guest-session-mapping/guest-session-mapping'
 import { GuestSessionMappingId } from '../@/guest-session-mapping/guest-session-mapping-id'
 import { UserSession } from '../@/user-session/user-session'
 import { UserSessionId } from '../@/user-session/user-session-id'
-import { isMsgFrontend, MsgFrontend, type FrontendModule, type ModelFrontend } from './types'
+import { ModelFrontend, MsgFrontend } from './types'
 
-const init: ModelFrontend = {
-  loginAsGuest_request: NotAsked,
+export const init = (_input: {}): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
+  return {
+    model: {
+      loginAsGuest_request: NotAsked,
+    },
+  }
 }
 
-const update = <T extends ModelFrontend>(input: {
+export const update = (input: {
   ctx: AuthFrontendCtx
-  model: T
-  msg?: unknown
+  model: ModelFrontend
+  msg: MsgFrontend
 }): {
-  model: T
-  msgOut?: unknown[]
+  model: ModelFrontend
   eff?: Eff<MsgFrontend>
 } => {
-  if (!isMsgFrontend(input.msg)) return { model: input.model }
-  switch (input.msg?.t) {
+  switch (input.msg.t) {
     case 'loginAsGuest_clickedContinueAsGuestButton': {
       return {
         model: {
           ...input.model,
           loginAsGuest_request: Loading,
         },
-        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
-        async eff(dispatch) {
-          const result = await continueAsGuest({
-            ctx: input.ctx,
-            clientSessionId: input.ctx.clientSessionId,
-            now: input.ctx.now,
-          })
-          dispatch({ t: 'loginAsGuest_continueAsGuestResult', result })
-        },
+        eff: Eff.batch([
+          playSound(APP_SOUND.tap),
+          async (dispatch) => {
+            const result = await continueAsGuest({
+              ctx: input.ctx,
+              clientSessionId: input.ctx.clientSessionId,
+              now: input.ctx.now,
+            })
+            dispatch({ n: 'loginAsGuest', t: 'loginAsGuest_continueAsGuestResult', result })
+          },
+        ]),
       }
     }
     case 'loginAsGuest_continueAsGuestResult': {
@@ -123,17 +127,15 @@ const continueAsGuest = async (input: {
 
 export const TEST_ID_CONTINUE_AS_GUEST_BUTTON = 'auth/continue-as-guest-button'
 
-const ViewButton: FrontendModule['View'] = (input) => {
+export const ViewButton = (input: {
+  ctx: AuthFrontendCtx
+  model: ModelFrontend
+  dispatch: (msg: MsgFrontend) => void
+}) => {
   return h(Button, {
-    onPress: () => input.dispatch({ t: 'loginAsGuest_clickedContinueAsGuestButton' }),
+    onPress: () => input.dispatch({ n: 'loginAsGuest', t: 'loginAsGuest_clickedContinueAsGuestButton' }),
     renderIconStart: (iconInput) => h(IconUserCircle, iconInput),
     text: input.ctx.t('auth.continue-as-guest'),
     width: 'full',
   })
-}
-
-export const ContinueAsGuestFrontend = {
-  init,
-  update,
-  ViewButton,
 }

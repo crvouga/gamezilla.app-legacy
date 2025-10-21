@@ -30,8 +30,8 @@ export const PingPongMsg = s.obj({
 export type PingPongMsg = s.Infer<typeof PingPongMsg>
 
 export type MsgFrontend =
-  | { t: 'backendConnection_ping'; pingId: PingId; now: UnixMs }
-  | { t: 'backendConnection_pong'; pingId: PingId; now: UnixMs }
+  | { n: 'backendConnection'; t: 'backendConnection_ping'; pingId: PingId; now: UnixMs }
+  | { n: 'backendConnection'; t: 'backendConnection_pong'; pingId: PingId; now: UnixMs }
 
 export const isMsgFrontend = (msg: unknown): msg is MsgFrontend => {
   return isAnyMsg(msg) && msg.t.startsWith('backendConnection_')

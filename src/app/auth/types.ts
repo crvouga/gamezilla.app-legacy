@@ -1,4 +1,3 @@
-import { isAnyMsg } from '~/@/msg/msg'
 import { RPC } from '~/@/rpc'
 import { AuthBackendCtx } from './@/backend/ctx'
 import { AuthFrontendCtx } from './@/frontend/ctx'
@@ -7,23 +6,21 @@ import type { ContinueAsGuest } from './login-as-guest'
 import { LoginWithSMSFrontend, LoginWithSMSTypes } from './login-with-sms'
 import type { LogoutFrontend } from './logout'
 
-export type ModelFrontend = LogoutFrontend.ModelFrontend &
-  LoginWithSMSFrontend.Model &
-  ContinueAsGuest.ModelFrontend &
-  CurrentUserFrontend.ModelFrontend
-
-export type MsgBase = { t: 'auth_clickedLoginWithPhone' }
-
-export const isMsgBase = (msg: unknown): msg is MsgBase => {
-  return isAnyMsg(msg) && msg.t.startsWith('auth_')
+export type ModelFrontend = {
+  logout: LogoutFrontend.ModelFrontend
+  loginWithSms: LoginWithSMSFrontend.Model
+  continueAsGuest: ContinueAsGuest.ModelFrontend
+  currentUser: CurrentUserFrontend.ModelFrontend
 }
+
+export type MsgBase = { n: 'auth'; t: 'auth_clickedLoginWithPhone' }
 
 export type MsgFrontend =
   | MsgBase
-  | ContinueAsGuest.MsgFrontend
-  | LoginWithSMSFrontend.MsgFrontend
-  | LogoutFrontend.Msg
-  | CurrentUserFrontend.MsgFrontend
+  | { t: 'continueAsGuest'; c: ContinueAsGuest.MsgFrontend }
+  | { t: 'loginWithSms'; c: LoginWithSMSFrontend.MsgFrontend }
+  | { t: 'logout'; c: LogoutFrontend.Msg }
+  | { t: 'currentUser'; c: CurrentUserFrontend.MsgFrontend }
 
 export type FrontendCtxModule = AuthFrontendCtx & {
   rpc: RPC.Client<typeof rpcContract>

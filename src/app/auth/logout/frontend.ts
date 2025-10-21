@@ -1,7 +1,6 @@
 import { Eff } from '~/@/eff'
 import { TranslatedText } from '~/@/l18n'
-import { isAnyMsg } from '~/@/msg/msg'
-import { RemoteResult } from '~/@/result'
+import { NotAsked, RemoteResult } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'
 import { IconPowerOff } from '~/@/ui/icon'
 import { MenuItem } from '~/@/ui/menu-item'
@@ -10,7 +9,7 @@ import { h } from '~/@/vdom/h'
 import { Frag } from '~/@/vdom/primitives/frag'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
+import { playSound } from '~/app/@/frontend/sound-cmd'
 import { FloatingConfirmation } from '~/app/@/ui/floating/confirmation/floating-confirmation'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
 
@@ -19,35 +18,37 @@ export type ModelFrontend = {
   logout_opened?: 'logged-out' | null
 }
 
+export const init = (_input: {}): { model: ModelFrontend } => {
+  return {
+    model: {
+      logout_request: NotAsked,
+      logout_opened: null,
+    },
+  }
+}
+
 export type Msg =
   | { t: 'logout_clickedLogoutMenuItem' }
   | { t: 'logout_logoutDrawerClosed' }
   | { t: 'logout_drawerClickedCancel' }
   | { t: 'logout_drawerClickedConfirm' }
 
-export const isMsg = (msg: unknown): msg is Msg => {
-  return isAnyMsg(msg) && msg.t.startsWith('logout_')
-}
-
-export const update = <T extends ModelFrontend>(input: {
+export const update = (input: {
   ctx: AuthFrontendCtx
-  model: T
-  msg?: unknown
+  model: ModelFrontend
+  msg: Msg
 }): {
-  model: T
-  msgOut?: unknown[]
+  model: ModelFrontend
   eff?: Eff<Msg>
 } => {
-  if (!isMsg(input.msg)) return { model: input.model }
-
-  switch (input.msg?.t) {
+  switch (input.msg.t) {
     case 'logout_clickedLogoutMenuItem': {
       return {
         model: {
           ...input.model,
           logout_opened: 'logged-out',
         },
-        msgOut: [PlaySoundCmd.init(APP_SOUND.alertErrorSm)],
+        eff: playSound(APP_SOUND.alertErrorSm),
       }
     }
 
@@ -57,7 +58,7 @@ export const update = <T extends ModelFrontend>(input: {
           ...input.model,
           logout_opened: null,
         },
-        async eff(_dispatch) {
+        async eff() {
           await input.ctx.userSessionDb.update({
             where: { op: '=', column: 'clientSessionId', value: input.ctx.clientSessionId },
             set: { endedAt: UnixMs.now() },
@@ -75,7 +76,7 @@ export const update = <T extends ModelFrontend>(input: {
           ...input.model,
           logout_opened: null,
         },
-        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
+        eff: playSound(APP_SOUND.tap),
       }
     }
   }

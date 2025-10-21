@@ -1,5 +1,5 @@
+import { Eff } from '~/@/eff'
 import { TranslatedText } from '~/@/l18n'
-import { isAnyMsg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
 import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
@@ -11,12 +11,14 @@ import { Box } from '~/@/vdom/primitives/box'
 import { sx } from '~/@/vdom/style/sx'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
-import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
+import { pushScreen } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ProfileFrontendCtx } from '../@/frontend/ctx'
 import { ProfileLoaderFrontend } from '../@/user-profile-loader/frontend'
 
-export type ModelFrontend = {}
+export type ModelFrontend = {
+  noop: boolean
+}
 
 const toUserId = (ctx: ProfileFrontendCtx): UserId | null => {
   const currentScreen = ctx.currentScreen
@@ -26,29 +28,36 @@ const toUserId = (ctx: ProfileFrontendCtx): UserId | null => {
   return null
 }
 
-export const init = (_: {}): { model: ModelFrontend } => {
+export const init = (_input: { ctx: ProfileFrontendCtx }): { model: ModelFrontend; eff?: Eff<Msg> } => {
   return {
-    model: {},
+    model: {
+      noop: false,
+    },
   }
 }
 
-export type Msg = { t: 'profiles_screenProfile_gotMsgOut'; c: unknown }
+export type Msg = { t: 'noop' } | { t: 'screenProfile_clickedEdit' }
 
-const isMsg = (msg: unknown): msg is Msg => {
-  return isAnyMsg(msg) && msg.t.startsWith('profiles_screenProfile_')
-}
-
-export const update = <T extends ModelFrontend>(input: {
-  model: T
-  msg?: unknown
+export const update = (input: {
+  ctx: ProfileFrontendCtx
+  model: ModelFrontend
+  msg: Msg
 }): {
-  model: T
-  msgOut?: unknown[]
+  model: ModelFrontend
+  eff?: Eff<Msg>
 } => {
-  if (!isMsg(input.msg)) return { model: input.model }
-  switch (input.msg?.t) {
-    case 'profiles_screenProfile_gotMsgOut': {
-      return { model: input.model, msgOut: [input.msg.c] }
+  switch (input.msg.t) {
+    case 'screenProfile_clickedEdit': {
+      return {
+        model: input.model,
+        eff: pushScreen({ n: 'profile', t: 'profile_profileEdit' }, true),
+      }
+    }
+    case 'noop': {
+      return {
+        model: input.model,
+        eff: Eff.None,
+      }
     }
   }
 }
@@ -63,7 +72,7 @@ export const subscriptions = (input: { ctx: ProfileFrontendCtx; model: ModelFron
       pagination: { limit: 1, offset: 0 },
       whereAnd: { userId: { equals: userId } },
     },
-    (c): Msg => ({ t: 'profiles_screenProfile_gotMsgOut', c: ProfileLoaderFrontend.gotMsg(c) }),
+    (): Msg => ({ t: 'noop' }),
   )
 }
 
@@ -109,8 +118,7 @@ const ViewBody = (input: { ctx: ProfileFrontendCtx; model: ModelFrontend; dispat
             h(Button, {
               onPress: () =>
                 input.dispatch({
-                  t: 'profiles_screenProfile_gotMsgOut',
-                  c: PushScreenCmd.init({ n: 'profile', t: 'profile_profileEdit' }),
+                  t: 'screenProfile_clickedEdit',
                 }),
               style: sx({ maxWidth: 64, flex: 1 }),
               renderIconStart: (iconInput) => h(IconUserPen, iconInput),

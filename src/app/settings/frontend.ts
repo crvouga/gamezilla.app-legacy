@@ -10,110 +10,119 @@ import { Text } from '~/@/vdom/primitives/text'
 import { sx } from '~/@/vdom/style/sx'
 import { VDom } from '~/@/vdom/vdom'
 import { VDomImplWeb } from '~/@/vdom/vdom-impl-web'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
-import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { andThen } from '../@/frontend/and-then'
 import { APP_SOUND } from '../@/frontend/app-sound'
-import { BackScreenCmd } from '../@/frontend/back-screen-cmd.$msg'
+import { playSound } from '../@/frontend/sound-cmd'
+import { back, pushScreen } from '../frontend/current-screen/current-screen-cmd'
 import { ScreenLangFrontend } from './screen-lang/frontend'
 import { ScreenRendererFrontend } from './screen-renderer/frontend'
 import { SoundFrontend } from './sound'
-import { isMsgFrontendBase, type FrontendCtxModule, type ModelFrontend, type MsgFrontend } from './types'
+import { type FrontendCtxModule, type ModelFrontend, type MsgFrontend } from './types'
 
-const init = (input: {
-  ctx: FrontendCtxModule
-}): { model: ModelFrontend; eff?: Eff<MsgFrontend>; msgOut?: unknown[] } => {
+const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
   const lang = ScreenLangFrontend.init(input)
   const renderer = ScreenRendererFrontend.init(input)
   const sound = SoundFrontend.init(input)
 
   return {
     model: {
-      ...lang.model,
-      ...renderer.model,
-      ...sound.model,
+      lang: lang.model,
+      renderer: renderer.model,
+      sound: sound.model,
       settings_opened: null,
     },
+    eff: Eff.batch<MsgFrontend>([
+      Eff.tag('lang', lang.eff),
+      Eff.tag('renderer', renderer.eff),
+      Eff.tag('sound', sound.eff),
+    ]),
   }
 }
 
-const update = <T extends ModelFrontend>(input: {
+const update = (input: {
   ctx: FrontendCtxModule
-  model: T
-  msg?: unknown
-  msgIn?: unknown
+  model: ModelFrontend
+  msg: MsgFrontend
 }): {
-  model: T
+  model: ModelFrontend
   eff?: Eff<MsgFrontend>
-  msgOut?: unknown[]
 } => {
-  return andThen<T, MsgFrontend>(
-    { model: input.model },
-    (model) => updateBase({ ...input, model }),
-    (model) => SoundFrontend.update({ ...input, model }),
-    (model) => ScreenLangFrontend.update({ ...input, model }),
-    (model) => ScreenRendererFrontend.update({ ...input, model }),
-  )
-}
+  switch (input.msg.t) {
+    case 'lang': {
+      const updated = ScreenLangFrontend.update({ ...input, model: input.model.lang, msg: input.msg.c })
+      return {
+        model: { ...input.model, lang: updated.model },
+        eff: Eff.tag('lang', updated.eff),
+      }
+    }
+    case 'renderer': {
+      const updated = ScreenRendererFrontend.update({ ...input, model: input.model.renderer, msg: input.msg.c })
+      return {
+        model: { ...input.model, renderer: updated.model },
+        eff: Eff.tag('renderer', updated.eff),
+      }
+    }
+    case 'sound': {
+      const updated = SoundFrontend.update({ ...input, model: input.model.sound, msg: input.msg.c })
+      return {
+        model: { ...input.model, sound: updated.model },
+        eff: Eff.tag('sound', updated.eff),
+      }
+    }
 
-const updateBase: typeof update = ({ model, ctx, msg }) => {
-  if (!isMsgFrontendBase(msg)) return { model }
-
-  switch (msg.t) {
     case 'settings_clickedOpenRenderer': {
       return {
-        model: { ...model, settings_opened: null },
-        msgOut: [PushScreenCmd.init({ n: 'settings', t: 'settings_renderer' }, true)],
+        model: { ...input.model, settings_opened: null },
+        eff: pushScreen({ n: 'settings', t: 'settings_renderer' }, true),
       }
     }
 
     case 'settings_clickedOpenLang': {
-      if (ctx.currentScreen.n === 'settings' && ctx.currentScreen.t === 'settings_chooseLang') {
+      if (input.ctx.currentScreen.n === 'settings' && input.ctx.currentScreen.t === 'settings_chooseLang') {
         return {
-          model: { ...model, settings_opened: null },
-          msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)],
+          model: { ...input.model, settings_opened: null },
+          eff: playSound(APP_SOUND.navForwardMin),
         }
       }
 
       return {
-        model: { ...model, settings_opened: null },
-        msgOut: [PushScreenCmd.init({ n: 'settings', t: 'settings_chooseLang' }, true)],
+        model: { ...input.model, settings_opened: null },
+        eff: pushScreen({ n: 'settings', t: 'settings_chooseLang' }, true),
       }
     }
 
     case 'settings_clickedOpenSettings': {
       return {
-        model: { ...model, settings_opened: null },
-        msgOut: [PushScreenCmd.init({ n: 'settings', t: 'settings_main', back: ctx.currentScreen }, true)],
+        model: { ...input.model, settings_opened: null },
+        eff: pushScreen({ n: 'settings', t: 'settings_main', back: input.ctx.currentScreen }, true),
       }
     }
 
     case 'settings_clickedBackButton': {
-      return { model, msgOut: [BackScreenCmd.init()] }
+      return { model: input.model, eff: back() }
     }
 
     case 'settings_clickedTopBar': {
-      const isOpenNew = model.settings_opened === 'top-bar-surface' ? null : 'top-bar-surface'
+      const isOpenNew = input.model.settings_opened === 'top-bar-surface' ? null : 'top-bar-surface'
       return {
-        model: { ...model, settings_opened: isOpenNew },
-        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
+        model: { ...input.model, settings_opened: isOpenNew },
+        eff: playSound(APP_SOUND.tap),
       }
     }
 
     case 'settings_closedTopBarSurface': {
       return {
         model: {
-          ...model,
+          ...input.model,
           settings_opened: null,
         },
-        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
+        eff: playSound(APP_SOUND.tap),
       }
     }
 
     default: {
       return {
-        model,
+        model: input.model,
       }
     }
   }
@@ -166,7 +175,7 @@ const ViewMain: typeof View = (props) => {
       h(ScrollBox, { style: sx({ flexDirection: 'col', flex: 1 }) }, [
         h(MenuItem, {
           primary: props.ctx.t('l18n.language'),
-          renderEnd: (endProps) => h(Text, { ...endProps, text: props.ctx.t(props.model.lang_lang ?? 'en') }),
+          renderEnd: (endProps) => h(Text, { ...endProps, text: props.ctx.t(props.model.lang.lang_lang ?? 'en') }),
           onPress: () => props.dispatch({ t: 'settings_clickedOpenLang' }),
           link: true,
           renderIcon: (inputIcon) => IconLanguage(inputIcon),
@@ -174,7 +183,7 @@ const ViewMain: typeof View = (props) => {
         h(MenuItem, {
           primary: props.ctx.t('l18n.renderer'),
           renderEnd: (endProps) =>
-            h(Box, {}, [h(Text, { ...endProps, text: VDomImplWeb.toName(props.model.render_vDomImpl) })]),
+            h(Box, {}, [h(Text, { ...endProps, text: VDomImplWeb.toName(props.model.renderer.render_vDomImpl) })]),
           onPress: () => props.dispatch({ t: 'settings_clickedOpenRenderer' }),
           renderIcon: (inputIcon) => IconCode(inputIcon),
           link: true,

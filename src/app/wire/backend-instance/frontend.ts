@@ -1,30 +1,31 @@
-import { Sub } from '~/@/sub'
-import { FrontendCtxModule } from '../types'
-import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
 import { Eff } from '~/@/eff'
+import { FrontendCtxModule } from '../types'
+import type { ModelFrontend, MsgFrontend } from './types'
+import { Sub } from '~/@/sub'
 
-const update = <T extends ModelFrontend>(input: {
+export const init = (_input: {}): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
+  return {
+    model: {
+      backendInstance: {},
+    },
+  }
+}
+
+export const update = (input: {
   ctx: FrontendCtxModule
-  model: T
-  msg?: unknown
+  model: ModelFrontend
+  msg: MsgFrontend
 }): {
-  model: T
+  model: ModelFrontend
   eff?: Eff<MsgFrontend>
-  msgOut?: unknown[]
 } => {
-  return { model: input.model }
+  switch (input.msg.t) {
+    case 'backendInstance_noop': {
+      return { model: input.model }
+    }
+  }
 }
 
-const subscriptions: FrontendModule['subscriptions'] = () => {
+export const subscriptions = (_input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<MsgFrontend> => {
   return Sub.none()
-}
-
-const View: FrontendModule['View'] = (_input) => {
-  return null
-}
-
-export const BackendInstanceFrontend = {
-  update,
-  subscriptions,
-  View,
 }

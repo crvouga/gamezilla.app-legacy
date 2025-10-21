@@ -15,40 +15,34 @@ import { ProfileTypes } from './profile'
 import { SettingsTypes } from './settings'
 import { SpacesTypes } from './spaces'
 import { WireTypes } from './wire'
-import { isAnyMsg } from '~/@/msg/msg'
 
-export type ModelFrontend = CurrentScreenFrontend.Model &
-  ToasterFrontend.Model &
-  ViewportFrontend.Model &
-  ScreenSizeFrontend.Model &
-  CopyToClipboardFrontend.Model &
-  QueryCache.Model &
-  FocusFrontend.Model &
-  AuthTypes.ModelFrontend &
-  SpacesTypes.ModelFrontend &
-  ProfileTypes.ModelFrontend &
-  WireTypes.ModelFrontend &
-  SettingsTypes.ModelFrontend
-
-export type MsgFrontendBase = {
-  t: 'app_gotMsgOut'
-  c: unknown
+export type ModelFrontend = {
+  currentScreen: CurrentScreenFrontend.Model
+  toaster: ToasterFrontend.Model
+  viewport: ViewportFrontend.Model
+  screenSize: ScreenSizeFrontend.Model
+  copyToClipboard: CopyToClipboardFrontend.Model
+  queryCache: QueryCache.Model
+  focus: FocusFrontend.Model
+  auth: AuthTypes.ModelFrontend
+  spaces: SpacesTypes.ModelFrontend
+  profile: ProfileTypes.ModelFrontend
+  wire: WireTypes.ModelFrontend
+  settings: SettingsTypes.ModelFrontend
 }
-export const isMsgFrontendBase = (msg: unknown): msg is MsgFrontendBase => isAnyMsg(msg) && msg.t.startsWith('app_')
 
 export type MsgFrontend =
-  | MsgFrontendBase
-  | CurrentScreenFrontend.Msg
-  | ToasterFrontend.Msg
-  | ViewportFrontend.Msg
-  | ScreenSizeFrontend.Msg
-  | FocusFrontend.Msg
-  | CopyToClipboardFrontend.Msg
-  | WireTypes.MsgFrontend
-  | SpacesTypes.MsgFrontend
-  | AuthTypes.MsgFrontend
-  | ProfileTypes.MsgFrontend
-  | SettingsTypes.MsgFrontend
+  | { t: 'currentScreen'; c: CurrentScreenFrontend.Msg }
+  | { t: 'toaster'; c: ToasterFrontend.Msg }
+  | { t: 'viewport'; c: ViewportFrontend.Msg }
+  | { t: 'screenSize'; c: ScreenSizeFrontend.Msg }
+  | { t: 'focus'; c: FocusFrontend.Msg }
+  | { t: 'copyToClipboard'; c: CopyToClipboardFrontend.Msg }
+  | { t: 'wire'; c: WireTypes.MsgFrontend }
+  | { t: 'spaces'; c: SpacesTypes.MsgFrontend }
+  | { t: 'auth'; c: AuthTypes.MsgFrontend }
+  | { t: 'profile'; c: ProfileTypes.MsgFrontend }
+  | { t: 'settings'; c: SettingsTypes.MsgFrontend }
 
 export const rpcContract = RPC.combineContracts([AuthTypes.rpcContract, SpacesTypes.rpcContract])
 

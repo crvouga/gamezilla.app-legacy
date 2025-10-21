@@ -16,12 +16,12 @@ import { Frag } from '~/@/vdom/primitives/frag'
 import { Text } from '~/@/vdom/primitives/text'
 import { sx } from '~/@/vdom/style/sx'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
-import { FocusViewCmd } from '~/app/@/frontend/focus-view-cmd.$msg'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
-import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
-import { ReplaceScreenCmd } from '~/app/@/frontend/replace-screen-cmd.$msg'
-import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
-import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
+import { pushScreen } from '~/app/@/frontend/push-screen-cmd.$msg'
+import { showErrorSmall } from '~/app/@/frontend/show-error-small'
+import { playSound } from '~/app/@/frontend/sound-cmd'
+import { showToast } from '~/app/@/frontend/toaster-cmd'
+import { replaceScreen } from '~/app/frontend/current-screen/current-screen-cmd'
+import { focus } from '~/app/frontend/focus/focus-cmd'
 import { SendCodeProblem } from '../@/backend/verify-sms/send-code-problem'
 import { VerifyCodeProblem } from '../@/backend/verify-sms/verify-code-problem'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
@@ -38,6 +38,16 @@ export type Model = {
   loginWithSms_sentCodeAt?: UnixMs | null
   loginWithSms_verified?: Remote | Verified
   loginWithSms_verifiedAt?: UnixMs | null
+}
+
+export const init = (_input: {}): { model: Model } => {
+  return {
+    model: {
+      loginWithSms_phone: undefined,
+      loginWithSms_phoneError: undefined,
+      loginWithSms_countryCode: undefined,
+    },
+  }
 }
 
 const toSendErrorMessage = (input: { model: Model; ctx: { t: Translator } }): TranslatedText | null => {
@@ -77,16 +87,16 @@ const toVerifyErrorMessage = (input: { model: Model; ctx: { t: Translator } }): 
 }
 
 export type MsgFrontend =
-  | { t: 'loginWithSms_clickedBackButton' }
-  | { t: 'loginWithSms_inputtedPhoneNumber'; phone: string }
-  | { t: 'loginWithSms_inputtedCountryCode'; countryCode: Iso3166Alpha2Code }
-  | { t: 'loginWithSms_clickedPhoneNumberClear' }
-  | { t: 'loginWithSms_clickedSendCodeButton' }
-  | { t: 'loginWithSms_inputtedCode'; code: string }
-  | { t: 'loginWithSms_clickedCodeClear' }
-  | { t: 'loginWithSms_clickedVerifyCodeButton'; phone: PhoneNumber; code: string }
-  | { t: 'loginWithSms_sentCode'; sent: Sent }
-  | { t: 'loginWithSms_verifiedCode'; verified: Verified }
+  | { n: 'loginWithSms'; t: 'loginWithSms_clickedBackButton' }
+  | { n: 'loginWithSms'; t: 'loginWithSms_inputtedPhoneNumber'; phone: string }
+  | { n: 'loginWithSms'; t: 'loginWithSms_inputtedCountryCode'; countryCode: Iso3166Alpha2Code }
+  | { n: 'loginWithSms'; t: 'loginWithSms_clickedPhoneNumberClear' }
+  | { n: 'loginWithSms'; t: 'loginWithSms_clickedSendCodeButton' }
+  | { n: 'loginWithSms'; t: 'loginWithSms_inputtedCode'; code: string }
+  | { n: 'loginWithSms'; t: 'loginWithSms_clickedCodeClear' }
+  | { n: 'loginWithSms'; t: 'loginWithSms_clickedVerifyCodeButton'; phone: PhoneNumber; code: string }
+  | { n: 'loginWithSms'; t: 'loginWithSms_sentCode'; sent: Sent }
+  | { n: 'loginWithSms'; t: 'loginWithSms_verifiedCode'; verified: Verified }
 
 const isMsg = (msg: unknown): msg is MsgFrontend => {
   return isAnyMsg(msg) && msg.t.startsWith('loginWithSms_')
@@ -100,13 +110,12 @@ const CODE_INPUT_VIEW_ID = 'codeInput'
 
 const PHONE_NUMBER_INPUT_VIEW_ID = 'phoneNumberInput'
 
-export const update = <T extends Model>(input: {
+export const update = (input: {
   ctx: Ctx
-  model: T
-  msg?: unknown
+  model: Model
+  msg: MsgFrontend
 }): {
-  model: T
-  msgOut?: unknown[]
+  model: Model
   eff?: Eff<MsgFrontend>
 } => {
   if (!isMsg(input.msg)) return { model: input.model }
@@ -115,18 +124,24 @@ export const update = <T extends Model>(input: {
       if (input.ctx.currentScreen.t === 'auth_verifyCode') {
         return {
           model: input.model,
-          msgOut: [ReplaceScreenCmd.init({ n: 'auth', t: 'auth_sendCode' }, true)],
+          eff: replaceScreen({ n: 'auth', t: 'auth_sendCode' }, true),
         }
       }
 
       return {
         model: input.model,
-        msgOut: [ReplaceScreenCmd.init({ n: 'auth', t: 'auth_login' }, true)],
+        eff: replaceScreen({ n: 'auth', t: 'auth_login' }, true),
       }
     }
 
     case 'loginWithSms_inputtedPhoneNumber': {
-      return { model: { ...input.model, loginWithSms_phone: input.msg.phone, loginWithSms_phoneError: null } }
+      return {
+        model: {
+          ...input.model,
+          loginWithSms_phone: input.msg.phone,
+          loginWithSms_phoneError: null,
+        },
+      }
     }
 
     case 'loginWithSms_clickedPhoneNumberClear': {
@@ -143,7 +158,7 @@ export const update = <T extends Model>(input: {
       if (isErr(phoneNumber)) {
         return {
           model: { ...input.model, loginWithSms_phoneError: input.ctx.t('auth-sms.invalid-phone-number') },
-          msgOut: [PlaySoundCmd.init(APP_SOUND.alertErrorSm), FocusViewCmd.init(PHONE_NUMBER_INPUT_VIEW_ID)],
+          eff: Eff.batch([playSound(APP_SOUND.alertErrorSm), focus(PHONE_NUMBER_INPUT_VIEW_ID)]),
         }
       }
 
@@ -151,23 +166,25 @@ export const update = <T extends Model>(input: {
         model: {
           ...input.model,
           loginWithSms_sent: RemoteResult.Loading,
-          sentCodeAt: input.ctx.now,
+          loginWithSms_sentCodeAt: input.ctx.now,
         },
-        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
-        async eff(dispatch) {
-          const sent = await input.ctx.rpc['loginWithSms_sendCode']({
-            phoneNumber: phoneNumber.value,
-            preferredLanguage: input.ctx.navigatorLanguage,
-          })
-          dispatch({ t: 'loginWithSms_sentCode', sent })
-        },
+        eff: Eff.batch([
+          playSound(APP_SOUND.tap),
+          async (dispatch) => {
+            const sent = await input.ctx.rpc['loginWithSms_sendCode']({
+              phoneNumber: phoneNumber.value,
+              preferredLanguage: input.ctx.navigatorLanguage,
+            })
+            dispatch({ n: 'loginWithSms', t: 'loginWithSms_sentCode', sent })
+          },
+        ]),
       }
     }
 
     case 'loginWithSms_sentCode': {
       const { sent } = input.msg
 
-      const modelNew: T = {
+      const modelNew: Model = {
         ...input.model,
         loginWithSms_sent: sent,
         loginWithSms_sentCodeAt: input.ctx.now,
@@ -178,14 +195,14 @@ export const update = <T extends Model>(input: {
       if (isErr(sent)) {
         return {
           model: modelNew,
-          msgOut: ShowErrorSmall.init(error, sent.error.error),
+          eff: showErrorSmall(error, sent.error.error),
         }
       }
 
       if (isErr(sent.value)) {
         return {
           model: modelNew,
-          msgOut: ShowErrorSmall.init(error),
+          eff: showErrorSmall(error),
         }
       }
 
@@ -198,14 +215,12 @@ export const update = <T extends Model>(input: {
           loginWithSms_verified: NotAsked,
           loginWithSms_code: '',
         },
-        msgOut: [
-          PushScreenCmd.init({ n: 'auth', t: 'auth_verifyCode', phoneNumber }),
-          ShowToastCmd.init(input.ctx.t('auth-sms.sent-code-to', PhoneNumber.format(phoneNumber)), {
-            duration: TimeSpan.seconds(4),
-          }),
-          FocusViewCmd.init(CODE_INPUT_VIEW_ID),
-          PlaySoundCmd.init(APP_SOUND.navForwardMin),
-        ],
+        eff: Eff.batch([
+          pushScreen({ n: 'auth', t: 'auth_verifyCode', phoneNumber }),
+          showToast(input.ctx.t('auth-sms.sent-code-to', PhoneNumber.format(phoneNumber)), 'info', TimeSpan.seconds(4)),
+          focus(CODE_INPUT_VIEW_ID),
+          playSound(APP_SOUND.navForwardMin),
+        ]),
       }
     }
 
@@ -224,7 +239,7 @@ export const update = <T extends Model>(input: {
             ...input.model,
             loginWithSms_codeError: input.ctx.t('auth-sms.please-enter-code'),
           },
-          msgOut: [PlaySoundCmd.init(APP_SOUND.alertErrorSm), FocusViewCmd.init(CODE_INPUT_VIEW_ID)],
+          eff: Eff.batch([playSound(APP_SOUND.alertErrorSm), focus(CODE_INPUT_VIEW_ID)]),
         }
       }
 
@@ -235,27 +250,29 @@ export const update = <T extends Model>(input: {
           ...input.model,
           loginWithSms_verified: RemoteResult.Loading,
         },
-        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
-        async eff(dispatch) {
-          const verified = await input.ctx.rpc.loginWithSms_verifyCode({
-            phoneNumber,
-            code: input.model.loginWithSms_code ?? '',
-            preferredLanguage: input.ctx.navigatorLanguage,
-          })
-          dispatch({ t: 'loginWithSms_verifiedCode', verified })
-        },
+        eff: Eff.batch([
+          playSound(APP_SOUND.tap),
+          async (dispatch) => {
+            const verified = await input.ctx.rpc.loginWithSms_verifyCode({
+              phoneNumber,
+              code: input.model.loginWithSms_code ?? '',
+              preferredLanguage: input.ctx.navigatorLanguage,
+            })
+            dispatch({ n: 'loginWithSms', t: 'loginWithSms_verifiedCode', verified })
+          },
+        ]),
       }
     }
 
     case 'loginWithSms_verifiedCode': {
       const { verified } = input.msg
-      const modelNew: T = { ...input.model, loginWithSms_verified: verified }
+      const modelNew: Model = { ...input.model, loginWithSms_verified: verified }
       const error = toVerifyErrorMessage({ model: modelNew, ctx: input.ctx }) ?? input.ctx.t('app.something-went-wrong')
 
       if (isErr(verified) || isErr(verified.value)) {
         return {
           model: modelNew,
-          msgOut: ShowErrorSmall.init(error),
+          eff: showErrorSmall(error),
         }
       }
 
@@ -293,12 +310,12 @@ const ViewSendCode = (input: { ctx: Ctx; model: Model; dispatch: (msg: MsgFronte
     ctx: input.ctx,
     title: input.ctx.t('auth-sms.send-code'),
     onBack: () => {
-      input.dispatch({ t: 'loginWithSms_clickedBackButton' })
+      input.dispatch({ n: 'loginWithSms', t: 'loginWithSms_clickedBackButton' })
     },
     submitText: input.ctx.t('auth-sms.send-code'),
     submitLoading: input.model.loginWithSms_sent?.t === 'loading',
     submitDisabled: false,
-    onSubmit: () => input.dispatch({ t: 'loginWithSms_clickedSendCodeButton' }),
+    onSubmit: () => input.dispatch({ n: 'loginWithSms', t: 'loginWithSms_clickedSendCodeButton' }),
     renderInputs: () =>
       h(Frag, {}, [
         h(Text, { style: sx({ textColor: 'white' }), text: input.model.loginWithSms_phone ?? '' }),
@@ -311,8 +328,9 @@ const ViewSendCode = (input: { ctx: Ctx; model: Model; dispatch: (msg: MsgFronte
           error: typeof input.model.loginWithSms_phoneError === 'string',
           value: input.model.loginWithSms_phone ?? '',
           helperText: input.model.loginWithSms_phoneError,
-          onChangeText: (value: string) => input.dispatch({ t: 'loginWithSms_inputtedPhoneNumber', phone: value }),
-          onClear: () => input.dispatch({ t: 'loginWithSms_clickedPhoneNumberClear' }),
+          onChangeText: (value: string) =>
+            input.dispatch({ n: 'loginWithSms', t: 'loginWithSms_inputtedPhoneNumber', phone: value }),
+          onClear: () => input.dispatch({ n: 'loginWithSms', t: 'loginWithSms_clickedPhoneNumberClear' }),
         }),
       ]),
   })
@@ -330,13 +348,14 @@ const ViewVerifyCode = (input: { ctx: Ctx; model: Model; dispatch: (msg: MsgFron
     ctx: input.ctx,
     title: input.ctx.t('auth-sms.verify-code'),
     onBack: () => {
-      input.dispatch({ t: 'loginWithSms_clickedBackButton' })
+      input.dispatch({ n: 'loginWithSms', t: 'loginWithSms_clickedBackButton' })
     },
     submitText: input.ctx.t('auth-sms.verify-code'),
     submitLoading: input.model.loginWithSms_verified?.t === 'loading',
     submitDisabled: false,
     onSubmit: () =>
       input.dispatch({
+        n: 'loginWithSms',
         t: 'loginWithSms_clickedVerifyCodeButton',
         phone: phoneNumber,
         code: input.model.loginWithSms_code ?? '',
@@ -359,8 +378,8 @@ const ViewVerifyCode = (input: { ctx: Ctx; model: Model; dispatch: (msg: MsgFron
           autoFocus: true,
           type: 'tel',
           value: input.model.loginWithSms_code ?? '',
-          onChangeText: (value) => input.dispatch({ t: 'loginWithSms_inputtedCode', code: value }),
-          onClear: () => input.dispatch({ t: 'loginWithSms_clickedCodeClear' }),
+          onChangeText: (value) => input.dispatch({ n: 'loginWithSms', t: 'loginWithSms_inputtedCode', code: value }),
+          onClear: () => input.dispatch({ n: 'loginWithSms', t: 'loginWithSms_clickedCodeClear' }),
         }),
       ]),
   })

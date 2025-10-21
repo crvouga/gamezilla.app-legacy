@@ -17,7 +17,7 @@ export const init = (input: { ctx: AppFrontendCtxBase }): { model: Model } => {
   }
 }
 
-export type Msg = { t: 'viewport_becameHidden' } | { t: 'viewport_becameVisible' }
+export type Msg = { n: 'viewport'; t: 'viewport_becameHidden' } | { n: 'viewport'; t: 'viewport_becameVisible' }
 
 const isMsg = (msg: unknown): msg is Msg => {
   return isAnyMsg(msg) && msg.t.startsWith('viewport_')
@@ -61,12 +61,14 @@ const visibilityStateSubscriptions = (input: { ctx: AppFrontendCtxBase }): Sub<M
     switch (state) {
       case 'hidden': {
         return {
+          n: 'viewport',
           t: 'viewport_becameHidden',
         }
       }
 
       case 'visible': {
         return {
+          n: 'viewport',
           t: 'viewport_becameVisible',
         }
       }

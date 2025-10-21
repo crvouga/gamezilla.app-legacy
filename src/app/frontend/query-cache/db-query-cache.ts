@@ -7,6 +7,7 @@ import { s } from '~/@/schema'
 import { Sub } from '~/@/sub'
 import { GotQueryCacheMsg } from '~/app/frontend/query-cache/got-query-cache-msg.$msg'
 import { QueryCache } from '.'
+import { QueryCacheMsg } from './query-cache-msgs'
 
 const init = <TEntity extends Record<string, unknown>, TRelated extends Record<string, unknown>>(config: {
   entityType: string
@@ -17,18 +18,16 @@ const init = <TEntity extends Record<string, unknown>, TRelated extends Record<s
 }) => {
   type Db = IDb.IDb<TEntity, TRelated>
 
-  const watch = <TMsg>(db: Db, queryInput: QueryInput<TEntity>, mapper: (m: unknown) => TMsg): Sub<TMsg> => {
+  const watch = <TMsg>(db: Db, queryInput: QueryInput<TEntity>, mapper: (m: QueryCacheMsg) => TMsg): Sub<TMsg> => {
     return db.liveQuery(queryInput, (result) => {
-      return mapper(
-        GotQueryCacheMsg.init({
-          entities: isOk(result) ? indexBy(result.value.entities.items, (c) => String(c[config.primaryKey])) : {},
-          query: queryInput,
-          results: isOk(result) ? result.value.entities.items.map((c) => String(c[config.primaryKey])) : [],
-          t: 'got-entities',
-          entityType: config.entityType,
-          lastUpdatedAtKey: String(config.lastUpdatedAtKey),
-        }),
-      )
+      return mapper({
+        entities: isOk(result) ? indexBy(result.value.entities.items, (c) => String(c[config.primaryKey])) : {},
+        query: queryInput,
+        results: isOk(result) ? result.value.entities.items.map((c) => String(c[config.primaryKey])) : [],
+        t: 'got-entities',
+        entityType: config.entityType,
+        lastUpdatedAtKey: String(config.lastUpdatedAtKey),
+      })
     })
   }
 

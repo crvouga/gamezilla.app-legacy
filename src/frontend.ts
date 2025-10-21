@@ -15,7 +15,6 @@ import { h, render } from './@/vdom'
 import { SwapVDomEngine } from './@/vdom/swap-vdom-engine'
 import { VdomImplWebStorage } from './@/vdom/vdom-impl-web-storage'
 import { Viewport } from './@/viewport/impl'
-import { AppReadyEvt } from './app/@/frontend/app-ready-evt.$msg'
 
 const logger = Logger.init({ t: 'console', namespace: ['frontend'], newLinePerMsg: false, maxLogLevel: 'debug' })
 
@@ -70,8 +69,6 @@ const main = async () => {
   })
 
   swapped.sub(program.render)
-
-  AppFrontend.externalMsgs.pub(AppReadyEvt.init())
 }
 
 main()

@@ -5,7 +5,7 @@ import { AppFrontendCtx, AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 
 export type ModelFrontend = {}
 
-export type MsgFrontend = { t: 'backendInstance_noop' }
+export type MsgFrontend = { n: 'backendInstance'; t: 'backendInstance_noop' }
 
 export type FrontendCtx = AppFrontendCtxBase | AppFrontendCtx
 

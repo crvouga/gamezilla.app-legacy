@@ -52,12 +52,12 @@ export const init = (_input: {}): { model: Model } => {
 }
 
 export type Msg =
-  | { t: 'toaster_timePassed' }
-  | { t: 'toaster_pressedDownOnToast'; toast: Toast }
-  | { t: 'toaster_pressedUpOnToast'; toast: Toast }
-  | { t: 'toaster_clickedDismissButton'; toastId: number }
-  | { t: 'toaster_clickedSeeError'; errorMsg: string; toastId: number }
-  | { t: 'toaster_gotCmd'; c: ToasterCmd }
+  | { n: 'toaster'; t: 'toaster_timePassed' }
+  | { n: 'toaster'; t: 'toaster_pressedDownOnToast'; toast: Toast }
+  | { n: 'toaster'; t: 'toaster_pressedUpOnToast'; toast: Toast }
+  | { n: 'toaster'; t: 'toaster_clickedDismissButton'; toastId: number }
+  | { n: 'toaster'; t: 'toaster_clickedSeeError'; errorMsg: string; toastId: number }
+  | { n: 'toaster'; t: 'toaster_gotCmd'; c: ToasterCmd }
 
 const isMsg = (msg: unknown): msg is Msg => isAnyMsg(msg) && msg.t.startsWith('toaster_')
 
@@ -184,13 +184,17 @@ export const subscriptions = (input: { model: Model }): Sub<Msg> => {
   return Sub.batch([
     //
     subscriptionsTimePassed(input),
-    Sub.map(toasterCmds, (c) => ({ t: 'toaster_gotCmd', c })),
+    Sub.map(toasterCmds, (c) => ({ t: 'toaster_gotCmd', c, n: 'toaster' })),
   ])
 }
 
 const subscriptionsTimePassed = (input: { model: Model }): Sub<Msg> => {
   if (!input.model.toaster_toast) return Sub.none()
-  return Time.interval('toasts', input.model.toaster_toast.duration, (): Msg => ({ t: 'toaster_timePassed' }))
+  return Time.interval(
+    'toasts',
+    input.model.toaster_toast.duration,
+    (): Msg => ({ n: 'toaster', t: 'toaster_timePassed' }),
+  )
 }
 
 export const View = (input: { model: Model; ctx: Ctx; dispatch: (m: Msg) => void }) => {
@@ -232,8 +236,8 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
         paddingTop: 4,
       }),
       edges: ['top'],
-      onPress: () => input.dispatch({ t: 'toaster_pressedDownOnToast', toast: input.toast }),
-      onPressOut: () => input.dispatch({ t: 'toaster_pressedUpOnToast', toast: input.toast }),
+      onPress: () => input.dispatch({ n: 'toaster', t: 'toaster_pressedDownOnToast', toast: input.toast }),
+      onPressOut: () => input.dispatch({ n: 'toaster', t: 'toaster_pressedUpOnToast', toast: input.toast }),
     },
     [
       h(
@@ -267,7 +271,12 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
               {
                 style: sx({ fontWeight: 'bold' }),
                 onPress: () =>
-                  input.dispatch({ t: 'toaster_clickedSeeError', errorMsg: errorMsg, toastId: input.toast.toastId }),
+                  input.dispatch({
+                    n: 'toaster',
+                    t: 'toaster_clickedSeeError',
+                    errorMsg: errorMsg,
+                    toastId: input.toast.toastId,
+                  }),
               },
               [h(Text, { text: 'See Error', style: sx({ textColor: 'white' }) })],
             ),
@@ -276,7 +285,12 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
             {
               role: 'button',
               'aria-label': input.ctx.t('app.dismiss'),
-              onPress: () => input.dispatch({ t: 'toaster_clickedDismissButton', toastId: input.toast.toastId }),
+              onPress: () =>
+                input.dispatch({
+                  n: 'toaster',
+                  t: 'toaster_clickedDismissButton',
+                  toastId: input.toast.toastId,
+                }),
             },
             [h(IconXMark, { style: sx({ size: 5, textColor: 'white' }) })],
           ),

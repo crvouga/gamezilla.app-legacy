@@ -9,17 +9,17 @@ import { h } from '~/@/vdom/h'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { Text } from '~/@/vdom/primitives/text'
 import { sx } from '~/@/vdom/style/sx'
-import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd.$msg'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
+import { playSound } from '~/app/@/frontend/sound-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
+import { back } from '~/app/frontend/current-screen/current-screen-cmd'
 import { APP_SOUND } from '../../@/frontend/app-sound'
 import { AppFrontendCtxBase } from '../../@/frontend/ctx'
 import { FrontendModule } from '../types'
-import { isMsgFrontend, ModelFrontend, MsgFrontend } from './types'
+import { ModelFrontend, MsgFrontend } from './types'
 
 const LANG_STORAGE_KEY = 'lang'
 
-const init = (input: { ctx: AppFrontendCtxBase }): { model: ModelFrontend } => {
+const init = (input: { ctx: AppFrontendCtxBase }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
   const initialLang = LanguageCodeISO_639_1.is(input.ctx.navigatorLanguage) ? input.ctx.navigatorLanguage : 'en'
 
   return {
@@ -30,34 +30,33 @@ const init = (input: { ctx: AppFrontendCtxBase }): { model: ModelFrontend } => {
   }
 }
 
-const update = <T extends ModelFrontend>(input: {
+const update = (input: {
   ctx: AppFrontendCtxBase
-  model: T
-  msg?: unknown
-  msgIn?: unknown
+  model: ModelFrontend
+  msg: MsgFrontend
 }): {
-  model: T
+  model: ModelFrontend
   eff?: Eff<MsgFrontend>
-  msgOut?: unknown[]
 } => {
-  if (!isMsgFrontend(input.msg)) return { model: input.model }
-
-  switch (input.msg?.t) {
+  switch (input.msg.t) {
     case 'lang_clickedBackButton': {
-      return { model: input.model, msgOut: [BackScreenCmd.init()] }
+      return { model: input.model, eff: back() }
     }
 
     case 'lang_clickedLang': {
-      const { lang } = input.msg
+      const lang = input.msg.lang
       return {
         model: {
           ...input.model,
           lang_lang: lang,
         },
-        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
-        async eff(_dispatch) {
-          await input.ctx.keyValueDb.set(LANG_STORAGE_KEY, lang)
-        },
+
+        eff: Eff.batch([
+          playSound(APP_SOUND.tap),
+          () => {
+            input.ctx.keyValueDb.set(LANG_STORAGE_KEY, lang)
+          },
+        ]),
       }
     }
 
@@ -83,7 +82,7 @@ const View: FrontendModule['View'] = (input) => {
     parentScreen: input.ctx.parentScreen,
     navBar: {
       title: input.ctx.t('l18n.language'),
-      back: { onPress: () => input.dispatch({ t: 'lang_clickedBackButton' }) },
+      back: { onPress: () => input.dispatch({ t: 'lang', c: { t: 'lang_clickedBackButton' } }) },
     },
     renderBody: () =>
       h(ScrollBox, { style: sx({ flexDirection: 'col', flex: 1 }) }, [
@@ -92,8 +91,8 @@ const View: FrontendModule['View'] = (input) => {
             key: langCode,
             ctx: input.ctx,
             langCode,
-            model: input.model,
-            dispatch: input.dispatch,
+            model: input.model.lang,
+            dispatch: (c) => input.dispatch({ t: 'lang', c }),
           }),
         ),
         h(Gutter, { variant: 'screen' }),

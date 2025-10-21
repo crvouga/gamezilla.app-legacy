@@ -6,11 +6,21 @@ import { ProfileFrontendCtx } from './@/frontend/ctx'
 import { ScreenProfileFrontend } from './screen-profile'
 import { ScreenUpdateUsernameFrontend } from './screen-update-username'
 
-type ModelFrontendBase = { profiles_profilesByUserId?: { [userId: UserId]: UserProfile } }
+export type ModelFrontend = {
+  profiles_profilesByUserId?: { [userId: UserId]: UserProfile }
+  screenUpdateUsername: ScreenUpdateUsernameFrontend.Model
+  screenProfile: ScreenProfileFrontend.ModelFrontend
+}
 
-export type ModelFrontend = ModelFrontendBase & ScreenProfileFrontend.ModelFrontend & ScreenUpdateUsernameFrontend.Model
-
-export type MsgFrontend = ScreenUpdateUsernameFrontend.Msg | ScreenProfileFrontend.Msg
+export type MsgFrontend =
+  | {
+      t: 'screenUpdateUsername'
+      c: ScreenUpdateUsernameFrontend.Msg
+    }
+  | {
+      t: 'screenProfile'
+      c: ScreenProfileFrontend.Msg
+    }
 
 export type BackendCtxModule = ProfileBackendCtx
 

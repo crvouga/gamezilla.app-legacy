@@ -55,10 +55,10 @@ export const init = (input: {
 }
 
 export type Msg =
-  | { t: 'currentScreen_screenChanged'; screen: Screen | null }
-  | { t: 'currentScreen_clickedLink'; screen: Screen }
-  | { t: 'currentScreen_clickedBack' }
-  | { t: 'currentScreen_gotCmd'; cmd: CurrentScreenCmd }
+  | { n: 'currentScreen'; t: 'currentScreen_screenChanged'; screen: Screen | null }
+  | { n: 'currentScreen'; t: 'currentScreen_clickedLink'; screen: Screen }
+  | { n: 'currentScreen'; t: 'currentScreen_clickedBack' }
+  | { n: 'currentScreen'; t: 'currentScreen_gotCmd'; cmd: CurrentScreenCmd }
 
 const isMsg = (msg: unknown): msg is Msg => {
   return isAnyMsg(msg) && msg.t.startsWith('currentScreen_')
@@ -207,8 +207,13 @@ const updateFromMsg: typeof update = (input) => {
 
 export const subscriptions = (input: { ctx: AppFrontendCtxBase }): Sub<Msg> => {
   return Sub.batch<Msg>([
-    Sub.map(currentScreenCmds, (cmd) => ({ t: 'currentScreen_gotCmd', cmd })),
+    Sub.map(currentScreenCmds, (cmd) => ({
+      n: 'currentScreen',
+      t: 'currentScreen_gotCmd',
+      cmd,
+    })),
     Sub.map(input.ctx.navigation.sub(SCREEN_QUERY_PARAM_NAME), (value) => ({
+      n: 'currentScreen',
       t: 'currentScreen_screenChanged',
       screen: decodeScreen(value),
     })),
