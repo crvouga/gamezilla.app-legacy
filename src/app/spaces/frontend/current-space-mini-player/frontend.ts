@@ -1,3 +1,4 @@
+import { Eff } from '~/@/eff'
 import { Avatar } from '~/@/ui/avatar'
 import { Clickable } from '~/@/ui/clickable'
 import { IconXMark } from '~/@/ui/icon'
@@ -11,27 +12,25 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
-import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
+import { pushScreen } from '~/app/@/frontend/push-screen-cmd.$msg'
+import { playSound } from '~/app/@/frontend/sound-cmd'
 import { GameCoverArt } from '../../game/games/cover-art'
 import { CurrentUserSpaceLoader } from '../../space/current-user-space-loader'
 import { Space } from '../../space/space'
 import { SpaceProjectionStarted } from '../../space/space-projection'
 import type { FrontendCtxModule, ModelFrontend, MsgFrontend } from '../../types'
-import { isMsgFrontend } from './types'
 
-const update = <T extends ModelFrontend>(input: {
+export type Msg = { t: 'currentSpaceMiniPlayer_clicked' }
+
+export const update = (input: {
   ctx: FrontendCtxModule
-  model: T
-  msg?: unknown
-  msgIn?: unknown
+  model: ModelFrontend
+  msg: Msg
 }): {
-  model: T
-  msgOut?: unknown[]
+  model: ModelFrontend
+  eff?: Eff<Msg>
 } => {
-  if (!isMsgFrontend(input.msg)) return input
-
-  switch (input.msg?.t) {
+  switch (input.msg.t) {
     case 'currentSpaceMiniPlayer_clicked': {
       if (!input.ctx.currentUser?.userId) return { model: input.model }
 
@@ -45,10 +44,10 @@ const update = <T extends ModelFrontend>(input: {
 
       return {
         model: input.model,
-        msgOut: [
-          PlaySoundCmd.init(APP_SOUND.navForwardMin),
-          PushScreenCmd.init({ n: 'spaces', t: 'spaces_space', spaceId: currentUsersSpaceId }),
-        ],
+        eff: Eff.batch([
+          playSound(APP_SOUND.navForwardMin),
+          pushScreen({ n: 'spaces', t: 'spaces_space', spaceId: currentUsersSpaceId }),
+        ]),
       }
     }
   }
@@ -123,13 +122,15 @@ const ViewActionButton = (props: {
           renderIcon: (iconInput) => h(IconXMark, iconInput),
           label: props.ctx.t('spaces.end'),
           size: 'lg',
-          onPress: () => props.dispatch({ t: 'endSpace_clickedEndSpaceButton', spaceId: props.spaceId }),
+          onPress: () =>
+            props.dispatch({ t: 'endSpace', c: { n: 'endSpace', t: 'clickedEndSpaceButton', spaceId: props.spaceId } }),
         })
       : h(IconButton, {
           renderIcon: (iconInput) => h(IconXMark, iconInput),
           label: props.ctx.t('spaces.leave'),
           size: 'lg',
-          onPress: () => props.dispatch({ t: 'leaveSpace_clickedLeaveSpaceButton', spaceId: props.spaceId }),
+          onPress: () =>
+            props.dispatch({ t: 'leaveSpace', c: { t: 'leaveSpace_clickedLeaveSpaceButton', spaceId: props.spaceId } }),
         }),
   ])
 }
@@ -151,7 +152,7 @@ const ViewRoot = (input: { children: VDom[] }) => {
   )
 }
 
-const View = (input: {
+export const View = (input: {
   key?: string
   ctx: AppFrontendCtx
   model: ModelFrontend
@@ -178,7 +179,7 @@ const View = (input: {
           alignItems: 'center',
           gap: 4,
         }),
-        onPress: () => input.dispatch({ t: 'currentSpaceMiniPlayer_clicked' }),
+        onPress: () => input.dispatch({ t: 'currentSpaceMiniPlayer', c: { t: 'currentSpaceMiniPlayer_clicked' } }),
       },
       [
         h(ViewSpaceImage, {
@@ -197,12 +198,7 @@ const View = (input: {
       isCurrentUserHost,
       spaceId: space.spaceId,
       ctx: input.ctx,
-      dispatch: input.dispatch,
+      dispatch: (m) => input.dispatch({ t: 'currentSpaceMiniPlayer', c: m }),
     }),
   ])
-}
-
-export const CurrentSpaceMiniPlayer = {
-  update,
-  View,
 }

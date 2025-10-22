@@ -1,1 +1,1 @@
-export * as StartSpaceTypes from './types'
+export * as StartSpaceFrontend from './frontend'

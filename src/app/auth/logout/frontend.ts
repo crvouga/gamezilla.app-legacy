@@ -18,7 +18,7 @@ export type ModelFrontend = {
   logout_opened?: 'logged-out' | null
 }
 
-export const init = (_input: {}): { model: ModelFrontend } => {
+export const init = (_input: {}): { model: ModelFrontend; eff?: Eff<Msg> } => {
   return {
     model: {
       logout_request: NotAsked,

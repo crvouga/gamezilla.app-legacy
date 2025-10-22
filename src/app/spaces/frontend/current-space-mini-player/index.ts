@@ -1,1 +1,1 @@
-export * as CurrentSpaceMiniPlayerTypes from './types'
+export * as CurrentSpaceMiniPlayerFrontend from './frontend'

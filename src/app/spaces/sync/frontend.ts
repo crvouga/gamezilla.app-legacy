@@ -1,53 +1,75 @@
 import { Eff } from '~/@/eff'
-import { isErr } from '~/@/result'
+import { EventSourced } from '~/@/event-sourced'
+import { WithEventId, WithEventMeta } from '~/@/event-sourced/event'
+import { Result } from '~/@/result'
+import { RPCError } from '~/@/rpc/error'
 import { Sub } from '~/@/sub'
-import { andThen } from '~/app/@/frontend/and-then'
-import { BackendConnectedEvt } from '~/app/@/frontend/backend-connected-evt.$msg'
+import { throttleByKey } from '~/@/throttle/throttle'
+import { TimeSpan } from '~/@/time/time-span'
+import { SpaceId } from '~/app/@/data/space-id'
+import { GotQueryCacheMsg } from '~/app/frontend/query-cache/got-query-cache-msg.$msg'
 import { GotSpaceMsg } from '../@/got-space-msg.$msg'
 import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
+import { MsgSpace, spaceMsgs } from '../space/msg-space'
 import { Space } from '../space/space'
+import { ISpaceDb } from '../space/space-db'
 import { SpaceDbQueryCache } from '../space/space-db-query-cache'
 import { FrontendCtxModule, ModelFrontend } from '../types'
-import { isMsgFrontend, MsgFrontend } from './types'
+import { queryCacheMsgs } from '~/app/frontend/query-cache/query-cache-msgs'
 
-const update = <T extends ModelFrontend>(input: {
+export type Msg =
+  | {
+      t: 'sync_gotMsgSpaceFromBackend'
+      c: WithEventMeta<MsgSpace>
+    }
+  | {
+      t: 'sync_gotMsgSpaceFromFrontend'
+      c: WithEventId<MsgSpace>
+    }
+  | {
+      t: 'sync_synced'
+      synced: Result<RPCError, { space: Space }>
+    }
+
+export const update = (input: {
   ctx: FrontendCtxModule
-  model: T
-  msg?: unknown
-  msgIn?: unknown
+  model: ModelFrontend
+  msg: Msg
 }): {
-  model: T
-  msgOut?: unknown[]
-  eff?: Eff<MsgFrontend>
+  model: ModelFrontend
+  eff?: Eff<Msg>
 } => {
-  return andThen<T, MsgFrontend>(
-    { model: input.model },
-    (model) => updateSync({ ...input, model }),
-    (model) => updateSynced({ ...input, model }),
-    (model) => publishMsgSpace({ ...input, model }),
-    (model) => outputMsgSpaces({ ...input, model }),
-  )
-}
-
-const outputMsgSpaces: typeof update = (input) => {
-  if (!isMsgFrontend(input.msg)) return { model: input.model }
-
   switch (input.msg?.t) {
-    case 'sync_gotMsgSpace': {
+    case 'sync_gotMsgSpaceFromBackend': {
+      const msgSpace = input.msg.c
       return {
         model: input.model,
-        msgSpace: [input.msg.c],
+        eff: () => {
+          spaceMsgs.pub(msgSpace)
+        },
+      }
+    }
+    case 'sync_gotMsgSpaceFromFrontend': {
+    }
+    case 'sync_synced': {
+      return {
+        model: {
+          ...input.model,
+        },
       }
     }
   }
-
-  return { model: input.model }
 }
 
-const publishMsgSpace: typeof update = (input) => {
-  if (!GotSpaceMsg.is(input.msgIn)) return { model: input.model }
-
-  const msgSpace = input.msgIn.c
+const updateSendToBackend = (input: {
+  ctx: FrontendCtxModule
+  model: ModelFrontend
+  msgSpace: WithEventId<MsgSpace>
+}): {
+  model: ModelFrontend
+  eff?: Eff<Msg>
+} => {
+  const msgSpace = input.msgSpace
 
   if (!msgSpace) return { model: input.model }
 
@@ -67,51 +89,70 @@ const publishMsgSpace: typeof update = (input) => {
   }
 }
 
-const updateSync: typeof update = (input) => {
-  if (BackendConnectedEvt.is(input.msgIn)) {
-    const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
+const updatePersist = (input: {
+  ctx: FrontendCtxModule
+  model: ModelFrontend
+  msgSpace: WithEventId<MsgSpace>
+}): {
+  model: ModelFrontend
+  eff?: Eff<Msg>
+} => {
+  const msgSpace = input.msgSpace
 
-    if (!currentUserSpace) return { model: input.model }
+  const space = SpaceDbQueryCache.entity(input.ctx, msgSpace.spaceId) ?? Space.init
 
-    return {
-      model: input.model,
-      async eff(dispatch) {
-        const synced = await input.ctx.rpc.spaces_sync({ space: currentUserSpace })
-        dispatch({ t: 'sync_synced', synced })
+  const spaceNew = Space.append(space, msgSpace)
+
+  return {
+    model: input.model,
+    eff: Eff.batch([
+      () =>
+        queryCacheMsgs.pub({
+          t: 'got-entity',
+          id: msgSpace.spaceId,
+          entityType: 'space',
+          entity: spaceNew,
+          lastUpdatedAtKey: Space.key('lastUpdatedAt'),
+        }),
+      () => {
+        switch (msgSpace.t) {
+          case 'game': {
+            upsertSpaceThrottled(input.ctx.spaceDb, msgSpace.spaceId, spaceNew)
+            return
+          }
+          default: {
+            upsertSpace(input.ctx.spaceDb, msgSpace.spaceId, spaceNew)
+            return
+          }
+        }
       },
-    }
+    ]),
   }
-
-  return { model: input.model }
 }
 
-const updateSynced: typeof update = (input) => {
-  if (!isMsgFrontend(input.msg)) return { model: input.model }
-
-  switch (input.msg?.t) {
-    case 'sync_synced': {
-      const { synced } = input.msg
-
-      if (isErr(synced)) return { model: input.model }
-
-      const space = Space.toSpaceStarted(synced.value.space)
-
-      return { model: { ...input.model, spaces: [space] } }
-    }
-  }
-
-  return { model: input.model }
+const upsertSpace = async (spaceDb: ISpaceDb, _spaceId: SpaceId, space: Space) => {
+  await spaceDb.upsert(EventSourced.startFromLatestSnapshot(space))
 }
 
-const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<MsgFrontend> => {
+const upsertSpaceThrottled = throttleByKey({
+  fn: upsertSpace,
+  keyFn: (_spaceDb, spaceId, _space) => spaceId,
+  throttle: TimeSpan.seconds(3),
+  behavior: 'use-latest',
+})
+
+export const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<Msg> => {
+  return Sub.batch([subscriptionsMsgSpaceFromFrontend(input), subscriptionsMsgSpaceFromBackend(input)])
+}
+
+const subscriptionsMsgSpaceFromFrontend = (_input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<Msg> => {
+  return Sub.map(spaceMsgs, (c) => ({ t: 'sync_gotMsgSpaceFromFrontend', c }))
+}
+
+const subscriptionsMsgSpaceFromBackend = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<Msg> => {
   const currentUserSpaceId = CurrentUserSpaceLoader.toCurrentUserSpaceId(input.ctx)
 
   if (!currentUserSpaceId) return Sub.none()
 
-  return input.ctx.topic.spaces_msg.sub(currentUserSpaceId, (c) => ({ t: 'sync_gotMsgSpace', c }))
-}
-
-export const SyncFrontend = {
-  update,
-  subscriptions,
+  return input.ctx.topic.spaces_msg.sub(currentUserSpaceId, (c) => ({ t: 'sync_gotMsgSpaceFromFrontend', c }))
 }

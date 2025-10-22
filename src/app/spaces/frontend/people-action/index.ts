@@ -1,1 +1,1 @@
-export * as PeopleActionTypes from './types'
+export * as PeopleActionFrontend from './frontend'

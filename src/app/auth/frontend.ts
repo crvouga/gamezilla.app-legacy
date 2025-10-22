@@ -62,6 +62,12 @@ export const init = (input: { ctx: Ctx }): { model: ModelFrontend; eff?: Eff<Msg
       loginWithSms: loginWithSms.model,
       continueAsGuest: continueAsGuest.model,
     },
+    eff: Eff.batch<MsgFrontend>([
+      Eff.tag('currentUser', currentUser.eff),
+      Eff.tag('logout', logout.eff),
+      Eff.tag('loginWithSms', loginWithSms.eff),
+      Eff.tag('continueAsGuest', continueAsGuest.eff),
+    ]),
   }
 }
 

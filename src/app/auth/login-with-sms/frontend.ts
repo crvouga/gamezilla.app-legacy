@@ -40,7 +40,7 @@ export type Model = {
   loginWithSms_verifiedAt?: UnixMs | null
 }
 
-export const init = (_input: {}): { model: Model } => {
+export const init = (_input: {}): { model: Model; eff?: Eff<MsgFrontend> } => {
   return {
     model: {
       loginWithSms_phone: undefined,

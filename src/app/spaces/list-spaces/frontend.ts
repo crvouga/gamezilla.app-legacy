@@ -6,8 +6,7 @@ import { h } from '~/@/vdom/h'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { sx } from '~/@/vdom/style/sx'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
-import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
+import { pushScreen } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ActionCreateProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { Space } from '../space/space'
@@ -15,9 +14,17 @@ import { SpaceDbQueryCache } from '../space/space-db-query-cache'
 import { SpaceDbQuery } from '../space/space-db/interface-query'
 import { FrontendCtxModule, ModelFrontend } from '../types'
 import { ViewSpaceCard } from './space-card/space-card'
-import { isMsgFrontend, MsgFrontend } from './types'
+
+import { Eff } from '~/@/eff'
+import { SpaceId } from '~/app/@/data/space-id'
+import { playSound } from '~/app/@/frontend/sound-cmd'
+import { GotQueryCacheMsg } from '~/app/frontend/query-cache/got-query-cache-msg.$msg'
 
 export const TEST_ID_SPACE_LIST_SCREEN = 'spaces/space-list-screen'
+
+export type Msg =
+  | { t: 'listSpaces_clickedSpaceCard'; spaceId: SpaceId }
+  | { t: 'listSpaces_gotMsgSpace'; c: GotQueryCacheMsg }
 
 const toQuery = (): SpaceDbQuery => {
   return {
@@ -29,40 +36,39 @@ const toQuery = (): SpaceDbQuery => {
   }
 }
 
-const update = <T extends ModelFrontend>(input: {
+const update = (input: {
   ctx: FrontendCtxModule
-  model: T
-  msg?: unknown
-  msgIn?: unknown
+  model: ModelFrontend
+  msg: Msg
 }): {
-  model: T
-  msgOut?: unknown[]
+  model: ModelFrontend
+  eff: Eff<Msg>
 } => {
-  if (!isMsgFrontend(input.msg)) return input
-
   switch (input.msg.t) {
     case 'listSpaces_clickedSpaceCard': {
       return {
         model: input.model,
-        msgOut: [
-          PushScreenCmd.init({ n: 'spaces', t: 'spaces_space', spaceId: input.msg.spaceId }),
-          PlaySoundCmd.init(APP_SOUND.navForwardMin),
-        ],
-      }
-    }
-    case 'listSpaces_gotMsgOut': {
-      return {
-        model: input.model,
-        msgOut: [input.msg.msgOut],
+        eff: Eff.batch([
+          pushScreen({ n: 'spaces', t: 'spaces_space', spaceId: input.msg.spaceId }),
+          playSound(APP_SOUND.navForwardMin),
+        ]),
       }
     }
   }
 }
 
+const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<Msg> => {
+  return SpaceDbQueryCache.sub(
+    input.ctx.spaceDb,
+    toQuery(),
+    (c): Msg => ({ t: 'listSpaces_gotMsgSpace', c: c as GotQueryCacheMsg }),
+  )
+}
+
 const View = (input: {
   ctx: FrontendCtxModule
   model: ModelFrontend
-  dispatch: (msg: MsgFrontend) => void
+  dispatch: (msg: Msg) => void
   slots: {
     actionCreate: ActionCreateProps | null
   }
@@ -122,10 +128,6 @@ const View = (input: {
       )
     },
   })
-}
-
-const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<MsgFrontend> => {
-  return SpaceDbQueryCache.sub(input.ctx.spaceDb, toQuery(), (c) => ({ t: 'listSpaces_gotMsgOut', msgOut: c }))
 }
 
 export const ListSpacesFrontend = {

@@ -99,7 +99,13 @@ const takeEvery = <A>(abortSignal: AbortSignal, sub: Sub<A>, callback: (a: A) =>
 const where = <A, B extends A>(sub: Sub<A>, guard: (msg: A) => msg is B): Sub<B> => {
   return {
     ...sub,
-    sub: (subscriber) => sub.sub((msg) => (guard(msg) ? subscriber(msg) : undefined)),
+    sub: (subscriber) => {
+      return sub.sub((msg) => {
+        if (guard(msg)) {
+          subscriber(msg)
+        }
+      })
+    },
   }
 }
 
