@@ -17,8 +17,6 @@ import { MsgSpace, spaceMsgs } from '../space/msg-space'
 import { Space } from '../space/space'
 import { FrontendCtxModule, ModelFrontend } from '../types'
 
-export type Model = {}
-
 export type Msg =
   | { n: 'endSpace'; t: 'clickedEndSpaceButton'; spaceId: SpaceId }
   | { n: 'endSpace'; t: 'submittedEndSpaceForm'; spaceId: SpaceId }

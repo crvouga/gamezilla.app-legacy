@@ -1,3 +1,4 @@
+import { IDb } from '~/@/db/interface'
 import { Sub } from '~/@/sub'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
@@ -5,10 +6,18 @@ import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { FrontendCtxModule, ModelFrontend, MsgFrontend } from '../types'
 import { Space } from './space'
 import { SpaceDbQueryCache } from './space-db-query-cache'
-import { SpaceDbQuery } from './space-db/interface-query'
+import { ISpaceDb } from './space-db/interface'
 
-const toQuery = (currentUserId: UserId): SpaceDbQuery => {
-  return { where: { hostId: { '=': currentUserId }, type: { '=': 'started' } } }
+const toQuery = (currentUserId: UserId): IDb.InferQueryInput<typeof ISpaceDb.schema> => {
+  return {
+    where: {
+      op: 'and',
+      clauses: [
+        { op: '=', column: 'hostId', value: currentUserId },
+        { op: '=', column: 'type', value: 'started' },
+      ],
+    },
+  }
 }
 
 const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<MsgFrontend> => {

@@ -1,12 +1,15 @@
-import * as ImplSqlDb from './impl-sql-db'
+import { ImplSql } from './impl-sql'
 import type { ISpaceDb } from './interface'
 
-export type Config = ImplSqlDb.Config
+export type SpaceDb = ImplSql
 
-export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
-  switch (config.t) {
-    case 'sql-db': {
-      return ImplSqlDb.SpaceDb(config)
-    }
+const init = (self: SpaceDb): ISpaceDb => {
+  switch (self.t) {
+    case 'sql-db':
+      return ImplSql.init(self)
   }
+}
+
+export const SpaceDb = {
+  init,
 }

@@ -1,24 +1,25 @@
+import { IDb } from '~/@/db/interface'
 import { Sub } from '~/@/sub'
 import { LoadingState } from '~/@/ui/spinner-block'
 import { h } from '~/@/vdom/h'
 import type { SpaceId } from '~/app/@/data/space-id'
 import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-button'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { EndSpaceFrontend } from '../end-space/frontend'
+import { EndSpaceFrontend } from '../end-space'
 import { ExitSpaceAction } from '../frontend/exit-space-action/frontend'
 import { PeopleActionFrontend } from '../frontend/people-action/frontend'
 import { GameFrontend } from '../game/frontend'
-import { JoinSpaceFrontend } from '../join-space/frontend'
+import { JoinSpaceFrontend } from '../join-space'
 import { LeaveSpaceFrontend } from '../leave-space/frontend'
 import type { FrontendCtxModule, ModelFrontend, MsgFrontend } from '../types'
 import { Space } from './space'
 import { SpaceDbQueryCache } from './space-db-query-cache'
-import { SpaceDbQuery } from './space-db/interface-query'
+import { ISpaceDb } from './space-db/interface'
 
 export const TEST_ID_SPACE_SCREEN = 'spaces/space-screen'
 
-const toQuery = (spaceId: SpaceId): SpaceDbQuery => {
-  return { where: { spaceId: { '=': spaceId } } }
+const toQuery = (spaceId: SpaceId): IDb.InferQueryInput<typeof ISpaceDb.schema> => {
+  return { where: { op: '=', column: 'id', value: spaceId } }
 }
 
 const View = (props: {
@@ -41,7 +42,11 @@ const View = (props: {
     }
 
     case 'ended': {
-      return h(EndSpaceFrontend.ViewSpaceEnded, props)
+      return h(EndSpaceFrontend.ViewSpaceEnded, {
+        ctx: props.ctx,
+        dispatch: (c) => props.dispatch({ t: 'endSpace', c }),
+        model: props.model,
+      })
     }
 
     case 'started': {

@@ -1,1 +1,1 @@
-export * as ListSpacesTypes from './types'
+export * as ListSpacesFrontend from './frontend'

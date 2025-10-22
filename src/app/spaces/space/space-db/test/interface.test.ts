@@ -12,34 +12,34 @@ describe('SpaceDb', () => {
     for (const f of await Fixtures()) {
       const spaceId = Space.toSpaceStarted(f.space)?.spaceId ?? SpaceId.generate()
 
-      const before = await f.spacesDb.query({ where: { spaceId: { '=': spaceId } } })
+      const before = await f.spacesDb.query({ where: { op: '=', column: 'id', value: spaceId } })
 
-      unwrap(await f.spacesDb.upsert(f.space))
+      unwrap(await f.spacesDb.upsert({ entities: [f.space] }))
 
-      const after = await f.spacesDb.query({ where: { spaceId: { '=': spaceId } } })
+      const after = await f.spacesDb.query({ where: { op: '=', column: 'id', value: spaceId } })
 
-      expect(unwrap(before).items).toEqual([])
-      expect(unwrap(after).items).toEqual([f.space])
+      expect(unwrap(before).entities.items).toEqual([])
+      expect(unwrap(after).entities.items).toEqual([f.space])
     }
   })
 
   test("multiple spaces don't collide", async () => {
     for (const f1 of await Fixtures()) {
       for (const f2 of await Fixtures()) {
-        unwrap(await f1.spacesDb.upsert(f1.space))
-        unwrap(await f2.spacesDb.upsert(f2.space))
-        const after1 = unwrap(await f1.spacesDb.query({ where: { spaceId: { '=': f1.spaceId } } }))
-        const after2 = unwrap(await f2.spacesDb.query({ where: { spaceId: { '=': f2.spaceId } } }))
-        expect(after1.items).toEqual([f1.space])
-        expect(after2.items).toEqual([f2.space])
+        unwrap(await f1.spacesDb.upsert({ entities: [f1.space] }))
+        unwrap(await f2.spacesDb.upsert({ entities: [f2.space] }))
+        const after1 = unwrap(await f1.spacesDb.query({ where: { op: '=', column: 'id', value: f1.spaceId } }))
+        const after2 = unwrap(await f2.spacesDb.query({ where: { op: '=', column: 'id', value: f2.spaceId } }))
+        expect(after1.entities.items).toEqual([f1.space])
+        expect(after2.entities.items).toEqual([f2.space])
       }
     }
   })
 
   test('upsert updates existing records', async () => {
     for (const f of await Fixtures()) {
-      unwrap(await f.spacesDb.upsert(f.space))
-      const before = unwrap(await f.spacesDb.query({ where: { spaceId: { '=': f.spaceId } } }))
+      unwrap(await f.spacesDb.upsert({ entities: [f.space] }))
+      const before = unwrap(await f.spacesDb.query({ where: { op: '=', column: 'id', value: f.spaceId } }))
 
       const modifiedSpace = pipe(f.space, (model) =>
         Space.append(
@@ -48,11 +48,13 @@ describe('SpaceDb', () => {
         ),
       )
 
-      unwrap(await f.spacesDb.upsert(modifiedSpace))
-      const after = unwrap(await f.spacesDb.query({ where: { spaceId: { '=': f.spaceId } } }))
+      unwrap(await f.spacesDb.upsert({ entities: [modifiedSpace] }))
+      const after = unwrap(await f.spacesDb.query({ where: { op: '=', column: 'id', value: f.spaceId } }))
 
-      expect((before.items[0]?.events.length ?? 0) < (after.items[0]?.events.length ?? 0)).toEqual(true)
-      expect(after.items).toEqual([modifiedSpace])
+      expect((before.entities.items[0]?.events.length ?? 0) < (after.entities.items[0]?.events.length ?? 0)).toEqual(
+        true,
+      )
+      expect(after.entities.items).toEqual([modifiedSpace])
     }
   })
 })

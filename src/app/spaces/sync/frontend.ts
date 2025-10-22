@@ -7,15 +7,14 @@ import { Sub } from '~/@/sub'
 import { throttleByKey } from '~/@/throttle/throttle'
 import { TimeSpan } from '~/@/time/time-span'
 import { SpaceId } from '~/app/@/data/space-id'
-import { GotQueryCacheMsg } from '~/app/frontend/query-cache/got-query-cache-msg.$msg'
-import { GotSpaceMsg } from '../@/got-space-msg.$msg'
+import { andThen } from '~/app/@/frontend/and-then'
+import { queryCacheMsgs } from '~/app/frontend/query-cache/query-cache-msgs'
 import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
 import { MsgSpace, spaceMsgs } from '../space/msg-space'
 import { Space } from '../space/space'
 import { ISpaceDb } from '../space/space-db'
 import { SpaceDbQueryCache } from '../space/space-db-query-cache'
 import { FrontendCtxModule, ModelFrontend } from '../types'
-import { queryCacheMsgs } from '~/app/frontend/query-cache/query-cache-msgs'
 
 export type Msg =
   | {
@@ -50,6 +49,12 @@ export const update = (input: {
       }
     }
     case 'sync_gotMsgSpaceFromFrontend': {
+      const msgSpace = input.msg.c
+      return andThen(
+        input,
+        (model) => updateSendToBackend({ ...input, model, msgSpace }),
+        (model) => updatePersist({ ...input, model, msgSpace }),
+      )
     }
     case 'sync_synced': {
       return {
@@ -115,20 +120,27 @@ const updatePersist = (input: {
           lastUpdatedAtKey: Space.key('lastUpdatedAt'),
         }),
       () => {
-        switch (msgSpace.t) {
-          case 'game': {
-            upsertSpaceThrottled(input.ctx.spaceDb, msgSpace.spaceId, spaceNew)
-            return
-          }
-          default: {
-            upsertSpace(input.ctx.spaceDb, msgSpace.spaceId, spaceNew)
-            return
-          }
-        }
+        persistSpace({ ctx: input.ctx, msgSpace, space: spaceNew })
       },
     ]),
   }
 }
+
+const persistSpace =
+  (input: { ctx: FrontendCtxModule; msgSpace: WithEventId<MsgSpace>; space: Space }): Eff =>
+  () => {
+    const { ctx, msgSpace, space } = input
+    switch (msgSpace.t) {
+      case 'game': {
+        upsertSpaceThrottled(ctx.spaceDb, msgSpace.spaceId, space)
+        return
+      }
+      default: {
+        upsertSpace(ctx.spaceDb, msgSpace.spaceId, space)
+        return
+      }
+    }
+  }
 
 const upsertSpace = async (spaceDb: ISpaceDb, _spaceId: SpaceId, space: Space) => {
   await spaceDb.upsert(EventSourced.startFromLatestSnapshot(space))

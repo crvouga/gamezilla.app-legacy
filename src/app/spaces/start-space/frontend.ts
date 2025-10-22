@@ -13,17 +13,17 @@ import { MsgSpace, spaceMsgs } from '../space/msg-space'
 import { Space } from '../space/space'
 import { FrontendCtxModule, ModelFrontend } from '../types'
 
-export type MsgFrontend =
+export type Msg =
   | { t: 'startSpace_clickedStartSpaceButton'; spaceId: SpaceId }
   | { t: 'startSpace_gotMsgSpace'; c: MsgSpace }
 
 export const update = (input: {
   ctx: FrontendCtxModule
   model: ModelFrontend
-  msg: MsgFrontend
+  msg: Msg
 }): {
   model: ModelFrontend
-  eff?: Eff<MsgFrontend>
+  eff?: Eff<Msg>
 } => {
   switch (input.msg?.t) {
     case 'startSpace_clickedStartSpaceButton': {
@@ -77,7 +77,7 @@ export const update = (input: {
 export const viewStartSpaceButton = (input: {
   ctx: FrontendCtxModule
   model: ModelFrontend
-  dispatch: (msg: MsgFrontend) => void
+  dispatch: (msg: Msg) => void
 }): ActionCreateProps | null => {
   if (!input.ctx.currentUser?.userId) return null
   const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)

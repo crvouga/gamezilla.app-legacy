@@ -20,7 +20,9 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
 
       const found = await config.ctx.spaceDb.query({
         where: {
-          spaceId: { '=': spaceId },
+          op: '=',
+          column: 'id',
+          value: spaceId,
         },
       })
 
@@ -28,7 +30,7 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
         return { space: input.space }
       }
 
-      const existing = found.value.items[0] ?? null
+      const existing = found.value.entities.items[0] ?? null
 
       if (!existing) {
         return { space: input.space }
@@ -36,7 +38,7 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
 
       const spaceNew = EventSourced.mergeLeft(existing, input.space)
 
-      const upserted = await config.ctx.spaceDb.upsert(spaceNew)
+      const upserted = await config.ctx.spaceDb.upsert({ entities: [spaceNew] })
 
       if (isErr(upserted)) {
         return { space: input.space }
@@ -64,15 +66,16 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
     behavior: 'use-latest',
     throttle: TimeSpan.seconds(3),
     keyFn: (spaceId, _space) => spaceId,
-    fn: (_spaceId: SpaceId, space: Space) => ctx.spaceDb.upsert(space),
+    fn: (_spaceId: SpaceId, space: Space) => ctx.spaceDb.upsert({ entities: [space] }),
   })
 
   Sub.takeEvery(s, msgSpaceSub, async (msgSpace) => {
     if (!spaceCache.has(msgSpace.spaceId)) {
       const got = await ctx.spaceDb.query({
         where: {
-          spaceId: { '=': msgSpace.spaceId },
-          hostId: undefined,
+          op: '=',
+          column: 'id',
+          value: msgSpace.spaceId,
         },
         limit: 1,
         offset: 0,
@@ -80,7 +83,7 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
 
       if (isErr(got)) return
 
-      spaceCache.set(msgSpace.spaceId, got.value.items[0] ?? Space.init)
+      spaceCache.set(msgSpace.spaceId, got.value.entities.items[0] ?? Space.init)
     }
 
     const space = spaceCache.get(msgSpace.spaceId) ?? Space.init

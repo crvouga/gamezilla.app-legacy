@@ -6,17 +6,20 @@ import { UserId } from '~/app/@/data/user-id'
 import type { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { EndSpaceFrontend } from './end-space'
-import { CurrentSpaceMiniPlayerTypes } from './frontend/current-space-mini-player'
-import { ExitSpaceActionTypes } from './frontend/exit-space-action'
-import { PeopleActionTypes } from './frontend/people-action'
-import { GameTypes } from './game'
-import { JoinSpaceTypes } from './join-space'
-import { LeaveSpaceTypes } from './leave-space'
-import { ListSpacesTypes } from './list-spaces'
+import { CurrentSpaceMiniPlayerFrontend } from './frontend/current-space-mini-player'
+import { ExitSpaceActionFrontend } from './frontend/exit-space-action'
+import { PeopleActionFrontend } from './frontend/people-action'
+import { GameFrontend } from './game'
+import { GamesBackendCtxModule } from './game/backend'
+import { JoinSpaceFrontend } from './join-space'
+import { LeaveSpaceFrontend } from './leave-space'
+import { ListSpacesFrontend } from './list-spaces'
 import { ISpaceDb } from './space/space-db/interface'
 import { SpaceProjectionStarted } from './space/space-projection'
-import { StartSpaceTypes } from './start-space'
+import { StartSpaceFrontend } from './start-space'
 import { SyncFrontend, SyncTypes } from './sync'
+import { GamesTypes } from './game/games'
+import { SpaceId } from '../@/data/space-id'
 
 type Opened =
   | null
@@ -26,23 +29,24 @@ type Opened =
   | 'join-space.person-preview-surface'
   | 'leave-space.confirmation'
 
-type ModelFrontendBase = {
+export type ModelFrontend = {
   spaces_openedPreviewUserId: UserId | null
   spaces_opened: Opened
+  spaces_games: {
+    [spaceId: SpaceId]: GamesTypes.ModelFrontend
+  }
 }
 
-export type ModelFrontend = ModelFrontendBase & GameTypes.ModelFrontend & EndSpaceFrontend.Model
-
 export type MsgFrontend =
-  | { t: 'listSpaces'; c: ListSpacesTypes.MsgFrontend }
-  | { t: 'peopleAction'; c: PeopleActionTypes.MsgFrontend }
-  | { t: 'leaveSpace'; c: LeaveSpaceTypes.MsgFrontend }
+  | { t: 'listSpaces'; c: ListSpacesFrontend.Msg }
+  | { t: 'peopleAction'; c: PeopleActionFrontend.Msg }
+  | { t: 'leaveSpace'; c: LeaveSpaceFrontend.Msg }
   | { t: 'endSpace'; c: EndSpaceFrontend.Msg }
-  | { t: 'game'; c: GameTypes.MsgFrontend }
-  | { t: 'joinSpace'; c: JoinSpaceTypes.MsgFrontend }
-  | { t: 'exitSpaceAction'; c: ExitSpaceActionTypes.MsgFrontend }
-  | { t: 'startSpace'; c: StartSpaceTypes.MsgFrontend }
-  | { t: 'currentSpaceMiniPlayer'; c: CurrentSpaceMiniPlayerTypes.MsgFrontend }
+  | { t: 'game'; c: GameFrontend.Msg }
+  | { t: 'joinSpace'; c: JoinSpaceFrontend.Msg }
+  | { t: 'exitSpaceAction'; c: ExitSpaceActionFrontend.Msg }
+  | { t: 'startSpace'; c: StartSpaceFrontend.Msg }
+  | { t: 'currentSpaceMiniPlayer'; c: CurrentSpaceMiniPlayerFrontend.Msg }
   | { t: 'sync'; c: SyncFrontend.Msg }
 
 export const topicContract = TopicContract.combine([SyncTypes.topicContract])
@@ -57,7 +61,7 @@ export type FrontendCtxModule = AppFrontendCtxBase & {
 }
 
 export type BackendCtxModule = AppBackendCtxBase &
-  GameTypes.GamesBackendCtxModule & {
+  GamesBackendCtxModule & {
     spaceDb: ISpaceDb
     topic: ITopicClient<typeof topicContract>
   }

@@ -1,6 +1,8 @@
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { GamesBackend } from './games/backend'
-import { GamesBackendCtxModule } from './types'
+import { GameBackendCtxModule } from './games/types'
+
+export type GamesBackendCtxModule = SpaceBackendCtx & GameBackendCtxModule
 
 const initCtx = (input: { ctx: SpaceBackendCtx }): GamesBackendCtxModule => {
   const gameCtx = GamesBackend.initCtx(input)

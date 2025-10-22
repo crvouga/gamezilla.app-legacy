@@ -294,9 +294,23 @@ const throttle = <Msg>(sub: PubSub<Msg>, throttle: TimeSpan): PubSub<Msg> => {
   }
 }
 
+const filterMap = <A, B>(sub: Sub<A>, f: (a: A) => B | null): Sub<B> => {
+  return {
+    sub: (subscriber) => {
+      return sub.sub((a) => {
+        const b = f(a)
+        if (b !== null) {
+          subscriber(b)
+        }
+      })
+    },
+  }
+}
+
 export const Sub = {
   throttle,
   map,
+  filterMap,
   batch,
   take,
   deduplicate,

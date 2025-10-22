@@ -5,6 +5,7 @@ import { ITopicClient } from '~/@/topic/topic-client/interface'
 import { h } from '~/@/vdom'
 import { AppFrontendCtxBase, isAppFrontendCtx } from '../@/frontend/ctx'
 import { EndSpaceFrontend } from './end-space'
+import { CurrentSpaceMiniPlayerFrontend } from './frontend/current-space-mini-player'
 import { ExitSpaceAction } from './frontend/exit-space-action/frontend'
 import { PeopleActionFrontend } from './frontend/people-action/frontend'
 import { GameFrontend } from './game/frontend'
@@ -24,7 +25,6 @@ import {
   type rpcContract,
   type topicContract,
 } from './types'
-import { CurrentSpaceMiniPlayerFrontend } from './frontend/current-space-mini-player'
 
 const initCtx = async (input: {
   ctx: AppFrontendCtxBase
@@ -144,7 +144,7 @@ const update = (input: {
 
 const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }) => {
   return Sub.batch<MsgFrontend>([
-    GameFrontend.subscriptions(input),
+    Sub.map(GameFrontend.subscriptions(input), (c) => ({ t: 'game', c })),
     Sub.map(SyncFrontend.subscriptions(input), (c) => ({ t: 'sync', c })),
     Sub.map(ListSpacesFrontend.subscriptions(input), (c) => ({ t: 'listSpaces', c })),
     CurrentUserSpaceLoader.subscriptions(input),

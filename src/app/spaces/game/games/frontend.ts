@@ -4,7 +4,7 @@ import { h } from '~/@/vdom/h'
 import { GameName } from './@/game-name'
 import { ConnectFour } from './connect-four/frontend'
 import { NumberlinkFrontend } from './numberlink/frontend'
-import type { FrontendModule, MsgFrontend } from './types'
+import type { FrontendModule, Msg } from './types'
 
 //
 //
@@ -101,7 +101,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
           modelSpace: input.modelSpace.c,
           model: input.model.t === 'connect-four' ? input.model.c : ConnectFour.init,
         }),
-        (c): MsgFrontend => ({ t: 'connect-four', c }),
+        (c): Msg => ({ t: 'connect-four', c }),
       )
     }
 
@@ -112,7 +112,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
           modelSpace: input.modelSpace.c,
           model: input.model.t === 'numberlink' ? input.model.c : NumberlinkFrontend.init,
         }),
-        (c): MsgFrontend => ({ t: 'numberlink', c }),
+        (c): Msg => ({ t: 'numberlink', c }),
       )
     }
   }

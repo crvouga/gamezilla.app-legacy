@@ -1,1 +1,1 @@
-export * as GameTypes from './types'
+export * as GameFrontend from './frontend'

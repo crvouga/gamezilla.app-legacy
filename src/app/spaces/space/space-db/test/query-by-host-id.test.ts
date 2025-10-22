@@ -5,14 +5,14 @@ import { Fixtures } from './fixture'
 describe('SpaceDb - query by host id', () => {
   test('query by host id', async () => {
     for (const f of await Fixtures()) {
-      const before = await f.spacesDb.query({ where: { hostId: { '=': f.hostId } } })
+      const before = await f.spacesDb.query({ where: { op: '=', column: 'hostId', value: f.hostId } })
 
-      unwrap(await f.spacesDb.upsert(f.space))
+      unwrap(await f.spacesDb.upsert({ entities: [f.space] }))
 
-      const after = await f.spacesDb.query({ where: { hostId: { '=': f.hostId } } })
+      const after = await f.spacesDb.query({ where: { op: '=', column: 'hostId', value: f.hostId } })
 
-      expect(unwrap(before).items).toEqual([])
-      expect(unwrap(after).items).toEqual([f.space])
+      expect(unwrap(before).entities.items).toEqual([])
+      expect(unwrap(after).entities.items).toEqual([f.space])
     }
   })
 })

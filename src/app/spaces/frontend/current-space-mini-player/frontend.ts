@@ -198,7 +198,7 @@ export const View = (input: {
       isCurrentUserHost,
       spaceId: space.spaceId,
       ctx: input.ctx,
-      dispatch: (m) => input.dispatch({ t: 'currentSpaceMiniPlayer', c: m }),
+      dispatch: (c) => input.dispatch(c),
     }),
   ])
 }

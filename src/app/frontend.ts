@@ -517,7 +517,7 @@ const toScreenLayoutProps = (props: {
         ctx,
         key: propsMiniPlayer.key,
         model: props.model.spaces,
-        dispatch: (c) => props.dispatch({ t: 'spaces', c: { t: 'currentSpaceMiniPlayer', c } }),
+        dispatch: (c) => props.dispatch({ t: 'spaces', c }),
       })
     },
     actionBar: {

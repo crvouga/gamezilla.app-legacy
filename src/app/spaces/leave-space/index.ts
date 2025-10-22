@@ -1,1 +1,1 @@
-export * as LeaveSpaceTypes from './types'
+export * as LeaveSpaceFrontend from './frontend'

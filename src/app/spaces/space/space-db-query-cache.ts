@@ -1,17 +1,24 @@
 import { indexBy } from '~/@/array/index-by'
+import { IDb } from '~/@/db/interface'
 import { deterministicJsonStringify } from '~/@/json/deterministic-stringify'
+import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { SpaceId } from '~/app/@/data/space-id'
 import { QueryCache } from '~/app/frontend/query-cache'
 import { GotQueryCacheMsg } from '~/app/frontend/query-cache/got-query-cache-msg.$msg'
 import { Space } from './space'
 import { ISpaceDb } from './space-db/interface'
-import { SpaceDbQuery } from './space-db/interface-query'
 
 const ENTITY_TYPE = 'space'
 
-const sub = <TMsg>(spaceDb: ISpaceDb, query: SpaceDbQuery, mapper: (m: unknown) => TMsg): Sub<TMsg> => {
-  return spaceDb.sub(query, (spaces) => {
+const sub = <TMsg>(
+  spaceDb: ISpaceDb,
+  query: IDb.InferQueryInput<typeof ISpaceDb.schema>,
+  mapper: (m: unknown) => TMsg,
+): Sub<TMsg> => {
+  return spaceDb.liveQuery(query, (output) => {
+    if (isErr(output)) return mapper(null)
+    const spaces = output.value.entities.items
     return mapper(
       GotQueryCacheMsg.init({
         entities: indexBy(spaces, (c) => Space.toSpaceId(c) ?? ''),
@@ -25,7 +32,7 @@ const sub = <TMsg>(spaceDb: ISpaceDb, query: SpaceDbQuery, mapper: (m: unknown) 
   })
 }
 
-const read = (ctx: { queryCache: QueryCache.Model }, query: SpaceDbQuery): Space[] => {
+const read = (ctx: { queryCache: QueryCache.Model }, query: IDb.InferQueryInput<typeof ISpaceDb.schema>): Space[] => {
   const queryKey = deterministicJsonStringify(query)
   const results = ctx.queryCache.queryCache_results[queryKey]
   const entities = (
@@ -37,12 +44,18 @@ const read = (ctx: { queryCache: QueryCache.Model }, query: SpaceDbQuery): Space
   return entities
 }
 
-const isLoading = (ctx: { queryCache: QueryCache.Model }, query: SpaceDbQuery): boolean => {
+const isLoading = (
+  ctx: { queryCache: QueryCache.Model },
+  query: IDb.InferQueryInput<typeof ISpaceDb.schema>,
+): boolean => {
   const queryKey = deterministicJsonStringify(query)
   return ctx.queryCache.queryCache_results[queryKey] === undefined
 }
 
-const isEmpty = (ctx: { queryCache: QueryCache.Model }, query: SpaceDbQuery): boolean => {
+const isEmpty = (
+  ctx: { queryCache: QueryCache.Model },
+  query: IDb.InferQueryInput<typeof ISpaceDb.schema>,
+): boolean => {
   const spaces = read(ctx, query)
   return !isLoading(ctx, query) && spaces.length === 0
 }

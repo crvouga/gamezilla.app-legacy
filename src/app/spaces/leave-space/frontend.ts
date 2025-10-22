@@ -1,23 +1,22 @@
 import { Eff } from '~/@/eff'
-import { withEventMeta } from '~/@/event-sourced/event'
+import { WithEventId, withEventMeta } from '~/@/event-sourced/event'
 import { IconArrowLeftOnRect } from '~/@/ui/icon'
 import { h } from '~/@/vdom/h'
-import { andThen } from '~/app/@/frontend/and-then'
+import { SpaceId } from '~/app/@/data/space-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
-import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
-import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
+import { pushScreen } from '~/app/@/frontend/push-screen-cmd.$msg'
+import { playSound } from '~/app/@/frontend/sound-cmd'
+import { showToast } from '~/app/@/frontend/toaster-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
-import { GotSpaceMsg } from '../@/got-space-msg.$msg'
 import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
-import { MsgSpace } from '../space/msg-space'
+import { MsgSpace, spaceMsgs } from '../space/msg-space'
 import { Space } from '../space/space'
 import { FrontendCtxModule, ModelFrontend } from '../types'
-import { SpaceId } from '~/app/@/data/space-id'
 
 export type Msg =
   | { t: 'leaveSpace_clickedLeaveSpaceButton'; spaceId: SpaceId }
   | { t: 'leaveSpace_submittedLeaveSpaceButton'; spaceId: SpaceId }
+  | { t: 'leaveSpace_gotMsgSpace'; c: WithEventId<MsgSpace> }
 
 const update = (input: {
   ctx: FrontendCtxModule
@@ -27,62 +26,7 @@ const update = (input: {
   model: ModelFrontend
   eff?: Eff<Msg>
 } => {
-  return andThen(
-    input,
-    (model) => updateFromMsgSpace({ ...input, model }),
-    (model) => updateLeaveSpaceButton({ ...input, model }),
-  )
-}
-
-const updateFromMsgSpace: typeof update = (input) => {
-  if (!GotSpaceMsg.is(input.msgIn)) return input
-  const msgSpace = input.msgIn.c
-
-  switch (msgSpace?.t) {
-    case 'userLeftSpace': {
-      if (!input.ctx.currentUser?.userId) return input
-
-      const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
-
-      if (!currentUserSpace) return input
-
-      const currentUserSpaceId = Space.toSpaceId(currentUserSpace)
-
-      if (msgSpace.spaceId !== currentUserSpaceId) return input
-
-      if (msgSpace.userId !== input.ctx.currentUser?.userId) {
-        const username = input.ctx.profilesByUserId[msgSpace.userId]?.username
-        return {
-          model: input.model,
-          msgOut: [
-            PlaySoundCmd.init(APP_SOUND.navBackward),
-            username
-              ? ShowToastCmd.init(input.ctx.t('spaces.other-user-left', username))
-              : ShowToastCmd.init(input.ctx.t('spaces.current-user-left')),
-          ],
-        }
-      }
-
-      return {
-        model: input.model,
-        msgOut: [
-          PlaySoundCmd.init(APP_SOUND.navBackward),
-          ShowToastCmd.init(input.ctx.t('spaces.current-user-left')),
-          PushScreenCmd.init({
-            n: 'spaces',
-            t: 'spaces_list',
-          }),
-        ],
-      }
-    }
-  }
-  return input
-}
-
-const updateLeaveSpaceButton: typeof update = (input) => {
-  if (!isMsgFrontend(input.msg)) return input
-
-  switch (input.msg?.t) {
+  switch (input.msg.t) {
     case 'leaveSpace_clickedLeaveSpaceButton': {
       if (!input.ctx.currentUser?.userId) return input
 
@@ -102,17 +46,58 @@ const updateLeaveSpaceButton: typeof update = (input) => {
 
       return {
         model: input.model,
-        msgOut: [GotSpaceMsg.init(spaceEventNew)],
+        eff: () => {
+          spaceMsgs.pub(spaceEventNew)
+        },
       }
     }
 
-    default: {
-      return input
+    case 'leaveSpace_gotMsgSpace': {
+      const msgSpace = input.msg.c
+      switch (msgSpace.t) {
+        case 'userLeftSpace': {
+          if (!input.ctx.currentUser?.userId) return input
+
+          const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
+
+          if (!currentUserSpace) return input
+
+          const currentUserSpaceId = Space.toSpaceId(currentUserSpace)
+
+          if (msgSpace.spaceId !== currentUserSpaceId) return input
+
+          if (msgSpace.userId !== input.ctx.currentUser?.userId) {
+            const username = input.ctx.profilesByUserId[msgSpace.userId]?.username
+            return {
+              model: input.model,
+              eff: Eff.batch([
+                playSound(APP_SOUND.navBackward),
+                username
+                  ? showToast(input.ctx.t('spaces.other-user-left', username))
+                  : showToast(input.ctx.t('spaces.current-user-left')),
+              ]),
+            }
+          }
+
+          return {
+            model: input.model,
+            eff: Eff.batch([
+              playSound(APP_SOUND.navBackward),
+              showToast(input.ctx.t('spaces.current-user-left')),
+              pushScreen({ n: 'spaces', t: 'spaces_list' }),
+            ]),
+          }
+        }
+        default: {
+          return input
+        }
+      }
     }
   }
+  return input
 }
 
-const viewAction = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFrontend) => void }): ScreenAction | null => {
+const viewAction = (input: { ctx: FrontendCtxModule; dispatch: (msg: Msg) => void }): ScreenAction | null => {
   if (!input.ctx.currentUser?.userId) return null
 
   const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)

@@ -1,3 +1,4 @@
+import { IDb } from '~/@/db/interface'
 import { Sub } from '~/@/sub'
 import { EmptyState } from '~/@/ui/empty-state'
 import { IconGamepad } from '~/@/ui/icon'
@@ -11,7 +12,7 @@ import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ActionCreateProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { Space } from '../space/space'
 import { SpaceDbQueryCache } from '../space/space-db-query-cache'
-import { SpaceDbQuery } from '../space/space-db/interface-query'
+import { ISpaceDb } from '../space/space-db/interface'
 import { FrontendCtxModule, ModelFrontend } from '../types'
 import { ViewSpaceCard } from './space-card/space-card'
 
@@ -26,12 +27,12 @@ export type Msg =
   | { t: 'listSpaces_clickedSpaceCard'; spaceId: SpaceId }
   | { t: 'listSpaces_gotMsgSpace'; c: GotQueryCacheMsg }
 
-const toQuery = (): SpaceDbQuery => {
+const toQuery = (): IDb.InferQueryInput<typeof ISpaceDb.schema> => {
   return {
     where: {
-      type: {
-        '=': 'started',
-      },
+      op: '=',
+      column: 'type',
+      value: 'started',
     },
   }
 }
@@ -42,9 +43,14 @@ const update = (input: {
   msg: Msg
 }): {
   model: ModelFrontend
-  eff: Eff<Msg>
+  eff?: Eff<Msg>
 } => {
   switch (input.msg.t) {
+    case 'listSpaces_gotMsgSpace': {
+      return {
+        model: input.model,
+      }
+    }
     case 'listSpaces_clickedSpaceCard': {
       return {
         model: input.model,

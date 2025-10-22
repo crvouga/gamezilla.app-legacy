@@ -10,7 +10,7 @@ export type ModelFrontend =
   | { t: 'connect-four'; c: ConnectFourTypes.ModelFrontend }
   | { t: 'numberlink'; c: NumberlinkTypes.ModelFrontend }
 
-export type MsgFrontend =
+export type Msg =
   | { t: 'connect-four'; c: ConnectFourTypes.MsgFrontend }
   | { t: 'numberlink'; c: NumberlinkTypes.MsgFrontend }
 
@@ -42,7 +42,7 @@ export type MsgSpace = s.Infer<typeof MsgSpace>
 
 export type FrontendModule = GameFrontendModule<{
   Model: ModelFrontend
-  Msg: MsgFrontend
+  Msg: Msg
   ModelSpace: ModelSpace
   MsgSpace: MsgSpace
   Ctx: SpaceFrontendCtx

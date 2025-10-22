@@ -5,8 +5,8 @@ import { h } from '~/@/vdom/h'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
-import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
-import { ShowOkSmall } from '~/app/@/frontend/show-ok-small'
+import { showErrorSmall } from '~/app/@/frontend/show-error-small'
+import { showOkSmall } from '~/app/@/frontend/show-ok-small'
 import { ActionCreateProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { IPuzzleDb } from '../../../../@/puzzle/puzzle-db'
@@ -60,13 +60,13 @@ const update: FrontendModule['update'] = (input) => {
       if (isErr(input.msgSpace.created)) {
         return {
           model: input.model,
-          msgOut: ShowErrorSmall.init(input.ctx.t('app.something-went-wrong')),
+          eff: showErrorSmall(input.ctx.t('app.something-went-wrong')),
         }
       }
 
       return {
         model: input.model,
-        msgOut: [ShowOkSmall.init(input.ctx.t('game.numberlink.puzzle-created'))],
+        eff: showOkSmall(input.ctx.t('game.numberlink.puzzle-created')),
       }
     }
 
