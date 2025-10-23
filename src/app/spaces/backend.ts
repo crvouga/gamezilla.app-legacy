@@ -11,11 +11,12 @@ const initCtx = async (input: {
   ctx: AppBackendCtxBase
   topic: ITopicClient<typeof topicContract>
 }): Promise<BackendCtxModule> => {
-  const spaceDb = await SpaceDb({
+  const spaceDb = SpaceDb.init({
     t: 'sql-db',
     sqlDb: input.ctx.sqlDb,
     logger: input.ctx.logger,
     migrationPolicy: input.ctx.migrationPolicy,
+    kvDb: input.ctx.keyValueDbDurable,
   })
 
   input.ctx.syncEngine.registerSync(SpaceSync({ spaceDb }))

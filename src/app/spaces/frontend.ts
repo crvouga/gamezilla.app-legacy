@@ -31,11 +31,12 @@ const initCtx = async (input: {
   rpc: RPC.Client<typeof rpcContract>
   topic: ITopicClient<typeof topicContract>
 }): Promise<FrontendCtxModule> => {
-  const spaceDb = await SpaceDb({
+  const spaceDb = SpaceDb.init({
     t: 'sql-db',
     sqlDb: input.ctx.sqlDb,
     logger: input.ctx.logger,
     migrationPolicy: input.ctx.migrationPolicy,
+    kvDb: input.ctx.keyValueDb,
   })
   return {
     ...input.ctx,

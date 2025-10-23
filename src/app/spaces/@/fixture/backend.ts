@@ -53,11 +53,12 @@ export const FixtureSpaceBackend = async () => {
     ...f.ctx,
     ...GamesBackend.initCtx({ ctx: f.ctx }),
 
-    spaceDb: await SpaceDb.init({
+    spaceDb: SpaceDb.init({
       t: 'sql-db',
       sqlDb: f.ctx.sqlDb,
       logger: f.ctx.logger,
       migrationPolicy: SqlDbMigrationPolicy.init({ t: 'never-run', logger: Logger.init({ t: 'noop' }) }),
+      kvDb: f.keyValueDbHashMap,
     }),
     topic,
   }
