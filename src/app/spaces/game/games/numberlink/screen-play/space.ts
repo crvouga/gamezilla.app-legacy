@@ -15,7 +15,7 @@ const update: SpaceModule['updateSpace'] = ({ modelSpace, msgSpace, ctx }) => {
       return {
         ...modelSpace,
         event: {
-          t: 'user-clicked-exit-mode-button',
+          t: 'userClickedExitModeButton',
           userId: msgSpace.userId,
         },
       }

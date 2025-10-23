@@ -20,8 +20,8 @@ export type ModelBackend = s.Infer<typeof ModelBackend>
 export type MsgFrontend =
   | GameMainMenu.Msg
   | { t: 'got-msg-space'; c: MsgSpace }
-  | { t: 'got-screen-build-msg'; c: BuildTypes.MsgFrontend }
-  | { t: 'got-screen-play-msg'; c: PlayTypes.MsgFrontend }
+  | { t: 'gotScreenBuildMsg'; c: BuildTypes.MsgFrontend }
+  | { t: 'gotScreenPlayMsg'; c: PlayTypes.MsgFrontend }
   | { t: 'got-hint-calculator-msg'; c: HintCalculatorTypes.MsgFrontend }
 
 const MODE = ['build', 'play'] as const
@@ -35,20 +35,21 @@ export const MsgSpace = s.or(
     userId: UserId,
   }),
   s.obj({
-    t: s.l('got-screen-play-msg'),
+    t: s.l('gotScreenPlayMsg'),
     c: PlayTypes.MsgSpace,
   }),
   s.obj({
-    t: s.l('got-screen-build-msg'),
+    t: s.l('gotScreenBuildMsg'),
     c: BuildTypes.MsgSpace,
   }),
 )
 export type MsgSpace = s.Infer<typeof MsgSpace>
 
 export const ModelSpace = s.obj({
-  numberlink_mode: s.or(Mode, s.l('none')),
-  numberlink_screenPlay: PlayTypes.ModelSpace,
-  numberlink_screenBuild: BuildTypes.ModelSpace,
+  mode: s.or(Mode, s.l('none')),
+  screenPlay: PlayTypes.ModelSpace,
+  screenBuild: BuildTypes.ModelSpace,
+  // hintCalculator: HintCalculatorTypes.Model,
 })
 export type ModelSpace = s.Infer<typeof ModelSpace>
 

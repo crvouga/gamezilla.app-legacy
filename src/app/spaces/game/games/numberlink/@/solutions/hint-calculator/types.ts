@@ -11,6 +11,13 @@ export type FindSolutionRequest = {
   result: RemoteResult<string, { solutions: Solutions }>
 }
 
+// const Model = s.obj({
+//   open: s.or(s.l('find-solutions-confirmation'), s.l('none')),
+//   requests: s.obj({
+//     [hash: SolutionHash]: FindSolutionRequest,
+//   }),
+// })
+
 export type ModelFrontend = {
   hintCalculator_open: 'find-solutions-confirmation' | null
   hintCalculator_requests: {

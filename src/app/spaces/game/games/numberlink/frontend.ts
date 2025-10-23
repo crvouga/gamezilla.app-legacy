@@ -89,18 +89,18 @@ const updateScreenPlay: FrontendModule['update'] = (input) => {
 
   const updated = ScreenPlayFrontend.update({
     ctx,
-    modelSpace: input.modelSpace.numberlink_screenPlay,
+    modelSpace: input.modelSpace.screenPlay,
     model: input.model.screenPlay,
     msgIn: input.msgIn,
-    msgSpace: input.msgSpace?.t === 'got-screen-play-msg' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
-    msg: input.msg?.t === 'got-screen-play-msg' ? input.msg.c : null,
+    msgSpace: input.msgSpace?.t === 'gotScreenPlayMsg' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
+    msg: input.msg?.t === 'gotScreenPlayMsg' ? input.msg.c : null,
   })
 
   return {
     model: { ...input.model, screenPlay: updated.model },
-    eff: Eff.tag('got-screen-play-msg', updated.eff),
+    eff: Eff.tag('gotScreenPlayMsg', updated.eff),
     msgOut: updated.msgOut,
-    msgSpace: updated.msgSpace?.map((c) => ({ ...c, c, t: 'got-screen-play-msg' })),
+    msgSpace: updated.msgSpace?.map((c) => ({ ...c, c, t: 'gotScreenPlayMsg' })),
   }
 }
 
@@ -109,18 +109,18 @@ const updateScreenBuild: FrontendModule['update'] = (input) => {
 
   const updated = ScreenBuildFrontend.update({
     ctx,
-    modelSpace: input.modelSpace.numberlink_screenBuild,
+    modelSpace: input.modelSpace.screenBuild,
     model: input.model.screenBuild,
     msgIn: input.msgIn,
-    msgSpace: input.msgSpace?.t === 'got-screen-build-msg' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
-    msg: input.msg?.t === 'got-screen-build-msg' ? input.msg.c : null,
+    msgSpace: input.msgSpace?.t === 'gotScreenBuildMsg' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
+    msg: input.msg?.t === 'gotScreenBuildMsg' ? input.msg.c : null,
   })
 
   return {
     model: { ...input.model, screenBuild: updated.model },
-    eff: Eff.tag('got-screen-build-msg', updated.eff),
+    eff: Eff.tag('gotScreenBuildMsg', updated.eff),
     msgOut: updated.msgOut,
-    msgSpace: updated.msgSpace?.map((c) => ({ ...c, c, t: 'got-screen-build-msg' })),
+    msgSpace: updated.msgSpace?.map((c) => ({ ...c, c, t: 'gotScreenBuildMsg' })),
   }
 }
 
@@ -163,16 +163,16 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  switch (input.modelSpace.numberlink_mode) {
+  switch (input.modelSpace.mode) {
     case 'build': {
       const ctx = toFrontendCtx(input)
       return Sub.map(
         ScreenBuildFrontend.subscriptions({
           ctx,
-          modelSpace: input.modelSpace.numberlink_screenBuild,
+          modelSpace: input.modelSpace.screenBuild,
           model: input.model.screenBuild,
         }),
-        (c): MsgFrontend => ({ t: 'got-screen-build-msg', c }),
+        (c): MsgFrontend => ({ t: 'gotScreenBuildMsg', c }),
       )
     }
 
@@ -181,10 +181,10 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
       return Sub.map(
         ScreenPlayFrontend.subscriptions({
           ctx,
-          modelSpace: input.modelSpace.numberlink_screenPlay,
+          modelSpace: input.modelSpace.screenPlay,
           model: input.model.screenPlay,
         }),
-        (c): MsgFrontend => ({ t: 'got-screen-play-msg', c }),
+        (c): MsgFrontend => ({ t: 'gotScreenPlayMsg', c }),
       )
     }
 
@@ -201,7 +201,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 //
 
 const View: FrontendModule['View'] = (input) => {
-  switch (input.modelSpace.numberlink_mode) {
+  switch (input.modelSpace.mode) {
     case 'none': {
       return h(ViewMainMenu, input)
     }
@@ -211,8 +211,8 @@ const View: FrontendModule['View'] = (input) => {
 
       return h(ScreenBuildFrontend.View, {
         ctx,
-        dispatch: (c) => input.dispatch({ t: 'got-screen-build-msg', c }),
-        modelSpace: input.modelSpace.numberlink_screenBuild,
+        dispatch: (c) => input.dispatch({ t: 'gotScreenBuildMsg', c }),
+        modelSpace: input.modelSpace.screenBuild,
         model: input.model.screenBuild,
       })
     }
@@ -221,8 +221,8 @@ const View: FrontendModule['View'] = (input) => {
       const ctx = toFrontendCtx(input)
       return h(ScreenPlayFrontend.View, {
         ctx,
-        dispatch: (c) => input.dispatch({ t: 'got-screen-play-msg', c }),
-        modelSpace: input.modelSpace.numberlink_screenPlay,
+        dispatch: (c) => input.dispatch({ t: 'gotScreenPlayMsg', c }),
+        modelSpace: input.modelSpace.screenPlay,
         model: input.model.screenPlay,
       })
     }

@@ -8,9 +8,9 @@ import type { ModelSpace, MsgSpace } from './types'
 const initSpace = (input: { ctx: SpaceCtx }): ModelSpace => {
   const ctx: NumberlinkSpaceCtx = input.ctx
   return {
-    numberlink_mode: 'none',
-    numberlink_screenBuild: BuildSpace.initSpace({ ctx }),
-    numberlink_screenPlay: PlaySpace.initSpace({ ctx }),
+    mode: 'none',
+    screenBuild: BuildSpace.initSpace({ ctx }),
+    screenPlay: PlaySpace.initSpace({ ctx }),
   }
 }
 
@@ -21,36 +21,36 @@ const updateSpace = (input: {
 }): ModelSpace => {
   const ctx: NumberlinkSpaceCtx = input.ctx
   switch (input.msgSpace.t) {
-    case 'got-screen-play-msg': {
+    case 'gotScreenPlayMsg': {
       const updated = PlaySpace.updateSpace({
         ctx,
         msgSpace: input.msgSpace.c,
-        modelSpace: input.modelSpace.numberlink_screenPlay,
+        modelSpace: input.modelSpace.screenPlay,
       })
 
       switch (updated.event?.t) {
-        case 'user-clicked-exit-mode-button': {
-          return { ...input.modelSpace, numberlink_screenPlay: updated, numberlink_mode: 'none' }
+        case 'userClickedExitModeButton': {
+          return { ...input.modelSpace, screenPlay: updated, mode: 'none' }
         }
         default: {
-          return { ...input.modelSpace, numberlink_screenPlay: updated }
+          return { ...input.modelSpace, screenPlay: updated }
         }
       }
     }
 
-    case 'got-screen-build-msg': {
+    case 'gotScreenBuildMsg': {
       const updated = BuildSpace.updateSpace({
         ctx,
         msgSpace: input.msgSpace.c,
-        modelSpace: input.modelSpace.numberlink_screenBuild,
+        modelSpace: input.modelSpace.screenBuild,
       })
 
       switch (updated.event?.t) {
-        case 'user-clicked-exit-mode-button': {
-          return { ...input.modelSpace, numberlink_screenBuild: updated, numberlink_mode: 'none' }
+        case 'userClickedExitModeButton': {
+          return { ...input.modelSpace, screenBuild: updated, mode: 'none' }
         }
         default: {
-          return { ...input.modelSpace, numberlink_screenBuild: updated }
+          return { ...input.modelSpace, screenBuild: updated }
         }
       }
     }
@@ -62,9 +62,9 @@ const updateSpace = (input: {
 
       return {
         ...input.modelSpace,
-        numberlink_mode: input.msgSpace.mode,
-        numberlink_screenPlay: PlaySpace.initSpace({ ctx }),
-        numberlink_screenBuild: BuildSpace.initSpace({ ctx }),
+        mode: input.msgSpace.mode,
+        screenPlay: PlaySpace.initSpace({ ctx }),
+        screenBuild: BuildSpace.initSpace({ ctx }),
       }
     }
   }
