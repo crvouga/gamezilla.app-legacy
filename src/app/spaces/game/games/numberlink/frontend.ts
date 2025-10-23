@@ -86,20 +86,13 @@ const updateHintCalculator: FrontendModule['update'] = (input) => {
 
 const updateScreenPlay: FrontendModule['update'] = (input) => {
   const ctx = toFrontendCtx(input)
-
   const updated = ScreenPlayFrontend.update({
     ctx,
     modelSpace: input.modelSpace.screenPlay,
-    model: input.model.screenPlay,
-    msgIn: input.msgIn,
     msgSpace: input.msgSpace?.t === 'gotScreenPlayMsg' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
-    msg: input.msg?.t === 'gotScreenPlayMsg' ? input.msg.c : null,
   })
-
   return {
-    model: { ...input.model, screenPlay: updated.model },
     eff: Eff.tag('gotScreenPlayMsg', updated.eff),
-    msgOut: updated.msgOut,
     msgSpace: updated.msgSpace?.map((c) => ({ ...c, c, t: 'gotScreenPlayMsg' })),
   }
 }
