@@ -39,7 +39,7 @@ const init = (config: ImplSql): ISpaceDb => {
     async query(queryInput) {
       const { where, limit, offset } = queryInput
 
-      let spaceIds: SpaceId[] | null = null
+      let finalWhere: Parameters<typeof spaceDb.query>[0]['where'] = undefined
 
       if (where?.op === 'in' && where.column === 'userIds') {
         const userIds = where.value as unknown as UserId[]
@@ -49,11 +49,21 @@ const init = (config: ImplSql): ISpaceDb => {
           offset: 0,
         })
         if (isErr(userResult)) return mapErr(userResult, (e) => e)
-        spaceIds = [...new Set(userResult.value.entities.items.map((e) => e.spaceId))]
+        const spaceIds = [...new Set(userResult.value.entities.items.map((e) => e.spaceId))]
+        finalWhere =
+          spaceIds.length > 0 ? { op: 'in', column: 'id', value: spaceIds } : { op: 'in', column: 'id', value: [] }
+      } else if (where?.op === '=' && where.column === 'id') {
+        finalWhere = { op: '=', column: 'id', value: where.value }
+      } else if (where?.op === 'in' && where.column === 'id') {
+        finalWhere = { op: 'in', column: 'id', value: where.value }
+      } else if (where) {
+        // For other query types (hostId, type), we'd need to query projection table first
+        // For now, return empty result
+        finalWhere = { op: 'in', column: 'id', value: [] }
       }
 
       const spaceResult = await spaceDb.query({
-        where: spaceIds ? { op: 'in', column: 'id', value: spaceIds } : undefined,
+        where: finalWhere,
         limit,
         offset,
       })

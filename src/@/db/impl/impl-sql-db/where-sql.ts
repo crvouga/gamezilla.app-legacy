@@ -18,7 +18,7 @@ const toWhereSqlClause = <TEntity extends Record<string, unknown>, TRow extends 
 ): string => {
   switch (where.op) {
     case 'in': {
-      if (where.value.length === 0) return ''
+      if (where.value.length === 0) return '1=0'
       const sqlColumn = config.mapKeyEntityToSql[where.column]
       if (!sqlColumn) return ''
       return `${quoteIfKeyword(sqlColumn)} IN (${where.value.map((v) => interpolateSqlValue(config.mapValueEntityToSql[where.column](v))).join(',')})`
@@ -32,7 +32,9 @@ const toWhereSqlClause = <TEntity extends Record<string, unknown>, TRow extends 
     }
     case 'and': {
       if (where.clauses.length === 0) return ''
-      return `${where.clauses.map((clause) => toWhereSqlClause(clause, config)).join(' AND ')}`
+      const clauses = where.clauses.map((clause) => toWhereSqlClause(clause, config)).filter((c) => c.length > 0)
+      if (clauses.length === 0) return ''
+      return clauses.join(' AND ')
     }
   }
 }
