@@ -211,8 +211,8 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
               maxWidth: 'md',
             }),
             ...(input.toast.variant === 'info' && PAPER_STYLE),
-            ...(input.toast.variant === 'success' && PAPER_STYLE),
-            ...(input.toast.variant === 'error' && { borderColor: 'red-400', backgroundColor: 'red-500' }),
+            ...(input.toast.variant === 'success' && sx({ borderColor: 'green-400', backgroundColor: 'green-500' })),
+            ...(input.toast.variant === 'error' && sx({ borderColor: 'red-400', backgroundColor: 'red-500' })),
           },
         },
         [

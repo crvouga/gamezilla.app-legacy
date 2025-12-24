@@ -24,9 +24,9 @@ const did = (output?: { msgOut?: unknown[] | null }): boolean => {
 
 export const showErrorSmall =
   (text: TranslatedText, errorMsg?: string, duration?: TimeSpan): Eff =>
-  () => {
-    playSound(APP_SOUND.alertErrorSm)
-    showToast(text, 'error', duration, errorMsg)
+  (dispatch) => {
+    playSound(APP_SOUND.alertErrorSm)(dispatch)
+    showToast(text, 'error', duration, errorMsg)(dispatch)
   }
 
 export const ShowErrorSmall = {
