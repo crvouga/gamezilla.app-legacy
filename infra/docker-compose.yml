@@ -1,7 +1,7 @@
 name: gamezilla_app
 
 services:
-  app-frontend:
+  frontend:
     build:
       context: ../
       dockerfile: infra/frontend/frontend.Dockerfile
@@ -13,10 +13,10 @@ services:
       - e2e
       - all
 
-  app-backend:
+  backend-rpc:
     build:
       context: ../
-      dockerfile: infra/backend/backend.Dockerfile
+      dockerfile: infra/backend-rpc/backend-rpc.Dockerfile
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
       - NODE_ENV=development
@@ -28,7 +28,36 @@ services:
       - e2e
       - all
 
-  svc-postgres:
+  backend-topic:
+    build:
+      context: ../
+      dockerfile: infra/backend-topic/backend-topic.Dockerfile
+    environment:
+      - NODE_ENV=development
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - '5003:5003'
+    profiles:
+      - e2e
+      - all
+
+  backend-worker:
+    build:
+      context: ../
+      dockerfile: infra/backend-worker/backend-worker.Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
+      - NODE_ENV=development
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - '5004:5004'
+    profiles:
+      - e2e
+      - all
+
+  postgres:
     build:
       context: ../
       dockerfile: infra/postgres/postgres.Dockerfile
