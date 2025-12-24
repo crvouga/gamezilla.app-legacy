@@ -3,7 +3,6 @@ import { DotEnv } from './@/dotenv/dotenv'
 import { FileSystem } from './@/file-system'
 import { Logger } from './@/logger'
 import { SecretString } from './@/secrets/secret-string'
-import { SqlDbMigration } from './@/sql-db-migrations/impl'
 import { BackendSqlDb } from './@/sql-db/backend-impl'
 
 const main = async () => {
@@ -32,11 +31,6 @@ const main = async () => {
   logger.info('Initializing database connection')
   const sqlDb = BackendSqlDb.init({ t: 'postgres', databaseUrl: DATABASE_URL, logger })
   logger.info('Database connection initialized')
-
-  logger.info('Running database migrations')
-  const sqlDbMigration = SqlDbMigration.init({ t: 'dbmate', databaseUrl: DATABASE_URL, logger, sqlDb })
-  await sqlDbMigration.up()
-  logger.info('Database migrations completed')
 
   logger.info('Loading server port from environment')
   const SERVER_PORT = 5002

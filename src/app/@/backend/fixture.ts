@@ -66,7 +66,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const now = UnixMs.now()
 
-  const migrationPolicy = SqlDbMigrationPolicy.init({ t: 'always-run', logger })
+  const migrationPolicy = SqlDbMigrationPolicy.init({ t: 'never-run', logger })
 
   const syncEngine = SyncEngineServer({ logger })
 
@@ -113,13 +113,13 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     t: 'sql-db',
     sqlDb: sqlDbPostgres,
     logger,
-    migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger }),
+    migrationPolicy: SqlDbMigrationPolicy.init({ t: 'never-run', logger }),
   })
 
   const keyValueDbSqlite = KeyValueDb.init({
     t: 'sql-db',
     sqlDb: sqlDbSqlite,
-    migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger }),
+    migrationPolicy: SqlDbMigrationPolicy.init({ t: 'never-run', logger }),
     logger,
   })
 

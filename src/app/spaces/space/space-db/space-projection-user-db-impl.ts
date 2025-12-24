@@ -45,7 +45,7 @@ export const initSpaceProjectionUserDb = (
     sqlDb: config.sqlDb,
     migration: {
       policy: SqlDbMigrationPolicy.init({
-        t: 'always-run',
+        t: 'never-run',
         logger: config.logger,
       }),
       up: UP,

@@ -44,7 +44,7 @@ export const initSpaceProjectionDb = (config: SpaceProjectionDbConfig): IDb.IDb<
     sqlDb: config.sqlDb,
     migration: {
       policy: SqlDbMigrationPolicy.init({
-        t: 'always-run',
+        t: 'never-run',
         logger: config.logger,
       }),
       up: UP,

@@ -30,7 +30,7 @@ const main = async () => {
 
   logger.info('Environment variables loaded')
 
-  const port = Number(process.env.PORT) || 5002
+  const port = Number(process.env.PORT) || 5003
 
   logger.info(`Port set to ${port}`)
 

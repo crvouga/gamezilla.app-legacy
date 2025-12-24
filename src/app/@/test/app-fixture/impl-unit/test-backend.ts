@@ -36,7 +36,7 @@ export const TestBackend = async (config: {
   const keyValueDbDurable = KeyValueDb.init({
     t: 'sql-db',
     sqlDb: config.sqlDb,
-    migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
+    migrationPolicy: SqlDbMigrationPolicy.init({ t: 'never-run', logger: Logger.init({ t: 'noop' }) }),
     logger,
   })
 
@@ -50,13 +50,13 @@ export const TestBackend = async (config: {
   const userProfileDb = ProfileDb({
     t: 'sql',
     sqlDb: config.sqlDb,
-    migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
+    migrationPolicy: SqlDbMigrationPolicy.init({ t: 'never-run', logger: Logger.init({ t: 'noop' }) }),
     logger,
   })
 
   const now = UnixMs.now()
 
-  const migrationPolicy = SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) })
+  const migrationPolicy = SqlDbMigrationPolicy.init({ t: 'never-run', logger: Logger.init({ t: 'noop' }) })
 
   const syncEngine = SyncEngineServer({ logger })
 

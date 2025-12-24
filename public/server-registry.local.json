@@ -1,9 +1,12 @@
 {
   "servers": [
     {
-      "name": "nats",
-      "region": "us-west",
-      "url": "ws://localhost:9222"
+      "tags": ["rpc"],
+      "url": "http://localhost:5001"
+    },
+    {
+      "tags": ["topic"],
+      "url": "http://localhost:5003"
     }
   ]
 }

@@ -48,7 +48,7 @@ export const initSpaceDb = (config: SpaceDbConfig): IDb.IDb<SpaceEntity, {}> => 
     sqlDb: config.sqlDb,
     migration: {
       policy: SqlDbMigrationPolicy.init({
-        t: 'always-run',
+        t: 'never-run',
         logger: config.logger,
       }),
       up: UP,
