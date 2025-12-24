@@ -12,18 +12,19 @@ import { VDom } from '~/@/vdom/vdom'
 import { VDomImplWeb } from '~/@/vdom/vdom-impl-web'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { APP_SOUND } from '../@/frontend/app-sound'
+import { AppFrontendCtxBase } from '../@/frontend/ctx'
+import { logoutCmd } from '../@/frontend/logout-cmd'
 import { playSound } from '../@/frontend/sound-cmd'
 import { back, pushScreen } from '../frontend/current-screen/current-screen-cmd'
 import { ScreenLangFrontend } from './screen-lang/frontend'
 import { ScreenRendererFrontend } from './screen-renderer/frontend'
 import { SoundFrontend } from './sound'
-import { type FrontendCtxModule, type ModelFrontend, type MsgFrontend } from './types'
+import { type ModelFrontend, type MsgFrontend } from './types'
 
-const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
+const init = (input: { ctx: AppFrontendCtxBase }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
   const lang = ScreenLangFrontend.init(input)
   const renderer = ScreenRendererFrontend.init(input)
   const sound = SoundFrontend.init(input)
-
   return {
     model: {
       lang: lang.model,
@@ -40,7 +41,7 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
 }
 
 const update = (input: {
-  ctx: FrontendCtxModule
+  ctx: AppFrontendCtxBase
   model: ModelFrontend
   msg: MsgFrontend
 }): {
@@ -55,6 +56,7 @@ const update = (input: {
         eff: Eff.tag('lang', updated.eff),
       }
     }
+
     case 'renderer': {
       const updated = ScreenRendererFrontend.update({ ...input, model: input.model.renderer, msg: input.msg.c })
       return {
@@ -62,6 +64,7 @@ const update = (input: {
         eff: Eff.tag('renderer', updated.eff),
       }
     }
+
     case 'sound': {
       const updated = SoundFrontend.update({ ...input, model: input.model.sound, msg: input.msg.c })
       return {
@@ -120,6 +123,13 @@ const update = (input: {
       }
     }
 
+    case 'settings_clickedLogoutMenuItem': {
+      return {
+        model: input.model,
+        eff: () => logoutCmd.pub({ t: 'logout' }),
+      }
+    }
+
     default: {
       return {
         model: input.model,
@@ -128,12 +138,15 @@ const update = (input: {
   }
 }
 
-const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<MsgFrontend> => {
-  return Sub.batch<MsgFrontend>([ScreenLangFrontend.subscriptions(input)])
+const subscriptions = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend }): Sub<MsgFrontend> => {
+  return Sub.batch<MsgFrontend>([
+    ScreenLangFrontend.subscriptions(input),
+    SoundFrontend.subscriptions({ ctx: input.ctx, model: input.model.sound }),
+  ])
 }
 
 const View = (input: {
-  ctx: FrontendCtxModule
+  ctx: AppFrontendCtxBase
   model: ModelFrontend
   dispatch: (msg: MsgFrontend) => void
   slots?: {

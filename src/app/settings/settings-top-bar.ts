@@ -1,16 +1,17 @@
 import { Clickable } from '~/@/ui/clickable'
 import { IconGear, IconLanguage } from '~/@/ui/icon'
 import { MenuItem } from '~/@/ui/menu-item'
-import { sx } from '~/@/vdom/style/sx'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
+import { sx } from '~/@/vdom/style/sx'
+import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { FloatingLayout } from '../@/ui/floating/layout/floating-layout'
 import { BackendConnectionStatus } from '../@/wire/backend-connection-status'
 import { SoundFrontend } from './sound'
-import type { FrontendModule } from './types'
+import { ModelFrontend, MsgFrontend } from './types'
 
-const View: FrontendModule['View'] = (props) => {
+const View = (props: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
   const iconSize = toStyleIconSize(props)
   return h(FloatingLayout, {
     ctx: props.ctx,
@@ -98,7 +99,11 @@ const View: FrontendModule['View'] = (props) => {
   })
 }
 
-const toStyleIconSize = (props: Parameters<FrontendModule['View']>[0]): Record<string, unknown> => {
+const toStyleIconSize = (props: {
+  ctx: AppFrontendCtxBase
+  model: ModelFrontend
+  dispatch: (msg: MsgFrontend) => void
+}): Record<string, unknown> => {
   switch (props.ctx.screenSize) {
     case 'mobile':
       return sx({ size: 4 })
@@ -107,7 +112,11 @@ const toStyleIconSize = (props: Parameters<FrontendModule['View']>[0]): Record<s
   }
 }
 
-const toStyleClickable = (props: Parameters<FrontendModule['View']>[0]): Record<string, unknown> => {
+const toStyleClickable = (props: {
+  ctx: AppFrontendCtxBase
+  model: ModelFrontend
+  dispatch: (msg: MsgFrontend) => void
+}): Record<string, unknown> => {
   switch (props.ctx.screenSize) {
     case 'mobile':
       return sx({
@@ -129,12 +138,23 @@ const toStyleClickable = (props: Parameters<FrontendModule['View']>[0]): Record<
   }
 }
 
-const toStyle = (props: Parameters<FrontendModule['View']>[0]): Record<string, unknown> => {
+const toStyle = (props: {
+  ctx: AppFrontendCtxBase
+  model: ModelFrontend
+  dispatch: (msg: MsgFrontend) => void
+}): Record<string, unknown> => {
   switch (props.ctx.screenSize) {
     case 'mobile':
-      return sx({ width: 'full' })
+      return sx({
+        width: 'full',
+      })
     default:
-      return sx({ position: 'absolute', top: 0, right: 0, zIndex: 50 })
+      return sx({
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        zIndex: 50,
+      })
   }
 }
 

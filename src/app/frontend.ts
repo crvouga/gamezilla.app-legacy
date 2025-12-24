@@ -51,6 +51,7 @@ import { CurrentSpaceMiniPlayerFrontend } from './spaces/frontend/current-space-
 import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract, topicContract } from './types'
 import { toBackendConnectionStatus } from './wire/backend-connection/backend-connection-status'
 import { WireFrontend } from './wire/frontend'
+import { UserId } from './@/data/user-id'
 
 const initCtx = async (config: {
   serverRegistrySrcUrl: Url
@@ -523,22 +524,24 @@ const toScreenLayoutProps = (props: {
     },
   ]
 
-  if (isAppFrontendCtx(ctx)) {
-    const screenProfile: Screen = { n: 'profile', t: 'profile_profile', userId: ctx.currentUser.userId }
-    actions.push({
-      label: ctx.t('profile.profile'),
-      renderIcon: (iconProps: IconProps) => h(IconUser, iconProps),
-      color:
-        props.model.currentScreen.currentScreen_screen.n === 'profile' ? ('selected' as const) : ('inherit' as const),
-      onPress() {
-        props.dispatch({
-          t: 'currentScreen',
-          c: { n: 'currentScreen', t: 'currentScreen_clickedLink', screen: screenProfile },
-        })
-      },
-      id: ctx.t('profile.profile'),
-    })
+  const screenProfile: Screen = {
+    n: 'profile',
+    t: 'profile_profile',
+    userId: ctx.currentUser?.userId ?? UserId.generate(),
   }
+  actions.push({
+    label: ctx.t('profile.profile'),
+    renderIcon: (iconProps: IconProps) => h(IconUser, iconProps),
+    color:
+      props.model.currentScreen.currentScreen_screen.n === 'profile' ? ('selected' as const) : ('inherit' as const),
+    onPress() {
+      props.dispatch({
+        t: 'currentScreen',
+        c: { n: 'currentScreen', t: 'currentScreen_clickedLink', screen: screenProfile },
+      })
+    },
+    id: ctx.t('profile.profile'),
+  })
 
   return {
     id: 'app-screen-layout',

@@ -1,5 +1,3 @@
-import { AppFrontendModule } from '../@/frontend/app-frontend-module'
-import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { ScreenLangTypes } from './screen-lang'
 import { ScreenRendererTypes } from './screen-renderer'
 import { SoundFrontend } from './sound'
@@ -12,22 +10,13 @@ export type ModelFrontend = {
 }
 
 export type MsgFrontend =
+  | { t: 'lang'; c: ScreenLangTypes.MsgFrontend }
+  | { t: 'renderer'; c: ScreenRendererTypes.MsgFrontend }
+  | { t: 'sound'; c: SoundFrontend.Msg }
   | { t: 'settings_clickedOpenLang' }
   | { t: 'settings_clickedOpenRenderer' }
   | { t: 'settings_clickedOpenSettings' }
   | { t: 'settings_clickedBackButton' }
   | { t: 'settings_clickedTopBar' }
   | { t: 'settings_closedTopBarSurface' }
-  | { t: 'lang'; c: ScreenLangTypes.MsgFrontend }
-  | { t: 'renderer'; c: ScreenRendererTypes.MsgFrontend }
-  | { t: 'sound'; c: SoundFrontend.Msg }
-
-export type FrontendCtxModule = AppFrontendCtxBase
-export type FrontendModule = AppFrontendModule<{
-  Ctx: AppFrontendCtxBase
-  Model: ModelFrontend
-  Msg: MsgFrontend
-  ViewSlot: {
-    menuItemsEnd: {}
-  }
-}>
+  | { t: 'settings_clickedLogoutMenuItem' }

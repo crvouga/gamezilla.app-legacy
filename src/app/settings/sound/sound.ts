@@ -1,19 +1,16 @@
 import { Eff } from '~/@/eff'
 import { Translator as SoundFrontend } from '~/@/l18n/generated'
-import { isAnyMsg } from '~/@/msg/msg'
 import { sleep } from '~/@/promise/sleep'
 import { type Result } from '~/@/result'
+import { Sub } from '~/@/sub'
 import { IconVolumeHigh, IconVolumeXMark } from '~/@/ui/icon'
 import { MenuItem } from '~/@/ui/menu-item'
 import { SwitchButton } from '~/@/ui/switch-button'
 import { h } from '~/@/vdom/h'
-import { andThen } from '~/app/@/frontend/and-then'
 import { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
-import { PreloadSoundsCmd } from '~/app/@/frontend/preload-sounds-cmd.$msg'
-import { ViewportVisibilityChangedEvt } from '~/app/@/frontend/viewport-visibility-changed-evt.$msg'
+import { playSound, SoundCmd, soundCmds } from '~/app/@/frontend/sound-cmd'
 
 type Module = AppFrontendModule<{
   Ctx: AppFrontendCtxBase
@@ -47,38 +44,25 @@ export type Msg =
       src: string[]
       result: Result<string, null>
     }
+  | {
+      t: 'sound_gotSoundCmd'
+      c: SoundCmd
+    }
 
-const isMsg = (msg: unknown): msg is Msg => {
-  return isAnyMsg(msg) && msg.t.startsWith('sound_')
-}
-
-export const update = <T extends Model>(input: {
+export const update = (input: {
   ctx: AppFrontendCtxBase
-  model: T
-  msg?: unknown
-  msgIn?: unknown
+  model: Model
+  msg: Msg
 }): {
-  model: T
+  model: Model
   eff?: Eff<Msg>
-  msgOut?: unknown[]
 } => {
-  return andThen<T, Msg>(
-    { model: input.model },
-    (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromCmd({ ...input, model }),
-    (model) => updateFromEvent({ ...input, model }),
-  )
-}
-
-const updateFromMsg: typeof update = (input) => {
-  if (!isMsg(input.msg)) return { model: input.model }
-
   switch (input.msg.t) {
     case 'sound_toggleMute': {
       if (input.model.sound_muted) {
         return {
           model: { ...input.model, sound_muted: false },
-          msgOut: [PlaySoundCmd.init(APP_SOUND.stateChangeUp)],
+          eff: () => playSound(APP_SOUND.stateChangeUp),
         }
       }
 
@@ -97,56 +81,52 @@ const updateFromMsg: typeof update = (input) => {
     case 'sound_preloadedSounds': {
       return { model: input.model }
     }
+
+    case 'sound_gotSoundCmd': {
+      const cmd = input.msg.c
+
+      switch (cmd.t) {
+        case 'playSound': {
+          if (input.model.sound_muted) {
+            return { model: input.model }
+          }
+
+          if (input.ctx.viewportVisibility === 'hidden') {
+            return { model: input.model }
+          }
+
+          return {
+            model: input.model,
+            async eff(dispatch) {
+              const { delay } = cmd
+              if (delay) await sleep(delay)
+              const played = await input.ctx.audioPlayer.play({ src: cmd.src, tag: cmd.tag })
+              dispatch({ t: 'sound_playedSound', src: cmd.src, result: played })
+            },
+          }
+        }
+
+        case 'preloadSounds': {
+          const { srcList } = cmd
+          return {
+            model: input.model,
+            async eff(dispatch) {
+              const preloaded = await input.ctx.audioPlayer.preload({ srcList })
+              dispatch({ t: 'sound_preloadedSounds', src: srcList, result: preloaded })
+            },
+          }
+        }
+      }
+    }
   }
 }
 
-const updateFromEvent: typeof update = (input) => {
-  if (ViewportVisibilityChangedEvt.is(input.msgIn)) {
-    return {
-      model: {
-        ...input.model,
-        sound_muted: input.msgIn.state === 'hidden',
-      },
-    }
-  }
-
-  return { model: input.model }
-}
-
-const updateFromCmd: typeof update = (input) => {
-  const { msgIn } = input
-
-  if (PlaySoundCmd.is(msgIn)) {
-    if (input.model.sound_muted) {
-      return { model: input.model }
-    }
-
-    if (input.ctx.viewportVisibility === 'hidden') {
-      return { model: input.model }
-    }
-
-    return {
-      model: input.model,
-      async eff(dispatch) {
-        const { delay } = msgIn
-        if (delay) await sleep(delay)
-        const played = await input.ctx.audioPlayer.play({ src: msgIn.src, tag: msgIn.tag })
-        dispatch({ t: 'sound_playedSound', src: msgIn.src, result: played })
-      },
-    }
-  }
-
-  if (PreloadSoundsCmd.is(msgIn)) {
-    return {
-      model: input.model,
-      async eff(dispatch) {
-        const preloaded = await input.ctx.audioPlayer.preload({ srcList: msgIn.srcList })
-        dispatch({ t: 'sound_preloadedSounds', src: msgIn.srcList, result: preloaded })
-      },
-    }
-  }
-
-  return { model: input.model }
+export const subscriptions = (_input: { ctx: AppFrontendCtxBase; model: Model }): Sub<Msg> => {
+  return Sub.batch<Msg>([
+    Sub.map(soundCmds, (c) => {
+      return { t: 'sound_gotSoundCmd', c }
+    }),
+  ])
 }
 
 export const ViewIcon = (input: { model: Model; style: Record<string, unknown> }) => {
