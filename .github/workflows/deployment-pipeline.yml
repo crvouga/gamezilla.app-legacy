@@ -56,7 +56,7 @@ jobs:
 
   unit:
     name: Unit Tests
-    needs: [cir-deps, typecheck]
+    needs: [cir-deps, typecheck, format]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -72,7 +72,7 @@ jobs:
 
   e2e-fast:
     name: E2E Fast Tests
-    needs: [cir-deps, typecheck]
+    needs: [cir-deps, typecheck, format]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
