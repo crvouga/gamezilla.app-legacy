@@ -16,7 +16,7 @@ import { profileCmds } from '~/app/profile/profile-cmd'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SectionPeopleList } from '../../@/ui/section-people-list'
 import { SectionPersonDetails } from '../../@/ui/section-person-details'
-import { FrontendCtxModule, ModelFrontend } from '../../types'
+import type { FrontendCtxModule, ModelFrontend } from '../../base-types'
 import { OpenUserDetailsCmd, openUserDetailsCmds } from './open-user-details-cmd'
 
 export type Msg =

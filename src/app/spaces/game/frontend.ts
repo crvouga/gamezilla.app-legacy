@@ -3,40 +3,17 @@ import { WithEventId, withEventId, withEventMeta } from '~/@/event-sourced/event
 import { Sub } from '~/@/sub'
 import { h } from '~/@/vdom/h'
 import { SpaceId } from '~/app/@/data/space-id'
-import { UserId } from '~/app/@/data/user-id'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
 import { MsgSpace, spaceMsgs } from '../space/msg-space'
 import { Space } from '../space/space'
 import { SpaceDbQueryCache } from '../space/space-db'
-import type { FrontendCtxModule, ModelFrontend, MsgFrontend } from '../types'
+import type { MsgFrontend } from '../types'
+import type { FrontendCtxModule, ModelFrontend } from '../base-types'
+import { Msg } from './types'
 import { ScreenNotInGameFrontend } from './frontend/screen-not-in-game'
-import { GamesTypes } from './games'
-import { ExitGameCmd, exitGameCmds } from './games/@/exit-game-cmd'
-import { GameName } from './games/@/game-name'
+import { exitGameCmds } from './games/@/exit-game-cmd'
 import { GamesFrontend } from './games/frontend'
-
-export type Msg =
-  | {
-      t: 'game_gotGameMsg'
-      spaceId: SpaceId
-      c: GamesTypes.Msg
-    }
-  | {
-      t: 'game_clickedGameTile'
-      gameName: GameName
-      userId: UserId
-      spaceId: SpaceId
-    }
-  | {
-      t: 'game_gotExitGameCmd'
-      c: ExitGameCmd
-    }
-  | {
-      t: 'game_gotMsgSpace'
-      c: WithEventId<GamesTypes.MsgSpace>
-      spaceId: SpaceId
-    }
 
 const update = (input: {
   ctx: FrontendCtxModule

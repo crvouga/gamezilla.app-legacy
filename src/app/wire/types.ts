@@ -3,8 +3,8 @@ import { TopicContract } from '~/@/topic/topic-contract'
 import { AppFrontendModule } from '../@/frontend/app-frontend-module'
 import { AppBackendCtxBase } from '../@/backend/ctx'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
-import { BackendConnectionTypes } from './backend-connection'
-import { BackendInstanceTypes } from './backend-instance'
+import * as BackendConnectionTypes from './backend-connection/types'
+import * as BackendInstanceTypes from './backend-instance/types'
 
 export type ModelFrontend = {
   backendInstance: BackendInstanceTypes.ModelFrontend

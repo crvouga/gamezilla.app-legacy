@@ -20,4 +20,3 @@ export const translations: Translations<Text> = {
     ar: 'تم إنشاؤه بواسطتك',
   },
 }
-

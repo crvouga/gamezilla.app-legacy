@@ -18,9 +18,9 @@ import { GameCoverArt } from '../../game/games/cover-art'
 import { CurrentUserSpaceLoader } from '../../space/current-user-space-loader'
 import { Space } from '../../space/space'
 import { SpaceProjectionStarted } from '../../space/space-projection'
-import type { FrontendCtxModule, ModelFrontend, MsgFrontend } from '../../types'
-
-export type Msg = { t: 'currentSpaceMiniPlayer_clicked' }
+import type { MsgFrontend } from '../../types'
+import type { FrontendCtxModule, ModelFrontend } from '../../base-types'
+import { Msg } from './types'
 
 export const update = (input: {
   ctx: FrontendCtxModule

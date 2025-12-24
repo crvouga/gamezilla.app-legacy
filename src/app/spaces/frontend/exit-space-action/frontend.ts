@@ -5,7 +5,7 @@ import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { pushScreen } from '~/app/frontend/current-screen/current-screen-cmd'
 import { playSound } from '~/app/@/frontend/sound-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
-import { FrontendCtxModule, ModelFrontend } from '../../types'
+import type { FrontendCtxModule, ModelFrontend } from '../../base-types'
 
 export type Msg = { t: 'exitSpaceAction_clicked' }
 

@@ -8,7 +8,6 @@ import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { sx } from '~/@/vdom/style/sx'
-import { SpaceId } from '~/app/@/data/space-id'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ActionCreateProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { pushScreen } from '~/app/frontend/current-screen/current-screen-cmd'
@@ -17,12 +16,11 @@ import { queryCacheMsgs } from '~/app/frontend/query-cache/query-cache-msgs'
 import { Space } from '../space/space'
 import { SpaceDbQueryCache, SpaceProjectionDbQueryCache } from '../space/space-db'
 import { SpaceProjectionEntity } from '../space/space-db/space-projection-entity'
-import { FrontendCtxModule, ModelFrontend } from '../types'
+import type { FrontendCtxModule, ModelFrontend } from '../base-types'
 import { ViewSpaceCard } from './space-card/space-card'
+import { Msg } from './types'
 
 export const TEST_ID_SPACE_LIST_SCREEN = 'spaces/space-list-screen'
-
-export type Msg = { t: 'clickedSpaceCard'; spaceId: SpaceId } | { t: 'listSpaces_gotMsgSpace'; c: GotQueryCacheMsg }
 
 const toProjectionQuery = (): QueryInput<SpaceProjectionEntity> => {
   return {

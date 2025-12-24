@@ -20,4 +20,3 @@ export const translations: Translations<Text> = {
     ar: (timeSpanDescription) => `\u062A\u0645 \u0627\u0644\u0625\u0646\u0634\u0627\u0621 ${timeSpanDescription}`,
   },
 }
-

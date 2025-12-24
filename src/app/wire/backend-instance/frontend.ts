@@ -1,5 +1,5 @@
 import { Eff } from '~/@/eff'
-import { FrontendCtxModule } from '../types'
+import type { FrontendCtxModule } from '../types'
 import type { ModelFrontend, MsgFrontend } from './types'
 import { Sub } from '~/@/sub'
 

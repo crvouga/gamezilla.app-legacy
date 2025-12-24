@@ -11,11 +11,8 @@ import { ActionCreateProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
 import { MsgSpace, spaceMsgs } from '../space/msg-space'
 import { Space } from '../space/space'
-import { FrontendCtxModule, ModelFrontend } from '../types'
-
-export type Msg =
-  | { t: 'startSpace_clickedStartSpaceButton'; spaceId: SpaceId }
-  | { t: 'startSpace_gotMsgSpace'; c: MsgSpace }
+import type { FrontendCtxModule, ModelFrontend } from '../base-types'
+import { Msg } from './types'
 
 export const update = (input: {
   ctx: FrontendCtxModule

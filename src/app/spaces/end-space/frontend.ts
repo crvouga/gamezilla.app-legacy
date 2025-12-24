@@ -3,7 +3,6 @@ import { withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
 import { IconArrowLeftOnRect } from '~/@/ui/icon'
 import { h } from '~/@/vdom/h'
-import { SpaceId } from '~/app/@/data/space-id'
 import { andThen } from '~/app/@/frontend/and-then'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -15,13 +14,8 @@ import { replaceScreen } from '~/app/frontend/current-screen/current-screen-cmd'
 import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
 import { MsgSpace, spaceMsgs } from '../space/msg-space'
 import { Space } from '../space/space'
-import { FrontendCtxModule, ModelFrontend } from '../types'
-
-export type Msg =
-  | { n: 'endSpace'; t: 'clickedEndSpaceButton'; spaceId: SpaceId }
-  | { n: 'endSpace'; t: 'submittedEndSpaceForm'; spaceId: SpaceId }
-  | { n: 'endSpace'; t: 'clickedBackButton' }
-  | { n: 'endSpace'; t: 'gotMsgSpace'; c: MsgSpace }
+import type { FrontendCtxModule, ModelFrontend } from '../base-types'
+import { Msg } from './types'
 
 export const update = (input: {
   ctx: FrontendCtxModule

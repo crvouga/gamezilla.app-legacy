@@ -1,8 +1,7 @@
 import { Eff } from '~/@/eff'
 import { EventSourced } from '~/@/event-sourced'
-import { WithEventId, WithEventMeta } from '~/@/event-sourced/event'
-import { isErr, Result } from '~/@/result'
-import { RPCError } from '~/@/rpc/error'
+import { WithEventId } from '~/@/event-sourced/event'
+import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { throttleByKey } from '~/@/throttle/throttle'
 import { TimeSpan } from '~/@/time/time-span'
@@ -18,21 +17,8 @@ import { SpaceDbQueryCache, SpaceProjectionDbQueryCache, SpaceProjectionUserDbQu
 import { SpaceEntity } from '../space/space-db/space-entity'
 import { SpaceProjectionEntity } from '../space/space-db/space-projection-entity'
 import { SpaceProjectionUserEntity } from '../space/space-db/space-projection-user-entity'
-import { FrontendCtxModule, ModelFrontend } from '../types'
-
-export type Msg =
-  | {
-      t: 'sync_gotMsgSpaceFromBackend'
-      c: WithEventMeta<MsgSpace>
-    }
-  | {
-      t: 'sync_gotMsgSpaceFromFrontend'
-      c: WithEventId<MsgSpace>
-    }
-  | {
-      t: 'sync_synced'
-      synced: Result<RPCError, { space: Space }>
-    }
+import type { FrontendCtxModule, ModelFrontend } from '../base-types'
+import { Msg } from './types'
 
 export const update = (input: {
   ctx: FrontendCtxModule

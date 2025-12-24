@@ -1,8 +1,7 @@
 import { Eff } from '~/@/eff'
-import { WithEventId, withEventMeta } from '~/@/event-sourced/event'
+import { withEventMeta } from '~/@/event-sourced/event'
 import { IconArrowLeftOnRect } from '~/@/ui/icon'
 import { h } from '~/@/vdom/h'
-import { SpaceId } from '~/app/@/data/space-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { pushScreen } from '~/app/frontend/current-screen/current-screen-cmd'
 import { playSound } from '~/app/@/frontend/sound-cmd'
@@ -11,14 +10,10 @@ import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-pro
 import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
 import { MsgSpace, spaceMsgs } from '../space/msg-space'
 import { Space } from '../space/space'
-import { FrontendCtxModule, ModelFrontend } from '../types'
+import type { FrontendCtxModule, ModelFrontend } from '../base-types'
+import { Msg } from './types'
 
-export type Msg =
-  | { t: 'leaveSpace_clickedLeaveSpaceButton'; spaceId: SpaceId }
-  | { t: 'leaveSpace_submittedLeaveSpaceButton'; spaceId: SpaceId }
-  | { t: 'leaveSpace_gotMsgSpace'; c: WithEventId<MsgSpace> }
-
-const update = (input: {
+export const update = (input: {
   ctx: FrontendCtxModule
   model: ModelFrontend
   msg: Msg

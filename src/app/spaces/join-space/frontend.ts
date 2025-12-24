@@ -9,8 +9,6 @@ import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
 import { Text } from '~/@/vdom/primitives/text'
 import { sx } from '~/@/vdom/style/sx'
-import { SpaceId } from '~/app/@/data/space-id'
-import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { playSound } from '~/app/@/frontend/sound-cmd'
 import { showToast } from '~/app/@/frontend/toaster-cmd'
@@ -26,15 +24,8 @@ import { GameCoverArt } from '../game/games/cover-art'
 import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
 import { MsgSpace, spaceMsgs } from '../space/msg-space'
 import { Space } from '../space/space'
-import { FrontendCtxModule, ModelFrontend } from '../types'
-
-export type Msg =
-  | { t: 'joinSpace_submittedJoinSpaceForm'; spaceId: SpaceId }
-  | { t: 'joinSpace_clickedPersonMenuItem'; userId: UserId }
-  | { t: 'joinSpace_closedPersonItemSurface' }
-  | { t: 'joinSpace_openedPersonDetails'; userId: UserId }
-  | { t: 'joinSpace_clickedBackButton' }
-  | { t: 'joinSpace_gotMsgSpace'; c: MsgSpace }
+import type { FrontendCtxModule, ModelFrontend } from '../base-types'
+import { Msg } from './types'
 
 export const update = (input: {
   ctx: FrontendCtxModule

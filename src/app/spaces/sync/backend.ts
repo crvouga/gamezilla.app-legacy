@@ -11,7 +11,7 @@ import { Space } from '../space/space'
 import { SpaceEntity } from '../space/space-db/space-entity'
 import { SpaceProjectionEntity } from '../space/space-db/space-projection-entity'
 import { SpaceProjectionUserEntity } from '../space/space-db/space-projection-user-entity'
-import { BackendCtxModule } from '../types'
+import type { BackendCtxModule } from '../types'
 import { rpcContract } from './types'
 
 const rpc = (config: { ctx: BackendCtxModule }) => {
