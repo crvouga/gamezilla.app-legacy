@@ -42,7 +42,12 @@ const init = (config: ImplSql): ISpaceDb => {
       let finalWhere: Parameters<typeof spaceDb.query>[0]['where'] = undefined
 
       if (where?.op === 'in' && where.column === 'userIds') {
-        const userIds = where.value as unknown as UserId[]
+        // Handle both UserId[] and UserId[][] (flatten if needed)
+        const userIdsRaw = where.value as unknown as UserId[] | UserId[][]
+        const userIds =
+          userIdsRaw.length > 0 && Array.isArray(userIdsRaw[0])
+            ? (userIdsRaw as UserId[][]).flat()
+            : (userIdsRaw as UserId[])
         const userResult = await projectionUserDb.query({
           where: { op: 'in', column: 'userId', value: userIds },
           limit: 1000,
@@ -52,12 +57,24 @@ const init = (config: ImplSql): ISpaceDb => {
         const spaceIds = [...new Set(userResult.value.entities.items.map((e) => e.spaceId))]
         finalWhere =
           spaceIds.length > 0 ? { op: 'in', column: 'id', value: spaceIds } : { op: 'in', column: 'id', value: [] }
+      } else if (where?.op === '=' && where.column === 'hostId') {
+        // Query projection table first to get spaceIds by hostId
+        const hostId = where.value as UserId
+        const projectionResult = await projectionDb.query({
+          where: { op: '=', column: 'hostId', value: hostId },
+          limit: 1000,
+          offset: 0,
+        })
+        if (isErr(projectionResult)) return mapErr(projectionResult, (e) => e)
+        const spaceIds = projectionResult.value.entities.items.map((e) => e.id)
+        finalWhere =
+          spaceIds.length > 0 ? { op: 'in', column: 'id', value: spaceIds } : { op: 'in', column: 'id', value: [] }
       } else if (where?.op === '=' && where.column === 'id') {
         finalWhere = { op: '=', column: 'id', value: where.value }
       } else if (where?.op === 'in' && where.column === 'id') {
         finalWhere = { op: 'in', column: 'id', value: where.value }
       } else if (where) {
-        // For other query types (hostId, type), we'd need to query projection table first
+        // For other query types (type), we'd need to query projection table first
         // For now, return empty result
         finalWhere = { op: 'in', column: 'id', value: [] }
       }
