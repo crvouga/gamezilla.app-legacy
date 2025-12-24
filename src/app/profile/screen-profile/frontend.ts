@@ -12,7 +12,7 @@ import { sx } from '~/@/vdom/style/sx'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { pushScreen } from '~/app/@/frontend/push-screen-cmd.$msg'
+import { pushScreen } from '~/app/frontend/current-screen/current-screen-cmd'
 import { ProfileFrontendCtx } from '../@/frontend/ctx'
 import { ProfileLoaderFrontend } from '../@/user-profile-loader/frontend'
 

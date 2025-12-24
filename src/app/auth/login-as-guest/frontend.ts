@@ -1,5 +1,6 @@
 import { Eff } from '~/@/eff'
-import { Err, isErr, Loading, NotAsked, Ok, Result, unwrapOr } from '~/@/result'
+import { Err, isErr, isOk, Loading, NotAsked, Ok, Result, unwrapOr } from '~/@/result'
+import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Button } from '~/@/ui/button'
 import { IconUserCircle } from '~/@/ui/icon'
@@ -9,6 +10,8 @@ import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { playSound } from '~/app/@/frontend/sound-cmd'
+import { showToast } from '~/app/@/frontend/toaster-cmd'
+import { replaceScreen } from '~/app/frontend/current-screen/current-screen-cmd'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
 import { GuestSessionMapping } from '../@/guest-session-mapping/guest-session-mapping'
 import { GuestSessionMappingId } from '../@/guest-session-mapping/guest-session-mapping-id'
@@ -58,6 +61,13 @@ export const update = (input: {
           ...input.model,
           loginAsGuest_request: input.msg.result,
         },
+        eff: isOk(input.msg.result)
+          ? Eff.batch([
+              playSound(APP_SOUND.celebration),
+              replaceScreen({ n: 'spaces', t: 'spaces_list' }, true),
+              showToast(input.ctx.t('auth.logged-in-as-guest'), 'info', TimeSpan.seconds(4)),
+            ])
+          : undefined,
       }
     }
   }

@@ -167,10 +167,14 @@ const loadOne = async (config: {
  * // PORT=3000
  */
 const load = async (config: DotEnvConfig): Promise<void> => {
-  const logger: ILogger = (config.logger ?? Logger.init({ t: 'noop' })).child(['dotenv'])
+  const logger: ILogger = (config.logger ?? (Logger ? Logger.init({ t: 'noop' }) : { child: () => ({ info: () => {} }) } as any)).child(['dotenv'])
   logger.info('Start loading .env files', config.paths)
   for (const path of config.paths) {
-    await loadOne({ ...config, path, logger })
+    await loadOne({
+      ...config,
+      path,
+      logger,
+    })
   }
   logger.info('Finished loading .env files')
 }
