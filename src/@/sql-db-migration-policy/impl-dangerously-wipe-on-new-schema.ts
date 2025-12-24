@@ -1,7 +1,7 @@
 import { deterministicJsonStringify } from '~/@/json/deterministic-stringify'
 import { IKeyValueDb } from '~/@/key-value-db'
 import { ILogger } from '~/@/logger'
-import { checkMigratableForMigration } from '~/@/sql-db/interface'
+import { checkMigratableForMigration, isMigratableSqlDb } from '~/@/sql-db/interface'
 import { isErr } from '~/@/result'
 import { s } from '~/@/schema'
 import { ISqlDbMigrationPolicy } from './interface'
@@ -49,7 +49,24 @@ const init = (config: ImplDangerouslyWipeOnNewSchema): ISqlDbMigrationPolicy => 
 
         logger.debug('running down migration to ensure the up migration succeeds', logPayload)
 
+        // CRITICAL FINAL CHECK: Defense in depth before executing down migrations
+        if (!isMigratableSqlDb(input.sqlDb)) {
+          logger.error(
+            `CRITICAL: Database became non-migratable before executing down migrations in 'dangerously-wipe-on-new-schema' policy. ` +
+              `Aborting migration to prevent accidental database modifications.`,
+          )
+          return { t: 'skipped', reason: 'non-migratable-database' }
+        }
+
         for (const down of input.down) {
+          // Final check before each SQL statement execution
+          if (!isMigratableSqlDb(input.sqlDb)) {
+            logger.error(
+              `CRITICAL: Database became non-migratable during down migration execution. ` +
+                `Stopping migration execution immediately. SQL: ${down.substring(0, 100)}...`,
+            )
+            return { t: 'skipped', reason: 'non-migratable-database' }
+          }
           const downResult = await input.sqlDb.query({
             sql: down,
             schema: s.unknown,
@@ -64,7 +81,26 @@ const init = (config: ImplDangerouslyWipeOnNewSchema): ISqlDbMigrationPolicy => 
 
         logger.debug('running up migration', logPayload)
 
+        // CRITICAL FINAL CHECK: Defense in depth before executing up migrations
+        if (!isMigratableSqlDb(input.sqlDb)) {
+          logger.error(
+            `CRITICAL: Database became non-migratable before executing up migrations in 'dangerously-wipe-on-new-schema' policy. ` +
+              `Aborting migration to prevent accidental database modifications.`,
+          )
+          return { t: 'skipped', reason: 'non-migratable-database' }
+        }
+
+        logger.warn('EXECUTING MIGRATION SQL - This should only happen with migratable databases (SQLite, PGLite)')
+
         for (const up of input.up) {
+          // Final check before each SQL statement execution
+          if (!isMigratableSqlDb(input.sqlDb)) {
+            logger.error(
+              `CRITICAL: Database became non-migratable during up migration execution. ` +
+                `Stopping migration execution immediately. SQL: ${up.substring(0, 100)}...`,
+            )
+            return { t: 'skipped', reason: 'non-migratable-database' }
+          }
           const upResult = await input.sqlDb.query({
             sql: up,
             schema: s.unknown,
@@ -95,7 +131,25 @@ const init = (config: ImplDangerouslyWipeOnNewSchema): ISqlDbMigrationPolicy => 
       }
 
       logger.debug('schema changed. running down migration', logPayload)
+
+      // CRITICAL FINAL CHECK: Defense in depth before executing down migrations
+      if (!isMigratableSqlDb(input.sqlDb)) {
+        logger.error(
+          `CRITICAL: Database became non-migratable before executing down migrations in 'dangerously-wipe-on-new-schema' policy. ` +
+            `Aborting migration to prevent accidental database modifications.`,
+        )
+        return { t: 'skipped', reason: 'non-migratable-database' }
+      }
+
       for (const down of prevSchema.down) {
+        // Final check before each SQL statement execution
+        if (!isMigratableSqlDb(input.sqlDb)) {
+          logger.error(
+            `CRITICAL: Database became non-migratable during down migration execution. ` +
+              `Stopping migration execution immediately. SQL: ${down.substring(0, 100)}...`,
+          )
+          return { t: 'skipped', reason: 'non-migratable-database' }
+        }
         const downResult = await input.sqlDb.query({
           sql: down,
           schema: s.unknown,
@@ -108,7 +162,27 @@ const init = (config: ImplDangerouslyWipeOnNewSchema): ISqlDbMigrationPolicy => 
       }
 
       logger.debug('down migration complete. running up migration', logPayload)
+
+      // CRITICAL FINAL CHECK: Defense in depth before executing up migrations
+      if (!isMigratableSqlDb(input.sqlDb)) {
+        logger.error(
+          `CRITICAL: Database became non-migratable before executing up migrations in 'dangerously-wipe-on-new-schema' policy. ` +
+            `Aborting migration to prevent accidental database modifications.`,
+        )
+        return { t: 'skipped', reason: 'non-migratable-database' }
+      }
+
+      logger.warn('EXECUTING MIGRATION SQL - This should only happen with migratable databases (SQLite, PGLite)')
+
       for (const up of input.up) {
+        // Final check before each SQL statement execution
+        if (!isMigratableSqlDb(input.sqlDb)) {
+          logger.error(
+            `CRITICAL: Database became non-migratable during up migration execution. ` +
+              `Stopping migration execution immediately. SQL: ${up.substring(0, 100)}...`,
+          )
+          return { t: 'skipped', reason: 'non-migratable-database' }
+        }
         const upResult = await input.sqlDb.query({
           sql: up,
           schema: s.unknown,

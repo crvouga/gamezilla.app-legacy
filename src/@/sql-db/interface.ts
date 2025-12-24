@@ -1,6 +1,7 @@
 import type { Result } from '~/@/result'
 import type { s } from '~/@/schema'
 import type { Sql } from '~/@/sql'
+import { Logger } from '../logger'
 import { Sub } from '../sub'
 
 export type ISqlDb = {
@@ -83,6 +84,65 @@ export const checkMigratableForMigration = (
     return false
   }
   return true
+}
+
+/**
+ * Validates that a production database URL is not pointing to localhost.
+ * This is a safety check to catch misconfigurations.
+ */
+export const validateProductionDatabaseUrl = (
+  databaseUrl: { dangerouslyReadValue: () => string },
+  context: string,
+): void => {
+  const url = databaseUrl.dangerouslyReadValue()
+  const isLocalhost = url.includes('localhost') || url.includes('127.0.0.1') || url.includes('::1')
+
+  if (isLocalhost) {
+    // This is a warning, not an error, as localhost might be valid in some production setups
+    // But we log it as a critical warning for visibility
+    console.warn(
+      `WARNING: Production database URL appears to point to localhost in ${context}. ` +
+        `This may indicate a misconfiguration. URL pattern detected: ${url.substring(0, 50)}...`,
+    )
+  }
+}
+
+/**
+ * Validates database configuration to ensure migrations never run against non-migratable databases.
+ * This is a comprehensive check that validates safety conditions.
+ */
+export const validateProductionDatabaseConfig = async (
+  sqlDb: ISqlDb,
+  migrationPolicy: {
+    execute: (input: {
+      logger: any
+      sqlDb: ISqlDb
+      up: string[]
+      down: string[]
+    }) => Promise<{ t: string; reason?: string }>
+  },
+  context: string,
+): Promise<void> => {
+  // CRITICAL: If database is not migratable (e.g., Postgres), ensure policy is never-run
+  // This check always runs regardless of environment to prevent accidental migrations
+  if (!isMigratableSqlDb(sqlDb)) {
+    const testLogger = Logger.init({ t: 'noop' })
+    const testResult = await migrationPolicy.execute({
+      logger: testLogger,
+      sqlDb,
+      up: [],
+      down: [],
+    })
+
+    if (testResult.t !== 'skipped' || testResult.reason !== 'never-run') {
+      throw new Error(
+        `CRITICAL: Non-migratable database (Postgres) detected but migration policy is not 'never-run' in ${context}. ` +
+          `Non-migratable databases MUST use 'never-run' policy. ` +
+          `Policy returned: ${JSON.stringify(testResult)}. ` +
+          `This is a critical safety violation that could lead to accidental migrations running against production.`,
+      )
+    }
+  }
 }
 
 export type SqlDbQueryInput<TRow> = {

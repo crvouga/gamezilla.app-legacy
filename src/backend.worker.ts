@@ -4,6 +4,7 @@ import { FileSystem } from './@/file-system'
 import { Logger } from './@/logger'
 import { SecretString } from './@/secrets/secret-string'
 import { BackendSqlDb } from './@/sql-db/backend-impl'
+import { assertNotMigratable, validateProductionDatabaseUrl } from './@/sql-db/interface'
 
 const main = async () => {
   const logger = Logger.init({ t: 'console', namespace: ['worker'], newLinePerMsg: false, maxLogLevel: 'debug' })
@@ -28,8 +29,13 @@ const main = async () => {
   const IS_PROD = process.env.NODE_ENV?.includes('production') ?? false
   logger.info(`Running in ${IS_PROD ? 'production' : 'development'} mode`)
 
+  validateProductionDatabaseUrl(DATABASE_URL, 'backend.worker.ts entry point')
+
   logger.info('Initializing database connection')
   const sqlDb = BackendSqlDb.init({ t: 'postgres', databaseUrl: DATABASE_URL, logger })
+
+  assertNotMigratable(sqlDb, 'backend.worker.ts entry point after BackendSqlDb.init')
+
   logger.info('Database connection initialized')
 
   logger.info('Loading worker port from environment')

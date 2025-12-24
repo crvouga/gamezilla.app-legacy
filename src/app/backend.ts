@@ -13,7 +13,8 @@ import { Runtime } from '~/@/runtime'
 import { ServerRegistry } from '~/@/server-registry/server-registry'
 import { SinglePageApp } from '~/@/single-page-app'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
-import { ISqlDb } from '~/@/sql-db/interface'
+import { validatePolicyDatabaseCompatibility } from '~/@/sql-db-migration-policy/interface'
+import { ISqlDb, validateProductionDatabaseConfig } from '~/@/sql-db/interface'
 import { SyncEngineServer } from '~/@/sync-engine/sync-engine-server'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
@@ -51,6 +52,13 @@ const initCtx = async (config: {
     t: 'never-run', // NEVER run migrations against production database
     logger,
   })
+
+  // CRITICAL: Validate database configuration before proceeding
+  // This provides multiple layers of redundancy to prevent accidental migrations
+  await validateProductionDatabaseConfig(config.sqlDb, migrationPolicy, 'AppBackend.initCtx')
+
+  // Additional validation: Check policy-database compatibility
+  await validatePolicyDatabaseCompatibility(migrationPolicy, config.sqlDb, 'AppBackend.initCtx')
 
   const keyValueDbDurable = KeyValueDb.init({
     t: 'sql-db',

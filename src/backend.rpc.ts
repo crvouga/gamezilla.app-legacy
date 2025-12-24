@@ -4,6 +4,7 @@ import { FileSystem } from './@/file-system'
 import { Logger } from './@/logger'
 import { SecretString } from './@/secrets/secret-string'
 import { BackendSqlDb } from './@/sql-db/backend-impl'
+import { assertNotMigratable, validateProductionDatabaseUrl } from './@/sql-db/interface'
 
 const main = async () => {
   const logger = Logger.init({ t: 'console', namespace: ['server'], newLinePerMsg: false, maxLogLevel: 'debug' })
@@ -28,8 +29,19 @@ const main = async () => {
   const IS_PROD = process.env.NODE_ENV?.includes('production') ?? false
   logger.info(`Running in ${IS_PROD ? 'production' : 'development'} mode`)
 
+  // CRITICAL: Validate database URL before initializing connection
+  // This provides an early warning if production URL points to localhost
+  if (IS_PROD) {
+    validateProductionDatabaseUrl(DATABASE_URL, 'backend.rpc.ts entry point')
+  }
+
   logger.info('Initializing database connection')
   const sqlDb = BackendSqlDb.init({ t: 'postgres', databaseUrl: DATABASE_URL, logger })
+
+  // CRITICAL: Additional validation at entry point
+  // This is a redundant check to ensure Postgres is never migratable
+  assertNotMigratable(sqlDb, 'backend.rpc.ts entry point after BackendSqlDb.init')
+
   logger.info('Database connection initialized')
 
   logger.info('Loading server port from environment')
