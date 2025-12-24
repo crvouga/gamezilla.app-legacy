@@ -393,6 +393,15 @@ const update = (input: {
         eff: Eff.tag('focus', updated.eff),
       }
     }
+    case 'queryCache': {
+      const updated = QueryCache.update({
+        model: input.model.queryCache,
+        msg: input.msg.c,
+      })
+      return {
+        model: { ...input.model, queryCache: updated.model },
+      }
+    }
   }
 }
 
@@ -406,6 +415,7 @@ const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }):
     Sub.map(ScreenSizeFrontend.subscriptions(inputNew), (c) => ({ t: 'screenSize', c })),
     Sub.map(CurrentScreenFrontend.subscriptions(inputNew), (c) => ({ t: 'currentScreen', c })),
     Sub.map(ToasterFrontend.subscriptions({ ...input, model: input.model.toaster }), (c) => ({ t: 'toaster', c })),
+    Sub.map(QueryCache.subscriptions({ model: input.model.queryCache }), (c) => ({ t: 'queryCache', c })),
     Sub.map(WireFrontend.subscriptions({ ...input, model: input.model.wire }), (c) => ({ t: 'wire', c })),
     Sub.map(SettingsFrontend.subscriptions({ ...input, model: input.model.settings }), (c) => ({ t: 'settings', c })),
     Sub.map(AuthFrontend.subscriptions({ ...input, model: input.model.auth }), (c) => ({ t: 'auth', c })),

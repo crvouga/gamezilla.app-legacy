@@ -5,6 +5,7 @@ import { EmptyState } from '~/@/ui/empty-state'
 import { IconGamepad } from '~/@/ui/icon'
 import { LoadingState } from '~/@/ui/spinner-block'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { sx } from '~/@/vdom/style/sx'
 import { SpaceId } from '~/app/@/data/space-id'
@@ -99,7 +100,19 @@ const View = (input: {
     },
     actionCreate: input.slots.actionCreate,
     renderBody: () => {
-      if (isLoading) return h(LoadingState, {})
+      if (isLoading)
+        return h(
+          Box,
+          {
+            style: sx({
+              flex: 1,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }),
+          },
+          [h(LoadingState, {})],
+        )
 
       if (spaces.length === 0)
         return h(EmptyState, {

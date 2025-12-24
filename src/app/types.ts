@@ -43,6 +43,7 @@ export type MsgFrontend =
   | { t: 'auth'; c: AuthTypes.MsgFrontend }
   | { t: 'profile'; c: ProfileTypes.MsgFrontend }
   | { t: 'settings'; c: SettingsTypes.MsgFrontend }
+  | { t: 'queryCache'; c: QueryCache.Msg }
 
 export const rpcContract = RPC.combineContracts([AuthTypes.rpcContract, SpacesTypes.rpcContract])
 

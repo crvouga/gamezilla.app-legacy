@@ -1,5 +1,8 @@
 import { deterministicJsonStringify } from '~/@/json/deterministic-stringify'
-import { GotQueryCacheMsg } from './got-query-cache-msg.$msg'
+import { Sub } from '~/@/sub'
+import { QueryCacheMsg, queryCacheMsgs } from './query-cache-msgs'
+
+export type Msg = QueryCacheMsg
 
 export type Model = {
   queryCache_queries: {
@@ -44,38 +47,36 @@ const mergeEntities = (
   return { ...existing, ...incoming }
 }
 
-export const update = <TModel extends Model>(input: {
-  model: TModel
-  msgIn?: unknown
+export const update = (input: {
+  model: Model
+  msg: Msg
 }): {
-  model: TModel
+  model: Model
 } => {
-  const { msgIn } = input
+  const { msg } = input
 
-  if (!GotQueryCacheMsg.is(msgIn)) return { model: input.model }
-
-  switch (msgIn.c.t) {
+  switch (msg.t) {
     case 'gotEntities': {
-      const entityType = msgIn.c.entityType
+      const entityType = msg.entityType
       const existingEntities = input.model.queryCache_entities.byType[entityType]?.byId ?? {}
       const entitiesNew = { byId: { ...existingEntities } }
 
-      for (const entityId in msgIn.c.entities) {
+      for (const entityId in msg.entities) {
         entitiesNew.byId[entityId] = mergeEntities(
-          msgIn.c.lastUpdatedAtKey,
+          msg.lastUpdatedAtKey,
           entitiesNew.byId[entityId] ?? {},
-          msgIn.c.entities[entityId] ?? {},
+          msg.entities[entityId] ?? {},
         )
       }
 
-      const queryKey = deterministicJsonStringify(msgIn.c.query)
+      const queryKey = deterministicJsonStringify(msg.query)
       const queriesNew = {
         ...input.model.queryCache_queries,
-        [queryKey]: msgIn.c.query,
+        [queryKey]: msg.query,
       }
       const resultsNew = {
         ...input.model.queryCache_results,
-        [queryKey]: msgIn.c.results,
+        [queryKey]: msg.results,
       }
 
       return {
@@ -94,7 +95,7 @@ export const update = <TModel extends Model>(input: {
     }
 
     case 'gotEntity': {
-      const entityType = msgIn.c.entityType
+      const entityType = msg.entityType
       const existingEntities = input.model.queryCache_entities.byType[entityType]?.byId ?? {}
 
       return {
@@ -106,11 +107,7 @@ export const update = <TModel extends Model>(input: {
               [entityType]: {
                 byId: {
                   ...existingEntities,
-                  [msgIn.c.id]: mergeEntities(
-                    msgIn.c.lastUpdatedAtKey,
-                    existingEntities[msgIn.c.id] ?? {},
-                    msgIn.c.entity,
-                  ),
+                  [msg.id]: mergeEntities(msg.lastUpdatedAtKey, existingEntities[msg.id] ?? {}, msg.entity),
                 },
               },
             },
@@ -119,4 +116,8 @@ export const update = <TModel extends Model>(input: {
       }
     }
   }
+}
+
+export const subscriptions = (_input: { model: Model }): Sub<Msg> => {
+  return queryCacheMsgs
 }
