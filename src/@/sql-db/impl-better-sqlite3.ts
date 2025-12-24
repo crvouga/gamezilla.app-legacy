@@ -3,7 +3,7 @@ import type { IFileSystem } from '../file-system/interface'
 import type { ILogger } from '../logger/interface'
 import { TimeSpan } from '../time/time-span'
 import { ImplStandardSqlite } from './impl-standard-sqlite'
-import type { ISqlDb } from './interface'
+import type { IMigratableSqlDb } from './interface'
 const Database = (DatabaseNamespace as any).default || DatabaseNamespace
 
 export type ImplBetterSqlite3 = {
@@ -20,7 +20,7 @@ export type ImplBetterSqlite3 = {
   pollInterval?: TimeSpan
 }
 
-const init = (config: ImplBetterSqlite3): ISqlDb => {
+const init = (config: ImplBetterSqlite3): IMigratableSqlDb => {
   if (config.databasePath !== ':memory:') {
     const dir = config.databasePath.substring(0, config.databasePath.lastIndexOf('/'))
     const setup = async () => {

@@ -48,7 +48,7 @@ const initCtx = async (config: {
   })
 
   const migrationPolicy = SqlDbMigrationPolicy.init({
-    t: config.isProd ? 'always-run' : 'always-run', // Always run migrations for now
+    t: 'never-run', // NEVER run migrations against production database
     logger,
   })
 

@@ -4,7 +4,7 @@ import { isErr, mapErr, Ok, Result, unwrapOr } from '~/@/result'
 import { s } from '~/@/schema'
 import { ascend } from '~/@/sort'
 import { Sql } from '~/@/sql'
-import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
+import { MigrationPolicyResult, ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
 import { ISqlDb } from '~/@/sql-db/interface'
 import { Sub } from '~/@/sub'
 import { IDb } from '../../interface'
@@ -43,12 +43,14 @@ const init = <
 >(
   self: ImplSqlDb<TEntity, TRelated, TRow>,
 ): IDb.IDb<TEntity, TRelated> => {
-  const run = self.migration?.policy.execute({
-    logger: self.logger,
-    sqlDb: self.sqlDb,
-    up: self.migration.up,
-    down: self.migration.down,
-  })
+  const run: Promise<MigrationPolicyResult> = self.migration
+    ? self.migration.policy.execute({
+        logger: self.logger,
+        sqlDb: self.sqlDb,
+        up: self.migration.up,
+        down: self.migration.down,
+      })
+    : Promise.resolve({ t: 'skipped', reason: 'never-run' })
 
   const rowToEntity = (row: TRow): TEntity => {
     const rowEntries = Object.entries(row)

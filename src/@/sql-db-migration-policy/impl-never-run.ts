@@ -10,6 +10,7 @@ const init = (config: ImplNeverRun): ISqlDbMigrationPolicy => {
   return {
     async execute(_input) {
       config.logger.debug('never-run, skipping migration')
+      return { t: 'skipped', reason: 'never-run' }
     },
   }
 }

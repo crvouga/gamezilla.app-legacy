@@ -1,6 +1,7 @@
 import { deterministicJsonStringify } from '~/@/json/deterministic-stringify'
 import { IKeyValueDb } from '~/@/key-value-db'
 import { ILogger } from '~/@/logger'
+import { isMigratableSqlDb } from '~/@/sql-db/interface'
 import { isErr } from '~/@/result'
 import { s } from '~/@/schema'
 import { ISqlDbMigrationPolicy } from './interface'
@@ -26,6 +27,17 @@ const init = (config: ImplDangerouslyWipeOnNewSchema): ISqlDbMigrationPolicy => 
   return {
     async execute(input) {
       const logger = input.logger.child(['dangerously-wipe-on-new-schema'])
+
+      if (!isMigratableSqlDb(input.sqlDb)) {
+        logger.error(
+          `CRITICAL: Attempted to run migration policy "dangerously-wipe-on-new-schema" against a non-migratable database. ` +
+            `Migrations can ONLY run against local-first databases (SQLite, PGLite). ` +
+            `Production databases (Postgres) MUST use 'never-run' policy. ` +
+            `Skipping migration to prevent accidental database modifications.`,
+        )
+        return { t: 'skipped', reason: 'non-migratable-database' }
+      }
+
       const logPayload = {
         up: input.up,
         down: input.down,
@@ -35,7 +47,7 @@ const init = (config: ImplDangerouslyWipeOnNewSchema): ISqlDbMigrationPolicy => 
       const prevSchemaResult = await config.kvDb.get(key, Entry)
       if (isErr(prevSchemaResult)) {
         logger.error('failed to get previous schema', { error: prevSchemaResult.error })
-        return
+        return { t: 'skipped', reason: 'never-run' }
       }
       const prevSchema = prevSchemaResult.value
       if (!prevSchema) {
@@ -77,7 +89,7 @@ const init = (config: ImplDangerouslyWipeOnNewSchema): ISqlDbMigrationPolicy => 
         logger.debug('up migration complete. writing new schema', { input, entryNew })
         await config.kvDb.set(key, entryNew)
         logger.debug('new schema written', { input, entryNew })
-        return
+        return { t: 'executed' }
       }
 
       const prevHash = hashSql(prevSchema.up)
@@ -85,7 +97,7 @@ const init = (config: ImplDangerouslyWipeOnNewSchema): ISqlDbMigrationPolicy => 
       const didChange = prevHash !== newHash
       if (!didChange) {
         logger.debug('no change in schema. skipping.', logPayload)
-        return
+        return { t: 'skipped', reason: 'schema-unchanged' }
       }
 
       logger.debug('schema changed. running down migration', logPayload)
@@ -121,6 +133,7 @@ const init = (config: ImplDangerouslyWipeOnNewSchema): ISqlDbMigrationPolicy => 
       }
       await config.kvDb.set(key, entryNew)
       logger.debug('new schema written', { input, entryNew })
+      return { t: 'executed' }
     },
   }
 }

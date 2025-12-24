@@ -3,7 +3,7 @@ import { s } from '~/@/schema'
 import { ILogger } from '../logger'
 import { TimeSpan } from '../time/time-span'
 import { ImplStandardSqlite } from './impl-standard-sqlite'
-import type { ISqlDb } from './interface'
+import type { IMigratableSqlDb } from './interface'
 
 export type ImplExpoSqlite = {
   t: 'expo-sqlite'
@@ -12,7 +12,7 @@ export type ImplExpoSqlite = {
   pollInterval?: TimeSpan
 }
 
-const init = (config: ImplExpoSqlite): ISqlDb => {
+const init = (config: ImplExpoSqlite): IMigratableSqlDb => {
   const db = SQLite.openDatabaseAsync(config.dbName)
 
   const initDb = async () => {

@@ -2,7 +2,7 @@ import { s } from '~/@/schema'
 import { TimeSpan } from '~/@/time/time-span'
 import { ILogger } from '../logger'
 import { ImplStandardSql } from './impl-standard-sql'
-import type { ISqlDb } from './interface'
+import type { IMigratableSqlDb } from './interface'
 
 export type ImplStandardSqlite = {
   t: 'standard-sqlite'
@@ -12,7 +12,7 @@ export type ImplStandardSqlite = {
   garbageCollectionInterval?: TimeSpan
 }
 
-const init = (config: ImplStandardSqlite): ISqlDb => {
+const init = (config: ImplStandardSqlite): IMigratableSqlDb => {
   const base = ImplStandardSql.init({
     ...config,
     t: 'standard-sql',
@@ -57,6 +57,7 @@ const init = (config: ImplStandardSqlite): ISqlDb => {
     aggregate: {
       StringConcat: (column, separator) => `STRING_AGG(${column}, '${separator}')`,
     },
+    __migratable: Symbol('migratable'),
   }
 }
 

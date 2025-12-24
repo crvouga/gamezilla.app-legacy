@@ -3,7 +3,7 @@ import { s } from '~/@/schema'
 import type { ILogger } from '../logger/interface'
 import { IPglite } from '../pglite/types'
 import { ImplStandardSql } from './impl-standard-sql'
-import type { ISqlDb } from './interface'
+import type { IMigratableSqlDb } from './interface'
 
 export type ImplPglite = {
   t: 'pglite'
@@ -11,7 +11,7 @@ export type ImplPglite = {
   logger: ILogger
 }
 
-const init = (config: ImplPglite): ISqlDb => {
+const init = (config: ImplPglite): IMigratableSqlDb => {
   const logger = config.logger.child(['pglite'])
 
   const impl = ImplStandardSql.init({
@@ -45,6 +45,7 @@ const init = (config: ImplPglite): ISqlDb => {
       })
       return unlisten
     },
+    __migratable: Symbol('migratable'),
   }
 }
 

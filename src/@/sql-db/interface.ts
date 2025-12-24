@@ -16,6 +16,24 @@ export type ISqlDb = {
   }
 }
 
+/**
+ * A branded type that marks a database as safe for automatic migrations.
+ * Only local-first databases (SQLite, PGLite) should implement this.
+ * Production databases (Postgres) must NEVER implement this.
+ */
+export type IMigratableSqlDb = ISqlDb & {
+  readonly __migratable: symbol
+}
+
+/**
+ * Type guard to check if a database is migratable.
+ * This provides runtime safety in addition to compile-time type checking.
+ */
+export const isMigratableSqlDb = (db: ISqlDb): db is IMigratableSqlDb => {
+  // Check for a marker property that only migratable databases will have
+  return '__migratable' in db && typeof (db as any).__migratable === 'symbol'
+}
+
 export type SqlDbQueryInput<TRow> = {
   schema: s.Schema<TRow>
   sql: string

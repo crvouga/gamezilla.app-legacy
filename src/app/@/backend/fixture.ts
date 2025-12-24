@@ -69,7 +69,9 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const now = UnixMs.now()
 
-  const migrationPolicy = SqlDbMigrationPolicy.init({ t: 'never-run', logger })
+  // For unit tests with SQLite, use always-run to ensure migrations execute
+  // SQLite is migratable, so this is safe
+  const migrationPolicy = SqlDbMigrationPolicy.init({ t: 'always-run', logger })
 
   const serverRegistry = ServerRegistry.init({
     httpClient: HttpClient.init({ t: 'fetch' }),
