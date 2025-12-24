@@ -1,10 +1,11 @@
-import { IDb } from '~/@/db/interface'
+import { QueryInput } from '~/@/db/interface/query-input/query-input'
 import { Sub } from '~/@/sub'
 import { LoadingState } from '~/@/ui/spinner-block'
 import { h } from '~/@/vdom/h'
 import type { SpaceId } from '~/app/@/data/space-id'
 import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-button'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
+import { GotQueryCacheMsg } from '~/app/frontend/query-cache/got-query-cache-msg.$msg'
 import { EndSpaceFrontend } from '../end-space'
 import { ExitSpaceAction } from '../frontend/exit-space-action/frontend'
 import { PeopleActionFrontend } from '../frontend/people-action/frontend'
@@ -13,12 +14,12 @@ import { JoinSpaceFrontend } from '../join-space'
 import { LeaveSpaceFrontend } from '../leave-space/frontend'
 import type { FrontendCtxModule, ModelFrontend, MsgFrontend } from '../types'
 import { Space } from './space'
-import { SpaceDbQueryCache } from './space-db-query-cache'
-import { ISpaceDb } from './space-db/interface'
+import { SpaceDbQueryCache } from './space-db'
+import { SpaceEntity } from './space-db/space-entity'
 
 export const TEST_ID_SPACE_SCREEN = 'spaces/space-screen'
 
-const toQuery = (spaceId: SpaceId): IDb.InferQueryInput<typeof ISpaceDb.schema> => {
+const toQuery = (spaceId: SpaceId): QueryInput<SpaceEntity> => {
   return { where: { op: '=', column: 'id', value: spaceId } }
 }
 
@@ -131,7 +132,19 @@ const ViewSpaceNotFound = (input: { ctx: FrontendCtxModule; dispatch: (m: MsgFro
 const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<MsgFrontend> => {
   const spaceId = input.ctx.currentScreen.t === 'spaces_space' ? input.ctx.currentScreen.spaceId : null
   if (!spaceId) return Sub.none()
-  return SpaceDbQueryCache.sub(input.ctx.spaceDb, toQuery(spaceId), (c): MsgFrontend => ({ t: 'gotQueryCacheMsg', c }))
+  return SpaceDbQueryCache.watch(input.ctx.spaceDb, toQuery(spaceId), (c): MsgFrontend => {
+    const msg =
+      c.t === 'gotEntity'
+        ? {
+            t: 'gotEntity' as const,
+            id: c.id,
+            entityType: c.entityType,
+            entity: c.entity,
+            lastUpdatedAtKey: c.lastUpdatedAtKey,
+          }
+        : c
+    return { t: 'gotQueryCacheMsg', c: GotQueryCacheMsg.init(msg) }
+  })
 }
 
 export const SpaceFrontend = {

@@ -1,4 +1,5 @@
-import { IDb } from '~/@/db/interface'
+import { QueryInput } from '~/@/db/interface/query-input/query-input'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { EmptyState } from '~/@/ui/empty-state'
 import { IconGamepad } from '~/@/ui/icon'
@@ -6,27 +7,23 @@ import { LoadingState } from '~/@/ui/spinner-block'
 import { h } from '~/@/vdom/h'
 import { ScrollBox } from '~/@/vdom/primitives/scroll-box'
 import { sx } from '~/@/vdom/style/sx'
-import { APP_SOUND } from '~/app/@/frontend/app-sound'
-import { pushScreen } from '~/app/frontend/current-screen/current-screen-cmd'
+import { SpaceId } from '~/app/@/data/space-id'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ActionCreateProps } from '~/app/@/ui/screen/layout/screen-layout-props'
+import { pushScreen } from '~/app/frontend/current-screen/current-screen-cmd'
+import { GotQueryCacheMsg } from '~/app/frontend/query-cache/got-query-cache-msg.$msg'
+import { queryCacheMsgs } from '~/app/frontend/query-cache/query-cache-msgs'
 import { Space } from '../space/space'
-import { SpaceDbQueryCache } from '../space/space-db-query-cache'
-import { ISpaceDb } from '../space/space-db/interface'
+import { SpaceDbQueryCache, SpaceProjectionDbQueryCache } from '../space/space-db'
+import { SpaceProjectionEntity } from '../space/space-db/space-projection-entity'
 import { FrontendCtxModule, ModelFrontend } from '../types'
 import { ViewSpaceCard } from './space-card/space-card'
-
-import { Eff } from '~/@/eff'
-import { SpaceId } from '~/app/@/data/space-id'
-import { playSound } from '~/app/@/frontend/sound-cmd'
-import { queryCacheMsgs } from '~/app/frontend/query-cache/query-cache-msgs'
-import { GotQueryCacheMsg } from '~/app/frontend/query-cache/got-query-cache-msg.$msg'
 
 export const TEST_ID_SPACE_LIST_SCREEN = 'spaces/space-list-screen'
 
 export type Msg = { t: 'clickedSpaceCard'; spaceId: SpaceId } | { t: 'listSpaces_gotMsgSpace'; c: GotQueryCacheMsg }
 
-const toQuery = (): IDb.InferQueryInput<typeof ISpaceDb.schema> => {
+const toProjectionQuery = (): QueryInput<SpaceProjectionEntity> => {
   return {
     where: {
       op: '=',
@@ -50,35 +47,26 @@ const update = (input: {
       return {
         model: input.model,
         eff: () => {
-          const cacheMsg = msg.c.c
-          if (cacheMsg.t === 'got-entity') {
-            queryCacheMsgs.pub({
-              t: 'gotEntity',
-              id: cacheMsg.id,
-              entityType: cacheMsg.entityType,
-              entity: cacheMsg.entity,
-              lastUpdatedAtKey: cacheMsg.lastUpdatedAtKey,
-            })
-          } else {
-            queryCacheMsgs.pub(cacheMsg)
-          }
+          queryCacheMsgs.pub(msg.c.c)
         },
       }
     }
     case 'clickedSpaceCard': {
       return {
         model: input.model,
-        eff: Eff.batch([
-          pushScreen({ n: 'spaces', t: 'spaces_space', spaceId: input.msg.spaceId }),
-          playSound(APP_SOUND.navForwardMin),
-        ]),
+        eff: pushScreen({ n: 'spaces', t: 'spaces_space', spaceId: input.msg.spaceId }, true),
       }
     }
   }
 }
 
 const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<Msg> => {
-  return SpaceDbQueryCache.sub(input.ctx.spaceDb, toQuery(), (c): Msg => ({ t: 'listSpaces_gotMsgSpace', c }))
+  const projectionQuery = toProjectionQuery()
+  return SpaceProjectionDbQueryCache.watch(
+    input.ctx.spaceProjectionDb,
+    projectionQuery,
+    (c): Msg => ({ t: 'listSpaces_gotMsgSpace', c: GotQueryCacheMsg.init(c) }),
+  )
 }
 
 const View = (input: {
@@ -89,9 +77,16 @@ const View = (input: {
     actionCreate: ActionCreateProps | null
   }
 }) => {
-  const query = toQuery()
-  const spaces = SpaceDbQueryCache.read(input.ctx, query)
-  const isLoading = SpaceDbQueryCache.isLoading(input.ctx, query)
+  const projectionQuery = toProjectionQuery()
+  const projections = SpaceProjectionDbQueryCache.query(input.ctx, projectionQuery)
+  const isLoading = SpaceProjectionDbQueryCache.isLoading(input.ctx, projectionQuery)
+
+  // Get the actual Space entities for the started spaces
+  const spaceIds = projections.map((p) => p.id)
+  const spaces = spaceIds
+    .map((spaceId) => SpaceDbQueryCache.entity(input.ctx, spaceId))
+    .filter((space): space is Space => space !== null)
+
   const spaceProjections = spaces.map(Space.toSpaceProjection)
 
   return h(ScreenLayout, {

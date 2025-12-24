@@ -1,13 +1,15 @@
 import { unwrap } from '~/@/result'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
+import { UnixMs } from '~/@/time/unix-ms'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Space } from '../../space'
-import { SpaceDb } from '../impl'
+import { initSpaceDb, SpaceDbConfig } from '../space-db-impl'
+import { SpaceEntity } from '../space-entity'
 
-const Fixture = async (config: SpaceDb) => {
-  const spacesDb = SpaceDb.init(config)
+const Fixture = async (config: SpaceDbConfig) => {
+  const spacesDb = initSpaceDb(config)
   const spaceId = SpaceId.generate()
   const hostId = UserId.generate()
   const guestIds = [UserId.generate(), UserId.generate(), UserId.generate()]
@@ -16,7 +18,17 @@ const Fixture = async (config: SpaceDb) => {
 
   const seedOtherSpaces = async (input: { count: number }) => {
     for (let i = 0; i < input.count; i++) {
-      unwrap(await spacesDb.upsert({ entities: [Space.random({ spaceId: SpaceId.generate() })] }))
+      const randomSpace = Space.random({ spaceId: SpaceId.generate() })
+      const spaceId = Space.toSpaceId(randomSpace)
+      if (!spaceId) continue
+      const spaceEntity: SpaceEntity = {
+        id: spaceId,
+        createdAt: UnixMs.now(),
+        updatedAt: UnixMs.now(),
+        deletedAt: null,
+        space: randomSpace,
+      }
+      unwrap(await spacesDb.upsert({ entities: [spaceEntity] }))
     }
   }
 
@@ -34,7 +46,7 @@ const Fixture = async (config: SpaceDb) => {
 export const Fixtures = async () => {
   const f = await FixtureAppBackend()
 
-  const configs: SpaceDb[] = []
+  const configs: SpaceDbConfig[] = []
 
   configs.push({
     t: 'sql-db',

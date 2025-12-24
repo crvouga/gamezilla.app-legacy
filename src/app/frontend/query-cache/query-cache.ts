@@ -93,7 +93,7 @@ export const update = <TModel extends Model>(input: {
       }
     }
 
-    case 'got-entity': {
+    case 'gotEntity': {
       const entityType = msgIn.c.entityType
       const existingEntities = input.model.queryCache_entities.byType[entityType]?.byId ?? {}
 

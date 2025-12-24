@@ -11,7 +11,7 @@ export const Msg = s.or(
     lastUpdatedAtKey: s.str(),
   }),
   s.obj({
-    t: s.l('got-entity'),
+    t: s.l('gotEntity'),
     id: s.str(),
     entityType: s.str(),
     entity: s.dict(s.str(), s.unknown),

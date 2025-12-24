@@ -56,7 +56,7 @@ const init = <TEntity extends Record<string, unknown>, TRelated extends Record<s
 
   const gotEntity = (entityId: string, entityNew: TEntity): GotQueryCacheMsg => {
     return GotQueryCacheMsg.init({
-      t: 'got-entity',
+      t: 'gotEntity',
       entityType: config.entityType,
       id: entityId,
       entity: entityNew,

@@ -43,7 +43,7 @@ const entity = (ctx: { queryCache: QueryCache.Model }, id: PuzzleId | undefined 
 
 const gotEntity = (puzzleId: PuzzleId, puzzleNew: Puzzle): GotQueryCacheMsg => {
   return GotQueryCacheMsg.init({
-    t: 'got-entity',
+    t: 'gotEntity',
     entityType: ENTITY_TYPE,
     id: puzzleId,
     entity: puzzleNew,

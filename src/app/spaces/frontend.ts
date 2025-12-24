@@ -15,7 +15,7 @@ import { LeaveSpaceFrontend } from './leave-space/frontend'
 import { ListSpacesFrontend } from './list-spaces/frontend'
 import { CurrentUserSpaceLoader } from './space/current-user-space-loader'
 import { SpaceFrontend } from './space/frontend'
-import { SpaceDb } from './space/space-db'
+import { initSpaceDb, initSpaceProjectionDb, initSpaceProjectionUserDb } from './space/space-db'
 import { StartSpaceFrontend } from './start-space'
 import { SyncFrontend } from './sync'
 import {
@@ -32,19 +32,24 @@ const initCtx = async (input: {
   rpc: RPC.Client<typeof rpcContract>
   topic: ITopicClient<typeof topicContract>
 }): Promise<FrontendCtxModule> => {
-  const spaceDb = SpaceDb.init({
-    t: 'sql-db',
+  const dbConfig = {
+    t: 'sql-db' as const,
     sqlDb: input.ctx.sqlDb,
     logger: input.ctx.logger,
     migrationPolicy: input.ctx.migrationPolicy,
     kvDb: input.ctx.keyValueDb,
-  })
+  }
+  const spaceDb = initSpaceDb(dbConfig)
+  const spaceProjectionDb = initSpaceProjectionDb(dbConfig)
+  const spaceProjectionUserDb = initSpaceProjectionUserDb(dbConfig)
   return {
     ...input.ctx,
     rpc: input.rpc,
     topic: input.topic,
     space: null,
     spaceDb,
+    spaceProjectionDb,
+    spaceProjectionUserDb,
   }
 }
 
@@ -147,17 +152,7 @@ const update = (input: {
         model: input.model,
         eff: () => {
           const cacheMsg = msg.c.c
-          if (cacheMsg.t === 'got-entity') {
-            queryCacheMsgs.pub({
-              t: 'gotEntity',
-              id: cacheMsg.id,
-              entityType: cacheMsg.entityType,
-              entity: cacheMsg.entity,
-              lastUpdatedAtKey: cacheMsg.lastUpdatedAtKey,
-            })
-          } else {
-            queryCacheMsgs.pub(cacheMsg)
-          }
+          queryCacheMsgs.pub(cacheMsg)
         },
       }
     }

@@ -17,7 +17,11 @@ import { GamesTypes } from './game/games'
 import { JoinSpaceFrontend } from './join-space'
 import { LeaveSpaceFrontend } from './leave-space'
 import { ListSpacesFrontend } from './list-spaces'
-import { ISpaceDb } from './space/space-db/interface'
+import {
+  initSpaceDb,
+  initSpaceProjectionDb,
+  initSpaceProjectionUserDb,
+} from './space/space-db'
 import { SpaceProjectionStarted } from './space/space-projection'
 import { StartSpaceFrontend } from './start-space'
 import { SyncFrontend, SyncTypes } from './sync'
@@ -59,12 +63,16 @@ export type FrontendCtxModule = AppFrontendCtxBase & {
   topic: ITopicClient<typeof topicContract>
   rpc: RPC.Client<typeof rpcContract>
   space: SpaceProjectionStarted | null
-  spaceDb: ISpaceDb
+  spaceDb: ReturnType<typeof initSpaceDb>
+  spaceProjectionDb: ReturnType<typeof initSpaceProjectionDb>
+  spaceProjectionUserDb: ReturnType<typeof initSpaceProjectionUserDb>
 }
 
 export type BackendCtxModule = AppBackendCtxBase &
   GamesBackendCtxModule & {
-    spaceDb: ISpaceDb
+    spaceDb: ReturnType<typeof initSpaceDb>
+    spaceProjectionDb: ReturnType<typeof initSpaceProjectionDb>
+    spaceProjectionUserDb: ReturnType<typeof initSpaceProjectionUserDb>
     topic: ITopicClient<typeof topicContract>
   }
 

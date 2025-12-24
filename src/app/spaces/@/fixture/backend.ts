@@ -13,7 +13,7 @@ import { UserProfile } from '~/app/@/data/user-profile'
 import { SpacesTypes } from '../..'
 import { GamesBackend } from '../../game/games/backend'
 import { Space } from '../../space/space'
-import { SpaceDb } from '../../space/space-db'
+import { initSpaceDb, initSpaceProjectionDb, initSpaceProjectionUserDb } from '../../space/space-db'
 import { BackendCtxModule } from '../../types'
 import { SpaceBackendCtx } from '../backend/ctx'
 
@@ -49,17 +49,21 @@ export const FixtureSpaceBackend = async () => {
     logger: f.ctx.logger,
   })
 
+  const dbConfig = {
+    t: 'sql-db' as const,
+    sqlDb: f.ctx.sqlDb,
+    logger: f.ctx.logger,
+    migrationPolicy: SqlDbMigrationPolicy.init({ t: 'never-run', logger: Logger.init({ t: 'noop' }) }),
+    kvDb: f.keyValueDbHashMap,
+  }
+
   const backendCtx: BackendCtxModule = {
     ...f.ctx,
     ...GamesBackend.initCtx({ ctx: f.ctx }),
 
-    spaceDb: SpaceDb.init({
-      t: 'sql-db',
-      sqlDb: f.ctx.sqlDb,
-      logger: f.ctx.logger,
-      migrationPolicy: SqlDbMigrationPolicy.init({ t: 'never-run', logger: Logger.init({ t: 'noop' }) }),
-      kvDb: f.keyValueDbHashMap,
-    }),
+    spaceDb: initSpaceDb(dbConfig),
+    spaceProjectionDb: initSpaceProjectionDb(dbConfig),
+    spaceProjectionUserDb: initSpaceProjectionUserDb(dbConfig),
     topic,
   }
 

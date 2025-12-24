@@ -44,7 +44,7 @@ const isEmpty = (ctx: { queryCache: QueryCache.Model }, query: PackQuery): boole
 
 const gotEntity = (packId: PackId, packNew: Pack): GotQueryCacheMsg => {
   return GotQueryCacheMsg.init({
-    t: 'got-entity',
+    t: 'gotEntity',
     entityType: ENTITY_TYPE,
     id: packId,
     entity: packNew,

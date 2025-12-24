@@ -69,7 +69,7 @@ const isEmpty = (ctx: { queryCache: QueryCache.Model }, solutionHash: SolutionHa
 
 const gotEntity = (solutionHash: SolutionHash, solutionNew: Solution): GotQueryCacheMsg => {
   return GotQueryCacheMsg.init({
-    t: 'got-entity',
+    t: 'gotEntity',
     entityType: ENTITY_TYPE,
     id: solutionHash,
     entity: solutionNew,

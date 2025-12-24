@@ -1,14 +1,15 @@
-import { IDb } from '~/@/db/interface'
+import { QueryInput } from '~/@/db/interface/query-input/query-input'
 import { Sub } from '~/@/sub'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
+import { GotQueryCacheMsg } from '~/app/frontend/query-cache/got-query-cache-msg.$msg'
 import { FrontendCtxModule, ModelFrontend, MsgFrontend } from '../types'
 import { Space } from './space'
-import { SpaceDbQueryCache } from './space-db-query-cache'
-import { ISpaceDb } from './space-db/interface'
+import { SpaceDbQueryCache, SpaceProjectionDbQueryCache } from './space-db'
+import { SpaceProjectionEntity } from './space-db/space-projection-entity'
 
-const toQuery = (currentUserId: UserId): IDb.InferQueryInput<typeof ISpaceDb.schema> => {
+const toQuery = (currentUserId: UserId): QueryInput<SpaceProjectionEntity> => {
   return {
     where: {
       op: 'and',
@@ -23,27 +24,46 @@ const toQuery = (currentUserId: UserId): IDb.InferQueryInput<typeof ISpaceDb.sch
 const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<MsgFrontend> => {
   const currentUserId = input.ctx.currentUser?.userId
   if (!currentUserId) return Sub.none()
-  return SpaceDbQueryCache.sub(
-    input.ctx.spaceDb,
-    toQuery(currentUserId),
-    (c): MsgFrontend => ({ t: 'gotQueryCacheMsg', c }),
-  )
+  return SpaceProjectionDbQueryCache.watch(input.ctx.spaceProjectionDb, toQuery(currentUserId), (c): MsgFrontend => {
+    const msg =
+      c.t === 'gotEntity'
+        ? {
+            t: 'gotEntity' as const,
+            id: c.id,
+            entityType: c.entityType,
+            entity: c.entity,
+            lastUpdatedAtKey: c.lastUpdatedAtKey,
+          }
+        : c
+    return { t: 'gotQueryCacheMsg', c: GotQueryCacheMsg.init(msg) }
+  })
 }
 
-const toCurrentUserSpace = (ctx: AppFrontendCtxBase): Space | null => {
+const toCurrentUserSpace = (ctx: AppFrontendCtxBase & Partial<FrontendCtxModule>): Space | null => {
   const currentUserId = ctx.currentUser?.userId
   if (!currentUserId) return null
 
-  const query = toQuery(currentUserId)
+  // Check if ctx has the required properties
+  if (!('spaceProjectionDb' in ctx) || !('queryCache' in ctx)) {
+    return null
+  }
 
-  const space = SpaceDbQueryCache.read(ctx, query)[0]
+  const query = toQuery(currentUserId)
+  const projections = SpaceProjectionDbQueryCache.query(ctx as FrontendCtxModule, query)
+
+  if (projections.length === 0) return null
+
+  const spaceId = projections[0]?.id
+  if (!spaceId) return null
+
+  const space = SpaceDbQueryCache.entity(ctx as FrontendCtxModule, spaceId)
 
   if (!space) return null
 
   return space
 }
 
-const toCurrentUserSpaceId = (ctx: AppFrontendCtxBase): SpaceId | null => {
+const toCurrentUserSpaceId = (ctx: AppFrontendCtxBase & Partial<FrontendCtxModule>): SpaceId | null => {
   const space = toCurrentUserSpace(ctx)
 
   if (!space) return null

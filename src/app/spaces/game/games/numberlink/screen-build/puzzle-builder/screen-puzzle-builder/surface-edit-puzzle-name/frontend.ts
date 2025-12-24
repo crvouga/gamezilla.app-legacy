@@ -123,7 +123,7 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
           ...(puzzlePatched
             ? [
                 GotQueryCacheMsg.init({
-                  t: 'got-entity',
+                  t: 'gotEntity',
                   id: input.msgSpace.puzzleId,
                   entityType: 'numberlink-puzzle',
                   entity: puzzlePatched,

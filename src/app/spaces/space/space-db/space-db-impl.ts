@@ -11,6 +11,7 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '../space'
 import { SpaceEntity } from './space-entity'
 import { UnixMs } from '~/@/time/unix-ms'
+import { DbQueryCache } from '~/app/frontend/query-cache/db-query-cache'
 
 export type SpaceDbConfig = {
   t: 'sql-db'
@@ -103,4 +104,37 @@ export const initSpaceDb = (config: SpaceDbConfig): IDb.IDb<SpaceEntity, {}> => 
       },
     },
   })
+}
+
+const SpaceDbQueryCacheBase = DbQueryCache.init({
+  entityType: 'space',
+  lastUpdatedAtKey: 'updatedAt',
+  primaryKey: 'id',
+  entity: SpaceEntity,
+  related: s.partialObj({}),
+})
+
+// Helper to extract Space from SpaceEntity
+const entity = (
+  ctx: { queryCache: import('~/app/frontend/query-cache').QueryCache.Model },
+  spaceId: SpaceId,
+): Space | null => {
+  const entity = SpaceDbQueryCacheBase.toEntity(ctx, spaceId)
+  return entity?.space ?? null
+}
+
+// Helper to read Space[] from query results
+const read = (
+  ctx: { queryCache: import('~/app/frontend/query-cache').QueryCache.Model },
+  query: import('~/@/db/interface/query-input/query-input').QueryInput<SpaceEntity>,
+): Space[] => {
+  const entities = SpaceDbQueryCacheBase.query(ctx, query)
+  return entities.map((e) => e.space)
+}
+
+export const SpaceDbQueryCache = {
+  ...SpaceDbQueryCacheBase,
+  entity,
+  read,
+  sub: SpaceDbQueryCacheBase.watch,
 }
