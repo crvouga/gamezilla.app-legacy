@@ -9,4 +9,4 @@ COPY ./ ./
 
 RUN pnpm install --prod --frozen-lockfile
 
-CMD ["pnpm", "run", "backend"]
+CMD ["pnpm", "run", "backend:topic"]

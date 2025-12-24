@@ -1,0 +1,9 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    "dockerfilePath": "./infra/backend-rpc/backend-rpc.Dockerfile"
+  },
+  "deploy": {
+    "sleepApplication": true
+  }
+}
