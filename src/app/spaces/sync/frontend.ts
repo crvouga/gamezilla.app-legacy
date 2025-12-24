@@ -113,7 +113,7 @@ const updatePersist = (input: {
     eff: Eff.batch([
       () =>
         queryCacheMsgs.pub({
-          t: 'got-entity',
+          t: 'gotEntity',
           id: msgSpace.spaceId,
           entityType: 'space',
           entity: spaceNew,
@@ -143,7 +143,8 @@ const persistSpace =
   }
 
 const upsertSpace = async (spaceDb: ISpaceDb, _spaceId: SpaceId, space: Space) => {
-  await spaceDb.upsert(EventSourced.startFromLatestSnapshot(space))
+  const snapshot = EventSourced.startFromLatestSnapshot(space)
+  await spaceDb.upsert({ entities: [snapshot] })
 }
 
 const upsertSpaceThrottled = throttleByKey({

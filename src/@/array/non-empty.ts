@@ -1,3 +1,5 @@
+import { Err, Ok, Result, unwrap } from '../result'
+
 /**
  * Type representing a non-empty array - an array with at least one element
  */
@@ -80,14 +82,31 @@ const prepend = <T>(x: T, xs: NonEmpty<T>): NonEmpty<T> => {
  * NonEmpty.assert([]) // throws Error
  */
 const assert = <T>(xs: T[]): NonEmpty<T> => {
+  return unwrap(init(xs))
+}
+
+/**
+ * Attempts to initialize a non-empty array from the given array.
+ * Returns an Ok(NonEmpty<T>) if the array is non-empty,
+ * otherwise returns an Err(Error).
+ *
+ * @example
+ * NonEmpty.init([1, 2, 3]) // Ok([1, 2, 3])
+ * NonEmpty.init([]) // Err(Error)
+ *
+ * @param xs - The array to convert to a NonEmpty array
+ * @returns A Result containing either an Error or a NonEmpty<T> array
+ */
+const init = <T>(xs: T[]): Result<Error, NonEmpty<T>> => {
   if (!is(xs)) {
-    throw new Error('Assertion failed: NonEmpty array has no elements')
+    return Err(new Error('Assertion failed: NonEmpty array has no elements'))
   }
-  return xs
+  return Ok(xs)
 }
 
 export const NonEmpty = {
   assert,
+  init,
   concat,
   is,
   last,

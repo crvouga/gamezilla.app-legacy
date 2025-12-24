@@ -3,7 +3,7 @@ import { s } from '~/@/schema'
 
 export const Msg = s.or(
   s.obj({
-    t: s.l('got-entities'),
+    t: s.l('gotEntities'),
     query: s.dict(s.str(), s.unknown),
     entityType: s.str(),
     entities: s.dict(s.str(), s.dict(s.str(), s.unknown)),

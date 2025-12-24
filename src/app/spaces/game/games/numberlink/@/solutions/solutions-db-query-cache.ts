@@ -29,7 +29,7 @@ const sub = <TMsg>(
         entities: indexBy(solutions, SolutionHash.init),
         query,
         results: solutions.map(SolutionHash.init),
-        t: 'got-entities',
+        t: 'gotEntities',
         entityType: ENTITY_TYPE,
         lastUpdatedAtKey: Solution.key('lastUpdatedAt'),
       }),

@@ -59,7 +59,11 @@ const View = (props: {
       const isJoined = currentUser.userId in spaceProjection.users
 
       if (!isJoined) {
-        return h(JoinSpaceFrontend.view, { ...props, ctx: spaceCtx })
+        return h(JoinSpaceFrontend.View, {
+          ctx: spaceCtx,
+          dispatch: (c) => props.dispatch({ t: 'joinSpace', c }),
+          model: props.model,
+        })
       }
 
       const inputNew = { ...props, ctx: spaceCtx }
@@ -80,19 +84,34 @@ const View = (props: {
             size: 'sm',
             variant: {
               t: 'space-between',
-              start: [ExitSpaceAction.viewAction(props), PeopleActionFrontend.view(props)],
-              end: [isHost ? EndSpaceFrontend.viewAction(props) : LeaveSpaceFrontend.viewAction(props)],
+              start: [
+                ExitSpaceAction.viewAction({
+                  ctx: props.ctx,
+                  dispatch: (c) => props.dispatch({ t: 'exitSpaceAction', c }),
+                }),
+                PeopleActionFrontend.view({
+                  ctx: props.ctx,
+                  model: props.model,
+                  dispatch: (c) => props.dispatch({ t: 'peopleAction', c }),
+                }),
+              ],
+              end: [
+                isHost
+                  ? EndSpaceFrontend.viewAction({
+                      ctx: props.ctx,
+                      dispatch: (c) => props.dispatch({ t: 'endSpace', c }),
+                    })
+                  : LeaveSpaceFrontend.viewAction({
+                      ctx: props.ctx,
+                      dispatch: (c) => props.dispatch({ t: 'leaveSpace', c }),
+                    }),
+              ],
             },
           },
         },
       }
 
-      const inputFinal = {
-        ...inputNew,
-        ctx: spaceCtxFinal,
-      }
-
-      return h(GameFrontend.View, inputFinal)
+      return h(GameFrontend.View, { ...inputNew, ctx: spaceCtxFinal })
     }
   }
 }
@@ -105,14 +124,14 @@ const ViewSpaceNotFound = (input: { ctx: FrontendCtxModule; dispatch: (m: MsgFro
   return h(ScreenTitleButton, {
     title: input.ctx.t('spaces.space-not-found'),
     buttonText: input.ctx.t('spaces.exit-space'),
-    onPress: () => input.dispatch({ t: 'exitSpaceAction_clicked' }),
+    onPress: () => input.dispatch({ t: 'exitSpaceAction', c: { t: 'exitSpaceAction_clicked' } }),
   })
 }
 
 const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<MsgFrontend> => {
   const spaceId = input.ctx.currentScreen.t === 'spaces_space' ? input.ctx.currentScreen.spaceId : null
   if (!spaceId) return Sub.none()
-  return SpaceDbQueryCache.sub(input.ctx.spaceDb, toQuery(spaceId), (c): MsgFrontend => ({ t: 'gotMsgSpace', c }))
+  return SpaceDbQueryCache.sub(input.ctx.spaceDb, toQuery(spaceId), (c): MsgFrontend => ({ t: 'gotQueryCacheMsg', c }))
 }
 
 export const SpaceFrontend = {

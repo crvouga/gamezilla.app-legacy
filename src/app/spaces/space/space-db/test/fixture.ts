@@ -1,4 +1,5 @@
 import { unwrap } from '~/@/result'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
@@ -39,7 +40,8 @@ export const Fixtures = async () => {
     t: 'sql-db',
     sqlDb: f.sqlDbSqlite,
     logger: f.logger,
-    kvDb: f.kvDb,
+    kvDb: f.keyValueDbHashMap,
+    migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: f.logger }),
   })
 
   if (f.t === 'integration') {
@@ -47,7 +49,8 @@ export const Fixtures = async () => {
       t: 'sql-db',
       sqlDb: f.sqlDbPostgres,
       logger: f.logger,
-      kvDb: f.kvDb,
+      kvDb: f.keyValueDbPostgres,
+      migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: f.logger }),
     })
   }
 

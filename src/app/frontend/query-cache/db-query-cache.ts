@@ -24,7 +24,7 @@ const init = <TEntity extends Record<string, unknown>, TRelated extends Record<s
         entities: isOk(result) ? indexBy(result.value.entities.items, (c) => String(c[config.primaryKey])) : {},
         query: queryInput,
         results: isOk(result) ? result.value.entities.items.map((c) => String(c[config.primaryKey])) : [],
-        t: 'got-entities',
+        t: 'gotEntities',
         entityType: config.entityType,
         lastUpdatedAtKey: String(config.lastUpdatedAtKey),
       })

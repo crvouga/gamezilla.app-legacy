@@ -90,8 +90,10 @@ const updateScreenPlay: FrontendModule['update'] = (input) => {
     ctx,
     modelSpace: input.modelSpace.screenPlay,
     msgSpace: input.msgSpace?.t === 'gotScreenPlayMsg' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
+    model: input.model.screenPlay,
   })
   return {
+    model: input.model,
     eff: Eff.tag('gotScreenPlayMsg', updated.eff),
     msgSpace: updated.msgSpace?.map((c) => ({ ...c, c, t: 'gotScreenPlayMsg' })),
   }
@@ -127,13 +129,6 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
           screenBuild: ScreenBuildFrontend.init,
         },
         msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)],
-        msgShared: [
-          {
-            t: 'numberlink-evt.user-changed-mode',
-            mode: input.msgSpace.mode,
-            userId: input.msgSpace.userId,
-          },
-        ],
       }
     }
 

@@ -4,6 +4,7 @@ import { Sub } from '~/@/sub'
 import { ITopicClient } from '~/@/topic/topic-client/interface'
 import { h } from '~/@/vdom'
 import { AppFrontendCtxBase, isAppFrontendCtx } from '../@/frontend/ctx'
+import { queryCacheMsgs } from '../frontend/query-cache/query-cache-msgs'
 import { EndSpaceFrontend } from './end-space'
 import { CurrentSpaceMiniPlayerFrontend } from './frontend/current-space-mini-player'
 import { ExitSpaceAction } from './frontend/exit-space-action/frontend'
@@ -71,73 +72,93 @@ const update = (input: {
 } => {
   switch (input.msg.t) {
     case 'endSpace': {
-      const updated = EndSpaceFrontend.update({ ctx: input.ctx, model: input.model, msg: input.msg.c })
+      const updated = EndSpaceFrontend.update({ ...input, msg: input.msg.c })
       return {
-        model: updated.model,
+        ...updated,
         eff: Eff.tag('endSpace', updated.eff),
       }
     }
     case 'leaveSpace': {
-      const updated = LeaveSpaceFrontend.update({ ctx: input.ctx, model: input.model, msg: input.msg.c })
+      const updated = LeaveSpaceFrontend.update({ ...input, msg: input.msg.c })
       return {
-        model: updated.model,
+        ...updated,
         eff: Eff.tag('leaveSpace', updated.eff),
       }
     }
     case 'game': {
-      const updated = GameFrontend.update({ ctx: input.ctx, model: input.model, msg: input.msg.c })
+      const updated = GameFrontend.update({ ...input, msg: input.msg.c })
       return {
-        model: updated.model,
+        ...updated,
         eff: Eff.tag('game', updated.eff),
       }
     }
     case 'joinSpace': {
-      const updated = JoinSpaceFrontend.update({ ctx: input.ctx, model: input.model, msg: input.msg.c })
+      const updated = JoinSpaceFrontend.update({ ...input, msg: input.msg.c })
       return {
-        model: updated.model,
+        ...updated,
         eff: Eff.tag('joinSpace', updated.eff),
       }
     }
     case 'listSpaces': {
-      const updated = ListSpacesFrontend.update({ ctx: input.ctx, model: input.model, msg: input.msg.c })
+      const updated = ListSpacesFrontend.update({ ...input, msg: input.msg.c })
       return {
-        model: updated.model,
+        ...updated,
         eff: Eff.tag('listSpaces', updated.eff),
       }
     }
     case 'exitSpaceAction': {
-      const updated = ExitSpaceAction.update({ ctx: input.ctx, model: input.model, msg: input.msg.c })
+      const updated = ExitSpaceAction.update({ ...input, msg: input.msg.c })
       return {
-        model: updated.model,
+        ...updated,
         eff: Eff.tag('exitSpaceAction', updated.eff),
       }
     }
     case 'currentSpaceMiniPlayer': {
-      const updated = CurrentSpaceMiniPlayerFrontend.update({ ctx: input.ctx, model: input.model, msg: input.msg.c })
+      const updated = CurrentSpaceMiniPlayerFrontend.update({ ...input, msg: input.msg.c })
       return {
-        model: updated.model,
+        ...updated,
         eff: Eff.tag('currentSpaceMiniPlayer', updated.eff),
       }
     }
     case 'peopleAction': {
-      const updated = PeopleActionFrontend.update({ ctx: input.ctx, model: input.model, msg: input.msg.c })
+      const updated = PeopleActionFrontend.update({ ...input, msg: input.msg.c })
       return {
-        model: updated.model,
+        ...updated,
         eff: Eff.tag('peopleAction', updated.eff),
       }
     }
     case 'sync': {
-      const updated = SyncFrontend.update({ ctx: input.ctx, model: input.model, msg: input.msg.c })
+      const updated = SyncFrontend.update({ ...input, msg: input.msg.c })
       return {
-        model: updated.model,
+        ...updated,
         eff: Eff.tag('sync', updated.eff),
       }
     }
     case 'startSpace': {
-      const updated = StartSpaceFrontend.update({ ctx: input.ctx, model: input.model, msg: input.msg.c })
+      const updated = StartSpaceFrontend.update({ ...input, msg: input.msg.c })
       return {
-        model: updated.model,
+        ...updated,
         eff: Eff.tag('startSpace', updated.eff),
+      }
+    }
+    case 'gotQueryCacheMsg': {
+      const msg = input.msg
+      return {
+        model: input.model,
+        eff: () => {
+          const cacheMsg = msg.c.c
+          if (cacheMsg.t === 'got-entity') {
+            queryCacheMsgs.pub({
+              t: 'gotEntity',
+              id: cacheMsg.id,
+              entityType: cacheMsg.entityType,
+              entity: cacheMsg.entity,
+              lastUpdatedAtKey: cacheMsg.lastUpdatedAtKey,
+            })
+          } else {
+            queryCacheMsgs.pub(cacheMsg)
+          }
+        },
       }
     }
   }

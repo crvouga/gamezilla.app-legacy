@@ -19,13 +19,12 @@ import { ViewSpaceCard } from './space-card/space-card'
 import { Eff } from '~/@/eff'
 import { SpaceId } from '~/app/@/data/space-id'
 import { playSound } from '~/app/@/frontend/sound-cmd'
+import { queryCacheMsgs } from '~/app/frontend/query-cache/query-cache-msgs'
 import { GotQueryCacheMsg } from '~/app/frontend/query-cache/got-query-cache-msg.$msg'
 
 export const TEST_ID_SPACE_LIST_SCREEN = 'spaces/space-list-screen'
 
-export type Msg =
-  | { t: 'listSpaces_clickedSpaceCard'; spaceId: SpaceId }
-  | { t: 'listSpaces_gotMsgSpace'; c: GotQueryCacheMsg }
+export type Msg = { t: 'clickedSpaceCard'; spaceId: SpaceId } | { t: 'listSpaces_gotMsgSpace'; c: GotQueryCacheMsg }
 
 const toQuery = (): IDb.InferQueryInput<typeof ISpaceDb.schema> => {
   return {
@@ -47,11 +46,26 @@ const update = (input: {
 } => {
   switch (input.msg.t) {
     case 'listSpaces_gotMsgSpace': {
+      const msg = input.msg
       return {
         model: input.model,
+        eff: () => {
+          const cacheMsg = msg.c.c
+          if (cacheMsg.t === 'got-entity') {
+            queryCacheMsgs.pub({
+              t: 'gotEntity',
+              id: cacheMsg.id,
+              entityType: cacheMsg.entityType,
+              entity: cacheMsg.entity,
+              lastUpdatedAtKey: cacheMsg.lastUpdatedAtKey,
+            })
+          } else {
+            queryCacheMsgs.pub(cacheMsg)
+          }
+        },
       }
     }
-    case 'listSpaces_clickedSpaceCard': {
+    case 'clickedSpaceCard': {
       return {
         model: input.model,
         eff: Eff.batch([
@@ -64,11 +78,7 @@ const update = (input: {
 }
 
 const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<Msg> => {
-  return SpaceDbQueryCache.sub(
-    input.ctx.spaceDb,
-    toQuery(),
-    (c): Msg => ({ t: 'listSpaces_gotMsgSpace', c: c as GotQueryCacheMsg }),
-  )
+  return SpaceDbQueryCache.sub(input.ctx.spaceDb, toQuery(), (c): Msg => ({ t: 'listSpaces_gotMsgSpace', c }))
 }
 
 const View = (input: {
@@ -124,7 +134,7 @@ const View = (input: {
                 h(ViewSpaceCard, {
                   key: spaceProjection.spaceId,
                   ctx: { ...input.ctx, currentUser: input.ctx.currentUser },
-                  onPress: () => input.dispatch({ t: 'listSpaces_clickedSpaceCard', spaceId: spaceProjection.spaceId }),
+                  onPress: () => input.dispatch({ t: 'clickedSpaceCard', spaceId: spaceProjection.spaceId }),
                   state: spaceProjection,
                 }),
               ]

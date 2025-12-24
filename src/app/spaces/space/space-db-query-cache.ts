@@ -14,17 +14,28 @@ const ENTITY_TYPE = 'space'
 const sub = <TMsg>(
   spaceDb: ISpaceDb,
   query: IDb.InferQueryInput<typeof ISpaceDb.schema>,
-  mapper: (m: unknown) => TMsg,
+  mapper: (m: GotQueryCacheMsg) => TMsg,
 ): Sub<TMsg> => {
   return spaceDb.liveQuery(query, (output) => {
-    if (isErr(output)) return mapper(null)
+    if (isErr(output)) {
+      return mapper(
+        GotQueryCacheMsg.init({
+          entities: {},
+          query,
+          results: [],
+          t: 'gotEntities',
+          entityType: 'space',
+          lastUpdatedAtKey: Space.key('lastUpdatedAt'),
+        }),
+      )
+    }
     const spaces = output.value.entities.items
     return mapper(
       GotQueryCacheMsg.init({
         entities: indexBy(spaces, (c) => Space.toSpaceId(c) ?? ''),
         query,
         results: spaces.map((c) => Space.toSpaceId(c) ?? ''),
-        t: 'got-entities',
+        t: 'gotEntities',
         entityType: 'space',
         lastUpdatedAtKey: Space.key('lastUpdatedAt'),
       }),

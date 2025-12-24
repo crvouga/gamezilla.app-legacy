@@ -116,7 +116,13 @@ const update = (input: {
       if (!spaceState.game) return input
 
       const modelGame = input.model.spaces_games[spaceId] ?? GamesFrontend.init(spaceState.game.t)
-
+      /**
+       *
+       *
+       * Maybe games should only use MsgSpace and ModelSpace no need for Msg and Model
+       *
+       *
+       */
       const gameUpdated = GamesFrontend.update({
         ctx: { ...input.ctx, space: spaceState, currentUser },
         model: modelGame,

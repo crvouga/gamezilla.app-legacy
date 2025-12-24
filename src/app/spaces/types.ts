@@ -5,12 +5,15 @@ import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { UserId } from '~/app/@/data/user-id'
 import type { AppFrontendModule } from '~/app/@/frontend/app-frontend-module'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
+import { GotQueryCacheMsg } from '~/app/frontend/query-cache/got-query-cache-msg.$msg'
+import { SpaceId } from '../@/data/space-id'
 import { EndSpaceFrontend } from './end-space'
 import { CurrentSpaceMiniPlayerFrontend } from './frontend/current-space-mini-player'
 import { ExitSpaceActionFrontend } from './frontend/exit-space-action'
 import { PeopleActionFrontend } from './frontend/people-action'
 import { GameFrontend } from './game'
 import { GamesBackendCtxModule } from './game/backend'
+import { GamesTypes } from './game/games'
 import { JoinSpaceFrontend } from './join-space'
 import { LeaveSpaceFrontend } from './leave-space'
 import { ListSpacesFrontend } from './list-spaces'
@@ -18,8 +21,6 @@ import { ISpaceDb } from './space/space-db/interface'
 import { SpaceProjectionStarted } from './space/space-projection'
 import { StartSpaceFrontend } from './start-space'
 import { SyncFrontend, SyncTypes } from './sync'
-import { GamesTypes } from './game/games'
-import { SpaceId } from '../@/data/space-id'
 
 type Opened =
   | null
@@ -38,6 +39,7 @@ export type ModelFrontend = {
 }
 
 export type MsgFrontend =
+  | { t: 'gotQueryCacheMsg'; c: GotQueryCacheMsg }
   | { t: 'listSpaces'; c: ListSpacesFrontend.Msg }
   | { t: 'peopleAction'; c: PeopleActionFrontend.Msg }
   | { t: 'leaveSpace'; c: LeaveSpaceFrontend.Msg }

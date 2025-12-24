@@ -49,7 +49,7 @@ export const update = (input: {
 
       return {
         model: input.model,
-        eff: () => {
+        eff: async () => {
           spaceMsgs.pub(
             withEventId<MsgSpace>({
               t: 'userEndedSpace',
@@ -166,7 +166,11 @@ export const viewAction = (input: { ctx: FrontendCtxModule; dispatch: (msg: Msg)
   }
 }
 
-export const ViewSpaceEnded = (input: { ctx: FrontendCtxModule; dispatch: (msg: Msg) => void }) => {
+export const ViewSpaceEnded = (input: {
+  ctx: FrontendCtxModule
+  dispatch: (msg: Msg) => void
+  model: ModelFrontend
+}) => {
   return h(ScreenTitleButton, {
     title: input.ctx.t('spaces.space-ended'),
     buttonText: input.ctx.t('spaces.exit-space'),

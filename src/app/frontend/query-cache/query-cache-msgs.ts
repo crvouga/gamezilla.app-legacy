@@ -2,7 +2,7 @@ import { Sub } from '~/@/sub'
 
 export type QueryCacheMsg =
   | {
-      t: 'got-entities'
+      t: 'gotEntities'
       query: Record<string, unknown>
       entityType: string
       entities: Record<string, Record<string, unknown>>
@@ -10,7 +10,7 @@ export type QueryCacheMsg =
       lastUpdatedAtKey: string
     }
   | {
-      t: 'got-entity'
+      t: 'gotEntity'
       id: string
       entityType: string
       entity: Record<string, unknown>

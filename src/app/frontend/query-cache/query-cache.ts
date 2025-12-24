@@ -55,7 +55,7 @@ export const update = <TModel extends Model>(input: {
   if (!GotQueryCacheMsg.is(msgIn)) return { model: input.model }
 
   switch (msgIn.c.t) {
-    case 'got-entities': {
+    case 'gotEntities': {
       const entityType = msgIn.c.entityType
       const existingEntities = input.model.queryCache_entities.byType[entityType]?.byId ?? {}
       const entitiesNew = { byId: { ...existingEntities } }

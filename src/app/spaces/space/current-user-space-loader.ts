@@ -26,7 +26,7 @@ const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }):
   return SpaceDbQueryCache.sub(
     input.ctx.spaceDb,
     toQuery(currentUserId),
-    (c): MsgFrontend => ({ t: 'spaces_gotMsgOut', c }),
+    (c): MsgFrontend => ({ t: 'gotQueryCacheMsg', c }),
   )
 }
 

@@ -37,7 +37,38 @@ const init = (config: ImplSql): ISpaceDb => {
     extra: {},
 
     async query(queryInput) {
-      //
+      const { where, limit, offset } = queryInput
+
+      let spaceIds: SpaceId[] | null = null
+
+      if (where?.op === 'in' && where.column === 'userIds') {
+        const userIds = where.value as unknown as UserId[]
+        const userResult = await projectionUserDb.query({
+          where: { op: 'in', column: 'userId', value: userIds },
+          limit: 1000,
+          offset: 0,
+        })
+        if (isErr(userResult)) return mapErr(userResult, (e) => e)
+        spaceIds = [...new Set(userResult.value.entities.items.map((e) => e.spaceId))]
+      }
+
+      const spaceResult = await spaceDb.query({
+        where: spaceIds ? { op: 'in', column: 'id', value: spaceIds } : undefined,
+        limit,
+        offset,
+      })
+
+      if (isErr(spaceResult)) return mapErr(spaceResult, (e) => e)
+
+      return Ok({
+        entities: {
+          items: spaceResult.value.entities.items.map((e) => e.space),
+          total: spaceResult.value.entities.total,
+          limit: spaceResult.value.entities.limit,
+          offset: spaceResult.value.entities.offset,
+        },
+        related: {},
+      })
     },
 
     liveQuery(queryInput, map) {
