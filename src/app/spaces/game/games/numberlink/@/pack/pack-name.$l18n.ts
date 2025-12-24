@@ -6,40 +6,18 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  ar: {
-    'numberlink-pack-name': (packName) => `${packName}`,
-  },
-  de: {
-    'numberlink-pack-name': (packName) => `${packName}`,
-  },
-  en: {
-    'numberlink-pack-name': (packName) => `${packName}`,
-  },
-  es: {
-    'numberlink-pack-name': (packName) => `${packName}`,
-  },
-  fr: {
-    'numberlink-pack-name': (packName) => `${packName}`,
-  },
-  hi: {
-    'numberlink-pack-name': (packName) => `${packName}`,
-  },
-  it: {
-    'numberlink-pack-name': (packName) => `${packName}`,
-  },
-  ja: {
-    'numberlink-pack-name': (packName) => `${packName}`,
-  },
-  ko: {
-    'numberlink-pack-name': (packName) => `${packName}`,
-  },
-  pt: {
-    'numberlink-pack-name': (packName) => `${packName}`,
-  },
-  ru: {
-    'numberlink-pack-name': (packName) => `${packName}`,
-  },
-  zh: {
-    'numberlink-pack-name': (packName) => `${packName}`,
+  'numberlink-pack-name': {
+    en: (packName) => `${packName}`,
+    es: (packName) => `${packName}`,
+    fr: (packName) => `${packName}`,
+    de: (packName) => `${packName}`,
+    it: (packName) => `${packName}`,
+    ja: (packName) => `${packName}`,
+    ko: (packName) => `${packName}`,
+    pt: (packName) => `${packName}`,
+    ru: (packName) => `${packName}`,
+    zh: (packName) => `${packName}`,
+    hi: (packName) => `${packName}`,
+    ar: (packName) => `${packName}`,
   },
 }

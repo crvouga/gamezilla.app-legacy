@@ -5,40 +5,18 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  en: {
-    login: 'Login',
-  },
-  ar: {
-    login: 'إضافة',
-  },
-  de: {
-    login: 'Hinzufügen',
-  },
-  es: {
-    login: 'Añadir',
-  },
-  fr: {
-    login: 'Ajouter',
-  },
-  hi: {
-    login: 'जोड़ें',
-  },
-  it: {
-    login: 'Aggiungi',
-  },
-  ja: {
-    login: '追加',
-  },
-  ko: {
-    login: '추가',
-  },
-  pt: {
-    login: 'Adicionar',
-  },
-  ru: {
-    login: 'Добавить',
-  },
-  zh: {
-    login: '添加',
+  login: {
+    en: 'Login',
+    es: 'Añadir',
+    fr: 'Ajouter',
+    de: 'Hinzufügen',
+    it: 'Aggiungi',
+    ja: '追加',
+    ko: '추가',
+    pt: 'Adicionar',
+    ru: 'Добавить',
+    zh: '添加',
+    hi: 'जोड़ें',
+    ar: 'إضافة',
   },
 }

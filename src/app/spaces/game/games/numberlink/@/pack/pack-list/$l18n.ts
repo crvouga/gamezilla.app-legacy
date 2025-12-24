@@ -6,52 +6,32 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  ar: {
-    'game.numberlink.no-packs': 'لا توجد حزم',
-    'game.numberlink.puzzle-count': (count) => `${count} ألغاز`,
+  'game.numberlink.no-packs': {
+    en: 'No packs',
+    es: 'Sin paquetes',
+    fr: 'Aucun pack',
+    de: 'Keine Packs',
+    it: 'Nessun pacchetto',
+    ja: 'パックなし',
+    ko: '팩 없음',
+    pt: 'Sem pacotes',
+    ru: 'Нет пакетов',
+    zh: '没有包',
+    hi: 'कोई पैक नहीं',
+    ar: 'لا توجد حزم',
   },
-  de: {
-    'game.numberlink.no-packs': 'Keine Packs',
-    'game.numberlink.puzzle-count': (count) => `${count} Rätsel`,
-  },
-  en: {
-    'game.numberlink.no-packs': 'No packs',
-    'game.numberlink.puzzle-count': (count) => (count === 1 ? `${count} puzzle` : `${count} puzzles`),
-  },
-  es: {
-    'game.numberlink.no-packs': 'Sin paquetes',
-    'game.numberlink.puzzle-count': (count) => `${count} rompecabezas`,
-  },
-  fr: {
-    'game.numberlink.no-packs': 'Aucun pack',
-    'game.numberlink.puzzle-count': (count) => `${count} puzzles`,
-  },
-  hi: {
-    'game.numberlink.no-packs': 'कोई पैक नहीं',
-    'game.numberlink.puzzle-count': (count) => `${count} पहेलियाँ`,
-  },
-  it: {
-    'game.numberlink.no-packs': 'Nessun pacchetto',
-    'game.numberlink.puzzle-count': (count) => `${count} puzzle`,
-  },
-  ja: {
-    'game.numberlink.no-packs': 'パックなし',
-    'game.numberlink.puzzle-count': (count) => `${count} パズル`,
-  },
-  ko: {
-    'game.numberlink.no-packs': '팩 없음',
-    'game.numberlink.puzzle-count': (count) => `${count} 퍼즐`,
-  },
-  pt: {
-    'game.numberlink.no-packs': 'Sem pacotes',
-    'game.numberlink.puzzle-count': (count) => `${count} quebra-cabeças`,
-  },
-  ru: {
-    'game.numberlink.no-packs': 'Нет пакетов',
-    'game.numberlink.puzzle-count': (count) => `${count} головоломок`,
-  },
-  zh: {
-    'game.numberlink.no-packs': '没有包',
-    'game.numberlink.puzzle-count': (count) => `${count} 拼图`,
+  'game.numberlink.puzzle-count': {
+    en: (count) => (count === 1 ? `${count} puzzle` : `${count} puzzles`),
+    es: (count) => `${count} rompecabezas`,
+    fr: (count) => `${count} puzzles`,
+    de: (count) => `${count} R\xE4tsel`,
+    it: (count) => `${count} puzzle`,
+    ja: (count) => `${count} \u30D1\u30BA\u30EB`,
+    ko: (count) => `${count} \uD37C\uC990`,
+    pt: (count) => `${count} quebra-cabe\xE7as`,
+    ru: (count) => `${count} \u0433\u043E\u043B\u043E\u0432\u043E\u043B\u043E\u043C\u043E\u043A`,
+    zh: (count) => `${count} \u62FC\u56FE`,
+    hi: (count) => `${count} \u092A\u0939\u0947\u0932\u093F\u092F\u093E\u0901`,
+    ar: (count) => `${count} \u0623\u0644\u063A\u0627\u0632`,
   },
 }

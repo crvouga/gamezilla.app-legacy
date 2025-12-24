@@ -5,40 +5,18 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  ar: {
-    'game-numberlink-play.no-hints-available': 'لا تتوفر تلميحات',
-  },
-  de: {
-    'game-numberlink-play.no-hints-available': 'Keine Hinweise verfügbar',
-  },
-  en: {
-    'game-numberlink-play.no-hints-available': 'No hints available',
-  },
-  es: {
-    'game-numberlink-play.no-hints-available': 'No hay pistas disponibles',
-  },
-  fr: {
-    'game-numberlink-play.no-hints-available': 'Aucun indice disponible',
-  },
-  hi: {
-    'game-numberlink-play.no-hints-available': 'कोई संकेत उपलब्ध नहीं है',
-  },
-  it: {
-    'game-numberlink-play.no-hints-available': 'Nessun suggerimento disponibile',
-  },
-  ja: {
-    'game-numberlink-play.no-hints-available': 'ヒントはありません',
-  },
-  ko: {
-    'game-numberlink-play.no-hints-available': '힌트 없음',
-  },
-  pt: {
-    'game-numberlink-play.no-hints-available': 'Nenhumas dicas disponíveis',
-  },
-  ru: {
-    'game-numberlink-play.no-hints-available': 'Подсказки отсутствуют',
-  },
-  zh: {
-    'game-numberlink-play.no-hints-available': '没有提示',
+  'game-numberlink-play.no-hints-available': {
+    en: 'No hints available',
+    es: 'No hay pistas disponibles',
+    fr: 'Aucun indice disponible',
+    de: 'Keine Hinweise verfügbar',
+    it: 'Nessun suggerimento disponibile',
+    ja: 'ヒントはありません',
+    ko: '힌트 없음',
+    pt: 'Nenhumas dicas disponíveis',
+    ru: 'Подсказки отсутствуют',
+    zh: '没有提示',
+    hi: 'कोई संकेत उपलब्ध नहीं है',
+    ar: 'لا تتوفر تلميحات',
   },
 }

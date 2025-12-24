@@ -5,40 +5,18 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  en: {
-    'l18n.settings': 'Settings',
-  },
-  ar: {
-    'l18n.settings': 'الإعدادات',
-  },
-  de: {
-    'l18n.settings': 'Einstellungen',
-  },
-  es: {
-    'l18n.settings': 'Configuración',
-  },
-  fr: {
-    'l18n.settings': 'Paramètres',
-  },
-  hi: {
-    'l18n.settings': 'सेटिंग्स',
-  },
-  it: {
-    'l18n.settings': 'Impostazioni',
-  },
-  ja: {
-    'l18n.settings': '設定',
-  },
-  ko: {
-    'l18n.settings': '설정',
-  },
-  pt: {
-    'l18n.settings': 'Configuração',
-  },
-  ru: {
-    'l18n.settings': 'Настройки',
-  },
-  zh: {
-    'l18n.settings': '设置',
+  'l18n.settings': {
+    en: 'Settings',
+    es: 'Configuración',
+    fr: 'Paramètres',
+    de: 'Einstellungen',
+    it: 'Impostazioni',
+    ja: '設定',
+    ko: '설정',
+    pt: 'Configuração',
+    ru: 'Настройки',
+    zh: '设置',
+    hi: 'सेटिंग्स',
+    ar: 'الإعدادات',
   },
 }

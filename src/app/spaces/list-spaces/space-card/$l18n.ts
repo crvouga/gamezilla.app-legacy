@@ -6,52 +6,32 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  en: {
-    'space-card.live': 'Live',
-    'space-card.people-count': (count) => `${count.toLocaleString()} people`,
+  'space-card.live': {
+    en: 'Live',
+    es: 'En vivo',
+    fr: 'En direct',
+    de: 'Live',
+    it: 'Dal vivo',
+    ja: 'ライブ',
+    ko: '실시간',
+    pt: 'Ao vivo',
+    ru: 'Прямой эфир',
+    zh: '现场',
+    hi: 'लाइव',
+    ar: 'حي',
   },
-  ar: {
-    'space-card.live': 'حي',
-    'space-card.people-count': (count) => `${count.toLocaleString()} أشخاص`,
-  },
-  de: {
-    'space-card.live': 'Live',
-    'space-card.people-count': (count) => `${count.toLocaleString()} Personen`,
-  },
-  es: {
-    'space-card.live': 'En vivo',
-    'space-card.people-count': (count) => `${count.toLocaleString()} personas`,
-  },
-  fr: {
-    'space-card.live': 'En direct',
-    'space-card.people-count': (count) => `${count.toLocaleString()} personnes`,
-  },
-  hi: {
-    'space-card.live': 'लाइव',
-    'space-card.people-count': (count) => `${count.toLocaleString()} लोग`,
-  },
-  it: {
-    'space-card.live': 'Dal vivo',
-    'space-card.people-count': (count) => `${count.toLocaleString()} persone`,
-  },
-  ja: {
-    'space-card.live': 'ライブ',
-    'space-card.people-count': (count) => `${count.toLocaleString()} 人`,
-  },
-  ko: {
-    'space-card.live': '실시간',
-    'space-card.people-count': (count) => `${count.toLocaleString()} 명`,
-  },
-  pt: {
-    'space-card.live': 'Ao vivo',
-    'space-card.people-count': (count) => `${count.toLocaleString()} pessoas`,
-  },
-  ru: {
-    'space-card.live': 'Прямой эфир',
-    'space-card.people-count': (count) => `${count.toLocaleString()} человек`,
-  },
-  zh: {
-    'space-card.live': '现场',
-    'space-card.people-count': (count) => `${count.toLocaleString()} 人`,
+  'space-card.people-count': {
+    en: (count) => `${count.toLocaleString()} people`,
+    es: (count) => `${count.toLocaleString()} personas`,
+    fr: (count) => `${count.toLocaleString()} personnes`,
+    de: (count) => `${count.toLocaleString()} Personen`,
+    it: (count) => `${count.toLocaleString()} persone`,
+    ja: (count) => `${count.toLocaleString()} \u4EBA`,
+    ko: (count) => `${count.toLocaleString()} \uBA85`,
+    pt: (count) => `${count.toLocaleString()} pessoas`,
+    ru: (count) => `${count.toLocaleString()} \u0447\u0435\u043B\u043E\u0432\u0435\u043A`,
+    zh: (count) => `${count.toLocaleString()} \u4EBA`,
+    hi: (count) => `${count.toLocaleString()} \u0932\u094B\u0917`,
+    ar: (count) => `${count.toLocaleString()} \u0623\u0634\u062E\u0627\u0635`,
   },
 }

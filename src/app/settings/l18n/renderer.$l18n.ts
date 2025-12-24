@@ -5,40 +5,18 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  en: {
-    'l18n.renderer': 'Renderer',
-  },
-  ar: {
-    'l18n.renderer': 'المعرض',
-  },
-  de: {
-    'l18n.renderer': 'Renderer',
-  },
-  es: {
-    'l18n.renderer': 'Renderer',
-  },
-  fr: {
-    'l18n.renderer': 'Renderer',
-  },
-  hi: {
-    'l18n.renderer': 'Renderer',
-  },
-  it: {
-    'l18n.renderer': 'Renderer',
-  },
-  ja: {
-    'l18n.renderer': 'Renderer',
-  },
-  ko: {
-    'l18n.renderer': 'Renderer',
-  },
-  pt: {
-    'l18n.renderer': 'Renderer',
-  },
-  ru: {
-    'l18n.renderer': 'Renderer',
-  },
-  zh: {
-    'l18n.renderer': 'Renderer',
+  'l18n.renderer': {
+    en: 'Renderer',
+    es: 'Renderer',
+    fr: 'Renderer',
+    de: 'Renderer',
+    it: 'Renderer',
+    ja: 'Renderer',
+    ko: 'Renderer',
+    pt: 'Renderer',
+    ru: 'Renderer',
+    zh: 'Renderer',
+    hi: 'Renderer',
+    ar: 'المعرض',
   },
 }

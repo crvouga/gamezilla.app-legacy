@@ -5,40 +5,18 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  en: {
-    'app.submit': 'Submit',
-  },
-  ar: {
-    'app.submit': 'إرسال',
-  },
-  de: {
-    'app.submit': 'Absenden',
-  },
-  es: {
-    'app.submit': 'Enviar',
-  },
-  fr: {
-    'app.submit': 'Soumettre',
-  },
-  hi: {
-    'app.submit': 'जमा करें',
-  },
-  it: {
-    'app.submit': 'Invia',
-  },
-  ja: {
-    'app.submit': '送信',
-  },
-  ko: {
-    'app.submit': '제출',
-  },
-  pt: {
-    'app.submit': 'Enviar',
-  },
-  ru: {
-    'app.submit': 'Отправить',
-  },
-  zh: {
-    'app.submit': '提交',
+  'app.submit': {
+    en: 'Submit',
+    es: 'Enviar',
+    fr: 'Soumettre',
+    de: 'Absenden',
+    it: 'Invia',
+    ja: '送信',
+    ko: '제출',
+    pt: 'Enviar',
+    ru: 'Отправить',
+    zh: '提交',
+    hi: 'जमा करें',
+    ar: 'إرسال',
   },
 }

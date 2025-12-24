@@ -5,40 +5,18 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  ar: {
-    'sound.sound-on': 'الصوت مفعل',
-  },
-  de: {
-    'sound.sound-on': 'Ton an',
-  },
-  en: {
-    'sound.sound-on': 'Sound On',
-  },
-  es: {
-    'sound.sound-on': 'Sonido encendido',
-  },
-  fr: {
-    'sound.sound-on': 'Son activé',
-  },
-  hi: {
-    'sound.sound-on': 'ध्वनि चालू',
-  },
-  it: {
-    'sound.sound-on': 'Suono acceso',
-  },
-  ja: {
-    'sound.sound-on': 'サウンドオン',
-  },
-  ko: {
-    'sound.sound-on': '소리 켜기',
-  },
-  pt: {
-    'sound.sound-on': 'Som ligado',
-  },
-  ru: {
-    'sound.sound-on': 'Звук включен',
-  },
-  zh: {
-    'sound.sound-on': '打开声音',
+  'sound.sound-on': {
+    en: 'Sound On',
+    es: 'Sonido encendido',
+    fr: 'Son activé',
+    de: 'Ton an',
+    it: 'Suono acceso',
+    ja: 'サウンドオン',
+    ko: '소리 켜기',
+    pt: 'Som ligado',
+    ru: 'Звук включен',
+    zh: '打开声音',
+    hi: 'ध्वनि चालू',
+    ar: 'الصوت مفعل',
   },
 }

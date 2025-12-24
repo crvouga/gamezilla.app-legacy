@@ -7,64 +7,46 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  en: {
-    'game.numberlink.create-new': 'Create New',
-    'game.numberlink.create-puzzle': 'Create Puzzle',
-    'game.numberlink.puzzle-created': 'Puzzle created',
+  'game.numberlink.create-new': {
+    en: 'Create New',
+    es: 'Crear nuevo',
+    fr: 'Créer nouveau',
+    de: 'Neu erstellen',
+    it: 'Crea nuovo',
+    ja: '新規作成',
+    ko: '새로 만들기',
+    pt: 'Criar novo',
+    ru: 'Создать новый',
+    zh: '创建新',
+    hi: 'नया बनाएं',
+    ar: 'إنشاء جديد',
   },
-  ar: {
-    'game.numberlink.create-new': 'إنشاء جديد',
-    'game.numberlink.create-puzzle': 'إنشاء لغز',
-    'game.numberlink.puzzle-created': 'تم إنشاء اللغز',
+  'game.numberlink.create-puzzle': {
+    en: 'Create Puzzle',
+    es: 'Crear rompecabezas',
+    fr: 'Créer un puzzle',
+    de: 'Puzzle erstellen',
+    it: 'Crea puzzle',
+    ja: 'パズルを作成',
+    ko: '퍼즐 만들기',
+    pt: 'Criar quebra-cabeça',
+    ru: 'Создать головоломку',
+    zh: '创建拼图',
+    hi: 'पहेली बनाएं',
+    ar: 'إنشاء لغز',
   },
-  de: {
-    'game.numberlink.create-new': 'Neu erstellen',
-    'game.numberlink.create-puzzle': 'Puzzle erstellen',
-    'game.numberlink.puzzle-created': 'Puzzle erstellt',
-  },
-  es: {
-    'game.numberlink.create-new': 'Crear nuevo',
-    'game.numberlink.create-puzzle': 'Crear rompecabezas',
-    'game.numberlink.puzzle-created': 'Rompecabezas creado',
-  },
-  fr: {
-    'game.numberlink.create-new': 'Créer nouveau',
-    'game.numberlink.create-puzzle': 'Créer un puzzle',
-    'game.numberlink.puzzle-created': 'Puzzle créé',
-  },
-  hi: {
-    'game.numberlink.create-new': 'नया बनाएं',
-    'game.numberlink.create-puzzle': 'पहेली बनाएं',
-    'game.numberlink.puzzle-created': 'पहेली बनाई गई',
-  },
-  it: {
-    'game.numberlink.create-new': 'Crea nuovo',
-    'game.numberlink.create-puzzle': 'Crea puzzle',
-    'game.numberlink.puzzle-created': 'Puzzle creato',
-  },
-  ja: {
-    'game.numberlink.create-new': '新規作成',
-    'game.numberlink.create-puzzle': 'パズルを作成',
-    'game.numberlink.puzzle-created': 'パズルが作成されました',
-  },
-  ko: {
-    'game.numberlink.create-new': '새로 만들기',
-    'game.numberlink.create-puzzle': '퍼즐 만들기',
-    'game.numberlink.puzzle-created': '퍼즐이 생성되었습니다',
-  },
-  pt: {
-    'game.numberlink.create-new': 'Criar novo',
-    'game.numberlink.create-puzzle': 'Criar quebra-cabeça',
-    'game.numberlink.puzzle-created': 'Quebra-cabeça criado',
-  },
-  ru: {
-    'game.numberlink.create-new': 'Создать новый',
-    'game.numberlink.create-puzzle': 'Создать головоломку',
-    'game.numberlink.puzzle-created': 'Головоломка создана',
-  },
-  zh: {
-    'game.numberlink.create-new': '创建新',
-    'game.numberlink.create-puzzle': '创建拼图',
-    'game.numberlink.puzzle-created': '拼图已创建',
+  'game.numberlink.puzzle-created': {
+    en: 'Puzzle created',
+    es: 'Rompecabezas creado',
+    fr: 'Puzzle créé',
+    de: 'Puzzle erstellt',
+    it: 'Puzzle creato',
+    ja: 'パズルが作成されました',
+    ko: '퍼즐이 생성되었습니다',
+    pt: 'Quebra-cabeça criado',
+    ru: 'Головоломка создана',
+    zh: '拼图已创建',
+    hi: 'पहेली बनाई गई',
+    ar: 'تم إنشاء اللغز',
   },
 }

@@ -5,40 +5,18 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  en: {
-    'status-bar.status-bar': 'Status Bar',
-  },
-  ar: {
-    'status-bar.status-bar': 'شريط الحالة',
-  },
-  es: {
-    'status-bar.status-bar': 'Barra de estado',
-  },
-  de: {
-    'status-bar.status-bar': 'Statusleiste',
-  },
-  fr: {
-    'status-bar.status-bar': "Barre d'état",
-  },
-  hi: {
-    'status-bar.status-bar': 'स्थिति बार',
-  },
-  it: {
-    'status-bar.status-bar': 'Barra di stato',
-  },
-  ja: {
-    'status-bar.status-bar': 'ステータスバー',
-  },
-  ko: {
-    'status-bar.status-bar': '상태 표시줄',
-  },
-  pt: {
-    'status-bar.status-bar': 'Barra de estado',
-  },
-  ru: {
-    'status-bar.status-bar': 'Панель состояния',
-  },
-  zh: {
-    'status-bar.status-bar': '状态栏',
+  'status-bar.status-bar': {
+    en: 'Status Bar',
+    es: 'Barra de estado',
+    fr: "Barre d'état",
+    de: 'Statusleiste',
+    it: 'Barra di stato',
+    ja: 'ステータスバー',
+    ko: '상태 표시줄',
+    pt: 'Barra de estado',
+    ru: 'Панель состояния',
+    zh: '状态栏',
+    hi: 'स्थिति बार',
+    ar: 'شريط الحالة',
   },
 }

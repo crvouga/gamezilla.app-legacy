@@ -7,52 +7,32 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  ar: {
-    'username.username-label': 'اسم المستخدم',
-    username: (username) => `@${username}`,
+  username: {
+    en: (username) => `@${username}`,
+    es: (username) => `@${username}`,
+    fr: (username) => `@${username}`,
+    de: (username) => `@${username}`,
+    it: (username) => `@${username}`,
+    ja: (username) => `@${username}`,
+    ko: (username) => `@${username}`,
+    pt: (username) => `@${username}`,
+    ru: (username) => `@${username}`,
+    zh: (username) => `@${username}`,
+    hi: (username) => `@${username}`,
+    ar: (username) => `@${username}`,
   },
-  de: {
-    'username.username-label': 'Benutzername',
-    username: (username) => `@${username}`,
-  },
-  en: {
-    'username.username-label': 'Username',
-    username: (username) => `@${username}`,
-  },
-  es: {
-    'username.username-label': 'Nombre de usuario',
-    username: (username) => `@${username}`,
-  },
-  fr: {
-    'username.username-label': "Nom d'utilisateur",
-    username: (username) => `@${username}`,
-  },
-  hi: {
-    'username.username-label': 'उपयोगकर्ता नाम',
-    username: (username) => `@${username}`,
-  },
-  it: {
-    'username.username-label': 'Nome utente',
-    username: (username) => `@${username}`,
-  },
-  ja: {
-    'username.username-label': 'ユーザー名',
-    username: (username) => `@${username}`,
-  },
-  ko: {
-    'username.username-label': '사용자 이름',
-    username: (username) => `@${username}`,
-  },
-  pt: {
-    'username.username-label': 'Nome de usuário',
-    username: (username) => `@${username}`,
-  },
-  ru: {
-    'username.username-label': 'Имя пользователя',
-    username: (username) => `@${username}`,
-  },
-  zh: {
-    'username.username-label': '用户名',
-    username: (username) => `@${username}`,
+  'username.username-label': {
+    en: 'Username',
+    es: 'Nombre de usuario',
+    fr: "Nom d'utilisateur",
+    de: 'Benutzername',
+    it: 'Nome utente',
+    ja: 'ユーザー名',
+    ko: '사용자 이름',
+    pt: 'Nome de usuário',
+    ru: 'Имя пользователя',
+    zh: '用户名',
+    hi: 'उपयोगकर्ता नाम',
+    ar: 'اسم المستخدم',
   },
 }

@@ -5,40 +5,18 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  en: {
-    'spaces.game': 'Game',
-  },
-  es: {
-    'spaces.game': 'Juego',
-  },
-  de: {
-    'spaces.game': 'Spiel',
-  },
-  fr: {
-    'spaces.game': 'Jeu',
-  },
-  it: {
-    'spaces.game': 'Gioco',
-  },
-  ja: {
-    'spaces.game': 'ゲーム',
-  },
-  ko: {
-    'spaces.game': '게임',
-  },
-  pt: {
-    'spaces.game': 'Jogo',
-  },
-  ru: {
-    'spaces.game': 'Игра',
-  },
-  zh: {
-    'spaces.game': '游戏',
-  },
-  ar: {
-    'spaces.game': 'لعبة',
-  },
-  hi: {
-    'spaces.game': 'खेल',
+  'spaces.game': {
+    en: 'Game',
+    es: 'Juego',
+    fr: 'Jeu',
+    de: 'Spiel',
+    it: 'Gioco',
+    ja: 'ゲーム',
+    ko: '게임',
+    pt: 'Jogo',
+    ru: 'Игра',
+    zh: '游戏',
+    hi: 'खेल',
+    ar: 'لعبة',
   },
 }

@@ -5,40 +5,18 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  en: {
-    'app.apply': 'Apply',
-  },
-  ar: {
-    'app.apply': 'تطبيق',
-  },
-  de: {
-    'app.apply': 'Anwenden',
-  },
-  es: {
-    'app.apply': 'Aplicar',
-  },
-  fr: {
-    'app.apply': 'Appliquer',
-  },
-  hi: {
-    'app.apply': 'लागू करें',
-  },
-  it: {
-    'app.apply': 'Applica',
-  },
-  ja: {
-    'app.apply': '適用',
-  },
-  ko: {
-    'app.apply': '적용',
-  },
-  pt: {
-    'app.apply': 'Aplicar',
-  },
-  ru: {
-    'app.apply': 'Применить',
-  },
-  zh: {
-    'app.apply': '应用',
+  'app.apply': {
+    en: 'Apply',
+    es: 'Aplicar',
+    fr: 'Appliquer',
+    de: 'Anwenden',
+    it: 'Applica',
+    ja: '適用',
+    ko: '적용',
+    pt: 'Aplicar',
+    ru: 'Применить',
+    zh: '应用',
+    hi: 'लागू करें',
+    ar: 'تطبيق',
   },
 }

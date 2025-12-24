@@ -6,52 +6,32 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  ar: {
-    'spaces.spaces': 'الفضاءات',
-    'spaces.no-spaces': 'لا توجد مساحات',
+  'spaces.no-spaces': {
+    en: 'No spaces',
+    es: 'Sin espacios',
+    fr: 'Aucun espace',
+    de: 'Keine Räume',
+    it: 'Nessuno spazio',
+    ja: 'スペースなし',
+    ko: '공간 없음',
+    pt: 'Sem espaços',
+    ru: 'Нет пространств',
+    zh: '没有空间',
+    hi: 'कोई स्थान नहीं',
+    ar: 'لا توجد مساحات',
   },
-  de: {
-    'spaces.spaces': 'Räume',
-    'spaces.no-spaces': 'Keine Räume',
-  },
-  en: {
-    'spaces.spaces': 'Spaces',
-    'spaces.no-spaces': 'No spaces',
-  },
-  es: {
-    'spaces.spaces': 'Espacios',
-    'spaces.no-spaces': 'Sin espacios',
-  },
-  fr: {
-    'spaces.spaces': 'Espaces',
-    'spaces.no-spaces': 'Aucun espace',
-  },
-  hi: {
-    'spaces.spaces': 'स्थान',
-    'spaces.no-spaces': 'कोई स्थान नहीं',
-  },
-  it: {
-    'spaces.spaces': 'Spazi',
-    'spaces.no-spaces': 'Nessuno spazio',
-  },
-  ja: {
-    'spaces.spaces': 'スペース',
-    'spaces.no-spaces': 'スペースなし',
-  },
-  ko: {
-    'spaces.spaces': '공간',
-    'spaces.no-spaces': '공간 없음',
-  },
-  pt: {
-    'spaces.spaces': 'Espaços',
-    'spaces.no-spaces': 'Sem espaços',
-  },
-  ru: {
-    'spaces.spaces': 'Пространства',
-    'spaces.no-spaces': 'Нет пространств',
-  },
-  zh: {
-    'spaces.spaces': '空间',
-    'spaces.no-spaces': '没有空间',
+  'spaces.spaces': {
+    en: 'Spaces',
+    es: 'Espacios',
+    fr: 'Espaces',
+    de: 'Räume',
+    it: 'Spazi',
+    ja: 'スペース',
+    ko: '공간',
+    pt: 'Espaços',
+    ru: 'Пространства',
+    zh: '空间',
+    hi: 'स्थान',
+    ar: 'الفضاءات',
   },
 }

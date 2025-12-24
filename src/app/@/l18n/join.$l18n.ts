@@ -5,40 +5,18 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  en: {
-    'app.join': 'Join',
-  },
-  ar: {
-    'app.join': 'انضم',
-  },
-  de: {
-    'app.join': 'Beitreten',
-  },
-  es: {
-    'app.join': 'Unirse',
-  },
-  fr: {
-    'app.join': 'Rejoindre',
-  },
-  hi: {
-    'app.join': 'शामिल हों',
-  },
-  it: {
-    'app.join': 'Unisciti',
-  },
-  ja: {
-    'app.join': '参加',
-  },
-  ko: {
-    'app.join': '참여',
-  },
-  pt: {
-    'app.join': 'Juntar',
-  },
-  ru: {
-    'app.join': 'Присоединиться',
-  },
-  zh: {
-    'app.join': '加入',
+  'app.join': {
+    en: 'Join',
+    es: 'Unirse',
+    fr: 'Rejoindre',
+    de: 'Beitreten',
+    it: 'Unisciti',
+    ja: '参加',
+    ko: '참여',
+    pt: 'Juntar',
+    ru: 'Присоединиться',
+    zh: '加入',
+    hi: 'शामिल हों',
+    ar: 'انضم',
   },
 }

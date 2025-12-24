@@ -5,40 +5,18 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  en: {
-    'app.dismiss': 'Dismiss',
-  },
-  ar: {
-    'app.dismiss': 'رفض',
-  },
-  de: {
-    'app.dismiss': 'Schließen',
-  },
-  es: {
-    'app.dismiss': 'Descartar',
-  },
-  fr: {
-    'app.dismiss': 'Fermer',
-  },
-  hi: {
-    'app.dismiss': 'ख़ारिज करें',
-  },
-  it: {
-    'app.dismiss': 'Chiudi',
-  },
-  ja: {
-    'app.dismiss': '閉じる',
-  },
-  ko: {
-    'app.dismiss': '닫기',
-  },
-  pt: {
-    'app.dismiss': 'Dispensar',
-  },
-  ru: {
-    'app.dismiss': 'Закрыть',
-  },
-  zh: {
-    'app.dismiss': '关闭',
+  'app.dismiss': {
+    en: 'Dismiss',
+    es: 'Descartar',
+    fr: 'Fermer',
+    de: 'Schließen',
+    it: 'Chiudi',
+    ja: '閉じる',
+    ko: '닫기',
+    pt: 'Dispensar',
+    ru: 'Закрыть',
+    zh: '关闭',
+    hi: 'ख़ारिज करें',
+    ar: 'رفض',
   },
 }

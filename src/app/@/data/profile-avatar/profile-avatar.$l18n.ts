@@ -5,40 +5,18 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  ar: {
-    'profile.avatar-label': 'الصورة الرمزية',
-  },
-  de: {
-    'profile.avatar-label': 'Avatar',
-  },
-  en: {
-    'profile.avatar-label': 'Avatar',
-  },
-  es: {
-    'profile.avatar-label': 'Avatar',
-  },
-  fr: {
-    'profile.avatar-label': 'Avatar',
-  },
-  hi: {
-    'profile.avatar-label': 'अवतार',
-  },
-  it: {
-    'profile.avatar-label': 'Avatar',
-  },
-  ja: {
-    'profile.avatar-label': 'アバター',
-  },
-  ko: {
-    'profile.avatar-label': '아바타',
-  },
-  pt: {
-    'profile.avatar-label': 'Avatar',
-  },
-  ru: {
-    'profile.avatar-label': 'Аватар',
-  },
-  zh: {
-    'profile.avatar-label': '头像',
+  'profile.avatar-label': {
+    en: 'Avatar',
+    es: 'Avatar',
+    fr: 'Avatar',
+    de: 'Avatar',
+    it: 'Avatar',
+    ja: 'アバター',
+    ko: '아바타',
+    pt: 'Avatar',
+    ru: 'Аватар',
+    zh: '头像',
+    hi: 'अवतार',
+    ar: 'الصورة الرمزية',
   },
 }

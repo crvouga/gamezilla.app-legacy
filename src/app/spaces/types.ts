@@ -17,11 +17,7 @@ import { GamesTypes } from './game/games'
 import { JoinSpaceFrontend } from './join-space'
 import { LeaveSpaceFrontend } from './leave-space'
 import { ListSpacesFrontend } from './list-spaces'
-import {
-  initSpaceDb,
-  initSpaceProjectionDb,
-  initSpaceProjectionUserDb,
-} from './space/space-db'
+import { initSpaceDb, initSpaceProjectionDb, initSpaceProjectionUserDb } from './space/space-db'
 import { SpaceProjectionStarted } from './space/space-projection'
 import { StartSpaceFrontend } from './start-space'
 import { SyncFrontend, SyncTypes } from './sync'

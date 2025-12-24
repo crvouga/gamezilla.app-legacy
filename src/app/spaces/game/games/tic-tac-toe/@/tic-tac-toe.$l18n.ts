@@ -8,40 +8,8 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  ar: {
-    'tic-tac-toe.bot-level': (botLevel) => {
-      switch (botLevel) {
-        case 'Easy':
-          return 'سهل'
-        case 'Impossible':
-          return 'مستحيل'
-        case 'Medium':
-          return 'متوسط'
-        default:
-          return 'غير معروف'
-      }
-    },
-    'tic-tac-toe.cross': 'صليب',
-    'tic-tac-toe.naught': 'دائرة',
-  },
-  de: {
-    'tic-tac-toe.bot-level': (botLevel) => {
-      switch (botLevel) {
-        case 'Easy':
-          return 'Leicht'
-        case 'Impossible':
-          return 'Unmöglich'
-        case 'Medium':
-          return 'Mittel'
-        default:
-          return 'Unbekannt'
-      }
-    },
-    'tic-tac-toe.cross': 'Kreuz',
-    'tic-tac-toe.naught': 'Kreis',
-  },
-  en: {
-    'tic-tac-toe.bot-level': (botLevel) => {
+  'tic-tac-toe.bot-level': {
+    en: (botLevel) => {
       switch (botLevel) {
         case 'Easy':
           return 'Easy'
@@ -53,14 +21,10 @@ export const translations: Translations<Text> = {
           return 'Unknown'
       }
     },
-    'tic-tac-toe.cross': 'Cross',
-    'tic-tac-toe.naught': 'Naught',
-  },
-  es: {
-    'tic-tac-toe.bot-level': (botLevel) => {
+    es: (botLevel) => {
       switch (botLevel) {
         case 'Easy':
-          return 'Fácil'
+          return 'F\xE1cil'
         case 'Impossible':
           return 'Imposible'
         case 'Medium':
@@ -69,11 +33,7 @@ export const translations: Translations<Text> = {
           return 'Desconocido'
       }
     },
-    'tic-tac-toe.cross': 'Cruz',
-    'tic-tac-toe.naught': 'Círculo',
-  },
-  fr: {
-    'tic-tac-toe.bot-level': (botLevel) => {
+    fr: (botLevel) => {
       switch (botLevel) {
         case 'Easy':
           return 'Facile'
@@ -85,11 +45,19 @@ export const translations: Translations<Text> = {
           return 'Inconnu'
       }
     },
-    'tic-tac-toe.cross': 'Croix',
-    'tic-tac-toe.naught': 'Rond',
-  },
-  it: {
-    'tic-tac-toe.bot-level': (botLevel) => {
+    de: (botLevel) => {
+      switch (botLevel) {
+        case 'Easy':
+          return 'Leicht'
+        case 'Impossible':
+          return 'Unm\xF6glich'
+        case 'Medium':
+          return 'Mittel'
+        default:
+          return 'Unbekannt'
+      }
+    },
+    it: (botLevel) => {
       switch (botLevel) {
         case 'Easy':
           return 'Facile'
@@ -101,103 +69,117 @@ export const translations: Translations<Text> = {
           return 'Sconosciuto'
       }
     },
-    'tic-tac-toe.cross': 'Croce',
-    'tic-tac-toe.naught': 'Cerchio',
-  },
-  ja: {
-    'tic-tac-toe.bot-level': (botLevel) => {
+    ja: (botLevel) => {
       switch (botLevel) {
         case 'Easy':
-          return '簡単'
+          return '\u7C21\u5358'
         case 'Impossible':
-          return '不可能'
+          return '\u4E0D\u53EF\u80FD'
         case 'Medium':
-          return '中'
+          return '\u4E2D'
         default:
-          return '未知'
+          return '\u672A\u77E5'
       }
     },
-    'tic-tac-toe.cross': 'クロス',
-    'tic-tac-toe.naught': 'ノート',
-  },
-  pt: {
-    'tic-tac-toe.bot-level': (botLevel) => {
+    ko: (botLevel) => {
       switch (botLevel) {
         case 'Easy':
-          return 'Fácil'
+          return '\uC26C\uC6B4'
         case 'Impossible':
-          return 'Impossível'
+          return '\uBD88\uAC00\uB2A5\uD55C'
         case 'Medium':
-          return 'Médio'
+          return '\uC911\uAC04'
+        default:
+          return '\uC54C \uC218 \uC5C6\uB294'
+      }
+    },
+    pt: (botLevel) => {
+      switch (botLevel) {
+        case 'Easy':
+          return 'F\xE1cil'
+        case 'Impossible':
+          return 'Imposs\xEDvel'
+        case 'Medium':
+          return 'M\xE9dio'
         default:
           return 'Desconhecido'
       }
     },
-    'tic-tac-toe.cross': 'Cruz',
-    'tic-tac-toe.naught': 'Círculo',
-  },
-  ru: {
-    'tic-tac-toe.bot-level': (botLevel) => {
+    ru: (botLevel) => {
       switch (botLevel) {
         case 'Easy':
-          return 'Легко'
+          return '\u041B\u0435\u0433\u043A\u043E'
         case 'Impossible':
-          return 'Невозможно'
+          return '\u041D\u0435\u0432\u043E\u0437\u043C\u043E\u0436\u043D\u043E'
         case 'Medium':
-          return 'Средний'
+          return '\u0421\u0440\u0435\u0434\u043D\u0438\u0439'
         default:
-          return 'Неизвестно'
+          return '\u041D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E'
       }
     },
-    'tic-tac-toe.cross': 'Крест',
-    'tic-tac-toe.naught': 'Нолик',
-  },
-  zh: {
-    'tic-tac-toe.bot-level': (botLevel) => {
+    zh: (botLevel) => {
       switch (botLevel) {
         case 'Easy':
-          return '容易'
+          return '\u5BB9\u6613'
         case 'Impossible':
-          return '不可能'
+          return '\u4E0D\u53EF\u80FD'
         case 'Medium':
-          return '中'
+          return '\u4E2D'
         default:
-          return '未知'
+          return '\u672A\u77E5'
       }
     },
-    'tic-tac-toe.cross': '交叉',
-    'tic-tac-toe.naught': '零',
-  },
-  hi: {
-    'tic-tac-toe.bot-level': (botLevel) => {
+    hi: (botLevel) => {
       switch (botLevel) {
         case 'Easy':
-          return 'आसान'
+          return '\u0906\u0938\u093E\u0928'
         case 'Impossible':
-          return 'असंभव'
+          return '\u0905\u0938\u0902\u092D\u0935'
         case 'Medium':
-          return 'मध्यम'
+          return '\u092E\u0927\u094D\u092F\u092E'
         default:
-          return 'अज्ञात'
+          return '\u0905\u091C\u094D\u091E\u093E\u0924'
       }
     },
-    'tic-tac-toe.cross': 'क्रॉस',
-    'tic-tac-toe.naught': 'नॉट',
-  },
-  ko: {
-    'tic-tac-toe.bot-level': (botLevel) => {
+    ar: (botLevel) => {
       switch (botLevel) {
         case 'Easy':
-          return '쉬운'
+          return '\u0633\u0647\u0644'
         case 'Impossible':
-          return '불가능한'
+          return '\u0645\u0633\u062A\u062D\u064A\u0644'
         case 'Medium':
-          return '중간'
+          return '\u0645\u062A\u0648\u0633\u0637'
         default:
-          return '알 수 없는'
+          return '\u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641'
       }
     },
-    'tic-tac-toe.cross': '크로스',
-    'tic-tac-toe.naught': '놋',
+  },
+  'tic-tac-toe.cross': {
+    en: 'Cross',
+    es: 'Cruz',
+    fr: 'Croix',
+    de: 'Kreuz',
+    it: 'Croce',
+    ja: 'クロス',
+    ko: '크로스',
+    pt: 'Cruz',
+    ru: 'Крест',
+    zh: '交叉',
+    hi: 'क्रॉस',
+    ar: 'صليب',
+  },
+  'tic-tac-toe.naught': {
+    en: 'Naught',
+    es: 'Círculo',
+    fr: 'Rond',
+    de: 'Kreis',
+    it: 'Cerchio',
+    ja: 'ノート',
+    ko: '놋',
+    pt: 'Círculo',
+    ru: 'Нолик',
+    zh: '零',
+    hi: 'नॉट',
+    ar: 'دائرة',
   },
 }

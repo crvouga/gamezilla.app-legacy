@@ -6,7 +6,9 @@ export type TranslationText = {
 }
 
 export type Translations<TText extends TranslationText> = {
-  [lang in LanguageCodeISO_639_1]: TText
+  [key in keyof TText]: {
+    [lang in LanguageCodeISO_639_1]: string | ((...args: any[]) => string)
+  }
 }
 
 export type TranslatedText = Brand<'TranslatedText', string>

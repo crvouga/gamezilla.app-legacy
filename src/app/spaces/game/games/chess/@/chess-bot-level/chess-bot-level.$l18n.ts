@@ -8,8 +8,8 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  en: {
-    'chess.bot-level': (botLevel) => {
+  'chess.bot-level': {
+    en: (botLevel) => {
       switch (botLevel) {
         case 0:
           return 'Beginner'
@@ -25,45 +25,7 @@ export const translations: Translations<Text> = {
           return 'Unknown'
       }
     },
-  },
-  ar: {
-    'chess.bot-level': (botLevel) => {
-      switch (botLevel) {
-        case 0:
-          return 'مبتدئ'
-        case 1:
-          return 'متوسط'
-        case 2:
-          return 'متقدم'
-        case 3:
-          return 'خبير'
-        case 4:
-          return 'ماجستير'
-        default:
-          return 'غير معروف'
-      }
-    },
-  },
-  de: {
-    'chess.bot-level': (botLevel) => {
-      switch (botLevel) {
-        case 0:
-          return 'Anfänger'
-        case 1:
-          return 'Fortgeschritten'
-        case 2:
-          return 'Experte'
-        case 3:
-          return 'Profi'
-        case 4:
-          return 'Meister'
-        default:
-          return 'Unbekannt'
-      }
-    },
-  },
-  es: {
-    'chess.bot-level': (botLevel) => {
+    es: (botLevel) => {
       switch (botLevel) {
         case 0:
           return 'Principiante'
@@ -79,45 +41,39 @@ export const translations: Translations<Text> = {
           return 'Desconocido'
       }
     },
-  },
-  fr: {
-    'chess.bot-level': (botLevel) => {
+    fr: (botLevel) => {
       switch (botLevel) {
         case 0:
-          return 'Débutant'
+          return 'D\xE9butant'
         case 1:
-          return 'Intermédiaire'
+          return 'Interm\xE9diaire'
         case 2:
-          return 'Avancé'
+          return 'Avanc\xE9'
         case 3:
           return 'Expert'
         case 4:
-          return 'Maître'
+          return 'Ma\xEEtre'
         default:
           return 'Inconnu'
       }
     },
-  },
-  hi: {
-    'chess.bot-level': (botLevel) => {
+    de: (botLevel) => {
       switch (botLevel) {
         case 0:
-          return 'शुरुआती'
+          return 'Anf\xE4nger'
         case 1:
-          return 'इंटरमीडिएट'
+          return 'Fortgeschritten'
         case 2:
-          return 'उन्नत'
+          return 'Experte'
         case 3:
-          return 'विशेषज्ञ'
+          return 'Profi'
         case 4:
-          return 'मास्टर'
+          return 'Meister'
         default:
-          return 'अज्ञात'
+          return 'Unbekannt'
       }
     },
-  },
-  it: {
-    'chess.bot-level': (botLevel) => {
+    it: (botLevel) => {
       switch (botLevel) {
         case 0:
           return 'Principiante'
@@ -133,52 +89,46 @@ export const translations: Translations<Text> = {
           return 'Sconosciuto'
       }
     },
-  },
-  ja: {
-    'chess.bot-level': (botLevel) => {
+    ja: (botLevel) => {
       switch (botLevel) {
         case 0:
-          return '初心者'
+          return '\u521D\u5FC3\u8005'
         case 1:
-          return '中級'
+          return '\u4E2D\u7D1A'
         case 2:
-          return '上級'
+          return '\u4E0A\u7D1A'
         case 3:
-          return 'エキスパート'
+          return '\u30A8\u30AD\u30B9\u30D1\u30FC\u30C8'
         case 4:
-          return 'マスター'
+          return '\u30DE\u30B9\u30BF\u30FC'
         default:
-          return '不明'
+          return '\u4E0D\u660E'
       }
     },
-  },
-  ko: {
-    'chess.bot-level': (botLevel) => {
+    ko: (botLevel) => {
       switch (botLevel) {
         case 0:
-          return '초보자'
+          return '\uCD08\uBCF4\uC790'
         case 1:
-          return '중급'
+          return '\uC911\uAE09'
         case 2:
-          return '고급'
+          return '\uACE0\uAE09'
         case 3:
-          return '전문가'
+          return '\uC804\uBB38\uAC00'
         case 4:
-          return '마스터'
+          return '\uB9C8\uC2A4\uD130'
         default:
-          return '알 수 없음'
+          return '\uC54C \uC218 \uC5C6\uC74C'
       }
     },
-  },
-  pt: {
-    'chess.bot-level': (botLevel) => {
+    pt: (botLevel) => {
       switch (botLevel) {
         case 0:
           return 'Iniciante'
         case 1:
-          return 'Intermediário'
+          return 'Intermedi\xE1rio'
         case 2:
-          return 'Avançado'
+          return 'Avan\xE7ado'
         case 3:
           return 'Especialista'
         case 4:
@@ -187,40 +137,68 @@ export const translations: Translations<Text> = {
           return 'Desconhecido'
       }
     },
-  },
-  ru: {
-    'chess.bot-level': (botLevel) => {
+    ru: (botLevel) => {
       switch (botLevel) {
         case 0:
-          return 'Новичок'
+          return '\u041D\u043E\u0432\u0438\u0447\u043E\u043A'
         case 1:
-          return 'Средний'
+          return '\u0421\u0440\u0435\u0434\u043D\u0438\u0439'
         case 2:
-          return 'Продвинутый'
+          return '\u041F\u0440\u043E\u0434\u0432\u0438\u043D\u0443\u0442\u044B\u0439'
         case 3:
-          return 'Эксперт'
+          return '\u042D\u043A\u0441\u043F\u0435\u0440\u0442'
         case 4:
-          return 'Мастер'
+          return '\u041C\u0430\u0441\u0442\u0435\u0440'
         default:
-          return 'Неизвестно'
+          return '\u041D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E'
       }
     },
-  },
-  zh: {
-    'chess.bot-level': (botLevel) => {
+    zh: (botLevel) => {
       switch (botLevel) {
         case 0:
-          return '初学者'
+          return '\u521D\u5B66\u8005'
         case 1:
-          return '中级'
+          return '\u4E2D\u7EA7'
         case 2:
-          return '高级'
+          return '\u9AD8\u7EA7'
         case 3:
-          return '专家'
+          return '\u4E13\u5BB6'
         case 4:
-          return '大师'
+          return '\u5927\u5E08'
         default:
-          return '未知'
+          return '\u672A\u77E5'
+      }
+    },
+    hi: (botLevel) => {
+      switch (botLevel) {
+        case 0:
+          return '\u0936\u0941\u0930\u0941\u0906\u0924\u0940'
+        case 1:
+          return '\u0907\u0902\u091F\u0930\u092E\u0940\u0921\u093F\u090F\u091F'
+        case 2:
+          return '\u0909\u0928\u094D\u0928\u0924'
+        case 3:
+          return '\u0935\u093F\u0936\u0947\u0937\u091C\u094D\u091E'
+        case 4:
+          return '\u092E\u093E\u0938\u094D\u091F\u0930'
+        default:
+          return '\u0905\u091C\u094D\u091E\u093E\u0924'
+      }
+    },
+    ar: (botLevel) => {
+      switch (botLevel) {
+        case 0:
+          return '\u0645\u0628\u062A\u062F\u0626'
+        case 1:
+          return '\u0645\u062A\u0648\u0633\u0637'
+        case 2:
+          return '\u0645\u062A\u0642\u062F\u0645'
+        case 3:
+          return '\u062E\u0628\u064A\u0631'
+        case 4:
+          return '\u0645\u0627\u062C\u0633\u062A\u064A\u0631'
+        default:
+          return '\u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641'
       }
     },
   },

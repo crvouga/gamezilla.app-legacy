@@ -88,9 +88,9 @@ describe('SpaceDb', () => {
       unwrap(await f.spacesDb.upsert({ entities: [modifiedEntity] }))
       const after = unwrap(await f.spacesDb.query({ where: { op: '=', column: 'id', value: f.spaceId } }))
 
-      expect((before.entities.items[0]?.space.events.length ?? 0) < (after.entities.items[0]?.space.events.length ?? 0)).toEqual(
-        true,
-      )
+      expect(
+        (before.entities.items[0]?.space.events.length ?? 0) < (after.entities.items[0]?.space.events.length ?? 0),
+      ).toEqual(true)
       expect(after.entities.items.map((e) => e.space)).toEqual([modifiedSpace])
     }
   })

@@ -15,7 +15,7 @@ describe('SpaceDb - query by space id', () => {
       const spaceId1 = Space.toSpaceId(randomSpace1)
       const spaceId2 = Space.toSpaceId(randomSpace2)
       const spaceId3 = Space.toSpaceId(randomSpace3)
-      
+
       if (spaceId1) {
         const entity1: SpaceEntity = {
           id: spaceId1,

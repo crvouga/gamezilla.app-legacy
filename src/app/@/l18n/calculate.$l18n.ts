@@ -5,40 +5,18 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  en: {
-    'app.calculate': 'Calculate',
-  },
-  ar: {
-    'app.calculate': 'حساب',
-  },
-  de: {
-    'app.calculate': 'Berechnen',
-  },
-  es: {
-    'app.calculate': 'Calcular',
-  },
-  fr: {
-    'app.calculate': 'Calculer',
-  },
-  hi: {
-    'app.calculate': 'गणना करें',
-  },
-  it: {
-    'app.calculate': 'Calcola',
-  },
-  ja: {
-    'app.calculate': '計算',
-  },
-  ko: {
-    'app.calculate': '계산',
-  },
-  pt: {
-    'app.calculate': 'Calcular',
-  },
-  ru: {
-    'app.calculate': 'Вычислить',
-  },
-  zh: {
-    'app.calculate': '计算',
+  'app.calculate': {
+    en: 'Calculate',
+    es: 'Calcular',
+    fr: 'Calculer',
+    de: 'Berechnen',
+    it: 'Calcola',
+    ja: '計算',
+    ko: '계산',
+    pt: 'Calcular',
+    ru: 'Вычислить',
+    zh: '计算',
+    hi: 'गणना करें',
+    ar: 'حساب',
   },
 }

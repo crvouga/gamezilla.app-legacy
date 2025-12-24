@@ -3,7 +3,6 @@ import fs from 'fs/promises'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { LanguageCodeISO_639_1 } from './lang-code-iso-639-1/lang-code-iso-639-1'
-import type { Translations, TranslationText } from './translations'
 
 //
 //
@@ -47,20 +46,21 @@ export type Text = ${typeRefs.join(' & ')};
 }
 
 async function generateLanguageFiles(files: string[]) {
-  const translationsAll: Translations<TranslationText> = {
-    ar: {},
-    de: {},
-    en: {},
-    es: {},
-    fr: {},
-    hi: {},
-    it: {},
-    ja: {},
-    ko: {},
-    pt: {},
-    ru: {},
-    zh: {},
-  }
+  const translationsAll: { [key in LanguageCodeISO_639_1]: { [key: string]: string | ((...args: any[]) => string) } } =
+    {
+      ar: {},
+      de: {},
+      en: {},
+      es: {},
+      fr: {},
+      hi: {},
+      it: {},
+      ja: {},
+      ko: {},
+      pt: {},
+      ru: {},
+      zh: {},
+    }
 
   for (const file of files) {
     try {
@@ -80,11 +80,16 @@ async function generateLanguageFiles(files: string[]) {
         throw new Error(`The file "${file}" does not export a "translations" object.`)
       }
 
-      for (const code of LanguageCodeISO_639_1.ALL) {
-        if (translations[code]) {
-          translationsAll[code] = {
-            ...translationsAll[code],
-            ...translations[code],
+      // New structure: translations[textId][langCode] = value
+      // Iterate over text IDs (top-level keys)
+      for (const textId in translations) {
+        const textTranslations = translations[textId]
+        if (textTranslations && typeof textTranslations === 'object') {
+          // For each language, add this text ID's translation
+          for (const code of LanguageCodeISO_639_1.ALL) {
+            if (textTranslations[code] !== undefined) {
+              translationsAll[code][textId] = textTranslations[code]
+            }
           }
         }
       }

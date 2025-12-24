@@ -4,10 +4,7 @@ import { ImplLocal } from './impl-local'
 import { ImplWebSocketsInHouse } from './impl-web-socket-in-house'
 import { ITopicClient } from './interface'
 
-export type Config<T extends TopicContractBase> =
-  | ImplLocal<T>
-  | ImplWebSocketsInHouse<T>
-  | ImplFromServer<T>
+export type Config<T extends TopicContractBase> = ImplLocal<T> | ImplWebSocketsInHouse<T> | ImplFromServer<T>
 
 const init = <T extends TopicContractBase>(config: Config<T>): ITopicClient<T> => {
   switch (config.t) {

@@ -8,8 +8,8 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  en: {
-    'connect-four.bot-level': (botLevel) => {
+  'connect-four.bot-level': {
+    en: (botLevel) => {
       switch (botLevel) {
         case 'Easy':
           return 'Easy'
@@ -21,59 +21,19 @@ export const translations: Translations<Text> = {
           return 'Unknown'
       }
     },
-    'connect-four.red': 'Red',
-    'connect-four.yellow': 'Yellow',
-  },
-  ar: {
-    'connect-four.bot-level': (botLevel) => {
+    es: (botLevel) => {
       switch (botLevel) {
         case 'Easy':
-          return 'سهل'
+          return 'F\xE1cil'
         case 'Hard':
-          return 'صعب'
-        case 'Medium':
-          return 'متوسط'
-        default:
-          return 'غير معروف'
-      }
-    },
-    'connect-four.red': 'أحمر',
-    'connect-four.yellow': 'أصفر',
-  },
-  de: {
-    'connect-four.bot-level': (botLevel) => {
-      switch (botLevel) {
-        case 'Easy':
-          return 'Leicht'
-        case 'Hard':
-          return 'Schwer'
-        case 'Medium':
-          return 'Mittel'
-        default:
-          return 'Unbekannt'
-      }
-    },
-    'connect-four.red': 'Rot',
-    'connect-four.yellow': 'Gelb',
-  },
-  es: {
-    'connect-four.bot-level': (botLevel) => {
-      switch (botLevel) {
-        case 'Easy':
-          return 'Fácil'
-        case 'Hard':
-          return 'Difícil'
+          return 'Dif\xEDcil'
         case 'Medium':
           return 'Medio'
         default:
           return 'Desconocido'
       }
     },
-    'connect-four.red': 'Rojo',
-    'connect-four.yellow': 'Amarillo',
-  },
-  fr: {
-    'connect-four.bot-level': (botLevel) => {
+    fr: (botLevel) => {
       switch (botLevel) {
         case 'Easy':
           return 'Facile'
@@ -85,27 +45,19 @@ export const translations: Translations<Text> = {
           return 'Inconnu'
       }
     },
-    'connect-four.red': 'Rouge',
-    'connect-four.yellow': 'Jaune',
-  },
-  hi: {
-    'connect-four.bot-level': (botLevel) => {
+    de: (botLevel) => {
       switch (botLevel) {
         case 'Easy':
-          return 'आसान'
+          return 'Leicht'
         case 'Hard':
-          return 'कठिन'
+          return 'Schwer'
         case 'Medium':
-          return 'मध्यम'
+          return 'Mittel'
         default:
-          return 'अज्ञात'
+          return 'Unbekannt'
       }
     },
-    'connect-four.red': 'लाल',
-    'connect-four.yellow': 'पीला',
-  },
-  it: {
-    'connect-four.bot-level': (botLevel) => {
+    it: (botLevel) => {
       switch (botLevel) {
         case 'Easy':
           return 'Facile'
@@ -117,87 +69,117 @@ export const translations: Translations<Text> = {
           return 'Sconosciuto'
       }
     },
-    'connect-four.red': 'Rosso',
-    'connect-four.yellow': 'Giallo',
-  },
-  ja: {
-    'connect-four.bot-level': (botLevel) => {
+    ja: (botLevel) => {
       switch (botLevel) {
         case 'Easy':
-          return '簡単'
+          return '\u7C21\u5358'
         case 'Hard':
-          return '難しい'
+          return '\u96E3\u3057\u3044'
         case 'Medium':
-          return '中'
+          return '\u4E2D'
         default:
-          return '不明'
+          return '\u4E0D\u660E'
       }
     },
-    'connect-four.red': '赤',
-    'connect-four.yellow': '黄色',
-  },
-  ko: {
-    'connect-four.bot-level': (botLevel) => {
+    ko: (botLevel) => {
       switch (botLevel) {
         case 'Easy':
-          return '쉬운'
+          return '\uC26C\uC6B4'
         case 'Hard':
-          return '어려운'
+          return '\uC5B4\uB824\uC6B4'
         case 'Medium':
-          return '중간'
+          return '\uC911\uAC04'
         default:
-          return '알 수 없음'
+          return '\uC54C \uC218 \uC5C6\uC74C'
       }
     },
-    'connect-four.red': '빨강',
-    'connect-four.yellow': '노랑',
-  },
-  pt: {
-    'connect-four.bot-level': (botLevel) => {
+    pt: (botLevel) => {
       switch (botLevel) {
         case 'Easy':
-          return 'Fácil'
+          return 'F\xE1cil'
         case 'Hard':
-          return 'Difícil'
+          return 'Dif\xEDcil'
         case 'Medium':
-          return 'Médio'
+          return 'M\xE9dio'
         default:
           return 'Desconhecido'
       }
     },
-    'connect-four.red': 'Vermelho',
-    'connect-four.yellow': 'Amarelo',
-  },
-  ru: {
-    'connect-four.bot-level': (botLevel) => {
+    ru: (botLevel) => {
       switch (botLevel) {
         case 'Easy':
-          return 'Легко'
+          return '\u041B\u0435\u0433\u043A\u043E'
         case 'Hard':
-          return 'Трудно'
+          return '\u0422\u0440\u0443\u0434\u043D\u043E'
         case 'Medium':
-          return 'Средний'
+          return '\u0421\u0440\u0435\u0434\u043D\u0438\u0439'
         default:
-          return 'Неизвестно'
+          return '\u041D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E'
       }
     },
-    'connect-four.red': 'Красный',
-    'connect-four.yellow': 'Желтый',
-  },
-  zh: {
-    'connect-four.bot-level': (botLevel) => {
+    zh: (botLevel) => {
       switch (botLevel) {
         case 'Easy':
-          return '简单'
+          return '\u7B80\u5355'
         case 'Hard':
-          return '困难'
+          return '\u56F0\u96BE'
         case 'Medium':
-          return '中'
+          return '\u4E2D'
         default:
-          return '未知'
+          return '\u672A\u77E5'
       }
     },
-    'connect-four.red': '红色',
-    'connect-four.yellow': '黄色',
+    hi: (botLevel) => {
+      switch (botLevel) {
+        case 'Easy':
+          return '\u0906\u0938\u093E\u0928'
+        case 'Hard':
+          return '\u0915\u0920\u093F\u0928'
+        case 'Medium':
+          return '\u092E\u0927\u094D\u092F\u092E'
+        default:
+          return '\u0905\u091C\u094D\u091E\u093E\u0924'
+      }
+    },
+    ar: (botLevel) => {
+      switch (botLevel) {
+        case 'Easy':
+          return '\u0633\u0647\u0644'
+        case 'Hard':
+          return '\u0635\u0639\u0628'
+        case 'Medium':
+          return '\u0645\u062A\u0648\u0633\u0637'
+        default:
+          return '\u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641'
+      }
+    },
+  },
+  'connect-four.red': {
+    en: 'Red',
+    es: 'Rojo',
+    fr: 'Rouge',
+    de: 'Rot',
+    it: 'Rosso',
+    ja: '赤',
+    ko: '빨강',
+    pt: 'Vermelho',
+    ru: 'Красный',
+    zh: '红色',
+    hi: 'लाल',
+    ar: 'أحمر',
+  },
+  'connect-four.yellow': {
+    en: 'Yellow',
+    es: 'Amarillo',
+    fr: 'Jaune',
+    de: 'Gelb',
+    it: 'Giallo',
+    ja: '黄色',
+    ko: '노랑',
+    pt: 'Amarelo',
+    ru: 'Желтый',
+    zh: '黄色',
+    hi: 'पीला',
+    ar: 'أصفر',
   },
 }

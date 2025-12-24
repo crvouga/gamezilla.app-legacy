@@ -5,40 +5,18 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  ar: {
-    'app.see-profile': 'مشاهدة الملف الشخصي',
-  },
-  de: {
-    'app.see-profile': 'Profil anzeigen',
-  },
-  en: {
-    'app.see-profile': 'See profile',
-  },
-  es: {
-    'app.see-profile': 'Ver perfil',
-  },
-  fr: {
-    'app.see-profile': 'Voir le profil',
-  },
-  hi: {
-    'app.see-profile': 'प्रोफ़ाइल देखें',
-  },
-  it: {
-    'app.see-profile': 'Vedi profilo',
-  },
-  ja: {
-    'app.see-profile': 'プロフィールを見る',
-  },
-  ko: {
-    'app.see-profile': '프로필 보기',
-  },
-  pt: {
-    'app.see-profile': 'Ver perfil',
-  },
-  ru: {
-    'app.see-profile': 'Посмотреть профиль',
-  },
-  zh: {
-    'app.see-profile': '查看个人资料',
+  'app.see-profile': {
+    en: 'See profile',
+    es: 'Ver perfil',
+    fr: 'Voir le profil',
+    de: 'Profil anzeigen',
+    it: 'Vedi profilo',
+    ja: 'プロフィールを見る',
+    ko: '프로필 보기',
+    pt: 'Ver perfil',
+    ru: 'Посмотреть профиль',
+    zh: '查看个人资料',
+    hi: 'प्रोफ़ाइल देखें',
+    ar: 'مشاهدة الملف الشخصي',
   },
 }

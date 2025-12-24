@@ -70,7 +70,8 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
       const projectionEntity: SpaceProjectionEntity = {
         id: spaceIdNew,
         hostId: snapshot.type === 'initial' ? null : snapshot.hostId,
-        gameId: snapshot.type === 'initial' ? null : (snapshot.type === 'started' && snapshot.game ? snapshot.game.t : null),
+        gameId:
+          snapshot.type === 'initial' ? null : snapshot.type === 'started' && snapshot.game ? snapshot.game.t : null,
         type: snapshot.type,
         updatedAt: now,
       }
@@ -83,7 +84,8 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
         offset: 0,
       })
 
-      const userIds = snapshot.type === 'initial' ? [] : Object.values(snapshot.type === 'started' ? snapshot.users : {})
+      const userIds =
+        snapshot.type === 'initial' ? [] : Object.values(snapshot.type === 'started' ? snapshot.users : {})
       if (userIds.length > 0) {
         const toSpaceProjectionUserPrimaryKey = (spaceId: SpaceId, userId: UserId) => `${spaceId}-${userId}`
         const userEntities: SpaceProjectionUserEntity[] = userIds.map((userId) => ({
@@ -137,7 +139,8 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
       const projectionEntity: SpaceProjectionEntity = {
         id: spaceId,
         hostId: snapshot.type === 'initial' ? null : snapshot.hostId,
-        gameId: snapshot.type === 'initial' ? null : (snapshot.type === 'started' && snapshot.game ? snapshot.game.t : null),
+        gameId:
+          snapshot.type === 'initial' ? null : snapshot.type === 'started' && snapshot.game ? snapshot.game.t : null,
         type: snapshot.type,
         updatedAt: now,
       }
@@ -150,7 +153,8 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
         offset: 0,
       })
 
-      const userIds = snapshot.type === 'initial' ? [] : Object.values(snapshot.type === 'started' ? snapshot.users : {})
+      const userIds =
+        snapshot.type === 'initial' ? [] : Object.values(snapshot.type === 'started' ? snapshot.users : {})
       if (userIds.length > 0) {
         const userEntities: SpaceProjectionUserEntity[] = userIds.map((userId) => ({
           id: toSpaceProjectionUserPrimaryKey(spaceId, userId),

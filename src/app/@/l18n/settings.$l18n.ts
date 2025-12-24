@@ -5,40 +5,18 @@ export type Text = {
 }
 
 export const translations: Translations<Text> = {
-  en: {
-    'app.settings': 'Settings',
-  },
-  ar: {
-    'app.settings': 'الإعدادات',
-  },
-  de: {
-    'app.settings': 'Einstellungen',
-  },
-  es: {
-    'app.settings': 'Ajustes',
-  },
-  fr: {
-    'app.settings': 'Paramètres',
-  },
-  hi: {
-    'app.settings': 'सेटिंग्स',
-  },
-  it: {
-    'app.settings': 'Impostazioni',
-  },
-  ja: {
-    'app.settings': '設定',
-  },
-  ko: {
-    'app.settings': '설정',
-  },
-  pt: {
-    'app.settings': 'Configurações',
-  },
-  ru: {
-    'app.settings': 'Настройки',
-  },
-  zh: {
-    'app.settings': '设置',
+  'app.settings': {
+    en: 'Settings',
+    es: 'Ajustes',
+    fr: 'Paramètres',
+    de: 'Einstellungen',
+    it: 'Impostazioni',
+    ja: '設定',
+    ko: '설정',
+    pt: 'Configurações',
+    ru: 'Настройки',
+    zh: '设置',
+    hi: 'सेटिंग्स',
+    ar: 'الإعدادات',
   },
 }
