@@ -10,6 +10,14 @@ import { Url } from '~/@/url/url'
 
 import { ServerRegistryRecordDb } from './server-registry-record-db/impl'
 import { ServerRegistryId } from './server-registry-record-id'
+import { ServerRegistryRecord } from './server-registry-record'
+import { Result } from '~/@/result'
+
+export type IServerRegistry = {
+  getServerUrls(): Promise<Url[]>
+  get(): Promise<Result<string, ServerRegistryRecord>>
+  worker(abortSignal: AbortSignal): Promise<void>
+}
 
 export type ServerRegistry = {
   httpClient: IHttpClient
@@ -22,7 +30,7 @@ export type ServerRegistry = {
 
 const DEFAULT_POLL_RATE = TimeSpan.seconds(30)
 
-const init = (self: ServerRegistry) => {
+const init = (self: ServerRegistry): IServerRegistry => {
   const logger = self.logger.child(['impl-main'])
 
   const serverRegistrySource = ServerRegistryRecordDb.init({

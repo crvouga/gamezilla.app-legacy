@@ -73,8 +73,19 @@ const init = (config: ImplSql): ISpaceDb => {
         finalWhere = { op: '=', column: 'id', value: where.value }
       } else if (where?.op === 'in' && where.column === 'id') {
         finalWhere = { op: 'in', column: 'id', value: where.value }
+      } else if (where?.op === '=' && where.column === 'type') {
+        const type = where.value as 'initial' | 'started' | 'ended'
+        const projectionResult = await projectionDb.query({
+          where: { op: '=', column: 'type', value: type },
+          limit: 1000,
+          offset: 0,
+        })
+        if (isErr(projectionResult)) return mapErr(projectionResult, (e) => e)
+        const spaceIds = projectionResult.value.entities.items.map((e) => e.id)
+        finalWhere =
+          spaceIds.length > 0 ? { op: 'in', column: 'id', value: spaceIds } : { op: 'in', column: 'id', value: [] }
       } else if (where) {
-        // For other query types (type), we'd need to query projection table first
+        // For other query types, we'd need to query projection table first
         // For now, return empty result
         finalWhere = { op: 'in', column: 'id', value: [] }
       }

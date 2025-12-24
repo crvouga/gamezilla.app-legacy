@@ -20,7 +20,7 @@ import { SyncEngineClient } from '~/@/sync-engine/sync-engine-client'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { TopicClient } from '~/@/topic/topic-client/impl'
-import { IconGamepad, IconUser } from '~/@/ui/icon'
+import { IconGamepad, IconUser, Props as IconProps } from '~/@/ui/icon'
 import { Url } from '~/@/url/url'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -496,19 +496,45 @@ const ViewScreen = (props: { ctx: FrontendCtxModule; model: ModelFrontend; dispa
 }
 
 const toScreenLayoutProps = (props: {
-  ctx: AppFrontendCtx | AppFrontendCtxBase
+  ctx: AppFrontendCtxBase
   model: ModelFrontend
   dispatch: (m: MsgFrontend) => void
 }): ParentScreenProps | null => {
   const { ctx } = props
-  if (!isAppFrontendCtx(ctx)) return null
   const screenSpace: Screen = { n: 'spaces', t: 'spaces_list' }
-  const screenProfile: Screen = { n: 'profile', t: 'profile_profile', userId: ctx.currentUser.userId }
+
   const pushSpaceList = () =>
     props.dispatch({
       t: 'currentScreen',
       c: { n: 'currentScreen', t: 'currentScreen_clickedLink', screen: screenSpace },
     })
+
+  const actions = [
+    {
+      label: ctx.t('spaces.spaces'),
+      renderIcon: (iconProps: IconProps) => h(IconGamepad, iconProps),
+      color: props.model.currentScreen.currentScreen_screen.n === 'spaces' ? ('selected' as const) : ('inherit' as const),
+      onPress: pushSpaceList,
+      id: ctx.t('spaces.spaces'),
+    },
+  ]
+
+  if (isAppFrontendCtx(ctx)) {
+    const screenProfile: Screen = { n: 'profile', t: 'profile_profile', userId: ctx.currentUser.userId }
+    actions.push({
+      label: ctx.t('profile.profile'),
+      renderIcon: (iconProps: IconProps) => h(IconUser, iconProps),
+      color: props.model.currentScreen.currentScreen_screen.n === 'profile' ? ('selected' as const) : ('inherit' as const),
+      onPress() {
+        props.dispatch({
+          t: 'currentScreen',
+          c: { n: 'currentScreen', t: 'currentScreen_clickedLink', screen: screenProfile },
+        })
+      },
+      id: ctx.t('profile.profile'),
+    })
+  }
+
   return {
     id: 'app-screen-layout',
     parentScreen: null,
@@ -523,27 +549,7 @@ const toScreenLayoutProps = (props: {
     actionBar: {
       variant: {
         t: 'uniform',
-        actions: [
-          {
-            label: ctx.t('spaces.spaces'),
-            renderIcon: (iconProps) => h(IconGamepad, iconProps),
-            color: props.model.currentScreen.currentScreen_screen.n === 'spaces' ? 'selected' : 'inherit',
-            onPress: pushSpaceList,
-            id: ctx.t('spaces.spaces'),
-          },
-          {
-            label: ctx.t('profile.profile'),
-            renderIcon: (iconProps) => h(IconUser, iconProps),
-            color: props.model.currentScreen.currentScreen_screen.n === 'profile' ? 'selected' : 'inherit',
-            onPress() {
-              props.dispatch({
-                t: 'currentScreen',
-                c: { n: 'currentScreen', t: 'currentScreen_clickedLink', screen: screenProfile },
-              })
-            },
-            id: ctx.t('profile.profile'),
-          },
-        ],
+        actions,
       },
     },
   }

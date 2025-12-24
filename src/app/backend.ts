@@ -48,7 +48,7 @@ const initCtx = async (config: {
   })
 
   const migrationPolicy = SqlDbMigrationPolicy.init({
-    t: 'never-run',
+    t: config.isProd ? 'always-run' : 'always-run', // Always run migrations for now
     logger,
   })
 
@@ -73,7 +73,7 @@ const initCtx = async (config: {
   const serverRegistry = ServerRegistry.init({
     httpClient: HttpClient.init({ t: 'fetch' }),
     logger,
-    serverRegistrySrcUrl: Url.derive('', 'http'),
+    serverRegistrySrcUrl: Url.derive(process.env.SERVER_REGISTRY_SRC_URL ?? '', 'http'),
     sqlDb: config.sqlDb,
     migrationPolicy,
     pollRate: TimeSpan.seconds(10),
@@ -119,6 +119,7 @@ const initCtx = async (config: {
     runtime,
     migrationPolicy,
     port: config.port,
+    serverRegistry,
   }
 
   const wire = await WireBackend.initCtx({ ctx: ctxBase, topic: topicClient })
@@ -179,6 +180,7 @@ const server = async (input: { ctx: BackendCtxModule }) => {
 }
 
 const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
+  input.ctx.serverRegistry.worker(s)
   WireBackend.worker(s, input)
   AuthBackend.worker(s, input)
   SpacesBackend.worker(s, input)

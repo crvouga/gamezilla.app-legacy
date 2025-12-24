@@ -8,6 +8,7 @@ import type { ISqlDb } from '~/@/sql-db/interface'
 import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
 import { ISyncEngine } from '~/@/sync-engine/sync-engine-server'
 import type { UnixMs } from '~/@/time/unix-ms'
+import { IServerRegistry } from '~/@/server-registry/server-registry'
 import { IUserProfileDb } from '~/app/profile/@/user-profile/user-profile-db'
 import { Env } from '../data/env'
 
@@ -25,4 +26,5 @@ export type AppBackendCtxBase = {
   syncEngine: ISyncEngine
   port: number
   fileSystem: IFileSystem
+  serverRegistry: IServerRegistry
 }

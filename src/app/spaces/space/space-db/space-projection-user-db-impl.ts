@@ -14,6 +14,7 @@ export type SpaceProjectionUserDbConfig = {
   sqlDb: ISqlDb
   logger: ILogger
   kvDb: IKeyValueDb
+  migrationPolicy: ISqlDbMigrationPolicy
 }
 
 const UP = [
@@ -44,10 +45,7 @@ export const initSpaceProjectionUserDb = (
     }),
     sqlDb: config.sqlDb,
     migration: {
-      policy: SqlDbMigrationPolicy.init({
-        t: 'never-run',
-        logger: config.logger,
-      }),
+      policy: config.migrationPolicy,
       up: UP,
       down: DOWN,
     },
