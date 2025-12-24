@@ -1,5 +1,5 @@
 import { ILogger } from '~/@/logger'
-import { isMigratableSqlDb } from '~/@/sql-db/interface'
+import { checkMigratableForMigration } from '~/@/sql-db/interface'
 import { s } from '~/@/schema'
 import { ISqlDbMigrationPolicy } from './interface'
 
@@ -12,13 +12,7 @@ const init = (config: ImplAlwaysRun): ISqlDbMigrationPolicy => {
   const logger = config.logger.child(['always-run'])
   return {
     async execute(input) {
-      if (!isMigratableSqlDb(input.sqlDb)) {
-        logger.error(
-          `CRITICAL: Attempted to run migration policy "always-run" against a non-migratable database. ` +
-            `Migrations can ONLY run against local-first databases (SQLite, PGLite). ` +
-            `Production databases (Postgres) MUST use 'never-run' policy. ` +
-            `Skipping migration to prevent accidental database modifications.`,
-        )
+      if (!checkMigratableForMigration(input.sqlDb, logger, 'always-run')) {
         return { t: 'skipped', reason: 'non-migratable-database' }
       }
 

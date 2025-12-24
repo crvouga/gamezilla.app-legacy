@@ -1,7 +1,7 @@
 import { deterministicJsonStringify } from '~/@/json/deterministic-stringify'
 import { IKeyValueDb } from '~/@/key-value-db'
 import { ILogger } from '~/@/logger'
-import { isMigratableSqlDb } from '~/@/sql-db/interface'
+import { checkMigratableForMigration } from '~/@/sql-db/interface'
 import { isErr } from '~/@/result'
 import { s } from '~/@/schema'
 import { ISqlDbMigrationPolicy } from './interface'
@@ -28,13 +28,7 @@ const init = (config: ImplDangerouslyWipeOnNewSchema): ISqlDbMigrationPolicy => 
     async execute(input) {
       const logger = input.logger.child(['dangerously-wipe-on-new-schema'])
 
-      if (!isMigratableSqlDb(input.sqlDb)) {
-        logger.error(
-          `CRITICAL: Attempted to run migration policy "dangerously-wipe-on-new-schema" against a non-migratable database. ` +
-            `Migrations can ONLY run against local-first databases (SQLite, PGLite). ` +
-            `Production databases (Postgres) MUST use 'never-run' policy. ` +
-            `Skipping migration to prevent accidental database modifications.`,
-        )
+      if (!checkMigratableForMigration(input.sqlDb, logger, 'dangerously-wipe-on-new-schema')) {
         return { t: 'skipped', reason: 'non-migratable-database' }
       }
 

@@ -4,7 +4,7 @@ import type { ILogger } from '../logger/interface'
 import { Sleep } from '../promise/sleep'
 import { Ok } from '../result'
 import { ImplStandardSql } from './impl-standard-sql'
-import type { ISqlDb } from './interface'
+import { assertNotMigratable, type ISqlDb } from './interface'
 
 export type ImplPostgres = {
   t: 'postgres'
@@ -41,7 +41,7 @@ const init = (config: ImplPostgres): ISqlDb => {
 
   const impl = ImplStandardSql.init({ t: 'standard-sql', query, logger })
 
-  return {
+  const instance: ISqlDb = {
     ...impl,
     aggregate: {
       StringConcat: (column, separator) => `STRING_AGG(${column}, '${separator}')`,
@@ -63,6 +63,13 @@ const init = (config: ImplPostgres): ISqlDb => {
       }
     },
   }
+
+  // CRITICAL: Postgres is a production database and must NEVER be migratable.
+  // This assertion ensures that even if the implementation is accidentally modified
+  // to return a migratable database, we will fail fast at initialization.
+  assertNotMigratable(instance, 'the Postgres implementation')
+
+  return instance
 }
 
 export const ImplPostgres = {
