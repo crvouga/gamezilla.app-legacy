@@ -119,7 +119,11 @@ export const update = (input: {
   if (!isMsg(input.msg)) return { model: input.model }
   switch (input.msg.t) {
     case 'loginWithSms_clickedBackButton': {
-      if (input.ctx.currentScreen.t === 'auth_verifyCode') {
+      const isOnVerifyCodeScreen =
+        input.ctx.currentScreen.t === 'auth_verifyCode' ||
+        (input.model.loginWithSms_sent?.t === 'ok' && input.model.loginWithSms_sent.value.t === 'ok')
+
+      if (isOnVerifyCodeScreen) {
         return {
           model: input.model,
           eff: replaceScreen({ n: 'auth', t: 'auth_sendCode' }, true),
