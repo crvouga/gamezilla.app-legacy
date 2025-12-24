@@ -1,9 +1,12 @@
 {
   "servers": [
     {
-      "name": "nats",
-      "region": "us-west",
-      "url": "nats-production-6a58.up.railway.app"
+      "name": "rpc",
+      "url": "https://rpc.joinhoops.com"
+    },
+    {
+      "name": "topic",
+      "url": "https://topic.joinhoops.com"
     }
   ]
 }

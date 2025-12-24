@@ -2,6 +2,7 @@ import { Json } from '~/@/json/json'
 import { ILogger } from '~/@/logger'
 import { Err, isErr, Ok } from '~/@/result'
 import { s } from '~/@/schema'
+import { ParseError } from '~/@/schema/schema/parse-error'
 import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
 import { ISqlDb } from '~/@/sql-db/interface'
 import { UnixMs } from '~/@/time/unix-ms'
@@ -54,7 +55,9 @@ const init = (self: ImplSqlDb): IServerRegistryRecordDb => {
       const json = Json.parse(row.data_json)
       if (isErr(json)) return Err(`Failed to parse server registry: ${json.error}`)
       const parsed = ServerRegistryRecord.schema.parse(json.value)
-      if (isErr(parsed)) return Err(`Failed to parse server registry: ${parsed.error}`)
+      if (isErr(parsed)) {
+        return Err(`Failed to parse server registry: ${ParseError.toString(parsed.error)}`)
+      }
       return Ok(parsed.value)
     },
     async insert(serverRegistryId, serverRegistry) {

@@ -29,7 +29,7 @@ import { VdomImplWebStorage } from '~/@/vdom/vdom-impl-web-storage'
 import { IViewport } from '~/@/viewport'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { ILogger } from '../@/logger'
-import { AppFrontendCtx, AppFrontendCtxBase, isAppFrontendCtx } from './@/frontend/ctx'
+import { AppFrontendCtxBase, isAppFrontendCtx } from './@/frontend/ctx'
 import { topicMsgCodec } from './@/topic-msg-codec'
 import { AppRoot } from './@/ui/app-root/app-root'
 import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
@@ -121,7 +121,10 @@ const initCtx = async (config: {
   const rpc = RPC.initClient({
     t: 'http',
     contract: rpcContract,
-    serverUrl: Url.derive('', 'http'),
+    serverUrl:
+      typeof window !== 'undefined' && window.location.port === '5173'
+        ? Url.of('http://localhost:5002')
+        : Url.of(typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5002'),
     clientSessionId,
     httpClient,
   })
@@ -539,6 +542,7 @@ const toScreenLayoutProps = (props: {
     id: 'app-screen-layout',
     parentScreen: null,
     renderMiniPlayer: (propsMiniPlayer) => {
+      if (!isAppFrontendCtx(ctx)) return null
       return h(CurrentSpaceMiniPlayerFrontend.View, {
         ctx,
         key: propsMiniPlayer.key,

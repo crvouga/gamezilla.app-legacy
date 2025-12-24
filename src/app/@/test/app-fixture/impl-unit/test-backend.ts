@@ -1,15 +1,18 @@
 import { FileSystem } from '~/@/file-system'
+import { HttpClient } from '~/@/http-client/impl'
 import { HttpServer } from '~/@/http-server'
 import { KeyValueDb } from '~/@/key-value-db'
 import { ILogger, Logger } from '~/@/logger'
 import { TopicBasedPubSub } from '~/@/pub-sub-topic-based'
 import { Runtime } from '~/@/runtime'
+import { ServerRegistry } from '~/@/server-registry/server-registry'
 import { ISqlDb } from '~/@/sql-db/interface'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { SyncEngineServer } from '~/@/sync-engine/sync-engine-server'
 import { randomServerPort } from '~/@/test/random-server-port'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
+import { Url } from '~/@/url/url'
 import { ITopicClient } from '~/@/topic/topic-client/interface'
 import { AuthBackend } from '~/app/auth/backend'
 import { AppBackend } from '~/app/backend'
@@ -33,10 +36,21 @@ export const TestBackend = async (config: {
     logger,
   })
 
+  const migrationPolicy = SqlDbMigrationPolicy.init({ t: 'never-run', logger: Logger.init({ t: 'noop' }) })
+
+  const serverRegistry = ServerRegistry.init({
+    httpClient: HttpClient.init({ t: 'fetch' }),
+    logger,
+    migrationPolicy,
+    serverRegistrySrcUrl: Url.derive('http://localhost:5173/server-registry.local.json', 'http'),
+    sqlDb: config.sqlDb,
+    pollRate: TimeSpan.seconds(10),
+  })
+
   const keyValueDbDurable = KeyValueDb.init({
     t: 'sql-db',
     sqlDb: config.sqlDb,
-    migrationPolicy: SqlDbMigrationPolicy.init({ t: 'never-run', logger: Logger.init({ t: 'noop' }) }),
+    migrationPolicy,
     logger,
   })
 
@@ -50,13 +64,11 @@ export const TestBackend = async (config: {
   const userProfileDb = ProfileDb({
     t: 'sql',
     sqlDb: config.sqlDb,
-    migrationPolicy: SqlDbMigrationPolicy.init({ t: 'never-run', logger: Logger.init({ t: 'noop' }) }),
+    migrationPolicy,
     logger,
   })
 
   const now = UnixMs.now()
-
-  const migrationPolicy = SqlDbMigrationPolicy.init({ t: 'never-run', logger: Logger.init({ t: 'noop' }) })
 
   const syncEngine = SyncEngineServer({ logger })
 
@@ -74,6 +86,7 @@ export const TestBackend = async (config: {
     httpServer,
     runtime,
     fileSystem: FileSystem.init({ t: 'node' }),
+    serverRegistry,
   }
 
   const wire = await WireBackend.initCtx({ ctx: ctxBase, topic: config.topic })

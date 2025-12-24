@@ -1,11 +1,11 @@
 {
   "servers": [
     {
-      "tags": ["rpc"],
-      "url": "http://localhost:5001"
+      "name": "rpc",
+      "url": "http://localhost:5002"
     },
     {
-      "tags": ["topic"],
+      "name": "topic",
       "url": "http://localhost:5003"
     }
   ]

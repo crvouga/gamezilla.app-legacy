@@ -3,10 +3,12 @@ import { HttpServer } from '~/@/http-server'
 import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import type { ILogger } from '~/@/logger'
 import { Logger } from '~/@/logger'
+import { HttpClient } from '~/@/http-client/impl'
 import { ITopicBasedPubSub, TopicBasedPubSub } from '~/@/pub-sub-topic-based'
 import type { IRuntime } from '~/@/runtime'
 import { Runtime } from '~/@/runtime'
 import { SecretString } from '~/@/secrets/secret-string'
+import { ServerRegistry } from '~/@/server-registry/server-registry'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { BackendSqlDb } from '~/@/sql-db/backend-impl'
 import type { ISqlDb } from '~/@/sql-db/interface'
@@ -15,6 +17,7 @@ import { IS_INTEGRATION_TEST } from '~/@/test/is-integration-test'
 import { randomServerPort } from '~/@/test/random-server-port'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
+import { Url } from '~/@/url/url'
 import { ClientId } from '~/@/wire/client-id'
 import { SessionId } from '~/@/wire/session-id'
 import { ProfileDb } from '~/app/profile/@/user-profile/user-profile-db'
@@ -68,6 +71,14 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const migrationPolicy = SqlDbMigrationPolicy.init({ t: 'never-run', logger })
 
+  const serverRegistry = ServerRegistry.init({
+    httpClient: HttpClient.init({ t: 'fetch' }),
+    logger,
+    migrationPolicy,
+    serverRegistrySrcUrl: Url.derive('', 'http'),
+    sqlDb: sqlDbSqlite,
+  })
+
   const syncEngine = SyncEngineServer({ logger })
 
   const ctx: AppBackendCtxBase = {
@@ -84,6 +95,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     userProfileDb: profileDb,
     runtime,
     httpServer,
+    serverRegistry,
   }
 
   if (!IS_INTEGRATION_TEST) {

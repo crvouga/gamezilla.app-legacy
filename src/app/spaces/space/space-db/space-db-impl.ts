@@ -5,7 +5,7 @@ import { IKeyValueDb } from '~/@/key-value-db'
 import { ILogger } from '~/@/logger'
 import { isErr, Ok } from '~/@/result'
 import { s } from '~/@/schema'
-import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
+import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
 import { ISqlDb } from '~/@/sql-db/interface'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '../space'
@@ -17,6 +17,7 @@ export type SpaceDbConfig = {
   sqlDb: ISqlDb
   logger: ILogger
   kvDb: IKeyValueDb
+  migrationPolicy: ISqlDbMigrationPolicy
 }
 
 const UP = [

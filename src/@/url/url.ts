@@ -167,4 +167,5 @@ export const Url = {
   removePath,
   setPath,
   schema,
+  of,
 }

@@ -1,6 +1,7 @@
 import { IHttpClient } from '~/@/http-client'
 import { ILogger } from '~/@/logger'
 import { Err, isErr, Ok } from '~/@/result'
+import { ParseError } from '~/@/schema/schema/parse-error'
 import { Url } from '~/@/url/url'
 import { ServerRegistryRecord } from '../server-registry-record'
 import { IServerRegistryRecordDb } from './interface'
@@ -31,7 +32,9 @@ const init = (self: ImplSrcUrl): IServerRegistryRecordDb => {
 
       const parsed = ServerRegistryRecord.schema.parse(data)
 
-      if (isErr(parsed)) return Err(`Failed to load server registry: ${parsed.error}`)
+      if (isErr(parsed)) {
+        return Err(`Failed to load server registry: ${ParseError.toString(parsed.error)}`)
+      }
 
       return Ok(parsed.value)
     },
