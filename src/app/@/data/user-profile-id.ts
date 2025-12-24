@@ -1,11 +1,11 @@
-import { Uuid } from '~/@/id/uuid'
 import type { Brand } from '~/@/brand/brand'
 import { s } from '~/@/schema'
+import { Uuid } from '~/@/id/uuid'
 
 export type UserProfileId = Brand<string, 'UserProfileId'>
 
 const is = (userId: unknown): userId is UserProfileId => {
-  return typeof userId === 'string' && Uuid.is(userId)
+  return typeof userId === 'string' && userId.length > 0
 }
 
 const schema = s.custom(is, 'Invalid user profile id')

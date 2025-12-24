@@ -1,13 +1,14 @@
-import { Uuid } from '~/@/id/uuid'
+import type { Brand } from '~/@/brand/brand'
 import { s } from '~/@/schema'
+import { Uuid } from '~/@/id/uuid'
 
-const schema = s.brand(s.str(), 'PackId')
-
-export type PackId = s.Infer<typeof schema>
+export type PackId = Brand<string, 'PackId'>
 
 const is = (id: unknown): id is PackId => {
-  return typeof id === 'string' && Uuid.is(id)
+  return typeof id === 'string' && id.length > 0
 }
+
+const schema = s.custom(is, 'Invalid pack id')
 
 const generate = (): PackId => {
   return Uuid.generate() as unknown as PackId

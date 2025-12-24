@@ -5,7 +5,7 @@ import { s } from '~/@/schema'
 export type UserId = Brand<string, 'UserId'>
 
 const is = (userId: unknown): userId is UserId => {
-  return typeof userId === 'string' && Uuid.is(userId)
+  return typeof userId === 'string' && userId.length > 0
 }
 const schema = s.custom(is, 'Invalid user id')
 

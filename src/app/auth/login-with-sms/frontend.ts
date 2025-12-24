@@ -294,12 +294,12 @@ export const update = (input: {
 
         return {
           model: modelNew,
-          async eff(_dispatch) {
-            await Promise.all([
-              input.ctx.userSessionDb.upsert({ entities: [userSession] }),
-              input.ctx.userAccountDb.upsert({ entities: [userAccount] }),
-            ])
-          },
+          eff: Eff.batch([
+            () => input.ctx.userSessionDb.upsert({ entities: [userSession] }),
+            () => input.ctx.userAccountDb.upsert({ entities: [userAccount] }),
+            replaceScreen({ n: 'spaces', t: 'spaces_list' }, true),
+            showToast(input.ctx.t('auth.logged-in'), 'info'),
+          ]),
         }
       }
 

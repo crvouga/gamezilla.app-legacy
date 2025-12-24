@@ -6,7 +6,7 @@ import { ShortId } from '../id/short-id'
 export type SessionId = Brand<string, 'SessionId'>
 
 const is = (id: unknown): id is SessionId => {
-  return typeof id === 'string'
+  return typeof id === 'string' && id.length > 0
 }
 
 const schema = s.custom(is, 'Invalid session id')

@@ -1,11 +1,11 @@
 import type { Brand } from '~/@/brand/brand'
-import { Uuid } from '~/@/id/uuid'
 import { s } from '~/@/schema'
+import { Uuid } from '~/@/id/uuid'
 
 export type ServerRegistryId = Brand<string, 'ServerRegistryId'>
 
 const is = (id: unknown): id is ServerRegistryId => {
-  return typeof id === 'string' && Uuid.is(id)
+  return typeof id === 'string' && id.length > 0
 }
 const schema = s.custom(is, 'Invalid server registry id')
 

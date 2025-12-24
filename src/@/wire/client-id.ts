@@ -1,14 +1,15 @@
+import type { Brand } from '~/@/brand/brand'
 import { Result } from '~/@/result'
 import { s } from '~/@/schema'
 import { ShortId } from '../id/short-id'
 
-const schema = s.brand(s.str(), 'ClientId')
-
-export type ClientId = s.Infer<typeof schema>
+export type ClientId = Brand<string, 'ClientId'>
 
 const is = (id: unknown): id is ClientId => {
-  return typeof id === 'string'
+  return typeof id === 'string' && id.length > 0
 }
+
+const schema = s.custom(is, 'Invalid client id')
 
 type Problem = 'invalid-client-id'
 

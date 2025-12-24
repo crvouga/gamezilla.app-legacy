@@ -1,15 +1,16 @@
+import type { Brand } from '~/@/brand/brand'
 import { s } from '~/@/schema'
 
-const schema = s.brand(s.str(), 'NodeId')
+export type NodeId = Brand<string, 'NodeId'>
 
-export type NodeId = s.Infer<typeof schema>
+const is = (nodeId: unknown): nodeId is NodeId => {
+  return typeof nodeId === 'string' && nodeId.length > 0
+}
+
+const schema = s.custom(is, 'Invalid node id')
 
 const init = (nodeId: string): NodeId => {
   return nodeId as NodeId
-}
-
-const is = (nodeId: unknown): nodeId is NodeId => {
-  return schema.parse(nodeId).t === 'ok'
 }
 
 export const NodeId = {

@@ -5,7 +5,7 @@ import { Uuid } from '~/@/id/uuid'
 export type PartyId = Brand<string, 'PartyId'>
 
 const is = (id: unknown): id is PartyId => {
-  return typeof id === 'string' && Uuid.is(id)
+  return typeof id === 'string' && id.length > 0
 }
 
 type Problem = 'invalid_party_id'
@@ -18,12 +18,7 @@ const decode = (id: string): Result<Problem, PartyId> => {
   return Result.Err('invalid_party_id')
 }
 const generate = (): PartyId => {
-  const id = Uuid.generate()
-  if (is(id)) {
-    return id
-  }
-
-  throw new Error('generated invalid id')
+  return Uuid.generate() as unknown as PartyId
 }
 
 export const PartyId = {

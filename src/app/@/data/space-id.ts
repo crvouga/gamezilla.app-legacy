@@ -6,7 +6,7 @@ import { Uuid } from '~/@/id/uuid'
 export type SpaceId = Brand<string, 'SpaceId'>
 
 const is = (id: unknown): id is SpaceId => {
-  return typeof id === 'string' && Uuid.is(id)
+  return typeof id === 'string' && id.length > 0
 }
 const schema = s.custom(is, 'Invalid space id')
 

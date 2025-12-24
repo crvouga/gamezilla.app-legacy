@@ -8,7 +8,7 @@ const generate = (): ChatUserJoinId => {
 }
 
 const is = (id: unknown): id is ChatUserJoinId => {
-  return typeof id === 'string' && Uuid.is(id)
+  return typeof id === 'string' && id.length > 0
 }
 
 export const ChatUserJoinId = {

@@ -5,7 +5,7 @@ import { s } from '~/@/schema'
 export type EventId = Brand<string, 'EventId'>
 
 const is = (id: unknown): id is EventId => {
-  return typeof id === 'string'
+  return typeof id === 'string' && id.length > 0
 }
 
 const schema = s.custom(is, 'Invalid event id')

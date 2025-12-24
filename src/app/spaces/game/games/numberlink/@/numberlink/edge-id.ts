@@ -1,9 +1,8 @@
+import type { Brand } from '~/@/brand/brand'
 import { s } from '~/@/schema'
 import { NodeId } from './node-id'
 
-const schema = s.brand(s.str(), 'EdgeId')
-
-export type EdgeId = s.Infer<typeof schema>
+export type EdgeId = Brand<string, 'EdgeId'>
 
 const EDGE_ID_SEPARATOR = '->'
 
@@ -12,8 +11,10 @@ const init = (sourceId: NodeId, targetId: NodeId): EdgeId => {
 }
 
 const is = (edgeId: unknown): edgeId is EdgeId => {
-  return typeof edgeId === 'string'
+  return typeof edgeId === 'string' && edgeId.length > 0
 }
+
+const schema = s.custom(is, 'Invalid edge id')
 
 export const EdgeId = {
   init,
