@@ -39,6 +39,39 @@
         scrollbar-width: thin;
         scrollbar-color: #000 #1a1a1a;
       }
+
+      /* Prevent browser autocomplete from changing background or text color in text fields */
+      input:-webkit-autofill,
+      input:-webkit-autofill:focus,
+      input:-webkit-autofill:hover,
+      input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+        box-shadow: 0 0 0 1000px transparent inset !important;
+        -webkit-text-fill-color: #fff !important;
+        color: #fff !important;
+        caret-color: #fff !important;
+        transition:
+          background-color 9999s ease-in-out 0s,
+          color 9999s ease-in-out 0s;
+      }
+      input:-internal-autofill-selected {
+        appearance: none !important;
+        background-color: transparent !important;
+        color: #fff !important;
+        transition:
+          background-color 9999s ease-in-out 0s,
+          color 9999s ease-in-out 0s;
+      }
+      /* Prevent autofill for Mozilla Firefox */
+      input:-moz-autofill {
+        box-shadow: 0 0 0 1000px transparent inset !important;
+        -moz-text-fill-color: #fff !important;
+        color: #fff !important;
+        caret-color: #fff !important;
+        transition:
+          background-color 9999s ease-in-out 0s,
+          color 9999s ease-in-out 0s;
+      }
     </style>
     <script type="module" src="./src/frontend.web.ts"></script>
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />

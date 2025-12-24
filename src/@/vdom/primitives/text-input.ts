@@ -38,6 +38,9 @@ const BASE_STYLE = {
   whiteSpace: 'pre-wrap',
   overflowWrap: 'break-word',
   userSelect: UserSelect.of('none'),
+  outline: 'none',
+  boxShadow: 'none',
+  appearance: 'none',
 }
 
 export const TextInput = (props: TextInputProps) => {
