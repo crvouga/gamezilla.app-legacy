@@ -77,7 +77,7 @@ const toVerifyErrorMessage = (input: { model: Model; ctx: { t: Translator } }): 
     return input.ctx.t('app.something-went-wrong')
   }
 
-  if (verified.value.t === 'err') {
+  if (verified.t === 'ok' && verified.value.t === 'err') {
     return VerifyCodeProblem.toString({ problem: verified.value.error, t: input.ctx.t })
   }
 
@@ -271,13 +271,31 @@ export const update = (input: {
       const modelNew: Model = { ...input.model, loginWithSms_verified: verified }
       const error = toVerifyErrorMessage({ model: modelNew, ctx: input.ctx }) ?? input.ctx.t('app.something-went-wrong')
 
-      if (isErr(verified) || isErr(verified.value)) {
+      // Check for RPC errors
+      if (isErr(verified)) {
         return {
           model: modelNew,
           eff: showErrorSmall(error),
         }
       }
 
+      // Check for non-ok states (loading, not-asked)
+      if (verified.t !== 'ok') {
+        return {
+          model: modelNew,
+          eff: showErrorSmall(error),
+        }
+      }
+
+      // Check for verification errors (Ok(Err(...)))
+      if (verified.value.t === 'err') {
+        return {
+          model: modelNew,
+          eff: showErrorSmall(error),
+        }
+      }
+
+      // Success case: Ok(Ok(...))
       const { userSession, userAccount } = verified.value.value
 
       return {
