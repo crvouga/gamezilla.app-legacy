@@ -1,10 +1,9 @@
 import { ImplInMemory } from './impl-in-memory'
-import { ImplNats } from './impl-nats'
 import { ImplNoop } from './impl-noop'
 import { ImplSqlDb } from './impl-sql-db'
 import { ITopicBasedPubSub } from './interface'
 
-export type TopicBasedPubSub = ImplInMemory | ImplSqlDb | ImplNoop | ImplNats | ImplNats
+export type TopicBasedPubSub = ImplInMemory | ImplSqlDb | ImplNoop
 
 const init = (config: TopicBasedPubSub): ITopicBasedPubSub => {
   switch (config.t) {
@@ -16,9 +15,6 @@ const init = (config: TopicBasedPubSub): ITopicBasedPubSub => {
     }
     case 'noop': {
       return ImplNoop.init(config)
-    }
-    case 'nats': {
-      return ImplNats.init(config)
     }
   }
 }

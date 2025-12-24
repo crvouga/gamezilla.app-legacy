@@ -28,23 +28,6 @@ services:
       - e2e
       - all
 
-  svc-nats:
-    build:
-      context: ../
-      dockerfile: infra/nats/nats.Dockerfile
-    environment:
-      - NATS_USER=nats
-      - NATS_PASS=nats
-    ports:
-      - '4222:4222'
-      - '8080:8080'
-      - '9222:9222'
-    profiles:
-      - e2e
-      - int
-      - local
-      - all
-
   svc-postgres:
     build:
       context: ../

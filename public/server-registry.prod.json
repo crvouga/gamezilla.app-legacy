@@ -2,11 +2,11 @@
   "servers": [
     {
       "name": "rpc",
-      "url": "https://rpc.joinhoops.com"
+      "url": "https://rpc-production-faa3.up.railway.app"
     },
     {
       "name": "topic",
-      "url": "https://topic.joinhoops.com"
+      "url": "https://topic-us-west-production.up.railway.app"
     }
   ]
 }
