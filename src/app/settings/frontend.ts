@@ -140,8 +140,8 @@ const update = (input: {
 
 const subscriptions = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend }): Sub<MsgFrontend> => {
   return Sub.batch<MsgFrontend>([
-    ScreenLangFrontend.subscriptions(input),
-    SoundFrontend.subscriptions({ ctx: input.ctx, model: input.model.sound }),
+    Sub.map(ScreenLangFrontend.subscriptions({ ctx: input.ctx, model: input.model.lang }), (c) => ({ t: 'lang', c })),
+    Sub.map(SoundFrontend.subscriptions({ ctx: input.ctx, model: input.model.sound }), (c) => ({ t: 'sound', c })),
   ])
 }
 
@@ -159,9 +159,17 @@ const View = (input: {
         case 'settings_main':
           return h(ViewMain, input)
         case 'settings_chooseLang':
-          return h(ScreenLangFrontend.View, input)
+          return h(ScreenLangFrontend.View, {
+            ...input,
+            model: input.model.lang,
+            dispatch: (c) => input.dispatch({ t: 'lang', c }),
+          })
         case 'settings_renderer':
-          return h(ScreenRendererFrontend.View, input)
+          return h(ScreenRendererFrontend.View, {
+            ...input,
+            model: input.model.renderer,
+            dispatch: (c) => input.dispatch({ t: 'renderer', c }),
+          })
         default:
           return null
       }

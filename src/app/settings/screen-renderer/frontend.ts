@@ -10,8 +10,7 @@ import { playSound } from '~/app/@/frontend/sound-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { back } from '~/app/frontend/current-screen/current-screen-cmd'
 import { APP_SOUND } from '../../@/frontend/app-sound'
-import type { FrontendModule } from '../types'
-import { ModelFrontend, MsgFrontend } from './types'
+import { type ModelFrontend, type MsgFrontend } from './types'
 
 const init = (input: { ctx: AppFrontendCtxBase }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
   return {
@@ -61,7 +60,7 @@ const update = (input: {
 
 export const TEST_ID_RENDERER_SCREEN = 'settings/renderer-screen'
 
-const View: FrontendModule['View'] = (input) => {
+const View = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
   return h(ScreenLayout, {
     id: 'setting-renderer',
     dataTestId: TEST_ID_RENDERER_SCREEN,
@@ -70,7 +69,7 @@ const View: FrontendModule['View'] = (input) => {
     navBar: {
       title: input.ctx.t('l18n.renderer'),
       back: {
-        onPress: () => input.dispatch({ t: 'renderer', c: { t: 'renderer_clickedBackButton' } }),
+        onPress: () => input.dispatch({ t: 'renderer_clickedBackButton' }),
       },
     },
     renderBody: () =>
@@ -78,13 +77,13 @@ const View: FrontendModule['View'] = (input) => {
         ScrollBox,
         { style: sx({ flexDirection: 'col', flex: 1 }) },
         VDomImplWeb.VISIBLE.map((vDomImpl) => {
-          const isSelected = vDomImpl === input.model.renderer.render_vDomImpl
-          const isDefault = vDomImpl === input.model.renderer.render_vDomImplInitial
+          const isSelected = vDomImpl === input.model.render_vDomImpl
+          const isDefault = vDomImpl === input.model.render_vDomImplInitial
           return h(MenuItem, {
             key: vDomImpl,
             primary: VDomImplWeb.toName(vDomImpl),
             secondary: isDefault && false ? input.ctx.t('l18n.default') : undefined,
-            onPress: () => input.dispatch({ t: 'renderer', c: { t: 'renderer_clickedRenderer', vDomImpl } }),
+            onPress: () => input.dispatch({ t: 'renderer_clickedRenderer', vDomImpl }),
             renderEnd: () =>
               h(RadioInputIcon, {
                 style: sx({ size: 7, textColor: 'white' }),

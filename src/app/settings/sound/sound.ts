@@ -59,18 +59,9 @@ export const update = (input: {
 } => {
   switch (input.msg.t) {
     case 'sound_toggleMute': {
-      if (input.model.sound_muted) {
-        return {
-          model: { ...input.model, sound_muted: false },
-          eff: () => playSound(APP_SOUND.stateChangeUp),
-        }
-      }
-
       return {
-        model: {
-          ...input.model,
-          sound_muted: !input.model.sound_muted,
-        },
+        model: { sound_muted: !input.model.sound_muted },
+        eff: () => playSound(APP_SOUND.stateChangeUp),
       }
     }
 

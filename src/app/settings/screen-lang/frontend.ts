@@ -14,7 +14,6 @@ import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { back } from '~/app/frontend/current-screen/current-screen-cmd'
 import { APP_SOUND } from '../../@/frontend/app-sound'
 import { AppFrontendCtxBase } from '../../@/frontend/ctx'
-import { FrontendModule } from '../types'
 import { ModelFrontend, MsgFrontend } from './types'
 
 const LANG_STORAGE_KEY = 'lang'
@@ -68,13 +67,13 @@ const update = (input: {
   }
 }
 
-const subscriptions: FrontendModule['subscriptions'] = (_input) => {
+const subscriptions = (_input: { ctx: AppFrontendCtxBase; model: ModelFrontend }): Sub<MsgFrontend> => {
   return Sub.none()
 }
 
 export const TEST_ID_LANG_SCREEN = 'settings/lang-screen'
 
-const View: FrontendModule['View'] = (input) => {
+const View = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
   return h(ScreenLayout, {
     id: 'setting-choose-lang',
     dataTestId: TEST_ID_LANG_SCREEN,
@@ -82,7 +81,7 @@ const View: FrontendModule['View'] = (input) => {
     parentScreen: input.ctx.parentScreen,
     navBar: {
       title: input.ctx.t('l18n.language'),
-      back: { onPress: () => input.dispatch({ t: 'lang', c: { t: 'lang_clickedBackButton' } }) },
+      back: { onPress: () => input.dispatch({ t: 'lang_clickedBackButton' }) },
     },
     renderBody: () =>
       h(ScrollBox, { style: sx({ flexDirection: 'col', flex: 1 }) }, [
@@ -91,8 +90,8 @@ const View: FrontendModule['View'] = (input) => {
             key: langCode,
             ctx: input.ctx,
             langCode,
-            model: input.model.lang,
-            dispatch: (c) => input.dispatch({ t: 'lang', c }),
+            model: input.model,
+            dispatch: (c) => input.dispatch(c),
           }),
         ),
         h(Gutter, { variant: 'screen' }),

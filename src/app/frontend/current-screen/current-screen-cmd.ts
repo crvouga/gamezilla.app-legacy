@@ -36,5 +36,5 @@ export const replaceScreen =
 export const back =
   (playSound?: boolean): Eff =>
   () => {
-    currentScreenCmds.pub({ t: 'back', playSound })
+    currentScreenCmds.pub({ t: 'back', playSound: playSound ?? true })
   }

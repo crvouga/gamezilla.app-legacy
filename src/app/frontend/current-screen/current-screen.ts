@@ -191,9 +191,10 @@ const updateFromMsg: typeof update = (input) => {
         case 'back': {
           return {
             model: input.model,
-            async eff() {
-              await input.ctx.navigation.back()
-            },
+            eff: Eff.batch([
+              cmd.playSound ? playSound(APP_SOUND.navBackwardMin) : null,
+              () => input.ctx.navigation.back(),
+            ]),
           }
         }
       }
