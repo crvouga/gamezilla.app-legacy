@@ -2,8 +2,10 @@ import path from 'path'
 import { defineConfig } from 'vite'
 import { DotEnv } from './src/@/dotenv/dotenv'
 import { FileSystem } from './src/@/file-system'
+import { Logger } from './src/@/logger/impl'
 
 await DotEnv.load({
+  logger: Logger.init({ t: 'noop' }),
   fs: FileSystem.init({ t: 'node' }),
   paths: ['.env'],
   precedence: 'preserve',

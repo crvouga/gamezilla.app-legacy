@@ -1,6 +1,7 @@
 import { describe, expect, test } from '~/@/test-runner'
 import { FileSystem } from '../file-system'
 import { DotEnv } from './dotenv'
+import { Logger } from '../logger/impl'
 
 describe('DotEnv', () => {
   test('should load environment variables from a file', async () => {
@@ -11,6 +12,7 @@ describe('DotEnv', () => {
     const env: Record<string, string | undefined> = {}
 
     await DotEnv.load({
+      logger: Logger.init({ t: 'noop' }),
       fs,
       paths: ['.env'],
       precedence: 'override',
@@ -29,6 +31,7 @@ describe('DotEnv', () => {
     const env: Record<string, string | undefined> = {}
 
     await DotEnv.load({
+      logger: Logger.init({ t: 'noop' }),
       fs,
       paths: ['.env'],
       precedence: 'override',
@@ -53,6 +56,7 @@ describe('DotEnv', () => {
     const env: Record<string, string | undefined> = {}
 
     await DotEnv.load({
+      logger: Logger.init({ t: 'noop' }),
       fs,
       paths: ['.env'],
       precedence: 'override',
@@ -73,6 +77,7 @@ describe('DotEnv', () => {
     await fs.write('.env', 'EXISTING_KEY=new_value')
 
     await DotEnv.load({
+      logger: Logger.init({ t: 'noop' }),
       fs,
       paths: ['.env'],
       precedence: 'preserve',
@@ -92,6 +97,7 @@ describe('DotEnv', () => {
     await fs.write('.env', 'EXISTING_KEY=new_value')
 
     await DotEnv.load({
+      logger: Logger.init({ t: 'noop' }),
       fs,
       paths: ['.env'],
       precedence: 'override',
@@ -110,6 +116,7 @@ describe('DotEnv', () => {
     const env: Record<string, string | undefined> = {}
 
     await DotEnv.load({
+      logger: Logger.init({ t: 'noop' }),
       fs,
       paths: ['.env', '.env.local'],
       precedence: 'override',
@@ -126,6 +133,7 @@ describe('DotEnv', () => {
     const env: Record<string, string | undefined> = {}
 
     await DotEnv.load({
+      logger: Logger.init({ t: 'noop' }),
       fs,
       paths: ['.env'],
       precedence: 'override',
@@ -143,6 +151,7 @@ describe('DotEnv', () => {
     const env: Record<string, string | undefined> = {}
 
     await DotEnv.load({
+      logger: Logger.init({ t: 'noop' }),
       fs,
       paths: ['.env'],
       precedence: 'override',

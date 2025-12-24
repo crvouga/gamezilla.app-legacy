@@ -10,7 +10,7 @@
     "all:up": "pnpm base --profile all up --build -d",
     "android": "expo run:android",
     "app": "pnpm exec concurrently --names \"FRONTEND,BACKEND\" --prefix-colors \"blue,magenta\" \"pnpm run frontend\" \"pnpm run backend\"",
-    "backend": "pnpm exec tsx watch ./src/backend.ts",
+    "backend": "pnpm exec tsx watch ./src/backend.rpc.ts",
     "base": "docker compose -f ./infra/docker-compose.yml --env-file .env",
     "base:down": "pnpm base --profile $PROFILE down",
     "base:up": "pnpm base --profile $PROFILE up --build -d",

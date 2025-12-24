@@ -1,5 +1,6 @@
 import { FileSystem } from '~/@/file-system'
 import { HealthCheck } from '~/@/health-check/health-check'
+import { HttpClient } from '~/@/http-client/impl'
 import { HttpServer } from '~/@/http-server'
 import { Cors } from '~/@/http-server/cors/cors'
 import { CorsPolicy } from '~/@/http-server/cors/cors-policy/impl'
@@ -9,6 +10,7 @@ import { ILogger } from '~/@/logger'
 import { TopicBasedPubSub } from '~/@/pub-sub-topic-based'
 import { RPC } from '~/@/rpc'
 import { Runtime } from '~/@/runtime'
+import { ServerRegistry } from '~/@/server-registry/server-registry'
 import { SinglePageApp } from '~/@/single-page-app'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { ISqlDb } from '~/@/sql-db/interface'
@@ -16,7 +18,8 @@ import { SyncEngineServer } from '~/@/sync-engine/sync-engine-server'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { TopicClient } from '~/@/topic/topic-client/impl'
-import { TopicServer } from '~/@/topic/topic-server/impl'
+import { Url } from '~/@/url/url'
+import { ClientSessionId } from '~/@/wire/client-session-id'
 import { AppBackendCtxBase } from './@/backend/ctx'
 import { topicMsgCodec } from './@/topic-msg-codec'
 import { AuthBackend } from './auth/backend'
@@ -67,33 +70,22 @@ const initCtx = async (config: {
     logger,
   })
 
-  httpServer.registerMiddleware(
-    Cors.middleware(
-      CorsPolicy.init({
-        t: 'allow-sub-domains',
-        allowedDomains: ['*'],
-        allowRequestHostDomain: true,
-        logger,
-      }),
-    ),
-  )
-
-  const topicServer = TopicServer.init({
-    t: 'web-sockets-in-house',
-    contract: AppTypes.topicContract,
-    endpoint: '/topic',
-    httpServer,
+  const serverRegistry = ServerRegistry.init({
+    httpClient: HttpClient.init({ t: 'fetch' }),
     logger,
-    codec: topicMsgCodec,
-    pubSub,
+    serverRegistrySrcUrl: Url.derive('', 'http'),
+    sqlDb: config.sqlDb,
+    migrationPolicy,
+    pollRate: TimeSpan.seconds(10),
   })
 
   const topicClient = TopicClient.init({
-    t: 'from-server',
+    t: 'web-sockets-in-house',
     contract: AppTypes.topicContract,
     codec: topicMsgCodec,
-    topicServer,
     logger: logger.child(['topic-client']),
+    getServerUrls: serverRegistry.getServerUrls,
+    clientSessionId: ClientSessionId.generate(),
   })
 
   const userProfileDb = ProfileDb({
@@ -153,17 +145,26 @@ const rpc = (input: { ctx: BackendCtxModule }) => {
   })
 }
 
-const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
-  input.ctx.logger.info('Starting backend worker')
-
-  input.ctx.httpServer.registerMiddleware(LoggerMiddleware({ logger: input.ctx.logger }))
-
+const server = async (input: { ctx: BackendCtxModule }) => {
+  const logger = input.ctx.logger.child(['backend'])
+  logger.info('Starting backend server')
+  input.ctx.httpServer.registerMiddleware(LoggerMiddleware({ logger }))
+  input.ctx.httpServer.registerMiddleware(
+    Cors.middleware(
+      CorsPolicy.init({
+        t: 'allow-sub-domains',
+        allowedDomains: ['*'],
+        allowRequestHostDomain: true,
+        logger,
+      }),
+    ),
+  )
   RPC.register({
     t: 'http-server',
     httpServer: input.ctx.httpServer,
-    logger: input.ctx.logger,
+    logger,
     contract: AppTypes.rpcContract,
-    server: AppBackend.rpc({ ctx: input.ctx }),
+    server: rpc({ ctx: input.ctx }),
   })
   HealthCheck.register({ httpServer: input.ctx.httpServer })
   SinglePageApp.register({
@@ -171,12 +172,13 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
     fs: input.ctx.fileSystem,
     httpServer: input.ctx.httpServer,
     indexFilename: 'index.html',
-    logger: input.ctx.logger,
+    logger,
   })
   HelloBackend.register({ ctx: input.ctx, httpServer: input.ctx.httpServer })
-
   input.ctx.httpServer.start(input.ctx.port)
+}
 
+const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
   WireBackend.worker(s, input)
   AuthBackend.worker(s, input)
   SpacesBackend.worker(s, input)
@@ -184,7 +186,8 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
 }
 
 export const AppBackend = {
-  initCtx,
   rpc,
+  initCtx,
+  server,
   worker,
 }

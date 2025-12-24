@@ -3,16 +3,16 @@ import { DotEnv } from './@/dotenv/dotenv'
 import { FileSystem } from './@/file-system'
 import { Logger } from './@/logger'
 import { SecretString } from './@/secrets/secret-string'
-import { SqlDbMigration } from './@/sql-db-migrations/impl'
 import { BackendSqlDb } from './@/sql-db/backend-impl'
 
 const main = async () => {
-  const logger = Logger.init({ t: 'console', namespace: ['backend'], newLinePerMsg: false, maxLogLevel: 'debug' })
+  const logger = Logger.init({ t: 'console', namespace: ['worker'], newLinePerMsg: false, maxLogLevel: 'debug' })
 
-  logger.info('Starting backend')
+  logger.info('Starting worker')
 
   logger.info('Loading environment variables from .env file')
   await DotEnv.load({
+    logger,
     fs: FileSystem.init({ t: 'node' }),
     paths: ['.env'],
     precedence: 'preserve',
@@ -32,27 +32,22 @@ const main = async () => {
   const sqlDb = BackendSqlDb.init({ t: 'postgres', databaseUrl: DATABASE_URL, logger })
   logger.info('Database connection initialized')
 
-  logger.info('Running database migrations')
-  const sqlDbMigration = SqlDbMigration.init({ t: 'dbmate', databaseUrl: DATABASE_URL, logger, sqlDb })
-  await sqlDbMigration.up()
-  logger.info('Database migrations completed')
-
-  logger.info('Loading backend port from environment')
-  const BACKEND_PORT = 5002
-  logger.info(`Backend port set to ${BACKEND_PORT}`)
+  logger.info('Loading worker port from environment')
+  const WORKER_PORT = 5002
+  logger.info(`Worker port set to ${WORKER_PORT}`)
 
   logger.info('Initializing backend context')
   const ctx = await AppBackend.initCtx({
     isProd: IS_PROD,
-    port: BACKEND_PORT,
+    port: WORKER_PORT,
     sqlDb,
     logger,
   })
-  logger.info('Backend context initialized')
+  logger.info('Worker context initialized')
 
   const abortController = new AbortController()
 
-  logger.info('Starting backend worker')
+  logger.info('Starting worker')
   await AppBackend.worker(abortController.signal, { ctx })
 }
 

@@ -1,9 +1,11 @@
 import { defineConfig, devices } from '@playwright/test'
 import { DotEnv } from './src/@/dotenv/dotenv'
 import { FileSystem } from './src/@/file-system'
+import { Logger } from './src/@/logger'
 import { Url } from './src/@/url/url'
 
 DotEnv.load({
+  logger: Logger.init({ t: 'noop' }),
   fs: FileSystem.init({ t: 'node' }),
   paths: ['.env'],
   precedence: 'preserve',
