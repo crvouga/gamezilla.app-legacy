@@ -56,6 +56,7 @@
     "env:local": "cp .env.local .env",
     "expo": "expo start --clear",
     "format": "pnpm exec sort-package-json && pnpm exec prettier --write .",
+    "format:check": "pnpm exec sort-package-json --check && pnpm exec prettier --check .",
     "frontend": "pnpm exec vite --open",
     "frontend:build": "pnpm exec vite build",
     "frontend:deploy": "curl -d \"\" \"https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/f871839e-b643-4b12-8994-a50777ed620f\"",
