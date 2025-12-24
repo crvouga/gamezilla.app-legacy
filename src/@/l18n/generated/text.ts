@@ -4,87 +4,131 @@ import type { Text as Text1 } from '../../time/time-span.$l18n'
 import type { Text as Text2 } from '../../ui/surface-drawer/$l18n'
 import type { Text as Text3 } from '../../../app/@/data/profile-avatar/profile-avatar.$l18n'
 import type { Text as Text4 } from '../../../app/@/data/username/username.$l18n'
-import type { Text as Text5 } from '../../../app/@/l18n/$l18n'
+import type { Text as Text5 } from '../../../app/@/l18n/accept.$l18n'
 import type { Text as Text6 } from '../../../app/@/l18n/add.$l18n'
 import type { Text as Text7 } from '../../../app/@/l18n/apply.$l18n'
-import type { Text as Text8 } from '../../../app/@/l18n/calculate.$l18n'
-import type { Text as Text9 } from '../../../app/@/l18n/dismiss.$l18n'
-import type { Text as Text10 } from '../../../app/@/l18n/find.$l18n'
-import type { Text as Text11 } from '../../../app/@/l18n/home.$l18n'
-import type { Text as Text12 } from '../../../app/@/l18n/join.$l18n'
-import type { Text as Text13 } from '../../../app/@/l18n/load.$l18n'
-import type { Text as Text14 } from '../../../app/@/l18n/login.$l18n'
-import type { Text as Text15 } from '../../../app/@/l18n/open-settings.$l18n'
-import type { Text as Text16 } from '../../../app/@/l18n/settings.$l18n'
-import type { Text as Text17 } from '../../../app/@/l18n/status-bar.$l18n'
-import type { Text as Text18 } from '../../../app/@/l18n/submit.$l18n'
-import type { Text as Text19 } from '../../../app/@/ui/floating/unsaved-changes/unsaved-changes.$l18n'
-import type { Text as Text20 } from '../../../app/auth/@/$l18n'
-import type { Text as Text21 } from '../../../app/auth/@/backend/verify-sms/$l18n'
-import type { Text as Text22 } from '../../../app/auth/@/l18n/auth.logged-in-as.$l18n'
-import type { Text as Text23 } from '../../../app/auth/login-as-guest/$l18n'
-import type { Text as Text24 } from '../../../app/auth/login-with-sms/$l18n'
-import type { Text as Text25 } from '../../../app/profile/$l18n/$l18n'
-import type { Text as Text26 } from '../../../app/profile/$l18n/edit-profile.$l18n'
-import type { Text as Text27 } from '../../../app/profile/@/user-profile-loader/$l18n'
-import type { Text as Text28 } from '../../../app/profile/screen-update-username/$l18n'
-import type { Text as Text29 } from '../../../app/settings/l18n/default.$l18n'
-import type { Text as Text30 } from '../../../app/settings/l18n/lang.$l18n'
-import type { Text as Text31 } from '../../../app/settings/l18n/renderer.$l18n'
-import type { Text as Text32 } from '../../../app/settings/l18n/settings.$l18n'
-import type { Text as Text33 } from '../../../app/settings/l18n/sound-off.$l18n'
-import type { Text as Text34 } from '../../../app/settings/l18n/sound-on.$l18n'
-import type { Text as Text35 } from '../../../app/spaces/@/l18n/$l18n'
-import type { Text as Text36 } from '../../../app/spaces/@/l18n/game.$l18n'
-import type { Text as Text37 } from '../../../app/spaces/@/ui/$l18n'
-import type { Text as Text38 } from '../../../app/spaces/end-space/$l18n'
-import type { Text as Text39 } from '../../../app/spaces/frontend/people-action/see-profile.$l18n'
-import type { Text as Text40 } from '../../../app/spaces/game/games/@/game-name/$l18n'
-import type { Text as Text41 } from '../../../app/spaces/game/games/@/game.$l18n'
-import type { Text as Text42 } from '../../../app/spaces/game/games/@/ui/game-layout/$l18n'
-import type { Text as Text43 } from '../../../app/spaces/game/games/@/ui/game-main-menu/$l18n'
-import type { Text as Text44 } from '../../../app/spaces/game/games/@/ui/prebuilt-actions/$l18n'
-import type { Text as Text45 } from '../../../app/spaces/game/games/@/ui/screen-layout-host-setting-up-game/screen-layout-host-setting-up-game.$l18n'
-import type { Text as Text46 } from '../../../app/spaces/game/games/chess/@/chess-bot-level/chess-bot-level.$l18n'
-import type { Text as Text47 } from '../../../app/spaces/game/games/chess/@/chess.$l18n'
-import type { Text as Text48 } from '../../../app/spaces/game/games/connect-four/@/$l18n'
-import type { Text as Text49 } from '../../../app/spaces/game/games/numberlink/@/copy-to-clipboard/$l18n'
-import type { Text as Text50 } from '../../../app/spaces/game/games/numberlink/@/l18n/$l18n'
-import type { Text as Text51 } from '../../../app/spaces/game/games/numberlink/@/l18n/next-pack.$l18n'
-import type { Text as Text52 } from '../../../app/spaces/game/games/numberlink/@/mode-edit/$l18n'
-import type { Text as Text53 } from '../../../app/spaces/game/games/numberlink/@/mode-play/$l18n'
-import type { Text as Text54 } from '../../../app/spaces/game/games/numberlink/@/pack/pack-list/$l18n'
-import type { Text as Text55 } from '../../../app/spaces/game/games/numberlink/@/pack/pack-name.$l18n'
-import type { Text as Text56 } from '../../../app/spaces/game/games/numberlink/@/puzzle/puzzle-list/$l18n'
-import type { Text as Text57 } from '../../../app/spaces/game/games/numberlink/@/puzzle/puzzle-name/$l18n'
-import type { Text as Text58 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/find-solutions-confirmation-body.$l18n'
-import type { Text as Text59 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/find-solutions.$l18n'
-import type { Text as Text60 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/no-hints-avaliable-body.$l18n'
-import type { Text as Text61 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/no-hints-avaliable.$l18n'
-import type { Text as Text62 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/no-hints-calculated.$l18n'
-import type { Text as Text63 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/no-hints-loaded-body.$l18n'
-import type { Text as Text64 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/no-hints-loaded.$l18n'
-import type { Text as Text65 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/no-solutions-found.$l18n'
-import type { Text as Text66 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/solutions-found.$l18n'
-import type { Text as Text67 } from '../../../app/spaces/game/games/numberlink/screen-build/$l18n'
-import type { Text as Text68 } from '../../../app/spaces/game/games/numberlink/screen-build/pack-builder/screen-pack-builder/$l18n'
-import type { Text as Text69 } from '../../../app/spaces/game/games/numberlink/screen-build/pack-builder/screen-pack-builder-open/$l18n'
-import type { Text as Text70 } from '../../../app/spaces/game/games/numberlink/screen-build/pack-builder/screen-pack-builder-open/button-create-new-pack/$l18n'
-import type { Text as Text71 } from '../../../app/spaces/game/games/numberlink/screen-build/puzzle-builder/screen-puzzle-builder/$l18n'
-import type { Text as Text72 } from '../../../app/spaces/game/games/numberlink/screen-build/puzzle-builder/screen-puzzle-builder/surface-delete-forever/$l18n'
-import type { Text as Text73 } from '../../../app/spaces/game/games/numberlink/screen-build/puzzle-builder/screen-puzzle-builder/surface-edit-puzzle-name/$l18n'
-import type { Text as Text74 } from '../../../app/spaces/game/games/numberlink/screen-build/puzzle-builder/screen-puzzle-builder-open/button-create-new-puzzle/$l18n'
-import type { Text as Text75 } from '../../../app/spaces/game/games/numberlink/screen-build/screen-main-menu/$l18n'
-import type { Text as Text76 } from '../../../app/spaces/game/games/numberlink/screen-play/screen-open-pack/$l18n'
-import type { Text as Text77 } from '../../../app/spaces/game/games/numberlink/screen-play/screen-play-puzzle/button-copy-puzzle/$l18n'
-import type { Text as Text78 } from '../../../app/spaces/game/games/numberlink/screen-play/screen-play-puzzle/last-puzzle/$l18n'
-import type { Text as Text79 } from '../../../app/spaces/game/games/tic-tac-toe/@/tic-tac-toe.$l18n'
-import type { Text as Text80 } from '../../../app/spaces/join-space/$l18n'
-import type { Text as Text81 } from '../../../app/spaces/leave-space/$l18n'
-import type { Text as Text82 } from '../../../app/spaces/list-spaces/$l18n'
-import type { Text as Text83 } from '../../../app/spaces/list-spaces/space-card/$l18n'
-import type { Text as Text84 } from '../../../app/spaces/start-space/$l18n'
-import type { Text as Text85 } from '../../../app/wire/$l18n'
+import type { Text as Text8 } from '../../../app/@/l18n/back.$l18n'
+import type { Text as Text9 } from '../../../app/@/l18n/calculate.$l18n'
+import type { Text as Text10 } from '../../../app/@/l18n/cancel.$l18n'
+import type { Text as Text11 } from '../../../app/@/l18n/change.$l18n'
+import type { Text as Text12 } from '../../../app/@/l18n/clear.$l18n'
+import type { Text as Text13 } from '../../../app/@/l18n/close.$l18n'
+import type { Text as Text14 } from '../../../app/@/l18n/congratulations.$l18n'
+import type { Text as Text15 } from '../../../app/@/l18n/copied-to-clipboard.$l18n'
+import type { Text as Text16 } from '../../../app/@/l18n/copy.$l18n'
+import type { Text as Text17 } from '../../../app/@/l18n/created-at-desc.$l18n'
+import type { Text as Text18 } from '../../../app/@/l18n/created-at.$l18n'
+import type { Text as Text19 } from '../../../app/@/l18n/created-by-you.$l18n'
+import type { Text as Text20 } from '../../../app/@/l18n/decline.$l18n'
+import type { Text as Text21 } from '../../../app/@/l18n/delete.$l18n'
+import type { Text as Text22 } from '../../../app/@/l18n/dimensions.$l18n'
+import type { Text as Text23 } from '../../../app/@/l18n/dismiss.$l18n'
+import type { Text as Text24 } from '../../../app/@/l18n/dont-save.$l18n'
+import type { Text as Text25 } from '../../../app/@/l18n/edit-name.$l18n'
+import type { Text as Text26 } from '../../../app/@/l18n/editor.$l18n'
+import type { Text as Text27 } from '../../../app/@/l18n/exit.$l18n'
+import type { Text as Text28 } from '../../../app/@/l18n/find.$l18n'
+import type { Text as Text29 } from '../../../app/@/l18n/gamezilla-app.$l18n'
+import type { Text as Text30 } from '../../../app/@/l18n/height.$l18n'
+import type { Text as Text31 } from '../../../app/@/l18n/home.$l18n'
+import type { Text as Text32 } from '../../../app/@/l18n/join.$l18n'
+import type { Text as Text33 } from '../../../app/@/l18n/last-updated-at-desc.$l18n'
+import type { Text as Text34 } from '../../../app/@/l18n/last-updated-at.$l18n'
+import type { Text as Text35 } from '../../../app/@/l18n/load.$l18n'
+import type { Text as Text36 } from '../../../app/@/l18n/login.$l18n'
+import type { Text as Text37 } from '../../../app/@/l18n/more.$l18n'
+import type { Text as Text38 } from '../../../app/@/l18n/next.$l18n'
+import type { Text as Text39 } from '../../../app/@/l18n/open-settings.$l18n'
+import type { Text as Text40 } from '../../../app/@/l18n/people.$l18n'
+import type { Text as Text41 } from '../../../app/@/l18n/plus-number.$l18n'
+import type { Text as Text42 } from '../../../app/@/l18n/prev.$l18n'
+import type { Text as Text43 } from '../../../app/@/l18n/question-mark.$l18n'
+import type { Text as Text44 } from '../../../app/@/l18n/redo.$l18n'
+import type { Text as Text45 } from '../../../app/@/l18n/remove.$l18n'
+import type { Text as Text46 } from '../../../app/@/l18n/reset.$l18n'
+import type { Text as Text47 } from '../../../app/@/l18n/resign.$l18n'
+import type { Text as Text48 } from '../../../app/@/l18n/restart.$l18n'
+import type { Text as Text49 } from '../../../app/@/l18n/retry.$l18n'
+import type { Text as Text50 } from '../../../app/@/l18n/save-changes-question.$l18n'
+import type { Text as Text51 } from '../../../app/@/l18n/save.$l18n'
+import type { Text as Text52 } from '../../../app/@/l18n/saved-changes.$l18n'
+import type { Text as Text53 } from '../../../app/@/l18n/screen-not-found.$l18n'
+import type { Text as Text54 } from '../../../app/@/l18n/settings.$l18n'
+import type { Text as Text55 } from '../../../app/@/l18n/skip.$l18n'
+import type { Text as Text56 } from '../../../app/@/l18n/something-went-wrong.$l18n'
+import type { Text as Text57 } from '../../../app/@/l18n/status-bar.$l18n'
+import type { Text as Text58 } from '../../../app/@/l18n/submit.$l18n'
+import type { Text as Text59 } from '../../../app/@/l18n/this-action-cannot-be-undone.$l18n'
+import type { Text as Text60 } from '../../../app/@/l18n/undo.$l18n'
+import type { Text as Text61 } from '../../../app/@/l18n/updated-name.$l18n'
+import type { Text as Text62 } from '../../../app/@/l18n/width.$l18n'
+import type { Text as Text63 } from '../../../app/@/ui/floating/unsaved-changes/unsaved-changes.$l18n'
+import type { Text as Text64 } from '../../../app/auth/@/$l18n'
+import type { Text as Text65 } from '../../../app/auth/@/backend/verify-sms/$l18n'
+import type { Text as Text66 } from '../../../app/auth/@/l18n/auth.logged-in-as.$l18n'
+import type { Text as Text67 } from '../../../app/auth/login-as-guest/$l18n'
+import type { Text as Text68 } from '../../../app/auth/login-with-sms/$l18n'
+import type { Text as Text69 } from '../../../app/profile/$l18n/$l18n'
+import type { Text as Text70 } from '../../../app/profile/$l18n/edit-profile.$l18n'
+import type { Text as Text71 } from '../../../app/profile/@/user-profile-loader/$l18n'
+import type { Text as Text72 } from '../../../app/profile/screen-update-username/$l18n'
+import type { Text as Text73 } from '../../../app/settings/l18n/default.$l18n'
+import type { Text as Text74 } from '../../../app/settings/l18n/lang.$l18n'
+import type { Text as Text75 } from '../../../app/settings/l18n/renderer.$l18n'
+import type { Text as Text76 } from '../../../app/settings/l18n/settings.$l18n'
+import type { Text as Text77 } from '../../../app/settings/l18n/sound-off.$l18n'
+import type { Text as Text78 } from '../../../app/settings/l18n/sound-on.$l18n'
+import type { Text as Text79 } from '../../../app/spaces/@/l18n/$l18n'
+import type { Text as Text80 } from '../../../app/spaces/@/l18n/game.$l18n'
+import type { Text as Text81 } from '../../../app/spaces/@/ui/$l18n'
+import type { Text as Text82 } from '../../../app/spaces/end-space/$l18n'
+import type { Text as Text83 } from '../../../app/spaces/frontend/people-action/see-profile.$l18n'
+import type { Text as Text84 } from '../../../app/spaces/game/games/@/game-name/$l18n'
+import type { Text as Text85 } from '../../../app/spaces/game/games/@/game.$l18n'
+import type { Text as Text86 } from '../../../app/spaces/game/games/@/ui/game-layout/$l18n'
+import type { Text as Text87 } from '../../../app/spaces/game/games/@/ui/game-main-menu/$l18n'
+import type { Text as Text88 } from '../../../app/spaces/game/games/@/ui/prebuilt-actions/$l18n'
+import type { Text as Text89 } from '../../../app/spaces/game/games/@/ui/screen-layout-host-setting-up-game/screen-layout-host-setting-up-game.$l18n'
+import type { Text as Text90 } from '../../../app/spaces/game/games/chess/@/chess-bot-level/chess-bot-level.$l18n'
+import type { Text as Text91 } from '../../../app/spaces/game/games/chess/@/chess.$l18n'
+import type { Text as Text92 } from '../../../app/spaces/game/games/connect-four/@/$l18n'
+import type { Text as Text93 } from '../../../app/spaces/game/games/numberlink/@/copy-to-clipboard/$l18n'
+import type { Text as Text94 } from '../../../app/spaces/game/games/numberlink/@/l18n/$l18n'
+import type { Text as Text95 } from '../../../app/spaces/game/games/numberlink/@/l18n/next-pack.$l18n'
+import type { Text as Text96 } from '../../../app/spaces/game/games/numberlink/@/mode-edit/$l18n'
+import type { Text as Text97 } from '../../../app/spaces/game/games/numberlink/@/mode-play/$l18n'
+import type { Text as Text98 } from '../../../app/spaces/game/games/numberlink/@/pack/pack-list/$l18n'
+import type { Text as Text99 } from '../../../app/spaces/game/games/numberlink/@/pack/pack-name.$l18n'
+import type { Text as Text100 } from '../../../app/spaces/game/games/numberlink/@/puzzle/puzzle-list/$l18n'
+import type { Text as Text101 } from '../../../app/spaces/game/games/numberlink/@/puzzle/puzzle-name/$l18n'
+import type { Text as Text102 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/find-solutions-confirmation-body.$l18n'
+import type { Text as Text103 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/find-solutions.$l18n'
+import type { Text as Text104 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/no-hints-avaliable-body.$l18n'
+import type { Text as Text105 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/no-hints-avaliable.$l18n'
+import type { Text as Text106 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/no-hints-calculated.$l18n'
+import type { Text as Text107 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/no-hints-loaded-body.$l18n'
+import type { Text as Text108 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/no-hints-loaded.$l18n'
+import type { Text as Text109 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/no-solutions-found.$l18n'
+import type { Text as Text110 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/solutions-found.$l18n'
+import type { Text as Text111 } from '../../../app/spaces/game/games/numberlink/screen-build/$l18n'
+import type { Text as Text112 } from '../../../app/spaces/game/games/numberlink/screen-build/pack-builder/screen-pack-builder/$l18n'
+import type { Text as Text113 } from '../../../app/spaces/game/games/numberlink/screen-build/pack-builder/screen-pack-builder-open/$l18n'
+import type { Text as Text114 } from '../../../app/spaces/game/games/numberlink/screen-build/pack-builder/screen-pack-builder-open/button-create-new-pack/$l18n'
+import type { Text as Text115 } from '../../../app/spaces/game/games/numberlink/screen-build/puzzle-builder/screen-puzzle-builder/$l18n'
+import type { Text as Text116 } from '../../../app/spaces/game/games/numberlink/screen-build/puzzle-builder/screen-puzzle-builder/surface-delete-forever/$l18n'
+import type { Text as Text117 } from '../../../app/spaces/game/games/numberlink/screen-build/puzzle-builder/screen-puzzle-builder/surface-edit-puzzle-name/$l18n'
+import type { Text as Text118 } from '../../../app/spaces/game/games/numberlink/screen-build/puzzle-builder/screen-puzzle-builder-open/button-create-new-puzzle/$l18n'
+import type { Text as Text119 } from '../../../app/spaces/game/games/numberlink/screen-build/screen-main-menu/$l18n'
+import type { Text as Text120 } from '../../../app/spaces/game/games/numberlink/screen-play/screen-open-pack/$l18n'
+import type { Text as Text121 } from '../../../app/spaces/game/games/numberlink/screen-play/screen-play-puzzle/button-copy-puzzle/$l18n'
+import type { Text as Text122 } from '../../../app/spaces/game/games/numberlink/screen-play/screen-play-puzzle/last-puzzle/$l18n'
+import type { Text as Text123 } from '../../../app/spaces/game/games/tic-tac-toe/@/tic-tac-toe.$l18n'
+import type { Text as Text124 } from '../../../app/spaces/join-space/$l18n'
+import type { Text as Text125 } from '../../../app/spaces/leave-space/$l18n'
+import type { Text as Text126 } from '../../../app/spaces/list-spaces/$l18n'
+import type { Text as Text127 } from '../../../app/spaces/list-spaces/space-card/$l18n'
+import type { Text as Text128 } from '../../../app/spaces/start-space/$l18n'
+import type { Text as Text129 } from '../../../app/wire/$l18n'
 
 export type Text = Text0 &
   Text1 &
@@ -171,4 +215,48 @@ export type Text = Text0 &
   Text82 &
   Text83 &
   Text84 &
-  Text85
+  Text85 &
+  Text86 &
+  Text87 &
+  Text88 &
+  Text89 &
+  Text90 &
+  Text91 &
+  Text92 &
+  Text93 &
+  Text94 &
+  Text95 &
+  Text96 &
+  Text97 &
+  Text98 &
+  Text99 &
+  Text100 &
+  Text101 &
+  Text102 &
+  Text103 &
+  Text104 &
+  Text105 &
+  Text106 &
+  Text107 &
+  Text108 &
+  Text109 &
+  Text110 &
+  Text111 &
+  Text112 &
+  Text113 &
+  Text114 &
+  Text115 &
+  Text116 &
+  Text117 &
+  Text118 &
+  Text119 &
+  Text120 &
+  Text121 &
+  Text122 &
+  Text123 &
+  Text124 &
+  Text125 &
+  Text126 &
+  Text127 &
+  Text128 &
+  Text129
