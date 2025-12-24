@@ -13,7 +13,6 @@ import { TextField } from '~/@/ui/text-field'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { Frag } from '~/@/vdom/primitives/frag'
-import { Text } from '~/@/vdom/primitives/text'
 import { sx } from '~/@/vdom/style/sx'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { showErrorSmall } from '~/app/@/frontend/show-error-small'
@@ -317,11 +316,11 @@ const ViewSendCode = (input: { ctx: Ctx; model: Model; dispatch: (msg: MsgFronte
     onSubmit: () => input.dispatch({ n: 'loginWithSms', t: 'loginWithSms_clickedSendCodeButton' }),
     renderInputs: () =>
       h(Frag, {}, [
-        h(Text, { style: sx({ textColor: 'white' }), text: input.model.loginWithSms_phone ?? '' }),
         h(TextField, {
           id: 'phoneNumberInput',
           testId: 'phone-number-input',
           label: input.ctx.t('auth-sms.phone-number'),
+          showLabel: false,
           type: 'tel',
           startIcon: h(IconMobilePhone, { style: sx({ size: 5 }) }),
           error: typeof input.model.loginWithSms_phoneError === 'string',

@@ -15,7 +15,8 @@ export const TextField = (input: {
   autoFocus?: boolean
   testId?: string
   id: string
-  label: TranslatedText
+  label?: TranslatedText | null
+  showLabel?: boolean
   value: string | number
   error?: boolean
   helperText?: TranslatedText | null
@@ -25,14 +26,16 @@ export const TextField = (input: {
   onClear?: () => void
   onChangeText: (value: string) => void
 }) => {
+  const showLabel = input.showLabel !== false && input.label
   return h(Box, { style: sx({ width: 'full', flexDirection: 'col', gap: 1 }) }, [
-    h(Text, {
-      text: input.label,
-      style: {
-        ...sx({ fontSize: 'sm' }),
-        textColor: input.error ? 'red-500' : 'white',
-      },
-    }),
+    showLabel &&
+      h(Text, {
+        text: input.label!,
+        style: {
+          ...sx({ fontSize: 'sm' }),
+          textColor: input.error ? 'red-500' : 'white',
+        },
+      }),
     h(
       Box,
       {
@@ -40,7 +43,8 @@ export const TextField = (input: {
           ...PAPER_STYLE,
           ...sx({
             flexDirection: 'row',
-            height: 20,
+            alignItems: 'center',
+            height: 16,
             width: 'full',
             overflow: 'hidden',
             rounded: 'md',
@@ -65,7 +69,7 @@ export const TextField = (input: {
         h(TextInput, {
           role: 'textbox',
           'data-testid': input.testId,
-          'aria-label': input.label,
+          'aria-label': input.label ?? '',
           id: input.id,
           type: input.type,
           defaultValue: input.value,
@@ -76,8 +80,9 @@ export const TextField = (input: {
               flex: 1,
               alignItems: 'center',
               gap: 2,
-              padding: 3,
-              fontSize: 'lg',
+              padding: 2,
+              fontSize: 'md',
+              textColor: 'white',
             }),
             backgroundColor: 'transparent',
           },
@@ -92,6 +97,8 @@ export const TextField = (input: {
                 ...sx({
                   rounded: 'md',
                   paddingX: 3,
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }),
               },
               'aria-label': 'Clear input',
