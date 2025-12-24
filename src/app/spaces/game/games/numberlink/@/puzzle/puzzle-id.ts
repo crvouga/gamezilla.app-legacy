@@ -4,29 +4,18 @@ import { s } from '~/@/schema'
 
 export type PuzzleId = Brand<string, 'PuzzleId'>
 
-const namespace = 'game-numberlink-puzzle'
-const separator = ':'
-
 const is = (maybePuzzleId: unknown): maybePuzzleId is PuzzleId => {
-  return typeof maybePuzzleId === 'string' && maybePuzzleId.startsWith(namespace)
+  return typeof maybePuzzleId === 'string' && Uuid.is(maybePuzzleId)
 }
 
 const schema = s.custom(is, 'Invalid flow puzzle id')
 
-const generate = () => {
-  const id = Uuid.generate()
-  const puzzleId = `${namespace}${separator}${id}`
-
-  if (is(puzzleId)) {
-    return puzzleId
-  }
-
-  throw new Error('impossible condition. generated invalid id.')
+const generate = (): PuzzleId => {
+  return Uuid.generate() as unknown as PuzzleId
 }
 
 export const PuzzleId = {
   ...schema,
   generate,
-
   is,
 }

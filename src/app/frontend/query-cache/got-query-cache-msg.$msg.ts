@@ -22,7 +22,7 @@ export const Msg = s.or(
 export type Msg = s.Infer<typeof Msg>
 
 const schema = s.obj({
-  t: s.l('got-query-cache-msg'),
+  t: s.l('gotQueryCacheMsg'),
   c: Msg,
 })
 
@@ -35,7 +35,7 @@ const is = (input: unknown): input is GotQueryCacheMsg => {
 }
 
 const init = (msg: Msg): GotQueryCacheMsg => {
-  return { t: 'got-query-cache-msg', c: msg }
+  return { t: 'gotQueryCacheMsg', c: msg }
 }
 
 export const GotQueryCacheMsg = {

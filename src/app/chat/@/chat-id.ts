@@ -4,12 +4,11 @@ import type { Brand } from '~/@/brand/brand'
 export type ChatId = Brand<string, 'ChatId'>
 
 const generate = (): ChatId => {
-  const id = Uuid.generate()
-  return `chat:${id}` as ChatId
+  return Uuid.generate() as unknown as ChatId
 }
 
 const is = (id: unknown): id is ChatId => {
-  return typeof id === 'string' && id.startsWith('chat:')
+  return typeof id === 'string' && Uuid.is(id)
 }
 
 export const ChatId = {

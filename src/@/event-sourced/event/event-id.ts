@@ -4,10 +4,6 @@ import { s } from '~/@/schema'
 
 export type EventId = Brand<string, 'EventId'>
 
-const namespace = 'event'
-const separator = ':'
-const namespaceWithSeparator = `${namespace}${separator}`
-
 const is = (id: unknown): id is EventId => {
   return typeof id === 'string'
 }
@@ -25,7 +21,7 @@ const decode = (id: string): Result<Problem, EventId> => {
 }
 
 const generate = (): EventId => {
-  return (namespaceWithSeparator + Math.floor(Math.random() * 1_000_000_000)) as EventId
+  return Math.floor(Math.random() * 1_000_000_000).toString() as EventId
 }
 
 export const EventId = {

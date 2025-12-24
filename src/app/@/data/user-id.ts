@@ -5,23 +5,12 @@ import { s } from '~/@/schema'
 export type UserId = Brand<string, 'UserId'>
 
 const is = (userId: unknown): userId is UserId => {
-  return typeof userId === 'string' && userId.startsWith('user:')
+  return typeof userId === 'string' && Uuid.is(userId)
 }
 const schema = s.custom(is, 'Invalid user id')
 
-const namespace = 'user'
-const separator = ':'
-
-const generate = () => {
-  const id = Uuid.generate()
-  const randomIntegers = Math.floor(Math.random() * 1000)
-  const userId = `${namespace}${separator}${id}${randomIntegers}`
-
-  if (is(userId)) {
-    return userId
-  }
-
-  throw new Error('impossible condition. generated invalid user id.')
+const generate = (): UserId => {
+  return Uuid.generate() as unknown as UserId
 }
 
 export const UserId = {

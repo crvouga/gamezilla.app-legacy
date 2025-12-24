@@ -5,11 +5,8 @@ import { ShortId } from '../id/short-id'
 
 export type SessionId = Brand<string, 'SessionId'>
 
-const namespace = 'session'
-const separator = ':'
-
 const is = (id: unknown): id is SessionId => {
-  return typeof id === 'string' && id.startsWith(`${namespace}${separator}`)
+  return typeof id === 'string'
 }
 
 const schema = s.custom(is, 'Invalid session id')
@@ -25,14 +22,7 @@ export const decode = (id: string): Result<Problem, SessionId> => {
 }
 
 export const generate = (): SessionId => {
-  const id = ShortId.generate(8)
-  const sessionId = `${namespace}${separator}${id}`
-
-  if (is(sessionId)) {
-    return sessionId
-  }
-
-  throw new Error('generated invalid session id')
+  return ShortId.generate(8) as SessionId
 }
 
 export const SessionId = {

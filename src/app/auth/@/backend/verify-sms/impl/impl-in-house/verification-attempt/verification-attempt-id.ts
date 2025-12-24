@@ -5,15 +5,16 @@ const schema = s.brand(s.str(), 'VerificationAttemptId')
 
 export type VerificationAttemptId = s.Infer<typeof schema>
 
+const is = (id: unknown): id is VerificationAttemptId => {
+  return typeof id === 'string' && Uuid.is(id)
+}
+
 const generate = (): VerificationAttemptId => {
-  const id = `auth-sms-verification-attempt:${Uuid.generate()}`
-  if (s.is(schema)(id)) {
-    return id
-  }
-  throw new Error('Failed to generate VerificationAttemptId')
+  return Uuid.generate() as unknown as VerificationAttemptId
 }
 
 export const VerificationAttemptId = {
   ...schema,
   generate,
+  is,
 }

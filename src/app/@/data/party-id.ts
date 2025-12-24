@@ -5,7 +5,7 @@ import { Uuid } from '~/@/id/uuid'
 export type PartyId = Brand<string, 'PartyId'>
 
 const is = (id: unknown): id is PartyId => {
-  return typeof id === 'string'
+  return typeof id === 'string' && Uuid.is(id)
 }
 
 type Problem = 'invalid_party_id'

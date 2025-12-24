@@ -6,17 +6,11 @@ const schema = s.brand(s.str(), 'BackendInstanceId')
 export type BackendInstanceId = s.Infer<typeof schema>
 
 const is = (backendInstanceId: unknown): backendInstanceId is BackendInstanceId => {
-  return typeof backendInstanceId === 'string'
+  return typeof backendInstanceId === 'string' && Uuid.is(backendInstanceId)
 }
 
-const namespace = 'backend-instance'
-const separator = ':'
-
-const generate = () => {
-  const id = Uuid.generate()
-  const randomIntegers = Math.floor(Math.random() * 1_000_000_000)
-  const backendInstanceId = `${namespace}${separator}${id}${randomIntegers}`
-  return backendInstanceId as BackendInstanceId
+const generate = (): BackendInstanceId => {
+  return Uuid.generate() as unknown as BackendInstanceId
 }
 
 export const BackendInstanceId = {

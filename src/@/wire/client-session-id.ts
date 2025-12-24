@@ -5,9 +5,6 @@ import { ShortId } from '../id/short-id'
 
 export type ClientSessionId = Brand<string, 'ClientSessionId'>
 
-const namespace = 'client-session'
-const separator = ':'
-
 const is = (id: unknown): id is ClientSessionId => {
   return typeof id === 'string'
 }
@@ -25,14 +22,7 @@ export const decode = (id: string): Result<Problem, ClientSessionId> => {
 }
 
 export const generate = (): ClientSessionId => {
-  const id = ShortId.generate(8)
-  const clientSessionId = `${namespace}${separator}${id}`
-
-  if (is(clientSessionId)) {
-    return clientSessionId
-  }
-
-  throw new Error('generated invalid session id')
+  return ShortId.generate(8) as ClientSessionId
 }
 
 export const ClientSessionId = {

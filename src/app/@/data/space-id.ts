@@ -1,14 +1,12 @@
 import { Result } from '~/@/result'
 import type { Brand } from '~/@/brand/brand'
 import { s } from '~/@/schema'
+import { Uuid } from '~/@/id/uuid'
 
 export type SpaceId = Brand<string, 'SpaceId'>
 
-const namespace = 'space'
-const separator = ':'
-
 const is = (id: unknown): id is SpaceId => {
-  return typeof id === 'string' && id.startsWith(namespace)
+  return typeof id === 'string' && Uuid.is(id)
 }
 const schema = s.custom(is, 'Invalid space id')
 
@@ -23,15 +21,7 @@ const decode = (id: string): Result<Problem, SpaceId> => {
 }
 
 const generate = (): SpaceId => {
-  // warning collisions could happen
-  // use short id so the logs are more readable
-  const spaceId = `${namespace}${separator}${Math.random().toString(36).slice(-6)}`
-
-  if (is(spaceId)) {
-    return spaceId
-  }
-
-  throw new Error('generated invalid id')
+  return Uuid.generate() as unknown as SpaceId
 }
 
 export const SpaceId = {
