@@ -64,5 +64,5 @@ export type AppFrontendCtx = AppFrontendCtxBase & {
 }
 
 export const isAppFrontendCtx = (ctx: AppFrontendCtxBase): ctx is AppFrontendCtx => {
-  return ctx.currentUser !== null
+  return ctx.currentUserState.t === 'logged-in' && !!ctx.currentUser
 }

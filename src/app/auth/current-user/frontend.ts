@@ -129,11 +129,16 @@ const toQueryUserAccountByUserId = (input: { userId: UserId }): QueryInput<UserA
 }
 
 export const toCurrentUserState = (input: { model: ModelFrontend; ctx: AppFrontendCtxBase }): CurrentUserState => {
-  const userSessions = UserSessionDbQueryCache.query(input.ctx, toQueryUserSessionByClientSessionId(input.ctx))
+  const query = toQueryUserSessionByClientSessionId(input.ctx)
+  const userSessions = UserSessionDbQueryCache.query(input.ctx, query)
+  const isLoading = UserSessionDbQueryCache.isLoading(input.ctx, query)
 
   const maybeUserSession = userSessions.find((userSession) => userSession.clientSessionId === input.ctx.clientSessionId)
 
-  if (!maybeUserSession) return { t: 'loading' }
+  if (!maybeUserSession) {
+    if (isLoading) return { t: 'loading' }
+    return { t: 'logged-out' }
+  }
 
   const userAccounts = UserAccountDbQueryCache.query(
     input.ctx,

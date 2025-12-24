@@ -271,7 +271,7 @@ export const update = (input: {
       const modelNew: Model = { ...input.model, loginWithSms_verified: verified }
       const error = toVerifyErrorMessage({ model: modelNew, ctx: input.ctx }) ?? input.ctx.t('app.something-went-wrong')
 
-      // Check for RPC errors
+      // Check for RPC errors (Err(RPCError))
       if (isErr(verified)) {
         return {
           model: modelNew,
@@ -279,33 +279,34 @@ export const update = (input: {
         }
       }
 
-      // Check for non-ok states (loading, not-asked)
-      if (verified.t !== 'ok') {
+      // verified is Ok at this point, check the nested result
+      // Check for verification errors (Ok(Err(VerifyCodeProblem)))
+      if (verified.t === 'ok' && verified.value.t === 'err') {
         return {
           model: modelNew,
           eff: showErrorSmall(error),
         }
       }
 
-      // Check for verification errors (Ok(Err(...)))
-      if (verified.value.t === 'err') {
+      // Success case: Ok(Ok({ userAccount, userSession }))
+      if (verified.t === 'ok' && verified.value.t === 'ok') {
+        const { userSession, userAccount } = verified.value.value
+
         return {
           model: modelNew,
-          eff: showErrorSmall(error),
+          async eff(_dispatch) {
+            await Promise.all([
+              input.ctx.userSessionDb.upsert({ entities: [userSession] }),
+              input.ctx.userAccountDb.upsert({ entities: [userAccount] }),
+            ])
+          },
         }
       }
 
-      // Success case: Ok(Ok(...))
-      const { userSession, userAccount } = verified.value.value
-
+      // Fallback: should not reach here, but handle defensively
       return {
         model: modelNew,
-        async eff(_dispatch) {
-          await Promise.all([
-            input.ctx.userSessionDb.upsert({ entities: [userSession] }),
-            input.ctx.userAccountDb.upsert({ entities: [userAccount] }),
-          ])
-        },
+        eff: showErrorSmall(error),
       }
     }
   }

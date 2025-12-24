@@ -516,7 +516,8 @@ const toScreenLayoutProps = (props: {
     {
       label: ctx.t('spaces.spaces'),
       renderIcon: (iconProps: IconProps) => h(IconGamepad, iconProps),
-      color: props.model.currentScreen.currentScreen_screen.n === 'spaces' ? ('selected' as const) : ('inherit' as const),
+      color:
+        props.model.currentScreen.currentScreen_screen.n === 'spaces' ? ('selected' as const) : ('inherit' as const),
       onPress: pushSpaceList,
       id: ctx.t('spaces.spaces'),
     },
@@ -527,7 +528,8 @@ const toScreenLayoutProps = (props: {
     actions.push({
       label: ctx.t('profile.profile'),
       renderIcon: (iconProps: IconProps) => h(IconUser, iconProps),
-      color: props.model.currentScreen.currentScreen_screen.n === 'profile' ? ('selected' as const) : ('inherit' as const),
+      color:
+        props.model.currentScreen.currentScreen_screen.n === 'profile' ? ('selected' as const) : ('inherit' as const),
       onPress() {
         props.dispatch({
           t: 'currentScreen',
