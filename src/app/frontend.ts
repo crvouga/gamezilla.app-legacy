@@ -10,7 +10,6 @@ import { INavigation } from '~/@/navigation'
 import { IPlatform } from '~/@/platform/platform'
 import { Psql } from '~/@/psql'
 import { RPC } from '~/@/rpc'
-import { Screen } from '~/@/screens/generated/screens'
 import { ServerRegistry } from '~/@/server-registry/server-registry'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { ISqlDb } from '~/@/sql-db/interface'
@@ -20,7 +19,7 @@ import { SyncEngineClient } from '~/@/sync-engine/sync-engine-client'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { TopicClient } from '~/@/topic/topic-client/impl'
-import { IconGamepad, IconUser, Props as IconProps } from '~/@/ui/icon'
+import { IconGamepad, Props as IconProps, IconUser } from '~/@/ui/icon'
 import { Url } from '~/@/url/url'
 import { h } from '~/@/vdom/h'
 import { Box } from '~/@/vdom/primitives/box'
@@ -32,6 +31,7 @@ import { ILogger } from '../@/logger'
 import { AppFrontendCtxBase, isAppFrontendCtx } from './@/frontend/ctx'
 import { topicMsgCodec } from './@/topic-msg-codec'
 import { AppRoot } from './@/ui/app-root/app-root'
+import { ScreenAction } from './@/ui/screen/action-bar/screen-action-bar-props'
 import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
 import { toCurrentUserState } from './auth/current-user/frontend'
 import { AuthFrontend } from './auth/frontend'
@@ -51,7 +51,6 @@ import { CurrentSpaceMiniPlayerFrontend } from './spaces/frontend/current-space-
 import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract, topicContract } from './types'
 import { toBackendConnectionStatus } from './wire/backend-connection/backend-connection-status'
 import { WireFrontend } from './wire/frontend'
-import { UserId } from './@/data/user-id'
 
 const initCtx = async (config: {
   serverRegistrySrcUrl: Url
@@ -524,43 +523,46 @@ const toScreenLayoutProps = (props: {
   dispatch: (m: MsgFrontend) => void
 }): ParentScreenProps | null => {
   const { ctx } = props
-  const screenSpace: Screen = { n: 'spaces', t: 'spaces_list' }
 
-  const pushSpaceList = () =>
-    props.dispatch({
-      t: 'currentScreen',
-      c: { n: 'currentScreen', t: 'currentScreen_clickedLink', screen: screenSpace },
-    })
-
-  const actions = [
+  const actions: ScreenAction[] = [
     {
       label: ctx.t('spaces.spaces'),
       renderIcon: (iconProps: IconProps) => h(IconGamepad, iconProps),
-      color:
-        props.model.currentScreen.currentScreen_screen.n === 'spaces' ? ('selected' as const) : ('inherit' as const),
-      onPress: pushSpaceList,
+      color: props.model.currentScreen.currentScreen_screen.n === 'spaces' ? 'selected' : 'inherit',
+      onPress() {
+        props.dispatch({
+          t: 'currentScreen',
+          c: {
+            n: 'currentScreen',
+            t: 'currentScreen_clickedLink',
+            screen: { n: 'spaces', t: 'spaces_list' },
+          },
+        })
+      },
       id: ctx.t('spaces.spaces'),
     },
   ]
 
-  const screenProfile: Screen = {
-    n: 'profile',
-    t: 'profile_profile',
-    userId: ctx.currentUser?.userId ?? UserId.generate(),
+  const currentUserId = ctx.currentUser?.userId
+
+  if (currentUserId) {
+    actions.push({
+      label: ctx.t('profile.profile'),
+      renderIcon: (iconProps: IconProps) => h(IconUser, iconProps),
+      color: props.model.currentScreen.currentScreen_screen.n === 'profile' ? 'selected' : 'inherit',
+      onPress() {
+        props.dispatch({
+          t: 'currentScreen',
+          c: {
+            n: 'currentScreen',
+            t: 'currentScreen_clickedLink',
+            screen: { n: 'profile', t: 'profile_profile', userId: currentUserId },
+          },
+        })
+      },
+      id: ctx.t('profile.profile'),
+    })
   }
-  actions.push({
-    label: ctx.t('profile.profile'),
-    renderIcon: (iconProps: IconProps) => h(IconUser, iconProps),
-    color:
-      props.model.currentScreen.currentScreen_screen.n === 'profile' ? ('selected' as const) : ('inherit' as const),
-    onPress() {
-      props.dispatch({
-        t: 'currentScreen',
-        c: { n: 'currentScreen', t: 'currentScreen_clickedLink', screen: screenProfile },
-      })
-    },
-    id: ctx.t('profile.profile'),
-  })
 
   return {
     id: 'app-screen-layout',
