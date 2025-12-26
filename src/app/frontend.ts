@@ -105,7 +105,10 @@ const initCtx = async (config: {
     clientSessionId,
     logger,
     codec: topicMsgCodec,
-    getServerUrls: serverRegistry.getServerUrls,
+    async getServerUrls() {
+      const serverUrls = await serverRegistry.getServerUrls()
+      return serverUrls.filter((s) => s.tags.includes('topic'))
+    },
     reconnectionRate: TimeSpan.seconds(0),
     syncSubscriptionRate: TimeSpan.seconds(0),
   })

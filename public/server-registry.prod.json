@@ -1,11 +1,11 @@
 {
   "servers": [
     {
-      "name": "rpc",
+      "tags": ["rpc"],
       "url": "https://rpc-production-faa3.up.railway.app"
     },
     {
-      "name": "topic",
+      "tags": ["topic"],
       "url": "https://topic-us-west-production.up.railway.app"
     }
   ]

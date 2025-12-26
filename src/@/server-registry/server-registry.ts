@@ -4,17 +4,15 @@ import { p } from '~/@/promise'
 import { isErr, unwrap } from '~/@/result'
 import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
 import { ISqlDb } from '~/@/sql-db/interface'
-
 import { TimeSpan } from '~/@/time/time-span'
 import { Url } from '~/@/url/url'
-
 import { ServerRegistryRecordDb } from './server-registry-record-db/impl'
 import { ServerRegistryId } from './server-registry-record-id'
 import { ServerRegistryRecord } from './server-registry-record'
 import { Result } from '~/@/result'
 
 export type IServerRegistry = {
-  getServerUrls(): Promise<Url[]>
+  getServerUrls(): Promise<{ url: Url; tags: string[] }[]>
   get(): Promise<Result<string, ServerRegistryRecord>>
   worker(abortSignal: AbortSignal): Promise<void>
 }
@@ -73,9 +71,12 @@ const init = (self: ServerRegistry): IServerRegistry => {
   }
 
   return {
-    async getServerUrls(): Promise<Url[]> {
+    async getServerUrls(): Promise<{ url: Url; tags: string[] }[]> {
       const got = unwrap(await serverRegistryCache.get())
-      const serverUrls = got.servers.map((s) => s.url)
+      const serverUrls = got.servers.map((s) => ({
+        url: s.url,
+        tags: s.tags,
+      }))
       return serverUrls
     },
     async get() {

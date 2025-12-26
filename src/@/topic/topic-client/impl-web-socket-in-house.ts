@@ -22,7 +22,7 @@ export type ImplWebSocketsInHouse<T extends TopicContractBase> = {
   reconnectionRate?: TimeSpan
   syncSubscriptionRate?: TimeSpan
   codec: ITopicMsgCodec
-  getServerUrls: () => Promise<Url[]>
+  getServerUrls: () => Promise<{ url: Url; tags: string[] }[]>
 }
 
 const DEFAULT_RECONNECTION_RATE = TimeSpan.seconds(10)
@@ -120,17 +120,17 @@ const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSock
 
         const serverUrls = await config.getServerUrls()
 
-        const serverUrl = serverUrls[0]
+        const serverEntry = serverUrls[0]
 
-        logger.info('connecting to server', { serverUrl })
+        logger.info('connecting to server', { serverEntry })
 
-        if (!serverUrl) {
+        if (!serverEntry) {
           logger.warn('no server url found')
           await p.sleep(config.reconnectionRate ?? DEFAULT_RECONNECTION_RATE, abortController.signal)
           continue
         }
 
-        const webSocketUrl = toWebSocketUrl({ serverUrl, clientSessionId: config.clientSessionId })
+        const webSocketUrl = toWebSocketUrl({ serverUrl: serverEntry.url, clientSessionId: config.clientSessionId })
 
         logger.info('connecting to server', { webSocketUrl })
 

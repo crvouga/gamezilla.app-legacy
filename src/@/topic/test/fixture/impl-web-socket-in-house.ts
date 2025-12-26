@@ -45,7 +45,8 @@ const init = async (_config?: ImplWebSocketInHouse): Promise<IFixture> => {
       t: 'web-sockets-in-house',
       clientSessionId,
       contract: testTopicContract,
-      getServerUrls: async () => NonEmpty.assert([Url.derive(`http://localhost:${port}${endpoint}`, 'http')]),
+      getServerUrls: async () =>
+        NonEmpty.assert([{ url: Url.derive(`http://localhost:${port}${endpoint}`, 'http'), tags: ['topic'] }]),
       logger: logger.child(['client', childName]),
       reconnectionRate: RECONNECTION_RATE,
       syncSubscriptionRate: SYNC_SUBSCRIPTION_RATE,

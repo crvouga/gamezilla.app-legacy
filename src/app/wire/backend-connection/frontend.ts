@@ -61,7 +61,7 @@ export const update = (input: {
     }
   }
 }
-const DISABLE = true
+const DISABLE = false
 export const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<MsgFrontend> => {
   if (DISABLE) return Sub.none()
   return Sub.batch([pings(input), pongs(input)])
