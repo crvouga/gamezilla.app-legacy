@@ -4,6 +4,20 @@ import { Box } from '~/@/vdom/primitives/box'
 import { VDom } from '~/@/vdom/vdom'
 import { VerticalActionBar } from '../../action-bar/screen-action-bar-vertical'
 import { ParentScreenProps, ScreenLayoutProps } from '../screen-layout-props'
+import type { ScreenSize } from '../../screen-size'
+
+const toActionBarsWidth = (screenSize: ScreenSize): number => {
+  switch (screenSize) {
+    case 'desktop':
+      return 48
+    case 'tablet':
+      return 32
+    case 'mobile':
+      return 24
+    default:
+      return 16
+  }
+}
 
 export const ActionBars = (props: ScreenLayoutProps & { position: 'start' | 'end' }) => {
   const actionBars = renderActionBars(props.ctx, props, props.position)
@@ -14,7 +28,9 @@ export const ActionBars = (props: ScreenLayoutProps & { position: 'start' | 'end
       style: sx({
         flexDirection: 'row',
         height: 'full',
-        flex: 1,
+        width: toActionBarsWidth(props.ctx.screenSize),
+        flexShrink: 0,
+        flexGrow: 0,
         alignItems: 'flex-start',
         justifyContent: props.position === 'start' ? 'flex-end' : 'flex-start',
       }),
