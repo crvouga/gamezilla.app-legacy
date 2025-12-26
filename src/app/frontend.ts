@@ -414,13 +414,22 @@ const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }):
     Sub.map(CopyToClipboardFrontend.subscriptions, (c) => ({ t: 'copyToClipboard', c })),
     Sub.map(ScreenSizeFrontend.subscriptions(inputNew), (c) => ({ t: 'screenSize', c })),
     Sub.map(CurrentScreenFrontend.subscriptions(inputNew), (c) => ({ t: 'currentScreen', c })),
-    Sub.map(ToasterFrontend.subscriptions({ ...input, model: input.model.toaster }), (c) => ({ t: 'toaster', c })),
-    Sub.map(QueryCache.subscriptions({ model: input.model.queryCache }), (c) => ({ t: 'queryCache', c })),
-    Sub.map(WireFrontend.subscriptions({ ...input, model: input.model.wire }), (c) => ({ t: 'wire', c })),
-    Sub.map(SettingsFrontend.subscriptions({ ...input, model: input.model.settings }), (c) => ({ t: 'settings', c })),
-    Sub.map(AuthFrontend.subscriptions({ ...input, model: input.model.auth }), (c) => ({ t: 'auth', c })),
-    Sub.map(ProfileFrontend.subscriptions({ ...input, model: input.model.profile }), (c) => ({ t: 'profile', c })),
-    Sub.map(SpacesFrontend.subscriptions({ ...input, model: input.model.spaces }), (c) => ({ t: 'spaces', c })),
+    Sub.map(ToasterFrontend.subscriptions({ ...inputNew, model: inputNew.model.toaster }), (c) => ({
+      t: 'toaster',
+      c,
+    })),
+    Sub.map(QueryCache.subscriptions({ model: inputNew.model.queryCache }), (c) => ({ t: 'queryCache', c })),
+    Sub.map(WireFrontend.subscriptions({ ...inputNew, model: inputNew.model.wire }), (c) => ({ t: 'wire', c })),
+    Sub.map(SettingsFrontend.subscriptions({ ...inputNew, model: inputNew.model.settings }), (c) => ({
+      t: 'settings',
+      c,
+    })),
+    Sub.map(AuthFrontend.subscriptions({ ...inputNew, model: inputNew.model.auth }), (c) => ({ t: 'auth', c })),
+    Sub.map(ProfileFrontend.subscriptions({ ...inputNew, model: inputNew.model.profile }), (c) => ({
+      t: 'profile',
+      c,
+    })),
+    Sub.map(SpacesFrontend.subscriptions({ ...inputNew, model: inputNew.model.spaces }), (c) => ({ t: 'spaces', c })),
   ])
 }
 

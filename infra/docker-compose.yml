@@ -1,10 +1,10 @@
 name: gamezilla_app
 
 services:
-  frontend:
+  frontend-web:
     build:
       context: ../
-      dockerfile: infra/frontend/frontend.Dockerfile
+      dockerfile: infra/frontend-web/frontend-web.Dockerfile
       args:
         NODE_ENV: development
     ports:

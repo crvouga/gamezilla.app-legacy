@@ -15,13 +15,13 @@ COPY . .
 ARG NODE_ENV
 ENV NODE_ENV=${NODE_ENV}
 
-RUN pnpm frontend:build
+RUN pnpm frontend-web:build
 
 FROM nginx:alpine
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-COPY infra/frontend/frontend.nginx.conf /etc/nginx/nginx.conf
+COPY infra/frontend-web/frontend-web.nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
 
