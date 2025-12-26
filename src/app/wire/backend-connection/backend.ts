@@ -10,6 +10,7 @@ const worker = async (s: AbortSignal, input: { topic: ITopicClient<typeof topicC
     clientSessionId: msg.clientSessionId,
   }))
 
+  console.log('pings', pings)
   Sub.takeEvery(s, pings, (ping) => {
     console.log('pong', ping)
     input.topic.backendConnection_pong.pub(ping.clientSessionId, {
