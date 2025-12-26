@@ -152,5 +152,8 @@
     "vitest": "^3.2.4",
     "wrangler": "^3.114.15"
   },
-  "packageManager": "pnpm@10.18.3"
+  "packageManager": "pnpm@10.18.3",
+  "engines": {
+    "node": ">=22.0.0"
+  }
 }
