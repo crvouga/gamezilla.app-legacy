@@ -36,7 +36,7 @@ const init = (config: ImplSql): ITodoDb => {
   return Db.init({
     t: 'sql-db',
     logger: config.logger,
-    parser: ITodoDb.schema,
+    interface: ITodoDb.schema,
     sqlDb: config.sqlDb,
     migration: {
       policy: SqlDbMigrationPolicy.init({

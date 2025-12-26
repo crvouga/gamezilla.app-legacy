@@ -42,7 +42,7 @@ export const initSpaceProjectionUserDb = (
   return Db.init({
     t: 'sql-db',
     logger: config.logger,
-    parser: IDb.schema({
+    interface: IDb.schema({
       Entity: SpaceProjectionUserEntity,
       Related: s.partialObj({}),
     }),

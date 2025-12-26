@@ -18,7 +18,7 @@ const init = <TEntity extends Record<string, unknown>, TRelated extends Record<s
 }) => {
   type Db = IDb.IDb<TEntity, TRelated>
 
-  const watch = <TMsg>(db: Db, queryInput: QueryInput<TEntity>, mapper: (m: QueryCacheMsg) => TMsg): Sub<TMsg> => {
+  const subscribe = <TMsg>(db: Db, queryInput: QueryInput<TEntity>, mapper: (m: QueryCacheMsg) => TMsg): Sub<TMsg> => {
     return db.liveQuery(queryInput, (result) => {
       return mapper({
         entities: isOk(result) ? indexBy(result.value.entities.items, (c) => String(c[config.primaryKey])) : {},
@@ -67,7 +67,7 @@ const init = <TEntity extends Record<string, unknown>, TRelated extends Record<s
   return {
     toEntity,
     gotEntity,
-    watch,
+    subscribe,
     query,
     isLoading,
     isEmpty,

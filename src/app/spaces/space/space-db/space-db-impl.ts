@@ -43,7 +43,7 @@ export const initSpaceDb = (config: SpaceDbConfig): IDb.IDb<SpaceEntity, {}> => 
   return Db.init({
     t: 'sql-db',
     logger: config.logger,
-    parser: IDb.schema({
+    interface: IDb.schema({
       Entity: SpaceEntity,
       Related: s.partialObj({}),
     }),
@@ -136,5 +136,5 @@ export const SpaceDbQueryCache = {
   ...SpaceDbQueryCacheBase,
   entity,
   read,
-  sub: SpaceDbQueryCacheBase.watch,
+  sub: SpaceDbQueryCacheBase.subscribe,
 }

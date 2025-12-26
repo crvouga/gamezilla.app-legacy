@@ -21,7 +21,7 @@ export type ImplSqlDb<
   TRow extends Record<string, unknown>,
 > = MappingConfig<TEntity, TRow> & {
   t: 'sql-db'
-  parser: IDb.Parser<TEntity, TRelated>
+  interface: IDb.Interface<TEntity, TRelated>
   sqlDb: ISqlDb
   viewName: string
   primaryKey: string

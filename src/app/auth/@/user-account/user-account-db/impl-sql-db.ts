@@ -40,7 +40,7 @@ const init = async (config: ImplSqlDb): Promise<IUserAccountDb> => {
   return Db.init({
     t: 'sql-db',
     logger,
-    parser: IUserAccountDb,
+    interface: IUserAccountDb,
     sqlDb: config.sqlDb,
     migration: {
       policy: config.migrationPolicy,

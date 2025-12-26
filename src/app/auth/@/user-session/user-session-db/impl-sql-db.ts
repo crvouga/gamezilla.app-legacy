@@ -60,7 +60,7 @@ const init = async (config: ImplSqlDb): Promise<IUserSessionDb> => {
   return Db.init({
     t: 'sql-db',
     logger,
-    parser: IUserSessionDb,
+    interface: IUserSessionDb,
     sqlDb: config.sqlDb,
     migration: {
       policy: config.migrationPolicy,

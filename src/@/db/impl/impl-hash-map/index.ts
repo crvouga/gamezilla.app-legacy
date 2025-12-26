@@ -12,7 +12,7 @@ import { queryMap } from './query-input-map'
 
 export type ImplHashMap<TEntity extends Record<string, unknown>, TRelated extends Record<string, unknown>> = {
   t: 'hash-map'
-  parser: IDb.Parser<TEntity, TRelated>
+  parser: IDb.Interface<TEntity, TRelated>
   toPrimaryKey: (entity: TEntity) => keyof TEntity
   map?: (entity: TEntity) => TEntity
   getRelated: (entities: TEntity[]) => Promise<TRelated>

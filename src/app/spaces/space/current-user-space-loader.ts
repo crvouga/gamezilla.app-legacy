@@ -25,19 +25,23 @@ const toQuery = (currentUserId: UserId): QueryInput<SpaceProjectionEntity> => {
 const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<MsgFrontend> => {
   const currentUserId = input.ctx.currentUser?.userId
   if (!currentUserId) return Sub.none()
-  return SpaceProjectionDbQueryCache.watch(input.ctx.spaceProjectionDb, toQuery(currentUserId), (c): MsgFrontend => {
-    const msg =
-      c.t === 'gotEntity'
-        ? {
-            t: 'gotEntity' as const,
-            id: c.id,
-            entityType: c.entityType,
-            entity: c.entity,
-            lastUpdatedAtKey: c.lastUpdatedAtKey,
-          }
-        : c
-    return { t: 'gotQueryCacheMsg', c: GotQueryCacheMsg.init(msg) }
-  })
+  return SpaceProjectionDbQueryCache.subscribe(
+    input.ctx.spaceProjectionDb,
+    toQuery(currentUserId),
+    (c): MsgFrontend => {
+      const msg =
+        c.t === 'gotEntity'
+          ? {
+              t: 'gotEntity' as const,
+              id: c.id,
+              entityType: c.entityType,
+              entity: c.entity,
+              lastUpdatedAtKey: c.lastUpdatedAtKey,
+            }
+          : c
+      return { t: 'gotQueryCacheMsg', c: GotQueryCacheMsg.init(msg) }
+    },
+  )
 }
 
 const toCurrentUserSpace = (ctx: AppFrontendCtxBase & Partial<FrontendCtxModule>): Space | null => {

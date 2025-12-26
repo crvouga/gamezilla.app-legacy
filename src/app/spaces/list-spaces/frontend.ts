@@ -61,7 +61,7 @@ const update = (input: {
 
 const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<Msg> => {
   const projectionQuery = toProjectionQuery()
-  return SpaceProjectionDbQueryCache.watch(
+  return SpaceProjectionDbQueryCache.subscribe(
     input.ctx.spaceProjectionDb,
     projectionQuery,
     (c): Msg => ({ t: 'listSpaces_gotMsgSpace', c: GotQueryCacheMsg.init(c) }),

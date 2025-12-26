@@ -55,7 +55,9 @@ export const update = (input: {
       const { c } = input.msg
       return {
         model: input.model,
-        eff: () => queryCacheMsgs.pub(c),
+        eff: () => {
+          queryCacheMsgs.pub(c)
+        },
       }
     }
     default: {
@@ -69,7 +71,7 @@ export const subscriptions = (input: { ctx: Ctx; model: ModelFrontend }): Sub<Ms
 }
 
 const subscriptionsUserSession: typeof subscriptions = (input) => {
-  return UserSessionDbQueryCache.watch(
+  return UserSessionDbQueryCache.subscribe(
     input.ctx.userSessionDb,
     toQueryUserSessionByClientSessionId(input.ctx),
     (c) => ({ t: 'gotQueryCacheMsg', c }),
@@ -81,7 +83,7 @@ const subscriptionsUserAccount: typeof subscriptions = (input) => {
   const userSessions = UserSessionDbQueryCache.query(input.ctx, queryUserSession)
   const userSession = userSessions[0]
   if (!userSession) return Sub.none()
-  return UserAccountDbQueryCache.watch(
+  return UserAccountDbQueryCache.subscribe(
     input.ctx.userAccountDb,
     toQueryUserAccountByUserId({ userId: userSession.userId }),
     (c) => ({ t: 'gotQueryCacheMsg', c }),

@@ -132,7 +132,7 @@ const ViewSpaceNotFound = (input: { ctx: FrontendCtxModule; dispatch: (m: MsgFro
 const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<MsgFrontend> => {
   const spaceId = input.ctx.currentScreen.t === 'spaces_space' ? input.ctx.currentScreen.spaceId : null
   if (!spaceId) return Sub.none()
-  return SpaceDbQueryCache.watch(input.ctx.spaceDb, toQuery(spaceId), (c): MsgFrontend => {
+  return SpaceDbQueryCache.subscribe(input.ctx.spaceDb, toQuery(spaceId), (c): MsgFrontend => {
     const msg =
       c.t === 'gotEntity'
         ? {

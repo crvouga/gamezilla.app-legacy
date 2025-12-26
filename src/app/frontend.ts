@@ -192,7 +192,10 @@ const initCtx = async (config: {
 }
 
 const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): FrontendCtxModule => {
-  const currentUserState = toCurrentUserState({ model: input.model.auth.currentUser, ctx: input.ctx })
+  const currentUserState = toCurrentUserState({
+    model: input.model.auth.currentUser,
+    ctx: { ...input.ctx, queryCache: input.model.queryCache },
+  })
 
   const baseCtx: FrontendCtxModule = {
     ...input.ctx,

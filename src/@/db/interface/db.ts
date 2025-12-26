@@ -9,7 +9,7 @@ import { UpdateOutput } from './update-output/update-output'
 import { UpsertInput } from './upsert-input/upsert-input'
 import { UpsertOutput } from './upsert-output/upsert-output'
 
-export type Parser<TEntity extends Record<string, unknown>, TRelated extends Record<string, unknown>> = {
+export type Interface<TEntity extends Record<string, unknown>, TRelated extends Record<string, unknown>> = {
   Entity: s.Schema<TEntity>
   Related: s.Schema<TRelated>
   QueryInput: s.Schema<QueryInput<TEntity>>
@@ -21,7 +21,7 @@ export type Parser<TEntity extends Record<string, unknown>, TRelated extends Rec
 export const schema = <TEntity extends Record<string, unknown>, TRelated extends Record<string, unknown>>(config: {
   Entity: s.Schema<TEntity>
   Related: s.Schema<TRelated>
-}): Parser<TEntity, TRelated> => {
+}): Interface<TEntity, TRelated> => {
   return {
     Entity: config.Entity,
     Related: config.Related,
@@ -33,19 +33,19 @@ export const schema = <TEntity extends Record<string, unknown>, TRelated extends
 }
 
 export type Infer<T> =
-  T extends Parser<infer TEntity extends Record<string, unknown>, infer TRelated extends Record<string, unknown>>
+  T extends Interface<infer TEntity extends Record<string, unknown>, infer TRelated extends Record<string, unknown>>
     ? IDb<TEntity, TRelated>
     : never
 
 export type InferQueryInput<T> =
-  T extends Parser<infer TEntity extends Record<string, unknown>, infer _TRelated> ? QueryInput<TEntity> : never
+  T extends Interface<infer TEntity extends Record<string, unknown>, infer _TRelated> ? QueryInput<TEntity> : never
 
 export type InferQueryOutput<T> =
-  T extends Parser<infer TEntity, infer TRelated> ? QueryOutput<TEntity, TRelated> : never
+  T extends Interface<infer TEntity, infer TRelated> ? QueryOutput<TEntity, TRelated> : never
 
-export type InferUpsertInput<T> = T extends Parser<infer TEntity, infer _TRelated> ? UpsertInput<TEntity> : never
+export type InferUpsertInput<T> = T extends Interface<infer TEntity, infer _TRelated> ? UpsertInput<TEntity> : never
 
-export type InferUpsertOutput<T> = T extends Parser<infer TEntity, infer _TRelated> ? UpsertOutput<TEntity> : never
+export type InferUpsertOutput<T> = T extends Interface<infer TEntity, infer _TRelated> ? UpsertOutput<TEntity> : never
 
 export type IDb<TEntity extends Record<string, unknown>, TRelated extends Record<string, unknown>> = {
   query: (query: QueryInput<TEntity>) => Promise<QueryOutput<TEntity, TRelated>>

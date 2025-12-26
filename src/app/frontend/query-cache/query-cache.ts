@@ -34,19 +34,6 @@ export const init = (_input: {}): { model: Model } => {
   }
 }
 
-const mergeEntities = (
-  lastUpdatedAtKey: string,
-  existing: Record<string, unknown>,
-  incoming: Record<string, unknown>,
-) => {
-  const existingLastUpdatedAt = existing[lastUpdatedAtKey]
-  const incomingLastUpdatedAt = incoming[lastUpdatedAtKey]
-  if (existingLastUpdatedAt && incomingLastUpdatedAt && existingLastUpdatedAt > incomingLastUpdatedAt) {
-    return existing
-  }
-  return { ...existing, ...incoming }
-}
-
 export const update = (input: {
   model: Model
   msg: Msg
@@ -116,6 +103,19 @@ export const update = (input: {
       }
     }
   }
+}
+
+const mergeEntities = (
+  lastUpdatedAtKey: string,
+  existing: Record<string, unknown>,
+  incoming: Record<string, unknown>,
+) => {
+  const existingLastUpdatedAt = existing[lastUpdatedAtKey]
+  const incomingLastUpdatedAt = incoming[lastUpdatedAtKey]
+  if (existingLastUpdatedAt && incomingLastUpdatedAt && existingLastUpdatedAt > incomingLastUpdatedAt) {
+    return existing
+  }
+  return { ...existing, ...incoming }
 }
 
 export const subscriptions = (_input: { model: Model }): Sub<Msg> => {
