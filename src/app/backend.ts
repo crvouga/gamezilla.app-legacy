@@ -83,7 +83,11 @@ const initCtx = async (config: {
     logger,
     serverRegistrySrcUrl: Url.derive(process.env.SERVER_REGISTRY_SRC_URL ?? '', 'http'),
     sqlDb: config.sqlDb,
-    migrationPolicy,
+    migrationPolicy: SqlDbMigrationPolicy.init({
+      t: 'dangerously-wipe-on-new-schema',
+      logger,
+      kvDb: keyValueDbDurable,
+    }),
     pollRate: TimeSpan.seconds(10),
   })
 
@@ -92,7 +96,10 @@ const initCtx = async (config: {
     contract: AppTypes.topicContract,
     codec: topicMsgCodec,
     logger: logger.child(['topic-client']),
-    getServerUrls: serverRegistry.getServerUrls,
+    async getServerUrls() {
+      const serverUrls = await serverRegistry.getServerUrls()
+      return serverUrls.filter((s) => s.tags.includes('topic'))
+    },
     clientSessionId: ClientSessionId.generate(),
   })
 

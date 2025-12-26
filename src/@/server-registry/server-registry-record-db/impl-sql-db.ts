@@ -35,7 +35,7 @@ const DOWN: string[] = [
 const Row = s.obj({
   id: s.str(),
   data_json: s.str(),
-  inserted_at_unix_ms: s.num(),
+  inserted_at_unix_ms: s.or(s.num(), s.str()),
 })
 
 const MAX_ROWS = 100
